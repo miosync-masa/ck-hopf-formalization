@@ -5,8 +5,9 @@ developers and reviewers.  Companion to `CK_HOPF_FORMALIZATION_MAP.md` (the
 reader-facing distillation) and `HOPF_DECOMPOSITION.md` (the full sprint log).*
 
 All Lean names below are verified against the source.  Constructive body:
-no `sorry`/`admit`/project axiom.  The only conditional surface is the three
-named kernels in §4.
+no `sorry`/`admit`/project axiom.  The only conditional surface is the **two**
+named boundary-semantics kernels in §4 (the former third kernel, the CK §3
+right-antipode core identity, is eliminated — §4).
 
 ---
 
@@ -206,8 +207,10 @@ These are thin wrappers (`:=` term-mode) over the Track R theorems.  They do
 resolved→flat).  They exhibit the distilled boundary-semantics principle of each
 facade as a theorem on the resolved carrier — the concrete JAR claim.
 
-`BoundaryResolvedSemanticModel` bundles the three principles into one inhabited
-`Prop` (`boundaryResolvedSemanticModel`): the **non-vacuity witness**.  It answers
+`BoundaryResolvedSemanticModel` bundles the repaired principles (injectivity
+before forgetting + exact projection onto the flat collapse map after forgetting)
+into one inhabited `Prop` (`boundaryResolvedSemanticModel`): the **non-vacuity
+witness**.  It answers
 the "vacuity / unicorn" objection — the flat facades are intentionally uninhabited
 (false; the diagnosis), while this is the concrete *inhabited* positive object on
 the resolved carrier.
