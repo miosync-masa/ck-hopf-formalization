@@ -211,20 +211,29 @@ identifying exactly what the informal flat proof silently assumes — rather tha
 an unconditional flat-carrier statement.
 
 The non-vacuous *positive* object is `BoundaryResolvedSemanticModel`
-(`BoundaryResolved.lean`), an inhabited `Prop` bundling the three repaired
-principles, with `boundaryResolvedSemanticModel` proving it on the
-boundary-resolved carrier:
-- edge submultiset retarget injectivity (under `EdgeIdsUnique`),
-- external-leg submultiset retarget injectivity (under `LegIdsUnique`),
-- forgetful compatibility with retargeting (the JAR commuting square).
+(`BoundaryResolved.lean`), an inhabited `Prop` bundling the repaired principles,
+with `boundaryResolvedSemanticModel` proving it on the boundary-resolved carrier.
+It contains **both** halves of the picture:
 
-It is **deliberately not** an instance of the flat facade classes (they are
-flat-false; `forget` runs resolved → flat).  Thus the resolved carrier supplies a
-concrete, inhabited model of the repaired semantic principles, while the flat
-theorem isolates the boundary assumption — answering any "vacuity / unicorn"
-objection: *the flat assumptions are intentionally uninhabited because they are
-false, and that is the diagnosis; the inhabited positive object lives on the
-boundary-resolved carrier.*
+*(1) Injectivity before forgetting* — where the flat collapse is repaired:
+- edge submultiset retarget injectivity (under `EdgeIdsUnique`),
+- external-leg submultiset retarget injectivity (under `LegIdsUnique`).
+
+*(2) Exact projection to the flat maps after forgetting* — where the resolved
+maps are shown to be the boundary-refinement of the flat collapse, not a
+cherry-picked analogue:
+- `forget` carries the resolved edge/leg retarget *verbatim* onto the flat
+  endpoint/attachment-rewrite (`map_forget_retarget_edges` / `_legs`, rfl-level),
+- the forgetful map commutes with graph-level retargeting (the JAR square).
+
+So the resolved injectivity is literally the *same* retarget map as the flat one,
+read on the identity-carrying carrier — the difference is exactly the persistent
+`edgeId`/`legId` that `forget` discards.  The model is **deliberately not** an
+instance of the flat facade classes (they are flat-false; `forget` runs resolved
+→ flat).  This answers any "vacuity / unicorn" objection: *the flat assumptions
+are intentionally uninhabited because they are false — that is the diagnosis; the
+inhabited positive object, projecting exactly onto the flat collapse map, lives on
+the boundary-resolved carrier.*
 
 ---
 

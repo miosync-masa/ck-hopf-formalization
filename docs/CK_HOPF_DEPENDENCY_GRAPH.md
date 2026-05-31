@@ -191,8 +191,12 @@ R-4-link ──► resolved_forget_retargetGraph_commutes   (forgetful recovery 
         │
         ▼
 BoundaryResolvedSemanticModel : Prop                  ✅ inhabited (non-vacuity witness)
+  -- (1) injectivity before forgetting (repaired collapse):
   ├ edge_submultiset_retarget_injective    (← R-3a, under EdgeIdsUnique)
   ├ leg_submultiset_retarget_injective     (← R-3b, under LegIdsUnique)
+  -- (2) exact projection onto the flat collapse map after forgetting:
+  ├ edge_forget_retarget_commutes          (← map_forget_retarget_edges, rfl-level)
+  ├ leg_forget_retarget_commutes           (← map_forget_retarget_legs, rfl-level)
   └ forget_retargetGraph_commutes          (← R-4-link)
   inhabited by `boundaryResolvedSemanticModel`
 ```
