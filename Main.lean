@@ -12,6 +12,8 @@ names are stable.
 -/
 import GaugeGeometry.QFT.HopfAlgebra.HopfAlgebra
 import GaugeGeometry.QFT.HopfAlgebra.AntipodeConvolution
+import GaugeGeometry.QFT.HopfAlgebra.BoundaryResolved
+import GaugeGeometry.QFT.HopfAlgebra.AxiomAudit
 import GaugeGeometry.QFT.Combinatorial.ResolvedFeynmanGraphs
 
 open GaugeGeometry.QFT.Combinatorial

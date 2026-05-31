@@ -5,3 +5,23 @@
 .DS_Store
 /.claude
 /.vscode
+
+# --- Non-Hopf content: retained locally (broader GaugeGeometry development),
+#     excluded from the ck-hopf-formalization artifact repository. ---
+/GaugeGeometry/Applications/
+/GaugeGeometry/Axioms/
+/GaugeGeometry/Axioms.lean
+/GaugeGeometry/Geometric/
+/GaugeGeometry/Physical/
+/GaugeGeometry/Main.lean
+/GaugeGeometry/QFT/Analytic/
+/GaugeGeometry/QFT/Representation/
+/GaugeGeometry/Core/*
+!/GaugeGeometry/Core/Sector.lean
+/GaugeGeometry/QFT/Combinatorial/ForestFormula.lean
+/GaugeGeometry/QFT/Combinatorial/OneLoopGraphs.lean
+/GaugeGeometry/QFT/Combinatorial/RenormalizationBridge.lean
+/GaugeGeometry/QFT/Combinatorial/WickExpansion.lean
+/GaugeGeometry/QFT/HopfAlgebra/SubgraphFintype.lean
+/Result.md
+/GaugeGeometry_Task_v3.md
