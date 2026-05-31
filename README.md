@@ -1,6 +1,6 @@
 # CK Hopf Formalization
 
-[![Lean Action CI](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean_action_ci.yml)
+[![Lean Action CI](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml/badge.svg)](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml)
 
 A Lean 4 formalization of the **Connes–Kreimer Hopf algebra of Feynman graphs**.
 
