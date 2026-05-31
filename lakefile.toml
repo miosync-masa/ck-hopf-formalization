@@ -1,0 +1,14 @@
+name = "GaugeGeometry"
+defaultTargets = ["GaugeGeometry", "ck-hopf-formalization"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.29.0"
+
+[[lean_lib]]
+name = "GaugeGeometry"
+
+[[lean_exe]]
+name = "ck-hopf-formalization"
+root = "Main"
