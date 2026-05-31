@@ -1,5 +1,5 @@
 name = "GaugeGeometry"
-defaultTargets = ["GaugeGeometry", "ck-hopf-formalization"]
+defaultTargets = ["ck-hopf-formalization"]
 
 [[require]]
 name = "mathlib"
