@@ -79,4 +79,66 @@ theorem resolved_forget_retargetGraph_commutes
           (fun ℓ => { attachedTo := f ℓ.attachedTo, sector := ℓ.sector }) } :=
   G.forget_retargetGraph f V
 
+/-! ## 4. Non-vacuity witness for the repaired boundary semantics
+
+`BoundaryResolvedSemanticModel` bundles the three repaired boundary-semantics
+principles (§1–§3) into a single proposition, and `boundaryResolvedSemanticModel`
+**inhabits it** on the boundary-resolved carrier.
+
+This is the *positive* object answering the "vacuity / unicorn" objection.  The
+two flat facade classes (`ForestGraphInsertionUniquenessModel`,
+`ForestQuotientForestSigmaForestCoverPromotedExternalLegsLiftableModel`) are
+**false on the flat carrier** — the conditional flat Hopf theorem is therefore a
+*proof-skeleton factorization* identifying exactly what the informal flat proof
+silently assumes, **not** an inhabited theorem about the flat carrier.  This
+structure is intentionally **not** an instance of those flat classes (it cannot
+be — they are flat-false and `forget` runs resolved → flat).  Instead it records
+the corresponding identity-preservation principles on the resolved carrier, where
+the persistent `edgeId`/`legId` makes the multiset collapse impossible.  The
+edge/leg injectivity principles are gated on id-uniqueness (`EdgeIdsUnique` /
+`LegIdsUnique`) — exactly the structure the flat carrier discards. -/
+structure BoundaryResolvedSemanticModel : Prop where
+  /-- The retargeted internal-edge submultiset determines its preimage, for
+  graphs with unique edge ids (the resolved repair of insertion uniqueness). -/
+  edge_submultiset_retarget_injective :
+    ∀ (G : ResolvedFeynmanGraph), G.EdgeIdsUnique → ∀ (f : VertexId → VertexId)
+      {M₁ M₂ : Multiset ResolvedFeynmanEdge},
+      M₁ ≤ G.internalEdges → M₂ ≤ G.internalEdges →
+      M₁.map (ResolvedFeynmanEdge.retarget f) =
+        M₂.map (ResolvedFeynmanEdge.retarget f) →
+      M₁ = M₂
+  /-- The retargeted external-leg submultiset determines its preimage, for graphs
+  with unique leg ids (the resolved repair of promoted-leg liftability). -/
+  leg_submultiset_retarget_injective :
+    ∀ (G : ResolvedFeynmanGraph), G.LegIdsUnique → ∀ (f : VertexId → VertexId)
+      {L₁ L₂ : Multiset ResolvedExternalLeg},
+      L₁ ≤ G.externalLegs → L₂ ≤ G.externalLegs →
+      L₁.map (ResolvedExternalLeg.retarget f) =
+        L₂.map (ResolvedExternalLeg.retarget f) →
+      L₁ = L₂
+  /-- The forgetful map commutes with identity-preserving retargeting: the flat
+  carrier is the forgetful image of the resolved carrier (the JAR square). -/
+  forget_retargetGraph_commutes :
+    ∀ (G : ResolvedFeynmanGraph) (f : VertexId → VertexId) (V : Finset VertexId),
+      (G.retargetGraph f V).forget =
+        { vertices := V
+          internalEdges := G.forget.internalEdges.map
+            (fun e => { source := f e.source, target := f e.target, sector := e.sector })
+          externalLegs := G.forget.externalLegs.map
+            (fun ℓ => { attachedTo := f ℓ.attachedTo, sector := ℓ.sector }) }
+
+/-- **Non-vacuity witness.**  The boundary-resolved carrier inhabits
+`BoundaryResolvedSemanticModel`: the three repaired principles (§1–§3) hold as
+theorems.  This is the concrete positive semantic object underwriting the JAR
+claim — the flat facades are *false* (that is the diagnosis); the resolved carrier
+is where the corresponding principles are *true*. -/
+theorem boundaryResolvedSemanticModel : BoundaryResolvedSemanticModel := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro G hId _f M₁ M₂ hM₁ hM₂ h
+    exact resolved_insertion_internalEdges_unique G hId hM₁ hM₂ h
+  · intro G hId _f L₁ L₂ hL₁ hL₂ h
+    exact resolved_promotedExternalLegs_unique G hId hL₁ hL₂ h
+  · intro G f V
+    exact resolved_forget_retargetGraph_commutes G f V
+
 end GaugeGeometry.QFT.HopfAlgebra

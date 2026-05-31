@@ -188,12 +188,25 @@ single generic engine behind both injectivity theorems.
 R-3a ──► resolved_insertion_internalEdges_unique      (distilled ForestGraphInsertionUniquenessModel)
 R-3b ──► resolved_promotedExternalLegs_unique         (distilled …PromotedExternalLegsLiftableModel)
 R-4-link ──► resolved_forget_retargetGraph_commutes   (forgetful recovery of the flat carrier)
+        │
+        ▼
+BoundaryResolvedSemanticModel : Prop                  ✅ inhabited (non-vacuity witness)
+  ├ edge_submultiset_retarget_injective    (← R-3a, under EdgeIdsUnique)
+  ├ leg_submultiset_retarget_injective     (← R-3b, under LegIdsUnique)
+  └ forget_retargetGraph_commutes          (← R-4-link)
+  inhabited by `boundaryResolvedSemanticModel`
 ```
 
 These are thin wrappers (`:=` term-mode) over the Track R theorems.  They do
 **not** instantiate the flat facade classes (flat-false; `forget` is
 resolved→flat).  They exhibit the distilled boundary-semantics principle of each
 facade as a theorem on the resolved carrier — the concrete JAR claim.
+
+`BoundaryResolvedSemanticModel` bundles the three principles into one inhabited
+`Prop` (`boundaryResolvedSemanticModel`): the **non-vacuity witness**.  It answers
+the "vacuity / unicorn" objection — the flat facades are intentionally uninhabited
+(false; the diagnosis), while this is the concrete *inhabited* positive object on
+the resolved carrier.
 
 ---
 

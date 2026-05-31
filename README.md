@@ -30,6 +30,19 @@ convolution operator `id − η∘ε` is locally nilpotent on generators), not a
 
 The constructive body contains **no** `sorry`, `admit`, or project-level axiom.
 
+## Non-vacuity (not a unicorn)
+
+The conditional flat-carrier theorem is a **proof-skeleton factorization**, not an
+unconditional theorem about the flat carrier: the two flat boundary assumptions
+are shown to be *false* on the flat carrier (that is the diagnosis). Non-vacuity
+is supplied separately by the concrete, **inhabited** object
+`BoundaryResolvedSemanticModel` (witness `boundaryResolvedSemanticModel`,
+`GaugeGeometry/QFT/HopfAlgebra/BoundaryResolved.lean`), which proves the
+corresponding *repaired* principles — edge / external-leg retarget injectivity and
+the forget-retarget commuting square — on boundary-resolved graphs. The flat
+facade classes are intentionally **not** instantiated; the positive semantic
+object lives on the resolved carrier.
+
 ## Main certificates
 
 Headline cross-file certificates (in `GaugeGeometry/QFT/HopfAlgebra/HopfAlgebra.lean`,

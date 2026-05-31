@@ -202,6 +202,30 @@ Consequence: both gap kernels are **theorems on the resolved carrier**.  They ar
 not defects in CK's mathematics — they are artifacts of the flat notation, and
 boundary resolution removes them.
 
+### Non-vacuity of the repaired boundary semantics
+
+The conditional flat Hopf theorem is **not** used as an inhabited theorem about
+the flat carrier: the two flat boundary facade classes are *false* on the flat
+carrier (§5), so the flat theorem is a **proof-skeleton factorization** —
+identifying exactly what the informal flat proof silently assumes — rather than
+an unconditional flat-carrier statement.
+
+The non-vacuous *positive* object is `BoundaryResolvedSemanticModel`
+(`BoundaryResolved.lean`), an inhabited `Prop` bundling the three repaired
+principles, with `boundaryResolvedSemanticModel` proving it on the
+boundary-resolved carrier:
+- edge submultiset retarget injectivity (under `EdgeIdsUnique`),
+- external-leg submultiset retarget injectivity (under `LegIdsUnique`),
+- forgetful compatibility with retargeting (the JAR commuting square).
+
+It is **deliberately not** an instance of the flat facade classes (they are
+flat-false; `forget` runs resolved → flat).  Thus the resolved carrier supplies a
+concrete, inhabited model of the repaired semantic principles, while the flat
+theorem isolates the boundary assumption — answering any "vacuity / unicorn"
+objection: *the flat assumptions are intentionally uninhabited because they are
+false, and that is the diagnosis; the inhabited positive object lives on the
+boundary-resolved carrier.*
+
 ---
 
 ## 7. JAR Claim Boundary
@@ -220,7 +244,12 @@ boundary resolution removes them.
 
 This is a complete, defensible contribution: **full conditional Hopf structure +
 semantic diagnosis + resolved repair core**, with the entire residual surface
-being the single mechanism "flat contraction forgets boundary incidence."
+being the single mechanism "flat contraction forgets boundary incidence."  The
+repaired principles are not vacuous: they are inhabited on the resolved carrier by
+`boundaryResolvedSemanticModel : BoundaryResolvedSemanticModel` (§6).  The flat
+facades are *intentionally* uninhabited (they are false — that is the diagnosis),
+so the flat theorem is a proof-skeleton factorization, not a vacuous implication
+dressed up as a result.
 
 **Stronger future claim (requires `R-4-full`):**
 > A full, unconditional CK Hopf algebra over boundary-resolved graphs.

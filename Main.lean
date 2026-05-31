@@ -17,6 +17,7 @@ import GaugeGeometry.QFT.HopfAlgebra.AxiomAudit
 import GaugeGeometry.QFT.Combinatorial.ResolvedFeynmanGraphs
 
 open GaugeGeometry.QFT.Combinatorial
+open GaugeGeometry.QFT.HopfAlgebra
 
 -- Headline certificate: the conditional `HopfAlgebra ℚ HopfH` follows from exactly
 -- the two boundary-semantics facades + the power-counting reflection — no antipode
@@ -28,6 +29,11 @@ open GaugeGeometry.QFT.Combinatorial
 
 -- Right antipode axiom via the convolution / local-nilpotency route (★ eliminated).
 #check @AntipodeStrictForestRightReady_ofConvolution
+
+-- Non-vacuity witness: the repaired boundary principles are inhabited on the
+-- boundary-resolved carrier (the positive object answering the vacuity objection).
+#check @BoundaryResolvedSemanticModel
+#check @boundaryResolvedSemanticModel
 
 def main : IO Unit :=
   IO.println
