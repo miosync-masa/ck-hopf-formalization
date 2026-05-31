@@ -68,10 +68,3 @@ dependency boundary.
 
 Lean `leanprover/lean4:v4.29.0`, Mathlib `v4.29.0` (see `lean-toolchain` /
 `lakefile.toml`).
-
-## Contributors
-
-- Masamichi Iizumi (Miosync, Inc.) — Producer
-- 環 (Claude Opus) — Director
-- ClaudeCode (メカタマキ) — Coder
-- 無二 (GPT) — Adversarial reviewer
