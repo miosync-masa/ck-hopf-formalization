@@ -182,6 +182,151 @@ def forget (A : ResolvedAdmissibleSubgraph G) : AdmissibleSubgraph G.forget wher
 @[simp] theorem forget_elements (A : ResolvedAdmissibleSubgraph G) :
     A.forget.elements = A.elements.image ResolvedFeynmanSubgraph.forget := rfl
 
+/-! ### Phase 1c — resolved contraction spine
+
+`componentAt` picks the component containing a vertex; `retargetVertex` collapses
+each component's vertices to a caller-supplied star; `contractWithStars` rewrites
+the complement edges/legs through that map.  All mirror the flat
+`AdmissibleSubgraph` API.  The headline `forget_contractWithStars` shows that
+forgetting the resolved contraction is the flat retarget of the *forgotten*
+complement — the honest projection (it does **not** equal the flat
+`contractWithStars`, because `forget` does not distribute over multiset
+subtraction; that non-distribution is exactly the boundary collapse Track R
+repairs). -/
+
+@[simp] theorem mem_vertices {A : ResolvedAdmissibleSubgraph G} {v : VertexId} :
+    v ∈ A.vertices ↔ ∃ γ ∈ A.elements, v ∈ γ.vertices := by
+  simp [vertices]
+
+/-- The chosen component of `A` containing a vertex `v` of its carrier. -/
+noncomputable def componentAt (A : ResolvedAdmissibleSubgraph G)
+    {v : VertexId} (hv : v ∈ A.vertices) : ResolvedFeynmanSubgraph G :=
+  Classical.choose (mem_vertices.mp hv)
+
+theorem componentAt_mem (A : ResolvedAdmissibleSubgraph G)
+    {v : VertexId} (hv : v ∈ A.vertices) :
+    A.componentAt hv ∈ A.elements :=
+  (Classical.choose_spec (mem_vertices.mp hv)).1
+
+theorem componentAt_vertex_mem (A : ResolvedAdmissibleSubgraph G)
+    {v : VertexId} (hv : v ∈ A.vertices) :
+    v ∈ (A.componentAt hv).vertices :=
+  (Classical.choose_spec (mem_vertices.mp hv)).2
+
+/-- Optional component lookup: the chosen containing component inside the carrier,
+`none` outside it. -/
+noncomputable def componentAt? (A : ResolvedAdmissibleSubgraph G)
+    (v : VertexId) : Option (ResolvedFeynmanSubgraph G) :=
+  if hv : v ∈ A.vertices then some (A.componentAt hv) else none
+
+@[simp] theorem componentAt?_of_not_mem (A : ResolvedAdmissibleSubgraph G)
+    {v : VertexId} (hv : v ∉ A.vertices) :
+    A.componentAt? v = none := by
+  unfold componentAt?; rw [dif_neg hv]
+
+theorem componentAt?_of_mem (A : ResolvedAdmissibleSubgraph G)
+    {v : VertexId} (hv : v ∈ A.vertices) :
+    A.componentAt? v = some (A.componentAt hv) := by
+  unfold componentAt?; rw [dif_pos hv]
+
+/-- Vertex retarget: send each component's vertices to its star, fix the rest. -/
+noncomputable def retargetVertex (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) (v : VertexId) : VertexId :=
+  match A.componentAt? v with
+  | some γ => starOf γ
+  | none => v
+
+@[simp] theorem retargetVertex_of_not_mem
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {v : VertexId} (hv : v ∉ A.vertices) :
+    A.retargetVertex starOf v = v := by
+  rw [retargetVertex, componentAt?_of_not_mem A hv]
+
+/-- Star vertices: the image of the components under the star assignment. -/
+def starVertices (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) : Finset VertexId :=
+  A.elements.image starOf
+
+@[simp] theorem mem_starVertices
+    {A : ResolvedAdmissibleSubgraph G}
+    {starOf : ResolvedFeynmanSubgraph G → VertexId} {v : VertexId} :
+    v ∈ A.starVertices starOf ↔ ∃ γ ∈ A.elements, starOf γ = v := by
+  simp [starVertices]
+
+/-- Complement edges of `A`: the internal edges of `G` not lying in any
+component (multiset difference), mirroring flat `complementEdges`. -/
+def complementEdges (A : ResolvedAdmissibleSubgraph G) : Multiset ResolvedFeynmanEdge :=
+  G.internalEdges - A.internalEdges
+
+/-- Retarget an internal edge through `A` (identity-preserving: `edgeId` kept). -/
+noncomputable def retargetEdge (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (e : ResolvedFeynmanEdge) : ResolvedFeynmanEdge :=
+  e.retarget (A.retargetVertex starOf)
+
+/-- Retarget an external leg through `A` (identity-preserving: `legId` kept). -/
+noncomputable def retargetExternalLeg (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (ℓ : ResolvedExternalLeg) : ResolvedExternalLeg :=
+  ℓ.retarget (A.retargetVertex starOf)
+
+/-- **Resolved star-contraction.**  Mirrors the flat `contractWithStars`: the
+complement edges and all external legs are retargeted through `A`, with each
+component collapsed to its star vertex. -/
+noncomputable def contractWithStars (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) : ResolvedFeynmanGraph where
+  vertices := (G.vertices \ A.vertices) ∪ A.starVertices starOf
+  internalEdges := A.complementEdges.map (A.retargetEdge starOf)
+  externalLegs := G.externalLegs.map (A.retargetExternalLeg starOf)
+
+@[simp] theorem contractWithStars_vertices
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) :
+    (A.contractWithStars starOf).vertices =
+      (G.vertices \ A.vertices) ∪ A.starVertices starOf := rfl
+
+@[simp] theorem contractWithStars_internalEdges
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) :
+    (A.contractWithStars starOf).internalEdges =
+      A.complementEdges.map (A.retargetEdge starOf) := rfl
+
+@[simp] theorem contractWithStars_externalLegs
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) :
+    (A.contractWithStars starOf).externalLegs =
+      G.externalLegs.map (A.retargetExternalLeg starOf) := rfl
+
+/-- **Forgetful compatibility of the resolved contraction (R-4-link, contraction
+level).**  Forgetting the resolved star-contraction equals retargeting the
+*forgotten* complement edges / external legs by the same vertex map.  The flat
+endpoint/attachment rewrite is the forgetful image of the resolved one.
+
+This is stated as the honest projection onto `A.complementEdges.map forget` (not
+onto the flat `A.forget.contractWithStars`): `forget` does **not** commute with
+the multiset subtraction defining `complementEdges`, which is precisely the
+boundary collapse the resolved carrier prevents. -/
+theorem forget_contractWithStars (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) :
+    (A.contractWithStars starOf).forget =
+      { vertices := (G.vertices \ A.vertices) ∪ A.starVertices starOf
+        internalEdges := (A.complementEdges.map ResolvedFeynmanEdge.forget).map
+          (fun e => { source := A.retargetVertex starOf e.source,
+                      target := A.retargetVertex starOf e.target, sector := e.sector })
+        externalLegs := (G.externalLegs.map ResolvedExternalLeg.forget).map
+          (fun ℓ => { attachedTo := A.retargetVertex starOf ℓ.attachedTo,
+                      sector := ℓ.sector }) } := by
+  show ResolvedFeynmanGraph.forget _ = _
+  unfold ResolvedFeynmanGraph.forget
+  congr 1
+  · show (A.complementEdges.map (A.retargetEdge starOf)).map ResolvedFeynmanEdge.forget = _
+    rw [Multiset.map_map, Multiset.map_map]
+    exact Multiset.map_congr rfl (fun e _ => rfl)
+  · show (G.externalLegs.map (A.retargetExternalLeg starOf)).map ResolvedExternalLeg.forget = _
+    rw [Multiset.map_map, Multiset.map_map]
+    exact Multiset.map_congr rfl (fun ℓ _ => rfl)
+
 end ResolvedAdmissibleSubgraph
 
 end GaugeGeometry.QFT.Combinatorial
