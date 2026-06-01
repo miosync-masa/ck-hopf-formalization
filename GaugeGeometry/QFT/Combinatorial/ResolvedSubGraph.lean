@@ -327,6 +327,163 @@ theorem forget_contractWithStars (A : ResolvedAdmissibleSubgraph G)
     rw [Multiset.map_map, Multiset.map_map]
     exact Multiset.map_congr rfl (fun ℓ _ => rfl)
 
+/-! ### Phase 1d — resolved retarget / quotient-remainder subgraph spine
+
+`retargetVertex` sends every ambient vertex into the contracted vertex set;
+`retargetSubgraph` / `quotientRemainderSubgraph` lift a source subgraph `γ` into
+the contracted graph (the remainder version first deletes the outer forest's
+internal edges).  Both mirror the flat
+`admissibleSubgraph(Retarget|QuotientRemainder)Subgraph`.  Forget compatibility is
+recorded field-wise (honest projection: forget of the resolved remainder is the
+flat retarget of the *forgotten* remnant edges/legs). -/
+
+/-- The vertex retarget lands in the contracted vertex set (mirrors flat). -/
+theorem retargetVertex_mem_contractWithStars_vertices
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {v : VertexId} (hvG : v ∈ G.vertices) :
+    A.retargetVertex starOf v ∈ (A.contractWithStars starOf).vertices := by
+  rw [contractWithStars_vertices]
+  by_cases hvA : v ∈ A.vertices
+  · rw [retargetVertex, componentAt?_of_mem A hvA, Finset.mem_union]
+    exact Or.inr (mem_starVertices.mpr ⟨A.componentAt hvA, A.componentAt_mem hvA, rfl⟩)
+  · rw [retargetVertex_of_not_mem A starOf hvA, Finset.mem_union]
+    exact Or.inl (Finset.mem_sdiff.mpr ⟨hvG, hvA⟩)
+
+/-- The remnant `γ.internalEdges - A.internalEdges` lies in the outer complement
+(pure multiset count argument; mirrors flat). -/
+theorem sub_internalEdges_le_complementEdges
+    (A : ResolvedAdmissibleSubgraph G) (γ : ResolvedFeynmanSubgraph G) :
+    γ.internalEdges - A.internalEdges ≤ A.complementEdges := by
+  rw [Multiset.le_iff_count]
+  intro e
+  unfold complementEdges
+  rw [Multiset.count_sub, Multiset.count_sub]
+  have hle := Multiset.count_le_of_le e γ.internalEdges_le
+  omega
+
+/-- Retarget a source subgraph `γ` (whose edges lie in the outer complement) into
+the contracted graph.  Mirrors flat `admissibleSubgraphRetargetSubgraph`. -/
+noncomputable def retargetSubgraph
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G)
+    (hEdges : γ.internalEdges ≤ A.complementEdges) :
+    ResolvedFeynmanSubgraph (A.contractWithStars starOf) where
+  vertices := γ.vertices.image (A.retargetVertex starOf)
+  internalEdges := γ.internalEdges.map (A.retargetEdge starOf)
+  externalLegs := γ.externalLegs.map (A.retargetExternalLeg starOf)
+  vertices_subset := by
+    intro v hv
+    rcases Finset.mem_image.mp hv with ⟨u, hu, rfl⟩
+    exact A.retargetVertex_mem_contractWithStars_vertices starOf (γ.vertices_subset hu)
+  internalEdges_le := by
+    rw [contractWithStars_internalEdges]; exact Multiset.map_le_map hEdges
+  externalLegs_le := by
+    rw [contractWithStars_externalLegs]; exact Multiset.map_le_map γ.externalLegs_le
+  edges_supported := by
+    intro e' he'
+    rcases Multiset.mem_map.mp he' with ⟨e, he, rfl⟩
+    obtain ⟨hs, ht⟩ := γ.edges_supported e he
+    exact ⟨Finset.mem_image.mpr ⟨e.source, hs, rfl⟩,
+           Finset.mem_image.mpr ⟨e.target, ht, rfl⟩⟩
+  legs_supported := by
+    intro ℓ' hℓ'
+    rcases Multiset.mem_map.mp hℓ' with ⟨ℓ, hℓ, rfl⟩
+    exact Finset.mem_image.mpr ⟨ℓ.attachedTo, γ.legs_supported ℓ hℓ, rfl⟩
+
+/-- Retarget the quotient remnant of `γ` (after deleting the outer forest's
+internal edges) into the contracted graph.  Mirrors flat
+`admissibleSubgraphQuotientRemainderSubgraph`. -/
+noncomputable def quotientRemainderSubgraph
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    ResolvedFeynmanSubgraph (A.contractWithStars starOf) where
+  vertices := γ.vertices.image (A.retargetVertex starOf)
+  internalEdges := (γ.internalEdges - A.internalEdges).map (A.retargetEdge starOf)
+  externalLegs := γ.externalLegs.map (A.retargetExternalLeg starOf)
+  vertices_subset := by
+    intro v hv
+    rcases Finset.mem_image.mp hv with ⟨u, hu, rfl⟩
+    exact A.retargetVertex_mem_contractWithStars_vertices starOf (γ.vertices_subset hu)
+  internalEdges_le := by
+    rw [contractWithStars_internalEdges]
+    exact Multiset.map_le_map (A.sub_internalEdges_le_complementEdges γ)
+  externalLegs_le := by
+    rw [contractWithStars_externalLegs]; exact Multiset.map_le_map γ.externalLegs_le
+  edges_supported := by
+    intro e' he'
+    rcases Multiset.mem_map.mp he' with ⟨e, he, rfl⟩
+    have heγ : e ∈ γ.internalEdges :=
+      Multiset.mem_of_le (Multiset.sub_le_self _ _) he
+    obtain ⟨hs, ht⟩ := γ.edges_supported e heγ
+    exact ⟨Finset.mem_image.mpr ⟨e.source, hs, rfl⟩,
+           Finset.mem_image.mpr ⟨e.target, ht, rfl⟩⟩
+  legs_supported := by
+    intro ℓ' hℓ'
+    rcases Multiset.mem_map.mp hℓ' with ⟨ℓ, hℓ, rfl⟩
+    exact Finset.mem_image.mpr ⟨ℓ.attachedTo, γ.legs_supported ℓ hℓ, rfl⟩
+
+@[simp] theorem quotientRemainderSubgraph_vertices
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    (A.quotientRemainderSubgraph starOf γ).vertices =
+      γ.vertices.image (A.retargetVertex starOf) := rfl
+
+@[simp] theorem quotientRemainderSubgraph_internalEdges
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    (A.quotientRemainderSubgraph starOf γ).internalEdges =
+      (γ.internalEdges - A.internalEdges).map (A.retargetEdge starOf) := rfl
+
+@[simp] theorem quotientRemainderSubgraph_externalLegs
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    (A.quotientRemainderSubgraph starOf γ).externalLegs =
+      γ.externalLegs.map (A.retargetExternalLeg starOf) := rfl
+
+/-- Forget compatibility (remainder, vertices): the forgotten remainder's vertex
+set is the retarget-image of `γ`'s vertices. -/
+@[simp] theorem forget_quotientRemainderSubgraph_vertices
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    (A.quotientRemainderSubgraph starOf γ).forget.vertices =
+      γ.vertices.image (A.retargetVertex starOf) := rfl
+
+/-- Forget compatibility (remainder, internal edges): forgetting the resolved
+remainder equals the flat endpoint-rewrite of the *forgotten* remnant edges. -/
+theorem forget_quotientRemainderSubgraph_internalEdges
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    (A.quotientRemainderSubgraph starOf γ).forget.internalEdges =
+      ((γ.internalEdges - A.internalEdges).map ResolvedFeynmanEdge.forget).map
+        (fun e => { source := A.retargetVertex starOf e.source,
+                    target := A.retargetVertex starOf e.target, sector := e.sector }) := by
+  show ((γ.internalEdges - A.internalEdges).map (A.retargetEdge starOf)).map
+      ResolvedFeynmanEdge.forget = _
+  rw [Multiset.map_map, Multiset.map_map]
+  exact Multiset.map_congr rfl (fun e _ => rfl)
+
+/-- Forget compatibility (remainder, external legs). -/
+theorem forget_quotientRemainderSubgraph_externalLegs
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    (A.quotientRemainderSubgraph starOf γ).forget.externalLegs =
+      (γ.externalLegs.map ResolvedExternalLeg.forget).map
+        (fun ℓ => { attachedTo := A.retargetVertex starOf ℓ.attachedTo,
+                    sector := ℓ.sector }) := by
+  show (γ.externalLegs.map (A.retargetExternalLeg starOf)).map
+      ResolvedExternalLeg.forget = _
+  rw [Multiset.map_map, Multiset.map_map]
+  exact Multiset.map_congr rfl (fun ℓ _ => rfl)
+
 end ResolvedAdmissibleSubgraph
 
 end GaugeGeometry.QFT.Combinatorial
