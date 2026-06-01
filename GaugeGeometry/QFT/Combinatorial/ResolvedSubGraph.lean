@@ -108,6 +108,15 @@ forgotten subgraphs are disjoint iff the resolved ones are. -/
 @[simp] theorem forget_disjoint_iff {γ δ : ResolvedFeynmanSubgraph G} :
     γ.forget.Disjoint δ.forget ↔ γ.Disjoint δ := Iff.rfl
 
+/-- Extensionality: resolved subgraphs are equal once their three carrier fields
+agree (the well-formedness fields are propositions, so proof-irrelevant). -/
+@[ext] theorem ext {γ₁ γ₂ : ResolvedFeynmanSubgraph G}
+    (hv : γ₁.vertices = γ₂.vertices)
+    (hi : γ₁.internalEdges = γ₂.internalEdges)
+    (he : γ₁.externalLegs = γ₂.externalLegs) : γ₁ = γ₂ := by
+  cases γ₁; cases γ₂
+  cases hv; cases hi; cases he; rfl
+
 end ResolvedFeynmanSubgraph
 
 /-! ## Phase 1b — resolved admissible subgraph (forest carrier)
@@ -483,6 +492,73 @@ theorem forget_quotientRemainderSubgraph_externalLegs
       ResolvedExternalLeg.forget = _
   rw [Multiset.map_map, Multiset.map_map]
   exact Multiset.map_congr rfl (fun ℓ _ => rfl)
+
+/-! ### Phase 1e — remainder injectivity package
+
+The local engines `retarget_residual_{edges,legs}_injective` lift the R-3a/b
+graph-level submultiset injectivity to the `retargetEdge`/`retargetExternalLeg`
+maps used by the remainder.  `parent_eq_of_remainder_eq` is the resolved analogue
+of the flat `ForestGraphInsertionUniquenessModel`: under id-uniqueness, equal
+quotient remainders + equal vertices + the outer forest contained in both parents
+force the parents equal — the very uniqueness that is *false* on the flat carrier
+(`flatEdgeRetarget_not_injective`). -/
+
+/-- **Residual edge injectivity.**  Under `EdgeIdsUnique`, the through-`A` edge
+retarget is injective on submultisets of `G.internalEdges`.  Direct corollary of
+the R-3a graph-level lemma with `f := A.retargetVertex starOf`. -/
+theorem retarget_residual_edges_injective
+    (A : ResolvedAdmissibleSubgraph G) (hId : G.EdgeIdsUnique)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {M₁ M₂ : Multiset ResolvedFeynmanEdge}
+    (hM₁ : M₁ ≤ G.internalEdges) (hM₂ : M₂ ≤ G.internalEdges)
+    (h : M₁.map (A.retargetEdge starOf) = M₂.map (A.retargetEdge starOf)) :
+    M₁ = M₂ :=
+  G.retargetInternalEdges_injective_on_submultisets
+    (f := A.retargetVertex starOf) hId hM₁ hM₂ h
+
+/-- **Residual leg injectivity.**  Under `LegIdsUnique`, the through-`A` leg
+retarget is injective on submultisets of `G.externalLegs`. -/
+theorem retarget_residual_legs_injective
+    (A : ResolvedAdmissibleSubgraph G) (hId : G.LegIdsUnique)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {M₁ M₂ : Multiset ResolvedExternalLeg}
+    (hM₁ : M₁ ≤ G.externalLegs) (hM₂ : M₂ ≤ G.externalLegs)
+    (h : M₁.map (A.retargetExternalLeg starOf) = M₂.map (A.retargetExternalLeg starOf)) :
+    M₁ = M₂ :=
+  G.retargetExternalLegs_injective_on_submultisets
+    (f := A.retargetVertex starOf) hId hM₁ hM₂ h
+
+/-- **Resolved remainder insertion-uniqueness** (resolved `ForestGraphInsertion
+UniquenessModel`).  If two source subgraphs share their vertex set, both contain
+the outer forest's internal edges, and have equal quotient remainders, then —
+under id-uniqueness — they are equal.  On the flat carrier this fails (the
+retarget collapses distinct edges/legs); the persistent `edgeId`/`legId` make it
+hold here. -/
+theorem parent_eq_of_remainder_eq
+    (A : ResolvedAdmissibleSubgraph G)
+    (hEdgeId : G.EdgeIdsUnique) (hLegId : G.LegIdsUnique)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {γ₁ γ₂ : ResolvedFeynmanSubgraph G}
+    (hV : γ₁.vertices = γ₂.vertices)
+    (hA₁ : A.internalEdges ≤ γ₁.internalEdges)
+    (hA₂ : A.internalEdges ≤ γ₂.internalEdges)
+    (hRem : A.quotientRemainderSubgraph starOf γ₁ =
+      A.quotientRemainderSubgraph starOf γ₂) :
+    γ₁ = γ₂ := by
+  have hEdges : γ₁.internalEdges - A.internalEdges = γ₂.internalEdges - A.internalEdges := by
+    apply A.retarget_residual_edges_injective hEdgeId starOf
+      (le_trans (Multiset.sub_le_self _ _) γ₁.internalEdges_le)
+      (le_trans (Multiset.sub_le_self _ _) γ₂.internalEdges_le)
+    have hc := congrArg ResolvedFeynmanSubgraph.internalEdges hRem
+    simpa using hc
+  have hLegs : γ₁.externalLegs = γ₂.externalLegs := by
+    apply A.retarget_residual_legs_injective hLegId starOf
+      γ₁.externalLegs_le γ₂.externalLegs_le
+    have hc := congrArg ResolvedFeynmanSubgraph.externalLegs hRem
+    simpa using hc
+  have hInt : γ₁.internalEdges = γ₂.internalEdges := by
+    rw [← tsub_add_cancel_of_le hA₁, ← tsub_add_cancel_of_le hA₂, hEdges]
+  exact ResolvedFeynmanSubgraph.ext hV hInt hLegs
 
 end ResolvedAdmissibleSubgraph
 
