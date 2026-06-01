@@ -83,3 +83,9 @@ dependency boundary.
 
 Lean `leanprover/lean4:v4.29.0`, Mathlib `v4.29.0` (see `lean-toolchain` /
 `lakefile.toml`).
+
+## Acknowledgment
+Translation＆Repository Makeing. Claude Opus 4.7 (Anthropic, May 25, 2026; https://claude.ai) was used to 
+assist with English translation of the manuscript & Github Repository Making. The author is a non-native English speaker. 
+All content, analysis, and interpretation are entirely the work of the author.
+
