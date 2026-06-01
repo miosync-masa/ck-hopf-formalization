@@ -13,6 +13,7 @@ names are stable.
 import GaugeGeometry.QFT.HopfAlgebra.HopfAlgebra
 import GaugeGeometry.QFT.HopfAlgebra.AntipodeConvolution
 import GaugeGeometry.QFT.HopfAlgebra.BoundaryResolved
+import GaugeGeometry.QFT.HopfAlgebra.BoundaryResolvedCounterexamples
 import GaugeGeometry.QFT.HopfAlgebra.AxiomAudit
 import GaugeGeometry.QFT.Combinatorial.ResolvedFeynmanGraphs
 
@@ -34,6 +35,14 @@ open GaugeGeometry.QFT.HopfAlgebra
 -- boundary-resolved carrier (the positive object answering the vacuity objection).
 #check @BoundaryResolvedSemanticModel
 #check @boundaryResolvedSemanticModel
+
+-- Mechanism-level negative results: the flat edge/leg retarget maps are formally
+-- non-injective (even on singleton multisets) — the exact collapse the resolved
+-- carrier repairs. Not a negation of the facade classes, but the failure behind them.
+#check @flatEdgeRetarget_not_injective
+#check @flatLegRetarget_not_injective
+#check @flatEdgeRetarget_multiset_collapse
+#check @flatLegRetarget_multiset_collapse
 
 def main : IO Unit :=
   IO.println

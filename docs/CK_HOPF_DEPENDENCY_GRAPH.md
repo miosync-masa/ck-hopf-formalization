@@ -36,7 +36,11 @@ Combinatorial/ResolvedFeynmanGraphs.lean boundary-resolved carrier (Track R, sta
         │
         ▼
 HopfAlgebra/BoundaryResolved.lean        Tier 1 bridge: distilled facade content
-                                           proved on resolved carrier (imports Coassoc + Resolved)
+        │                                  proved on resolved carrier (imports Coassoc + Resolved)
+        ▼
+HopfAlgebra/BoundaryResolvedCounterexamples.lean
+                                           formal mechanism-level negative results:
+                                           flat edge/leg retarget maps non-injective
 ```
 
 `ResolvedFeynmanGraphs.lean` is intentionally standalone: it imports the flat
@@ -131,7 +135,13 @@ hBP #1 ✅  hBP #2 ✅  hBP #3 ✅              hBP #4 (semantic) ──┐
   carries no residual cover-data hypothesis (audit
   `coassoc_strict_forest_linearMap_ofReflection`).
 - The two 🔒 kernels are the **boundary-semantics facades** — false on the flat
-  carrier (§5 of the formalization map), repaired by Track R.
+  carrier (§5 of the formalization map), repaired by Track R.  The underlying
+  collapse is sealed as **formal mechanism-level counterexamples** in
+  `BoundaryResolvedCounterexamples.lean` (`flatEdgeRetarget_not_injective`,
+  `flatLegRetarget_not_injective`, and their singleton-multiset forms): the flat
+  edge/leg retarget maps are provably non-injective.  These do not negate the
+  facade classes directly (those are proof-skeleton interfaces) but formalize the
+  exact retargeting collapse the facades would have to rule out.
 
 ---
 

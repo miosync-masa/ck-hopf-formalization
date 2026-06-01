@@ -15,8 +15,10 @@ coassociativity, and **both** antipode axioms) is assembled around the
 Connes–Kreimer forest cover identity over a flat Feynman-graph carrier.
 
 The entire conditional surface reduces to **exactly two named kernels**, both of
-which are *boundary-semantics facades*: false on the flat carrier (with explicit
-counterexamples), and **theorems on a boundary-resolved carrier**
+which are *boundary-semantics facades*: false on the flat carrier (with formal
+mechanism-level counterexamples — the flat edge/leg retarget maps are proved
+non-injective in `GaugeGeometry/QFT/HopfAlgebra/BoundaryResolvedCounterexamples.lean`),
+and **theorems on a boundary-resolved carrier**
 (`ResolvedFeynmanGraph`, persistent half-edge / leg identities), with the flat
 carrier recovered as its forgetful image.
 

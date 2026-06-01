@@ -156,17 +156,31 @@ incidence and attachment multiplicity.  This makes two facts CK uses informally
 After contraction, two distinct external legs attached at the same vertex with
 the same sector become indistinguishable.  There is no consistent way to lift the
 promoted legs back to their pre-contraction identities, because the flat leg
-`{ attachedTo, sector }` carries no identity. *Counterexample:* two legs with
-identical `(attachedTo, sector)` that originated from different half-edges.
+`{ attachedTo, sector }` carries no identity. *Formal counterexample*
+(`flatLegRetarget_not_injective`, and on singleton multisets
+`flatLegRetarget_multiset_collapse`, in `BoundaryResolvedCounterexamples.lean`):
+two legs differing only at an attachment vertex that the vertex map identifies
+have equal flat retargets.
 
 **Gap 2 — graph insertion uniqueness (`ForestGraphInsertionUniquenessModel`).**
 The claim "same vertices + same remnant ⇒ same graph" fails because two distinct
 internal edges with identical `(source, target, sector)` collapse to the same
-multiset element. *Counterexample:* graphs differing only by a duplicated edge
-that the multiset cannot distinguish, yet sharing vertices and remnant.
+multiset element. *Formal counterexample* (`flatEdgeRetarget_not_injective`,
+`flatEdgeRetarget_multiset_collapse`, in `BoundaryResolvedCounterexamples.lean`):
+two edges differing only at an endpoint that the vertex map identifies collapse
+to the same multiset element after retargeting.
 
 Both gaps share one mechanism: **multiset-level collapse of structurally
-distinct boundary data**.
+distinct boundary data**.  This is now sealed as **formal, mechanism-level
+counterexamples** rather than prose.  These theorems do *not* negate the flat
+facade classes directly (those are large proof-skeleton interfaces); they
+formalize the exact retargeting collapse those facades would have to rule out —
+the flat edge and leg retarget maps are provably non-injective, even on singleton
+multisets.  In contrast, `BoundaryResolvedSemanticModel` (§6) proves the
+corresponding boundary-resolved retarget maps injective *before forgetting*, and
+proves that forgetting boundary identities projects them exactly onto these flat
+maps.  So the resolved positive results are formally wired to these flat
+failures, not cherry-picked analogues.
 
 ---
 
@@ -184,8 +198,9 @@ identities, projecting back to the flat carrier.
 - **Submultiset injectivity (R-3a/3b).** On submultisets of a graph with unique
   ids, `retargetInternalEdges`/`retargetExternalLegs` are **injective**
   (`…_injective_on_submultisets`), via the generic `Multiset.map_eq_of_injOn_le`.
-  This is exactly the collapse that produced both flat counterexamples — now
-  **provably impossible** because the persistent id survives.
+  This is exactly the collapse that produced both flat counterexamples
+  (`BoundaryResolvedCounterexamples.lean`) — now **provably impossible** because
+  the persistent id survives.
 - **Forgetful commuting square (R-4-link).** `forget_retargetGraph`:
   ```
           retargetGraph (id-preserving, injective — R-3)
