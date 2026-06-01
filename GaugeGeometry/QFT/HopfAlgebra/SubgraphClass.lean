@@ -789,7 +789,7 @@ def IsConnectedDivergent
     [DivergenceMeasure G] [IsIsoInvariantDivergence G] :
     FeynmanSubgraphClass G → Prop :=
   Quotient.lift FeynmanSubgraph.IsConnectedDivergent
-    (fun γ₁ γ₂ h => propext (FeynmanSubgraph.IsIso.isConnectedDivergent_iff h))
+    (fun _ _ h => propext (FeynmanSubgraph.IsIso.isConnectedDivergent_iff h))
 
 @[simp] theorem isConnectedDivergent_toSubgraphClass
     [DivergenceMeasure G] [IsIsoInvariantDivergence G]

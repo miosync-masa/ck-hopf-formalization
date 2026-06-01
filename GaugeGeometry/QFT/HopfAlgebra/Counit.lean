@@ -1,6 +1,13 @@
 import GaugeGeometry.QFT.HopfAlgebra.Coproduct
 import Mathlib.RingTheory.TensorProduct.Maps
 
+-- The power-counting environment (`DivergenceMeasure`, iso/ambient-invariance,
+-- contraction-preservation) is carried as section variables; many counit lemmas
+-- are pure tensor/algebra facts that do not use them. Match the project
+-- convention (Coproduct, Coassoc, AntipodeConvolution) and silence the
+-- unused-section-variable linter file-wide.
+set_option linter.unusedSectionVars false
+
 /-!
 # Counit on `HopfH`  [Sprint D — H5.1–H5.5]
 
