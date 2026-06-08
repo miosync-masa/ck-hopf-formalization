@@ -56,4 +56,55 @@ theorem strictSummandViaForget_eq
 
 end ResolvedAdmissibleSubgraph
 
+/-! ## Phase 2d — resolved finite proper-forest index (Option C: finite payload)
+
+There is no `Fintype (ResolvedFeynmanSubgraph G)` (no global resolved enumeration),
+so we do not enumerate all resolved proper forests intrinsically.  Following the
+project's facade/payload style, the summation index is an explicit finite payload:
+a `Finset` of resolved admissible forests, each required to be proper.  Every
+member forgets into the flat `forestCoproductProperForestIndex` filter (Phase 2c-i),
+so the payload's forgetful image lands in the flat finite index. -/
+
+/-- A finite index of resolved proper forests of `G` (Option C payload). -/
+structure ResolvedProperForestFiniteIndex (G : ResolvedFeynmanGraph) where
+  /-- The finite carrier of resolved admissible forests. -/
+  carrier : Finset (ResolvedAdmissibleSubgraph G)
+  /-- Every member is a proper forest. -/
+  mem_proper : ∀ A ∈ carrier, A.IsProperForest
+
+namespace ResolvedProperForestFiniteIndex
+
+/-- Each member forgets into the flat proper-forest index filter
+(`properDisjoint… ∩ {0 < complement}`) — the Phase 2c-i bridge applied pointwise. -/
+theorem forget_mem_flat (I : ResolvedProperForestFiniteIndex G)
+    {A : ResolvedAdmissibleSubgraph G} (hA : A ∈ I.carrier) :
+    A.forget ∈ (G.forget.properDisjointAdmissibleDivergentSubgraphs).filter
+      (fun B => 0 < B.complementEdges.card) :=
+  A.forget_mem_properDisjoint_filter_complement (I.mem_proper A hA)
+
+/-- **Resolved strict coproduct sum over a finite payload.**  Sum of the
+per-forest summands (`strictSummandViaForget`) over the payload carrier, with a
+shared abstract right-generator assignment.  Lands in the flat `HopfH ⊗ HopfH`. -/
+noncomputable def strictCoproductSum (I : ResolvedProperForestFiniteIndex G)
+    (right : ∀ B : AdmissibleSubgraph G.forget,
+      B ∈ (G.forget).properDisjointAdmissibleDivergentSubgraphs → HopfGen) :
+    HopfH ⊗[ℚ] HopfH :=
+  ∑ A ∈ I.carrier, A.strictSummandViaForget right
+
+@[simp] theorem strictCoproductSum_def (I : ResolvedProperForestFiniteIndex G)
+    (right : ∀ B : AdmissibleSubgraph G.forget,
+      B ∈ (G.forget).properDisjointAdmissibleDivergentSubgraphs → HopfGen) :
+    I.strictCoproductSum right =
+      ∑ A ∈ I.carrier, A.strictSummandViaForget right := rfl
+
+/-- The empty payload gives the zero sum. -/
+@[simp] theorem strictCoproductSum_empty
+    (right : ∀ B : AdmissibleSubgraph G.forget,
+      B ∈ (G.forget).properDisjointAdmissibleDivergentSubgraphs → HopfGen) :
+    (⟨∅, by intro A hA; simp at hA⟩ : ResolvedProperForestFiniteIndex G).strictCoproductSum
+      right = 0 := by
+  simp [strictCoproductSum]
+
+end ResolvedProperForestFiniteIndex
+
 end GaugeGeometry.QFT.Combinatorial
