@@ -613,6 +613,63 @@ theorem forget_retargetExternalLegs
   rw [Multiset.map_map, Multiset.map_map]
   exact Multiset.map_congr rfl (fun ℓ _ => rfl)
 
+/-! ### Phase 2a — resolved proper forest index (predicate level)
+
+The resolved analogue of the flat proper-forest filter
+`forestCoproductProperForestIndex` (= `properDisjointAdmissibleDivergentSubgraphs`
+restricted to positive complement), at the **predicate level** only — no finite
+`Finset` enumeration yet (that is Phase 2b).  Pairwise-disjointness and
+connected-divergence are already structure fields of `ResolvedAdmissibleSubgraph`,
+so `IsProperForest` only adds the remaining flat membership conditions:
+forest/components nonempty and positively edged, and positive complement. -/
+
+/-- The forest has at least one component. -/
+def IsNonempty (A : ResolvedAdmissibleSubgraph G) : Prop := A.elements.Nonempty
+
+/-- Every component carries at least one internal edge (componentwise CK
+properness; mirrors flat `HasPositiveInternalEdgesComponents`). -/
+def HasPositiveInternalEdgesComponents (A : ResolvedAdmissibleSubgraph G) : Prop :=
+  ∀ γ ∈ A.elements, 0 < γ.internalEdges.card
+
+/-- **Resolved proper forest** (predicate form of `forestCoproductProperForestIndex`).
+Mirrors the flat membership conditions beyond the structural fields
+(`pairwiseDisjoint`, `isConnectedDivergent`): the forest and all its components are
+nonempty and positively edged, and the complement is nonempty. -/
+def IsProperForest (A : ResolvedAdmissibleSubgraph G) : Prop :=
+  A.IsNonempty ∧
+  A.HasNonemptyComponents ∧
+  0 < A.internalEdges.card ∧
+  A.HasPositiveInternalEdgesComponents ∧
+  0 < A.complementEdges.card
+
+theorem isNonempty_of_isProperForest {A : ResolvedAdmissibleSubgraph G}
+    (h : A.IsProperForest) : A.IsNonempty := h.1
+
+theorem hasNonemptyComponents_of_isProperForest {A : ResolvedAdmissibleSubgraph G}
+    (h : A.IsProperForest) : A.HasNonemptyComponents := h.2.1
+
+theorem internalEdges_card_pos_of_isProperForest {A : ResolvedAdmissibleSubgraph G}
+    (h : A.IsProperForest) : 0 < A.internalEdges.card := h.2.2.1
+
+theorem hasPositiveInternalEdgesComponents_of_isProperForest
+    {A : ResolvedAdmissibleSubgraph G}
+    (h : A.IsProperForest) : A.HasPositiveInternalEdgesComponents := h.2.2.2.1
+
+theorem complementEdges_card_pos_of_isProperForest {A : ResolvedAdmissibleSubgraph G}
+    (h : A.IsProperForest) : 0 < A.complementEdges.card := h.2.2.2.2
+
+/-- Pairwise-disjointness is automatic (structure field), recorded for parity with
+the flat `properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint`. -/
+theorem isPairwiseDisjoint_of_isProperForest {A : ResolvedAdmissibleSubgraph G}
+    (_h : A.IsProperForest) : A.IsPairwiseDisjoint := A.isPairwiseDisjoint
+
 end ResolvedAdmissibleSubgraph
+
+/-- A resolved admissible subgraph that is a proper forest of `G` (predicate-level
+`forestCoproductProperForestIndex`).  Finite enumeration is deferred to Phase 2b. -/
+def ResolvedFeynmanGraph.ResolvedProperForest (G : ResolvedFeynmanGraph)
+    [∀ H : FeynmanGraph, DivergenceMeasure H]
+    (A : ResolvedAdmissibleSubgraph G) : Prop :=
+  A.IsProperForest
 
 end GaugeGeometry.QFT.Combinatorial
