@@ -298,6 +298,32 @@ on the flat carrier.  The only forward direction is:
    Hopf structure (the stronger JAR claim).  Multi-month; not required for the
    present claim.
 
+### R-4-full Phase 1 — boundary-resolved lower graph spine
+
+In progress (`GaugeGeometry/QFT/Combinatorial/ResolvedSubGraph.lean`, standalone
+module; builds via `lake build GaugeGeometry.QFT.Combinatorial.ResolvedSubGraph`,
+not yet wired into `Main`).  This does **not** yet define the full resolved CK
+Hopf algebra; it builds the carrier-level structures a rebuild needs and proves
+the **resolved counterparts of the two flat-false boundary interfaces**.
+
+| Phase | Artifact | Status | Role |
+|---|---|---|---|
+| 1a | `ResolvedFeynmanSubgraph` + `forget` | ✅ | resolved subgraph carrier |
+| 1b | `ResolvedAdmissibleSubgraph` + `forget` | ✅ | resolved admissible-forest carrier |
+| 1c | `contractWithStars` + `forget_contractWithStars` | ✅ | resolved contraction spine |
+| 1d | `quotientRemainderSubgraph` + forget | ✅ | resolved remnant spine |
+| 1e | `parent_eq_of_remainder_eq` | ✅ | resolved insertion uniqueness — repairs flat bomb #1 (`ForestGraphInsertionUniquenessModel`) |
+| 1f | `parent_externalLegs_eq_of_remainder_eq` / `externalLegs_lift_unique` | ✅ | resolved external-leg liftability — repairs flat bomb #2 (`…PromotedExternalLegsLiftableModel`) |
+
+This strengthens the non-vacuity story symmetrically: the flat retarget collapse
+has formal counterexamples (`BoundaryResolvedCounterexamples.lean`,
+`flatEdgeRetarget_not_injective` / `flatLegRetarget_not_injective`), while the
+resolved remainder/leg retargeting has formal injectivity/recovery theorems on
+the same operation — the difference is exactly the persistent `edgeId`/`legId`
+that `forget` discards.  **Next (`Phase 2`):** resolved proper-forest index →
+resolved coproduct → resolved coassociativity (the antipode is inherited from the
+carrier-independent convolution proof at no cost).
+
 *Completed since the last revision:* coassociativity `forest_inj` and the full
 forest-cover source connected-divergence (`forest_cd`) are theorems; the
 forest-cover CD data is discharged from the power-counting environment; **and the

@@ -34,13 +34,17 @@ HopfAlgebra/HopfAlgebra.lean             instHopfAlgebraStructHopfHStrictForest,
 
 Combinatorial/ResolvedFeynmanGraphs.lean boundary-resolved carrier (Track R, standalone)
         │
-        ▼
-HopfAlgebra/BoundaryResolved.lean        Tier 1 bridge: distilled facade content
-        │                                  proved on resolved carrier (imports Coassoc + Resolved)
-        ▼
-HopfAlgebra/BoundaryResolvedCounterexamples.lean
-                                           formal mechanism-level negative results:
-                                           flat edge/leg retarget maps non-injective
+        ├─────────────────────────────────┐
+        ▼                                  ▼
+HopfAlgebra/BoundaryResolved.lean        Combinatorial/ResolvedSubGraph.lean
+        │   Tier 1 bridge: distilled        R-4-full Phase 1 lower spine (standalone)
+        │   facade content on resolved        ResolvedFeynmanSubgraph
+        │   carrier (imports Coassoc +         ResolvedAdmissibleSubgraph
+        │   Resolved)                          contractWithStars / quotientRemainderSubgraph
+        ▼                                      insertion uniqueness ✅ (bomb #1)
+HopfAlgebra/BoundaryResolvedCounterexamples.lean   external-leg liftability ✅ (bomb #2)
+        formal mechanism-level negative results:
+        flat edge/leg retarget maps non-injective
 ```
 
 `ResolvedFeynmanGraphs.lean` is intentionally standalone: it imports the flat
@@ -49,6 +53,27 @@ carrier (for `forget`) but is not wired into the Hopf coproduct/coassoc stack
 both Coassoc and the resolved carrier; it states the distilled content of the two
 flat-false facades and proves them on the resolved carrier (Tier 1 — no resolved
 SubGraph layer).
+
+`ResolvedSubGraph.lean` is the **R-4-full Phase 1 lower graph spine** (also
+standalone — imports `ResolvedFeynmanGraphs` + flat `SubGraph`, no HopfAlgebra;
+not yet wired into `Main`).  It builds the resolved subgraph / admissible-forest /
+contraction / quotient-remainder carriers and proves the resolved counterparts of
+**both** flat-false boundary interfaces:
+
+```
+ResolvedSubGraph spine ✅  (R-4-full Phase 1)
+  ├ ResolvedFeynmanSubgraph                 (1a)
+  ├ ResolvedAdmissibleSubgraph              (1b)
+  ├ contractWithStars                       (1c)
+  ├ quotientRemainderSubgraph               (1d)
+  ├ insertion uniqueness ✅  parent_eq_of_remainder_eq               (1e, bomb #1)
+  └ external-leg liftability ✅  externalLegs_lift_unique /
+                                 parent_externalLegs_eq_of_remainder_eq  (1f, bomb #2)
+```
+
+This does **not** yet build the resolved Hopf algebra.  **Phase 2** continues:
+resolved proper-forest index → resolved coproduct → resolved coassociativity
+(antipode inherited from the carrier-independent convolution proof).
 
 ---
 

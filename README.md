@@ -62,6 +62,15 @@ Boundary-resolved carrier:
 `GaugeGeometry/QFT/Combinatorial/ResolvedFeynmanGraphs.lean`
 (`GaugeGeometry.QFT.Combinatorial.ResolvedFeynmanGraph`).
 
+R-4-full Phase 1 (boundary-resolved lower graph spine, in progress):
+`GaugeGeometry/QFT/Combinatorial/ResolvedSubGraph.lean` (standalone; build with
+`lake build GaugeGeometry.QFT.Combinatorial.ResolvedSubGraph`). It builds the
+resolved subgraph / admissible-forest / contraction / quotient-remainder carriers
+and proves the resolved counterparts of **both** flat-false boundary interfaces —
+insertion uniqueness (`parent_eq_of_remainder_eq`) and external-leg liftability
+(`externalLegs_lift_unique`). It does not yet build the resolved Hopf algebra;
+that is Phase 2 (resolved proper-forest index → coproduct → coassociativity).
+
 ## Build
 
 ```bash
