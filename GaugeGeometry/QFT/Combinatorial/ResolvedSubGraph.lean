@@ -560,6 +560,59 @@ theorem parent_eq_of_remainder_eq
     rw [← tsub_add_cancel_of_le hA₁, ← tsub_add_cancel_of_le hA₂, hEdges]
   exact ResolvedFeynmanSubgraph.ext hV hInt hLegs
 
+/-! ### Phase 1f — resolved external-leg liftability spine
+
+The leg counterpart of Phase 1e, corresponding to the flat (false)
+`…PromotedExternalLegsLiftableModel`.  The submultiset-level engine is already
+`retarget_residual_legs_injective` (Phase 1e): under `LegIdsUnique`, the
+through-`A` leg retarget is injective on submultisets of `G.externalLegs`.  Here
+we package it in the two directions the forest cover uses — remainder-reflection
+and preimage-uniqueness — and record the forgetful correspondence. -/
+
+/-- **Remainder reflects parent external legs.**  Under `LegIdsUnique`, equal
+quotient remainders force equal parent external-leg multisets.  (This is the
+leg-only reflection; unlike `parent_eq_of_remainder_eq` it needs no vertex or
+inner-forest hypotheses — the legs are recovered outright from id-uniqueness.) -/
+theorem parent_externalLegs_eq_of_remainder_eq
+    (A : ResolvedAdmissibleSubgraph G) (hLegId : G.LegIdsUnique)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {γ₁ γ₂ : ResolvedFeynmanSubgraph G}
+    (hRem : A.quotientRemainderSubgraph starOf γ₁ =
+      A.quotientRemainderSubgraph starOf γ₂) :
+    γ₁.externalLegs = γ₂.externalLegs := by
+  apply A.retarget_residual_legs_injective hLegId starOf
+    γ₁.externalLegs_le γ₂.externalLegs_le
+  have hc := congrArg ResolvedFeynmanSubgraph.externalLegs hRem
+  simpa using hc
+
+/-- **External-leg lift uniqueness.**  Under `LegIdsUnique`, a retargeted leg
+submultiset has a unique preimage among submultisets of `G.externalLegs` — the
+resolved repair of promoted-leg liftability (`retarget_residual_legs_injective`
+packaged in the preimage direction the exact/cover legs use). -/
+theorem externalLegs_lift_unique
+    (A : ResolvedAdmissibleSubgraph G) (hLegId : G.LegIdsUnique)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {L : Multiset ResolvedExternalLeg} (hL : L ≤ G.externalLegs) :
+    ∀ L', L' ≤ G.externalLegs →
+      L'.map (A.retargetExternalLeg starOf) = L.map (A.retargetExternalLeg starOf) →
+      L' = L := by
+  intro L' hL' h
+  exact A.retarget_residual_legs_injective hLegId starOf hL' hL h
+
+/-- Forgetful correspondence for the through-`A` leg retarget: forgetting after
+retargeting equals the flat attachment-rewrite (by `A.retargetVertex starOf`)
+after forgetting.  Honest projection at the leg-multiset level. -/
+theorem forget_retargetExternalLegs
+    (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (L : Multiset ResolvedExternalLeg) :
+    (L.map (A.retargetExternalLeg starOf)).map ResolvedExternalLeg.forget =
+      (L.map ResolvedExternalLeg.forget).map
+        (fun ℓ => { attachedTo := A.retargetVertex starOf ℓ.attachedTo,
+                    sector := ℓ.sector }) := by
+  rw [Multiset.map_map, Multiset.map_map]
+  exact Multiset.map_congr rfl (fun ℓ _ => rfl)
+
 end ResolvedAdmissibleSubgraph
 
 end GaugeGeometry.QFT.Combinatorial
