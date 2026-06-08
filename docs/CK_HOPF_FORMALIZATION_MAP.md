@@ -320,9 +320,43 @@ has formal counterexamples (`BoundaryResolvedCounterexamples.lean`,
 `flatEdgeRetarget_not_injective` / `flatLegRetarget_not_injective`), while the
 resolved remainder/leg retargeting has formal injectivity/recovery theorems on
 the same operation — the difference is exactly the persistent `edgeId`/`legId`
-that `forget` discards.  **Next (`Phase 2`):** resolved proper-forest index →
-resolved coproduct → resolved coassociativity (the antipode is inherited from the
-carrier-independent convolution proof at no cost).
+that `forget` discards.
+
+### R-4-full Phase 2 — resolved proper-forest index, forget bridge, coproduct summand
+
+In progress (`GaugeGeometry/QFT/HopfAlgebra/ResolvedCoproductIndex.lean` and
+`ResolvedCoproduct.lean`; standalone, not yet wired into `Main`).  Phase 2
+establishes that the resolved coproduct can be built **through `forget`**, reusing
+the flat finite proper-forest index.
+
+| Phase | Artifact | Status | Role |
+|---|---|---|---|
+| 2a | `ResolvedAdmissibleSubgraph.IsProperForest` (+ projections) | ✅ | resolved proper forest, predicate level |
+| 2b | `forget_mem_properDisjointAdmissibleDivergentSubgraphs` (linchpin `forget_injOn_elements`) | ✅ | resolved proper forest forgets to flat `properDisjoint…` |
+| 2c-i | `forget_mem_properDisjoint_filter_complement` | ✅ | complement positivity transfers — full bridge into `forestCoproductProperForestIndex` |
+| 2c-ii | `strictSummandViaForget` | ✅ | resolved single-forest coproduct summand (= flat summand of `A.forget`) |
+| 2d | `ResolvedProperForestFiniteIndex` + `strictCoproductSum` | ✅ | finite index as explicit payload; summation wrapper |
+
+Three design conclusions fell out and **substantially lower the R-4-full cost**:
+
+1. **No native resolved finite index** (`forget_injOn_elements`): on a
+   pairwise-disjoint nonempty-component forest, `forget` is injective on the
+   components, so the forgetful image is a faithful flat forest.  The resolved
+   proper forest forgets *into* the flat `forestCoproductProperForestIndex`; no
+   `Fintype (ResolvedFeynmanSubgraph)` enumeration is needed.
+2. **No ambient `EdgeIdsUnique`** for complement positivity: `Multiset.map`
+   preserves cardinality (unlike `Finset.image`), so the `0 < complement.card`
+   filter transfers even though `forget` collapses `edgeId`s.
+3. **No `ResolvedHopfGen`**: the flat summand API is generic over an arbitrary
+   `FeynmanGraph` with an abstract right-generator assignment and lands in the flat
+   `HopfH ⊗ HopfH`.  The **algebra carrier stays flat `HopfH`**; the resolved
+   carrier is a *semantic witness layer* used only to discharge the facades.
+
+**Next (`Phase 3`):** instantiate canonical stars + the connected-divergence proof
+to fill the abstract right-generator assignment (abstract summand → concrete
+summand), then prove resolved coassociativity over the payload, turning the two
+boundary facades into theorems.  The antipode is inherited from the
+carrier-independent convolution proof (§4) at no cost.
 
 *Completed since the last revision:* coassociativity `forest_inj` and the full
 forest-cover source connected-divergence (`forest_cd`) are theorems; the

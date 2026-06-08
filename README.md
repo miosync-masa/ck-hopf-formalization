@@ -62,14 +62,25 @@ Boundary-resolved carrier:
 `GaugeGeometry/QFT/Combinatorial/ResolvedFeynmanGraphs.lean`
 (`GaugeGeometry.QFT.Combinatorial.ResolvedFeynmanGraph`).
 
-R-4-full Phase 1 (boundary-resolved lower graph spine, in progress):
-`GaugeGeometry/QFT/Combinatorial/ResolvedSubGraph.lean` (standalone; build with
-`lake build GaugeGeometry.QFT.Combinatorial.ResolvedSubGraph`). It builds the
-resolved subgraph / admissible-forest / contraction / quotient-remainder carriers
-and proves the resolved counterparts of **both** flat-false boundary interfaces —
-insertion uniqueness (`parent_eq_of_remainder_eq`) and external-leg liftability
-(`externalLegs_lift_unique`). It does not yet build the resolved Hopf algebra;
-that is Phase 2 (resolved proper-forest index → coproduct → coassociativity).
+R-4-full Phases 1–2 (boundary-resolved reconstruction, in progress; standalone
+modules, not yet wired into `Main`):
+
+- **Phase 1** — `GaugeGeometry/QFT/Combinatorial/ResolvedSubGraph.lean`: the
+  resolved subgraph / admissible-forest / contraction / quotient-remainder
+  carriers, proving the resolved counterparts of **both** flat-false boundary
+  interfaces — insertion uniqueness (`parent_eq_of_remainder_eq`) and external-leg
+  liftability (`externalLegs_lift_unique`).
+- **Phase 2** — `GaugeGeometry/QFT/HopfAlgebra/ResolvedCoproductIndex.lean` and
+  `ResolvedCoproduct.lean`: the resolved proper forest forgets into the flat finite
+  proper-forest index (`forget_mem_properDisjoint_filter_complement`), and the
+  resolved coproduct summand/sum is defined through that bridge
+  (`strictSummandViaForget`, `strictCoproductSum`).
+
+Design conclusions so far: the **algebra carrier stays flat `HopfH`** — no resolved
+generator type, no native resolved `Fintype`, no ambient id-uniqueness assumption;
+the resolved carrier is a *semantic witness layer* reached through `forget`. This
+does not yet build the resolved Hopf algebra; Phase 3 is concrete star/generator
+assignment → resolved coassociativity (turning the facades into theorems).
 
 ## Build
 

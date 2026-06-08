@@ -71,9 +71,29 @@ ResolvedSubGraph spine ✅  (R-4-full Phase 1)
                                  parent_externalLegs_eq_of_remainder_eq  (1f, bomb #2)
 ```
 
-This does **not** yet build the resolved Hopf algebra.  **Phase 2** continues:
-resolved proper-forest index → resolved coproduct → resolved coassociativity
-(antipode inherited from the carrier-independent convolution proof).
+`ResolvedCoproductIndex.lean` and `ResolvedCoproduct.lean` are the **R-4-full
+Phase 2** layer (HopfAlgebra-level — they import `ResolvedSubGraph` + `Coproduct`;
+standalone, not yet wired into `Main`).  They bridge the resolved proper forest to
+the flat finite index and define the resolved coproduct summand/sum:
+
+```
+Resolved coproduct via forget ✅  (R-4-full Phase 2)
+  ├ IsProperForest (predicate + projections)                         (2a)
+  ├ forget_injOn_elements  (linchpin: forget injective on components) (2b)
+  ├ forget_mem_properDisjointAdmissibleDivergentSubgraphs            (2b)
+  ├ forget_mem_properDisjoint_filter_complement  → forestCoproductProperForestIndex (2c-i)
+  ├ strictSummandViaForget  (= flat summand of A.forget)              (2c-ii)
+  └ ResolvedProperForestFiniteIndex + strictCoproductSum             (2d)
+```
+
+Design conclusions (cost-lowering): **no** native resolved `Fintype`, **no**
+ambient `EdgeIdsUnique` (multiset `map` preserves card), **no** `ResolvedHopfGen`
+(algebra carrier stays flat `HopfH`; resolved is a semantic witness layer).
+
+This does **not** yet build the resolved Hopf algebra.  **Phase 3** continues:
+concrete canonical stars / right-generator assignment → resolved coassociativity
+over the payload (turning the two facades into theorems); antipode inherited from
+the carrier-independent convolution proof.
 
 ---
 
