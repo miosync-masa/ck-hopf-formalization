@@ -26,7 +26,11 @@ namespace GaugeGeometry.QFT.Combinatorial
 
 variable {G : ResolvedFeynmanGraph}
 variable [∀ H : FeynmanGraph, DivergenceMeasure H]
-variable [∀ H : FeynmanGraph, Fintype (FeynmanSubgraph H)]
+         [∀ H : FeynmanGraph, IsPermInvariantDivergence H]
+         [∀ H : FeynmanGraph, IsIsoInvariantDivergence H]
+         [∀ H : FeynmanGraph, Fintype (FeynmanSubgraph H)]
+         [IsAmbientInvariantDivergence] [IsDivergencePreservedByContract]
+         [IsDivergencePreservedByAdmissibleForestContract]
 
 namespace ResolvedAdmissibleSubgraph
 
@@ -135,6 +139,93 @@ theorem forget_mem_properDisjointAdmissibleDivergentSubgraphs
   rw [FeynmanGraph.mem_disjointAdmissibleDivergentSubgraphs]
   exact ⟨FeynmanGraph.mem_admissibleDivergentSubgraphs G.forget A.forget,
     A.forget_isPairwiseDisjoint⟩
+
+/-! #### Phase 2c-i — complement positivity, closing the `forestCoproductProperForestIndex` bridge
+
+The deferred `0 < complementEdges.card` transfer.  **Design note:** no ambient
+`EdgeIdsUnique` is needed — `Multiset.map` preserves cardinality (a multiset keeps
+multiplicity, unlike `Finset.image`), so the complement *card* transfers even
+though `forget` collapses `edgeId`s.  The two ingredients are
+`internalEdges_le` and the aggregate `forget_internalEdges_eq_map`. -/
+
+/-- `Multiset.map forget` commutes with a `Finset.sum` of edge multisets. -/
+private theorem map_forget_finset_sum (s : Finset (ResolvedFeynmanSubgraph G)) :
+    (∑ γ ∈ s, γ.internalEdges).map ResolvedFeynmanEdge.forget =
+      ∑ γ ∈ s, γ.internalEdges.map ResolvedFeynmanEdge.forget := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert γ s hγs ih =>
+      rw [Finset.sum_insert hγs, Finset.sum_insert hγs, Multiset.map_add, ih]
+
+/-- **Aggregate internal edges are bounded by the ambient graph's** (mirror of the
+flat `admissibleSubgraph_internalEdges_le_of_pairwise`).  Vertex-disjoint
+components share no internal edge, so the componentwise sum embeds in
+`G.internalEdges`. -/
+theorem internalEdges_le (A : ResolvedAdmissibleSubgraph G) :
+    A.internalEdges ≤ G.internalEdges := by
+  classical
+  rw [Multiset.le_iff_count]
+  intro e
+  by_cases heA : e ∈ A.internalEdges
+  · obtain ⟨γ, hγ, heγ⟩ := mem_internalEdges.mp heA
+    have hzero : ∀ δ ∈ A.elements, δ ≠ γ → δ.internalEdges.count e = 0 := by
+      intro δ hδ hne
+      by_cases heδ : e ∈ δ.internalEdges
+      · have hdisj : _root_.Disjoint δ.vertices γ.vertices := A.pairwiseDisjoint hδ hγ hne
+        obtain ⟨hsδ, _⟩ := δ.edges_supported e heδ
+        obtain ⟨hsγ, _⟩ := γ.edges_supported e heγ
+        exact absurd hsγ (Finset.disjoint_left.mp hdisj hsδ)
+      · exact Multiset.count_eq_zero.mpr heδ
+    show (∑ x ∈ A.elements, x.internalEdges).count e ≤ G.internalEdges.count e
+    rw [multiset_count_finset_sum]
+    calc (∑ x ∈ A.elements, (x.internalEdges).count e)
+        = γ.internalEdges.count e := by
+          rw [Finset.sum_eq_single γ (fun δ hδ hne => hzero δ hδ hne)
+            (fun hγnot => absurd hγ hγnot)]
+      _ ≤ G.internalEdges.count e := Multiset.count_le_of_le e γ.internalEdges_le
+  · rw [Multiset.count_eq_zero.mpr heA]; exact Nat.zero_le _
+
+/-- The forgetful image of the aggregate internal edges is the `forget`-map of the
+resolved aggregate (uses injectivity of `forget` on the components). -/
+theorem forget_internalEdges_eq_map (A : ResolvedAdmissibleSubgraph G)
+    (hne : A.HasNonemptyComponents) :
+    A.forget.internalEdges = A.internalEdges.map ResolvedFeynmanEdge.forget := by
+  show (∑ δ ∈ A.forget.elements, δ.internalEdges)
+      = (∑ γ ∈ A.elements, γ.internalEdges).map ResolvedFeynmanEdge.forget
+  rw [forget_elements,
+    Finset.sum_image (fun γ₁ h₁ γ₂ h₂ h => A.forget_injOn_elements hne h₁ h₂ h),
+    map_forget_finset_sum]
+  exact Finset.sum_congr rfl (fun γ _ => ResolvedFeynmanSubgraph.forget_internalEdges γ)
+
+/-- **Complement positivity transfers** (no ambient id-uniqueness needed). -/
+theorem forget_complementEdges_card_pos (A : ResolvedAdmissibleSubgraph G)
+    (hA : A.IsProperForest) : 0 < A.forget.complementEdges.card := by
+  have hmap : A.forget.internalEdges = A.internalEdges.map ResolvedFeynmanEdge.forget :=
+    A.forget_internalEdges_eq_map hA.2.1
+  have hfle : A.forget.internalEdges ≤ (G.forget).internalEdges := by
+    rw [hmap, show (G.forget).internalEdges = G.internalEdges.map ResolvedFeynmanEdge.forget from rfl]
+    exact Multiset.map_le_map A.internalEdges_le
+  have hcard : A.forget.complementEdges.card = A.complementEdges.card := by
+    show ((G.forget).internalEdges - A.forget.internalEdges).card
+        = (G.internalEdges - A.internalEdges).card
+    rw [Multiset.card_sub hfle, Multiset.card_sub A.internalEdges_le, hmap,
+      show (G.forget).internalEdges = G.internalEdges.map ResolvedFeynmanEdge.forget from rfl,
+      Multiset.card_map, Multiset.card_map]
+  rw [hcard]
+  exact complementEdges_card_pos_of_isProperForest hA
+
+/-- **Full Phase 2 bridge.**  A resolved proper forest forgets into the flat
+`forestCoproductProperForestIndex` filter `properDisjoint… ∩ {0 < complement}`.
+For `G.forget = (repG g).toFeynmanGraph` this is membership in
+`forestCoproductProperForestIndex g`. -/
+theorem forget_mem_properDisjoint_filter_complement
+    (A : ResolvedAdmissibleSubgraph G) (hA : A.IsProperForest) :
+    A.forget ∈ (G.forget.properDisjointAdmissibleDivergentSubgraphs).filter
+      (fun B => 0 < B.complementEdges.card) := by
+  rw [Finset.mem_filter]
+  exact ⟨A.forget_mem_properDisjointAdmissibleDivergentSubgraphs hA,
+    A.forget_complementEdges_card_pos hA⟩
 
 end ResolvedAdmissibleSubgraph
 
