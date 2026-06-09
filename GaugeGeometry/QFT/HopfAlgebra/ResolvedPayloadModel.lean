@@ -145,4 +145,64 @@ theorem forget_ofFlatSubgraph_isConnectedDivergent {δ : FeynmanSubgraph Gf}
   show (0 : Int) ≤ DivergenceMeasure.degree ((ofFlatSubgraph δ).forget)
   rw [forget_ofFlatSubgraph_degree]; exact hd'
 
+/-! ### Phase 6c-3 — canonical payload family
+
+DecidableEq for resolved subgraphs (for `Finset.image`), the forest lift, the
+proper-forest transfer, the canonical cover, and the inhabited payload family. -/
+
+/-- Resolved subgraphs are compared by their carrier fields (proof fields are
+proof-irrelevant), mirroring the flat `FeynmanSubgraph` instance. -/
+instance (G : ResolvedFeynmanGraph) : DecidableEq (ResolvedFeynmanSubgraph G) := by
+  classical
+  intro γ₁ γ₂
+  by_cases hV : γ₁.vertices = γ₂.vertices
+  · by_cases hI : γ₁.internalEdges = γ₂.internalEdges
+    · by_cases hE : γ₁.externalLegs = γ₂.externalLegs
+      · refine isTrue ?_
+        cases γ₁; cases γ₂; cases hV; cases hI; cases hE; rfl
+      · exact isFalse (fun h => hE (by rw [h]))
+    · exact isFalse (fun h => hI (by rw [h]))
+  · exact isFalse (fun h => hV (by rw [h]))
+
+/-- `ofFlatEdge` / `ofFlatLeg` are injective (they only add a constant id). -/
+theorem ofFlatEdge_injective : Function.Injective ofFlatEdge := by
+  intro e₁ e₂ h
+  have hs : e₁.source = e₂.source := congrArg ResolvedFeynmanEdge.source h
+  have ht : e₁.target = e₂.target := congrArg ResolvedFeynmanEdge.target h
+  have hsec : e₁.sector = e₂.sector := congrArg ResolvedFeynmanEdge.sector h
+  cases e₁; cases e₂; simp_all
+
+theorem ofFlatLeg_injective : Function.Injective ofFlatLeg := by
+  intro ℓ₁ ℓ₂ h
+  have ha : ℓ₁.attachedTo = ℓ₂.attachedTo := congrArg ResolvedExternalLeg.attachedTo h
+  have hsec : ℓ₁.sector = ℓ₂.sector := congrArg ResolvedExternalLeg.sector h
+  cases ℓ₁; cases ℓ₂; simp_all
+
+/-- `ofFlatSubgraph` is injective (carrier-wise; `ofFlatEdge`/`ofFlatLeg` injective). -/
+theorem ofFlatSubgraph_injective : Function.Injective (ofFlatSubgraph (Gf := Gf)) := by
+  intro δ₁ δ₂ h
+  have hv : δ₁.vertices = δ₂.vertices := congrArg ResolvedFeynmanSubgraph.vertices h
+  have hi : δ₁.internalEdges = δ₂.internalEdges :=
+    Multiset.map_injective ofFlatEdge_injective (congrArg ResolvedFeynmanSubgraph.internalEdges h)
+  have he : δ₁.externalLegs = δ₂.externalLegs :=
+    Multiset.map_injective ofFlatLeg_injective (congrArg ResolvedFeynmanSubgraph.externalLegs h)
+  cases δ₁; cases δ₂; cases hv; cases hi; cases he; rfl
+
+/-- The constant-id lift of a flat (pairwise-disjoint) admissible forest. -/
+noncomputable def ofFlatForest (A : AdmissibleSubgraph Gf) (hDisj : A.IsPairwiseDisjoint) :
+    ResolvedAdmissibleSubgraph (ofFlatGraph Gf) where
+  elements := A.elements.image ofFlatSubgraph
+  isConnectedDivergent := by
+    intro γ hγ
+    obtain ⟨δ, hδ, rfl⟩ := Finset.mem_image.mp hγ
+    exact forget_ofFlatSubgraph_isConnectedDivergent (A.isConnectedDivergent_of_mem hδ)
+  pairwiseDisjoint := by
+    intro γ₁ h₁ γ₂ h₂ hne
+    obtain ⟨δ₁, hδ₁, rfl⟩ := Finset.mem_image.mp h₁
+    obtain ⟨δ₂, hδ₂, rfl⟩ := Finset.mem_image.mp h₂
+    exact hDisj hδ₁ hδ₂ (fun h => hne (by rw [h]))
+
+@[simp] theorem ofFlatForest_elements (A : AdmissibleSubgraph Gf) (hDisj : A.IsPairwiseDisjoint) :
+    (ofFlatForest A hDisj).elements = A.elements.image ofFlatSubgraph := rfl
+
 end GaugeGeometry.QFT.Combinatorial
