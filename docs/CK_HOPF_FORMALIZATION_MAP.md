@@ -352,11 +352,38 @@ Three design conclusions fell out and **substantially lower the R-4-full cost**:
    `HopfH ⊗ HopfH`.  The **algebra carrier stays flat `HopfH`**; the resolved
    carrier is a *semantic witness layer* used only to discharge the facades.
 
-**Next (`Phase 3`):** instantiate canonical stars + the connected-divergence proof
-to fill the abstract right-generator assignment (abstract summand → concrete
-summand), then prove resolved coassociativity over the payload, turning the two
-boundary facades into theorems.  The antipode is inherited from the
-carrier-independent convolution proof (§4) at no cost.
+### R-4-full Phases 3–6c — canonical coproduct, coassociativity, and an inhabited payload
+
+These complete the conditional resolved coproduct story (`ResolvedCoproduct.lean`,
+`ResolvedPayloadModel.lean`; standalone, not wired into `Main`).
+
+| Phase | Artifact | Status | Role |
+|---|---|---|---|
+| 3a–b | `flatCanonicalStar`, `strictSummandCanonicalViaForget` | ✅ | concrete canonical summand (= flat canonical summand of `A.forget`) |
+| 3c | `ResolvedProperForestFiniteCover` + `strictCoproductSumCanonical_eq_flat` | ✅ | cover reindex: resolved canonical sum = flat coproduct body |
+| 4a–b | `ResolvedHopfPayload`, `resolvedCoproductX_eq_coproduct_strict_forest_X` | ✅ | resolved coproduct-on-generator **= flat `Δ(X g)`** (free-index `forget` transport) |
+| 4c | `ResolvedHopfPayloadFamily.resolvedCoproduct`, `…_toLinearMap_eq_flat` | ✅ | resolved coproduct **= flat coproduct** as an `AlgHom`/`LinearMap` |
+| 5 | `resolvedCoproduct_coassoc`, `…_ofReflection` | ✅ | resolved **coassociativity by transfer**, gated only on the two boundary facades |
+| 6c | `resolvedHopfPayloadFamily_exists` | ✅ | **the payload family is inhabited** (canonical constant-id lift) |
+
+**Non-vacuity (unicorn objection closed).**  Phases 4–5 show the resolved coproduct
+equals the flat one as a linear map and inherits coassociativity *given* a payload
+family.  Phase 6c removes the "given": `resolvedHopfPayloadFamily_exists :
+Nonempty ResolvedHopfPayloadFamily` constructs one canonically — for each generator
+`g`, the constant-id lift `ofFlatGraph (repG g)` (decorate every edge/leg with
+`id = ⟨0⟩`) with its canonical proper-forest cover.  The theorem depends only on
+`propext`, `Classical.choice`, `Quot.sound` (no `sorry`, no project axiom).  So the
+resolved coproduct/coassociativity are **not** conditional on an abstract payload:
+an explicit, provably-existent model is exhibited.
+
+Key design point: the lift targets subgraphs/forests of `(ofFlatGraph Gf).forget`
+(the forgetful ambient itself), so the round-trips are same-type equalities and no
+graph-type transport is needed; `EdgeIdsUnique` is not required (the coproduct
+transfer never uses it), and the algebra carrier stays flat `HopfH`.
+
+**Remaining (optional):** package a full unconditional resolved `HopfAlgebra`
+instance — the antipode is inherited from the carrier-independent convolution proof
+(§4) at no cost; only the bialgebra/coalgebra packaging is left.
 
 *Completed since the last revision:* coassociativity `forest_inj` and the full
 forest-cover source connected-divergence (`forest_cd`) are theorems; the

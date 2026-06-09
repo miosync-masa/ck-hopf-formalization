@@ -90,10 +90,33 @@ Design conclusions (cost-lowering): **no** native resolved `Fintype`, **no**
 ambient `EdgeIdsUnique` (multiset `map` preserves card), **no** `ResolvedHopfGen`
 (algebra carrier stays flat `HopfH`; resolved is a semantic witness layer).
 
-This does **not** yet build the resolved Hopf algebra.  **Phase 3** continues:
-concrete canonical stars / right-generator assignment → resolved coassociativity
-over the payload (turning the two facades into theorems); antipode inherited from
-the carrier-independent convolution proof.
+`ResolvedCoproduct.lean` (Phases 3–5) lifts this to the whole carrier, and
+`ResolvedPayloadModel.lean` (Phase 6c) makes it unconditional on the payload:
+
+```
+ResolvedCoproduct  ✅  (Phases 3–5)
+  ├ strictSummandCanonicalViaForget                                  (3a-b)
+  ├ ResolvedProperForestFiniteCover + strictCoproductSumCanonical_eq_flat (3c)
+  ├ resolvedCoproductX_eq_coproduct_strict_forest_X  (= flat Δ(X g)) (4a-b)
+  ├ resolvedCoproduct_toLinearMap_eq_flat  (= flat coproduct as LinearMap) (4c)
+  └ resolvedCoproduct_coassoc[_ofReflection]  (coassoc by transfer)  (5)
+
+ResolvedPayloadModel  ✅  (R-4-full Phase 6c)
+  flat graph / proper forest
+     │  ofFlatGraph / ofForgetForest   (constant-id lift, edgeId/legId = ⟨0⟩)
+     ▼
+  ResolvedHopfPayloadFamily
+     │  resolvedHopfPayloadFamily_exists   (axioms: propext, Classical.choice, Quot.sound)
+     ▼
+  non-vacuity / unicorn objection CLOSED ✅
+```
+
+The resolved coproduct (= flat coproduct as a linear map) and its coassociativity
+are therefore **not** conditional on an abstract payload: a canonical constant-id
+lift provably supplies a payload family for every generator
+(`resolvedHopfPayloadFamily_exists`).  This does **not** yet package a full
+unconditional resolved `HopfAlgebra` instance (optional; the antipode is inherited
+from the carrier-independent convolution proof, leaving only bialgebra packaging).
 
 ---
 

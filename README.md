@@ -75,12 +75,25 @@ modules, not yet wired into `Main`):
   proper-forest index (`forget_mem_properDisjoint_filter_complement`), and the
   resolved coproduct summand/sum is defined through that bridge
   (`strictSummandViaForget`, `strictCoproductSum`).
+- **Phases 3–5** — `ResolvedCoproduct.lean`: the resolved coproduct equals the flat
+  strict-forest coproduct as a linear map
+  (`resolvedCoproduct_toLinearMap_eq_flat`), and resolved coassociativity is
+  inherited by transfer (`resolvedCoproduct_coassoc_ofReflection`, gated only on the
+  two boundary facades).
+- **Phase 6c** — `ResolvedPayloadModel.lean`: the payload hypothesis is *inhabited*.
+  `resolvedHopfPayloadFamily_exists : Nonempty ResolvedHopfPayloadFamily` constructs
+  a canonical witness for every generator — the constant-id lift
+  `ofFlatGraph (repG g)` with its canonical proper-forest cover — depending only on
+  `propext`, `Classical.choice`, `Quot.sound` (no `sorry`, no project axiom). So the
+  resolved coproduct/coassociativity are not conditional on an abstract payload: an
+  explicit, provably-existent model is exhibited.
 
-Design conclusions so far: the **algebra carrier stays flat `HopfH`** — no resolved
+Design conclusions: the **algebra carrier stays flat `HopfH`** — no resolved
 generator type, no native resolved `Fintype`, no ambient id-uniqueness assumption;
-the resolved carrier is a *semantic witness layer* reached through `forget`. This
-does not yet build the resolved Hopf algebra; Phase 3 is concrete star/generator
-assignment → resolved coassociativity (turning the facades into theorems).
+the resolved carrier is a *semantic witness layer* reached through `forget`. What is
+**not** yet packaged is a full unconditional resolved `HopfAlgebra` instance (the
+antipode would be inherited from the carrier-independent convolution proof; only the
+bialgebra/coalgebra packaging remains).
 
 ## Build
 
