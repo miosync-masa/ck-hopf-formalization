@@ -54,6 +54,53 @@ theorem strictSummandViaForget_eq
     A.strictSummandViaForget right =
       FeynmanGraph.admissibleForestStrictSummand G.forget right A.forget := rfl
 
+/-! ### Phase 3a — canonical star assignment via forget
+
+The canonical star/contraction machinery for the *canonical* summand (Phase 3b)
+lives on the flat side `A.forget`: the flat summand via forget consumes the flat
+canonical star and the flat canonical contracted graph of `A.forget`, reusing the
+existing flat canonical infrastructure.  `canonicalStarOfViaForget` is the resolved
+star (the flat canonical star precomposed with `forget`), kept for the resolved
+contraction; the flat-side `flatCanonicalStar` / `canonicalRightGraphViaForget` are
+what Phase 3b actually uses. -/
+
+/-- The flat canonical star assignment of the forgotten forest `A.forget`. -/
+noncomputable def flatCanonicalStar (A : ResolvedAdmissibleSubgraph G)
+    (hA : A.IsProperForest) : FeynmanSubgraph G.forget → VertexId :=
+  FeynmanGraph.admissibleForestCanonicalStarOf G.forget A.forget
+    (A.forget_mem_properDisjointAdmissibleDivergentSubgraphs hA)
+
+/-- Resolved canonical star assignment, via `forget`: the flat canonical star
+precomposed with the forgetful map on components. -/
+noncomputable def canonicalStarOfViaForget (A : ResolvedAdmissibleSubgraph G)
+    (hA : A.IsProperForest) : ResolvedFeynmanSubgraph G → VertexId :=
+  fun γ => A.flatCanonicalStar hA γ.forget
+
+@[simp] theorem canonicalStarOfViaForget_def (A : ResolvedAdmissibleSubgraph G)
+    (hA : A.IsProperForest) (γ : ResolvedFeynmanSubgraph G) :
+    A.canonicalStarOfViaForget hA γ = A.flatCanonicalStar hA γ.forget := rfl
+
+/-- The flat canonical star of the forgotten forest is a fresh star assignment. -/
+theorem flatCanonicalStar_isFreshStarAssignment (A : ResolvedAdmissibleSubgraph G)
+    (hA : A.IsProperForest) :
+    A.forget.IsFreshStarAssignment (A.flatCanonicalStar hA) :=
+  FeynmanGraph.admissibleForestCanonicalStarOf_isFreshStarAssignment G.forget A.forget
+    (A.forget_mem_properDisjointAdmissibleDivergentSubgraphs hA)
+
+/-- Canonical right (contracted) graph for a resolved proper forest, via `forget`:
+the flat canonical contraction of `A.forget`.  This is the right-tensor-factor
+graph for the canonical summand (Phase 3b). -/
+noncomputable def canonicalRightGraphViaForget (A : ResolvedAdmissibleSubgraph G)
+    (hA : A.IsProperForest) : FeynmanGraph :=
+  FeynmanGraph.admissibleForestCanonicalContractGraph G.forget A.forget
+    (A.forget_mem_properDisjointAdmissibleDivergentSubgraphs hA)
+
+/-- The canonical right graph is the flat canonical-star contraction of `A.forget`. -/
+@[simp] theorem canonicalRightGraphViaForget_eq (A : ResolvedAdmissibleSubgraph G)
+    (hA : A.IsProperForest) :
+    A.canonicalRightGraphViaForget hA =
+      (A.forget).contractWithStars (A.flatCanonicalStar hA) := rfl
+
 end ResolvedAdmissibleSubgraph
 
 /-! ## Phase 2d — resolved finite proper-forest index (Option C: finite payload)
