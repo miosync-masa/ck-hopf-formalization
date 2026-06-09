@@ -101,6 +101,60 @@ noncomputable def canonicalRightGraphViaForget (A : ResolvedAdmissibleSubgraph G
     A.canonicalRightGraphViaForget hA =
       (A.forget).contractWithStars (A.flatCanonicalStar hA) := rfl
 
+/-! ### Phase 3b — right HopfGen via forget + canonical summand
+
+`hCD` is the global canonical-contraction connected-divergence hypothesis over
+`G.forget`, taken as a parameter exactly as in the flat
+`admissibleForestStrictSummandWithCanonicalStars` interface (not discharged from
+the ambient power-counting here).  The canonical right generator and summand are
+then the flat canonical ones of `A.forget`. -/
+
+/-- The canonical contracted graph of a resolved proper forest is connected
+divergent — by the supplied global hypothesis `hCD`. -/
+theorem canonicalRightGraphViaForget_isConnectedDivergent
+    (A : ResolvedAdmissibleSubgraph G) (hA : A.IsProperForest)
+    (hCD : ∀ B : AdmissibleSubgraph G.forget,
+      ∀ hB : B ∈ G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf G.forget B hB)).IsConnectedDivergent) :
+    (A.canonicalRightGraphViaForget hA).IsConnectedDivergent := by
+  unfold canonicalRightGraphViaForget
+  rw [FeynmanGraph.admissibleForestCanonicalContractGraph_eq]
+  exact hCD A.forget (A.forget_mem_properDisjointAdmissibleDivergentSubgraphs hA)
+
+/-- The right tensor generator for a resolved proper forest, via `forget`: the flat
+canonical right HopfGen of `A.forget`. -/
+noncomputable def rightHopfGenViaForget
+    (A : ResolvedAdmissibleSubgraph G) (hA : A.IsProperForest)
+    (hCD : ∀ B : AdmissibleSubgraph G.forget,
+      ∀ hB : B ∈ G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf G.forget B hB)).IsConnectedDivergent) :
+    HopfGen :=
+  FeynmanGraph.admissibleForestRightWithCanonicalStars G.forget hCD A.forget
+    (A.forget_mem_properDisjointAdmissibleDivergentSubgraphs hA)
+
+/-- The canonical strict coproduct summand of a resolved proper forest, via
+`forget`: specialize `strictSummandViaForget` with the flat canonical right
+assignment.  Equals the flat canonical summand of `A.forget`. -/
+noncomputable def strictSummandCanonicalViaForget
+    (A : ResolvedAdmissibleSubgraph G)
+    (hCD : ∀ B : AdmissibleSubgraph G.forget,
+      ∀ hB : B ∈ G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf G.forget B hB)).IsConnectedDivergent) :
+    HopfH ⊗[ℚ] HopfH :=
+  A.strictSummandViaForget (FeynmanGraph.admissibleForestRightWithCanonicalStars G.forget hCD)
+
+@[simp] theorem strictSummandCanonicalViaForget_eq
+    (A : ResolvedAdmissibleSubgraph G)
+    (hCD : ∀ B : AdmissibleSubgraph G.forget,
+      ∀ hB : B ∈ G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf G.forget B hB)).IsConnectedDivergent) :
+    A.strictSummandCanonicalViaForget hCD =
+      FeynmanGraph.admissibleForestStrictSummandWithCanonicalStars G.forget hCD A.forget := rfl
+
 end ResolvedAdmissibleSubgraph
 
 /-! ## Phase 2d — resolved finite proper-forest index (Option C: finite payload)
@@ -151,6 +205,26 @@ noncomputable def strictCoproductSum (I : ResolvedProperForestFiniteIndex G)
     (⟨∅, by intro A hA; simp at hA⟩ : ResolvedProperForestFiniteIndex G).strictCoproductSum
       right = 0 := by
   simp [strictCoproductSum]
+
+/-- **Canonical resolved strict coproduct sum over a finite payload.**  Sum of the
+canonical per-forest summands (`strictSummandCanonicalViaForget`) over the payload
+carrier, with the shared global canonical-contraction CD hypothesis `hCD`.  Each
+summand equals the flat canonical summand of `A.forget`. -/
+noncomputable def strictCoproductSumCanonical (I : ResolvedProperForestFiniteIndex G)
+    (hCD : ∀ B : AdmissibleSubgraph G.forget,
+      ∀ hB : B ∈ G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf G.forget B hB)).IsConnectedDivergent) :
+    HopfH ⊗[ℚ] HopfH :=
+  ∑ A ∈ I.carrier, A.strictSummandCanonicalViaForget hCD
+
+@[simp] theorem strictCoproductSumCanonical_def (I : ResolvedProperForestFiniteIndex G)
+    (hCD : ∀ B : AdmissibleSubgraph G.forget,
+      ∀ hB : B ∈ G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf G.forget B hB)).IsConnectedDivergent) :
+    I.strictCoproductSumCanonical hCD =
+      ∑ A ∈ I.carrier, A.strictSummandCanonicalViaForget hCD := rfl
 
 end ResolvedProperForestFiniteIndex
 
