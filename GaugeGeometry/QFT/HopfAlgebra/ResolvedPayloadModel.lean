@@ -97,7 +97,12 @@ rewriting the carrier-graph equality.  `IsDivergent` depends on the ambient
 `DivergenceMeasure`; it transfers via `IsAmbientInvariantDivergence` (degree of a
 subgraph equals the degree of the self-subgraph of its own intrinsic graph). -/
 
-variable [∀ H : FeynmanGraph, DivergenceMeasure H] [IsAmbientInvariantDivergence]
+variable [∀ H : FeynmanGraph, DivergenceMeasure H]
+         [∀ H : FeynmanGraph, IsPermInvariantDivergence H]
+         [∀ H : FeynmanGraph, IsIsoInvariantDivergence H]
+         [∀ H : FeynmanGraph, Fintype (FeynmanSubgraph H)]
+         [IsAmbientInvariantDivergence] [IsDivergencePreservedByContract]
+         [IsDivergencePreservedByAdmissibleForestContract]
 
 /-- The forgotten subgraph lift has the same intrinsic graph as the original
 (carrier-level, no graph transport). -/
@@ -204,5 +209,61 @@ noncomputable def ofFlatForest (A : AdmissibleSubgraph Gf) (hDisj : A.IsPairwise
 
 @[simp] theorem ofFlatForest_elements (A : AdmissibleSubgraph Gf) (hDisj : A.IsPairwiseDisjoint) :
     (ofFlatForest A hDisj).elements = A.elements.image ofFlatSubgraph := rfl
+
+/-- `Multiset.map ofFlatEdge` commutes with a `Finset.sum` of edge multisets. -/
+private theorem map_ofFlatEdge_finset_sum (s : Finset (FeynmanSubgraph Gf)) :
+    (∑ δ ∈ s, δ.internalEdges).map ofFlatEdge = ∑ δ ∈ s, δ.internalEdges.map ofFlatEdge := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert δ s hδs ih => rw [Finset.sum_insert hδs, Finset.sum_insert hδs, Multiset.map_add, ih]
+
+/-- The aggregate internal edges of the forest lift are the `ofFlatEdge`-image of
+the flat forest's internal edges. -/
+theorem ofFlatForest_internalEdges_eq (A : AdmissibleSubgraph Gf) (hDisj : A.IsPairwiseDisjoint) :
+    (ofFlatForest A hDisj).internalEdges = A.internalEdges.map ofFlatEdge := by
+  show (∑ γ ∈ (ofFlatForest A hDisj).elements, γ.internalEdges) = A.internalEdges.map ofFlatEdge
+  rw [ofFlatForest_elements,
+    Finset.sum_image (fun δ₁ _ δ₂ _ h => ofFlatSubgraph_injective h)]
+  conv_rhs => rw [show A.internalEdges = ∑ δ ∈ A.elements, δ.internalEdges from rfl,
+    map_ofFlatEdge_finset_sum]
+  exact Finset.sum_congr rfl (fun δ _ => rfl)
+
+/-- **Proper-forest transfer.**  The lift of a flat proper forest is a resolved
+proper forest.  Each of the five `IsProperForest` conditions transfers from the
+flat proper-index membership (nonemptiness/positive-edges via carrier round-trips;
+complement positivity via `internalEdges_le` + cardinality). -/
+theorem ofFlatForest_isProperForest {g : HopfGen}
+    {A : AdmissibleSubgraph (repG g).toFeynmanGraph}
+    (hA : A ∈ forestCoproductProperForestIndex g) (hDisj : A.IsPairwiseDisjoint) :
+    (ofFlatForest A hDisj).IsProperForest := by
+  rw [mem_forestCoproductProperForestIndex] at hA
+  obtain ⟨hpd, hcompl⟩ := hA
+  rw [FeynmanGraph.mem_properDisjointAdmissibleDivergentSubgraphs] at hpd
+  obtain ⟨hnd, hhnc, hiec, hhpiec⟩ := hpd
+  rw [FeynmanGraph.mem_nonemptyDisjointAdmissibleDivergentSubgraphs] at hnd
+  obtain ⟨_, hne⟩ := hnd
+  refine ⟨hne.image _, ?_, ?_, ?_, ?_⟩
+  · intro γ hγ
+    obtain ⟨δ, hδ, rfl⟩ := Finset.mem_image.mp hγ
+    have hδne := hhnc δ hδ
+    simpa [ResolvedFeynmanSubgraph.IsNonempty, ResolvedFeynmanSubgraph.vertexCount,
+      FeynmanSubgraph.IsNonempty, FeynmanSubgraph.vertexCount] using hδne
+  · rw [ofFlatForest_internalEdges_eq, Multiset.card_map]; exact hiec
+  · intro γ hγ
+    obtain ⟨δ, hδ, rfl⟩ := Finset.mem_image.mp hγ
+    have := hhpiec δ hδ
+    rwa [show (ofFlatSubgraph δ).internalEdges = δ.internalEdges.map ofFlatEdge from rfl,
+      Multiset.card_map]
+  · have hle : A.internalEdges ≤ (repG g).toFeynmanGraph.internalEdges :=
+      admissibleSubgraph_internalEdges_le_of_pairwise A hDisj
+    have hcard : (ofFlatForest A hDisj).complementEdges.card = A.complementEdges.card := by
+      show ((ofFlatGraph (repG g).toFeynmanGraph).internalEdges
+          - (ofFlatForest A hDisj).internalEdges).card
+          = ((repG g).toFeynmanGraph.internalEdges - A.internalEdges).card
+      rw [ofFlatForest_internalEdges_eq, ofFlatGraph_internalEdges,
+        Multiset.card_sub (Multiset.map_le_map hle), Multiset.card_sub hle,
+        Multiset.card_map, Multiset.card_map]
+    rw [hcard]; exact hcompl
 
 end GaugeGeometry.QFT.Combinatorial
