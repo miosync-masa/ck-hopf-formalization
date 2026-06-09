@@ -266,4 +266,145 @@ theorem ofFlatForest_isProperForest {g : HopfGen}
         Multiset.card_map, Multiset.card_map]
     rw [hcard]; exact hcompl
 
+/-! ### Phase 6c-3 — lift over `G.forget` (transport-free cover)
+
+To build the cover without graph transport, lift subgraphs/forests of
+`(ofFlatGraph Gf).forget` itself (the graph the forgetful map lands in), so the
+round-trip `forget ∘ lift = id` is a *same-type* equality. -/
+
+/-- Lift a subgraph of `(ofFlatGraph Gf).forget` to a resolved subgraph of
+`ofFlatGraph Gf` (decorate edges/legs with id `⟨0⟩`). -/
+def liftFromForgetSubgraph (γf : FeynmanSubgraph (ofFlatGraph Gf).forget) :
+    ResolvedFeynmanSubgraph (ofFlatGraph Gf) where
+  vertices := γf.vertices
+  internalEdges := γf.internalEdges.map ofFlatEdge
+  externalLegs := γf.externalLegs.map ofFlatLeg
+  vertices_subset := γf.vertices_subset
+  internalEdges_le := by
+    have h : γf.internalEdges ≤ Gf.internalEdges := by
+      have hle := γf.internalEdges_le
+      rwa [congrArg FeynmanGraph.internalEdges (forget_ofFlatGraph Gf)] at hle
+    rw [ofFlatGraph_internalEdges]; exact Multiset.map_le_map h
+  externalLegs_le := by
+    have h : γf.externalLegs ≤ Gf.externalLegs := by
+      have hle := γf.externalLegs_le
+      rwa [congrArg FeynmanGraph.externalLegs (forget_ofFlatGraph Gf)] at hle
+    rw [ofFlatGraph_externalLegs]; exact Multiset.map_le_map h
+  edges_supported := by
+    intro e' he'
+    obtain ⟨e, he, rfl⟩ := Multiset.mem_map.mp he'
+    simpa [ofFlatEdge, FeynmanEdge.SupportedOn] using γf.edges_supported e he
+  legs_supported := by
+    intro ℓ' hℓ'
+    obtain ⟨ℓ, hℓ, rfl⟩ := Multiset.mem_map.mp hℓ'
+    simpa [ofFlatLeg, ExternalLeg.SupportedOn] using γf.legs_supported ℓ hℓ
+
+/-- Extensionality for flat subgraphs (carrier fields determine the subgraph). -/
+private theorem feynmanSubgraph_ext {G : FeynmanGraph} {γ₁ γ₂ : FeynmanSubgraph G}
+    (hv : γ₁.vertices = γ₂.vertices) (hi : γ₁.internalEdges = γ₂.internalEdges)
+    (he : γ₁.externalLegs = γ₂.externalLegs) : γ₁ = γ₂ := by
+  cases γ₁; cases γ₂; cases hv; cases hi; cases he; rfl
+
+/-- The lift round-trips: forgetting recovers the original subgraph (same type,
+no transport). -/
+@[simp] theorem forget_liftFromForgetSubgraph
+    (γf : FeynmanSubgraph (ofFlatGraph Gf).forget) :
+    (liftFromForgetSubgraph γf).forget = γf := by
+  refine feynmanSubgraph_ext rfl ?_ ?_
+  · show (γf.internalEdges.map ofFlatEdge).map ResolvedFeynmanEdge.forget = γf.internalEdges
+    rw [Multiset.map_map, forget_comp_ofFlatEdge, Multiset.map_id]
+  · show (γf.externalLegs.map ofFlatLeg).map ResolvedExternalLeg.forget = γf.externalLegs
+    rw [Multiset.map_map, forget_comp_ofFlatLeg, Multiset.map_id]
+
+theorem liftFromForgetSubgraph_injective :
+    Function.Injective (liftFromForgetSubgraph (Gf := Gf)) := by
+  intro γ₁ γ₂ h
+  have := congrArg (·.forget) h
+  simpa [forget_liftFromForgetSubgraph] using this
+
+/-- Extensionality for flat admissible subgraphs (determined by `forest.elements`). -/
+private theorem admissibleSubgraph_ext {G : FeynmanGraph} [DivergenceMeasure G]
+    {A₁ A₂ : AdmissibleSubgraph G} (h : A₁.elements = A₂.elements) : A₁ = A₂ := by
+  obtain ⟨⟨e₁, d₁, nd₁⟩, cd₁⟩ := A₁
+  obtain ⟨⟨e₂, d₂, nd₂⟩, cd₂⟩ := A₂
+  cases h; rfl
+
+/-- The lift of a pairwise-disjoint forest of `(ofFlatGraph Gf).forget` to a
+resolved forest of `ofFlatGraph Gf` (transport-free: same forgetful ambient). -/
+noncomputable def ofForgetForest (Af : AdmissibleSubgraph (ofFlatGraph Gf).forget)
+    (hDisj : Af.IsPairwiseDisjoint) : ResolvedAdmissibleSubgraph (ofFlatGraph Gf) where
+  elements := Af.elements.image liftFromForgetSubgraph
+  isConnectedDivergent := by
+    intro γ hγ
+    obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hγ
+    rw [forget_liftFromForgetSubgraph]
+    exact Af.isConnectedDivergent_of_mem hδf
+  pairwiseDisjoint := by
+    intro γ₁ h₁ γ₂ h₂ hne
+    obtain ⟨δf₁, hδf₁, rfl⟩ := Finset.mem_image.mp h₁
+    obtain ⟨δf₂, hδf₂, rfl⟩ := Finset.mem_image.mp h₂
+    exact hDisj hδf₁ hδf₂ (fun h => hne (by rw [h]))
+
+@[simp] theorem ofForgetForest_elements (Af : AdmissibleSubgraph (ofFlatGraph Gf).forget)
+    (hDisj : Af.IsPairwiseDisjoint) :
+    (ofForgetForest Af hDisj).elements = Af.elements.image liftFromForgetSubgraph := rfl
+
+/-- The forest lift round-trips: forgetting recovers the original forest (same
+forgetful ambient, no transport). -/
+theorem forget_ofForgetForest (Af : AdmissibleSubgraph (ofFlatGraph Gf).forget)
+    (hDisj : Af.IsPairwiseDisjoint) : (ofForgetForest Af hDisj).forget = Af := by
+  apply admissibleSubgraph_ext
+  rw [ResolvedAdmissibleSubgraph.forget_elements, ofForgetForest_elements,
+    Finset.image_image,
+    show (ResolvedFeynmanSubgraph.forget ∘ liftFromForgetSubgraph (Gf := Gf))
+      = id from funext (fun γf => forget_liftFromForgetSubgraph γf),
+    Finset.image_id]
+
+/-- Aggregate internal edges of the forget-forest lift. -/
+theorem ofForgetForest_internalEdges_eq (Af : AdmissibleSubgraph (ofFlatGraph Gf).forget)
+    (hDisj : Af.IsPairwiseDisjoint) :
+    (ofForgetForest Af hDisj).internalEdges = Af.internalEdges.map ofFlatEdge := by
+  show (∑ γ ∈ (ofForgetForest Af hDisj).elements, γ.internalEdges) = Af.internalEdges.map ofFlatEdge
+  rw [ofForgetForest_elements,
+    Finset.sum_image (fun δ₁ _ δ₂ _ h => liftFromForgetSubgraph_injective h)]
+  conv_rhs => rw [show Af.internalEdges = ∑ δ ∈ Af.elements, δ.internalEdges from rfl,
+    map_ofFlatEdge_finset_sum]
+  exact Finset.sum_congr rfl (fun δ _ => rfl)
+
+/-- A flat proper forest of `(ofFlatGraph Gf).forget` lifts to a resolved proper
+forest (transport-free; same forgetful ambient). -/
+theorem ofForgetForest_isProperForest (Af : AdmissibleSubgraph (ofFlatGraph Gf).forget)
+    (hAf : Af ∈ ((ofFlatGraph Gf).forget.properDisjointAdmissibleDivergentSubgraphs).filter
+      (fun A => 0 < A.complementEdges.card))
+    (hDisj : Af.IsPairwiseDisjoint) :
+    (ofForgetForest Af hDisj).IsProperForest := by
+  rw [Finset.mem_filter] at hAf
+  obtain ⟨hpd, hcompl⟩ := hAf
+  rw [FeynmanGraph.mem_properDisjointAdmissibleDivergentSubgraphs] at hpd
+  obtain ⟨hnd, hhnc, hiec, hhpiec⟩ := hpd
+  rw [FeynmanGraph.mem_nonemptyDisjointAdmissibleDivergentSubgraphs] at hnd
+  obtain ⟨_, hne⟩ := hnd
+  refine ⟨hne.image _, ?_, ?_, ?_, ?_⟩
+  · intro γ hγ
+    obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hγ
+    simpa [ResolvedFeynmanSubgraph.IsNonempty, ResolvedFeynmanSubgraph.vertexCount,
+      FeynmanSubgraph.IsNonempty, FeynmanSubgraph.vertexCount] using hhnc δf hδf
+  · rw [ofForgetForest_internalEdges_eq, Multiset.card_map]; exact hiec
+  · intro γ hγ
+    obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hγ
+    have := hhpiec δf hδf
+    rwa [show (liftFromForgetSubgraph δf).internalEdges = δf.internalEdges.map ofFlatEdge from rfl,
+      Multiset.card_map]
+  · have hle' : Af.internalEdges ≤ Gf.internalEdges := by
+      have hle := admissibleSubgraph_internalEdges_le_of_pairwise Af hDisj
+      rwa [congrArg FeynmanGraph.internalEdges (forget_ofFlatGraph Gf)] at hle
+    have hcard : (ofForgetForest Af hDisj).complementEdges.card = Af.complementEdges.card := by
+      show ((ofFlatGraph Gf).internalEdges - (ofForgetForest Af hDisj).internalEdges).card
+          = ((ofFlatGraph Gf).forget.internalEdges - Af.internalEdges).card
+      rw [ofForgetForest_internalEdges_eq, ofFlatGraph_internalEdges,
+        congrArg FeynmanGraph.internalEdges (forget_ofFlatGraph Gf),
+        Multiset.card_sub (Multiset.map_le_map hle'), Multiset.card_sub hle',
+        Multiset.card_map, Multiset.card_map]
+    rw [hcard]; exact hcompl
+
 end GaugeGeometry.QFT.Combinatorial
