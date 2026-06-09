@@ -15,6 +15,8 @@ Phase 6c builds, per generator, a `ResolvedHopfPayload`, hence a
 for every generator.
 -/
 
+set_option linter.unusedSectionVars false
+
 namespace GaugeGeometry.QFT.Combinatorial
 
 variable {Gf : FeynmanGraph}
@@ -87,5 +89,60 @@ graph-independent types, so these typecheck without graph transport). -/
     (ofFlatSubgraph γ).forget.externalLegs = γ.externalLegs := by
   show (γ.externalLegs.map ofFlatLeg).map ResolvedExternalLeg.forget = γ.externalLegs
   rw [Multiset.map_map, forget_comp_ofFlatLeg, Multiset.map_id]
+
+/-! ### Phase 6c-2 — connected-divergence transfer for the subgraph lift
+
+`IsConnected`/`IsOnePI` depend only on `toFeynmanGraph` (carrier), so transfer by
+rewriting the carrier-graph equality.  `IsDivergent` depends on the ambient
+`DivergenceMeasure`; it transfers via `IsAmbientInvariantDivergence` (degree of a
+subgraph equals the degree of the self-subgraph of its own intrinsic graph). -/
+
+variable [∀ H : FeynmanGraph, DivergenceMeasure H] [IsAmbientInvariantDivergence]
+
+/-- The forgotten subgraph lift has the same intrinsic graph as the original
+(carrier-level, no graph transport). -/
+theorem forget_ofFlatSubgraph_toFeynmanGraph (δ : FeynmanSubgraph Gf) :
+    (ofFlatSubgraph δ).forget.toFeynmanGraph = δ.toFeynmanGraph := by
+  simp only [FeynmanSubgraph.toFeynmanGraph, forget_ofFlatSubgraph_vertices,
+    forget_ofFlatSubgraph_internalEdges, forget_ofFlatSubgraph_externalLegs]
+
+theorem forget_ofFlatSubgraph_isConnected (δ : FeynmanSubgraph Gf) :
+    (ofFlatSubgraph δ).forget.IsConnected ↔ δ.IsConnected := by
+  unfold FeynmanSubgraph.IsConnected
+  rw [forget_ofFlatSubgraph_toFeynmanGraph]
+
+theorem forget_ofFlatSubgraph_isOnePI (δ : FeynmanSubgraph Gf) :
+    (ofFlatSubgraph δ).forget.IsOnePI ↔ δ.IsOnePI := by
+  unfold FeynmanSubgraph.IsOnePI
+  rw [forget_ofFlatSubgraph_toFeynmanGraph]
+
+/-- Degree of a self-subgraph depends only on the (equal) ambient graph. -/
+private theorem degree_self_eq_of_graph_eq {g₁ g₂ : FeynmanGraph} (h : g₁ = g₂)
+    (wf₁ : g₁.WellFormed) (wf₂ : g₂.WellFormed) :
+    DivergenceMeasure.degree (FeynmanSubgraph.self g₁ wf₁) =
+      DivergenceMeasure.degree (FeynmanSubgraph.self g₂ wf₂) := by
+  subst h; rfl
+
+/-- The divergence degree is preserved by the subgraph lift, via
+`IsAmbientInvariantDivergence` (both equal the degree of the self-subgraph of the
+common intrinsic graph). -/
+theorem forget_ofFlatSubgraph_degree (δ : FeynmanSubgraph Gf) :
+    DivergenceMeasure.degree ((ofFlatSubgraph δ).forget) = DivergenceMeasure.degree δ := by
+  rw [← IsAmbientInvariantDivergence.degree_self_eq ((ofFlatSubgraph δ).forget),
+      ← IsAmbientInvariantDivergence.degree_self_eq δ]
+  exact degree_self_eq_of_graph_eq (forget_ofFlatSubgraph_toFeynmanGraph δ) _ _
+
+/-- **CD transfer (Phase 6c-2 headline).**  A connected-divergent flat subgraph
+lifts to a connected-divergent resolved subgraph (after forgetting).  This is the
+field needed for `ofFlatForest.isConnectedDivergent`. -/
+theorem forget_ofFlatSubgraph_isConnectedDivergent {δ : FeynmanSubgraph Gf}
+    (hδ : δ.IsConnectedDivergent) :
+    (ofFlatSubgraph δ).forget.IsConnectedDivergent := by
+  obtain ⟨hc, ho, hd⟩ := hδ
+  refine ⟨(forget_ofFlatSubgraph_isConnected δ).mpr hc,
+          (forget_ofFlatSubgraph_isOnePI δ).mpr ho, ?_⟩
+  have hd' : (0 : Int) ≤ DivergenceMeasure.degree δ := hd
+  show (0 : Int) ≤ DivergenceMeasure.degree ((ofFlatSubgraph δ).forget)
+  rw [forget_ofFlatSubgraph_degree]; exact hd'
 
 end GaugeGeometry.QFT.Combinatorial
