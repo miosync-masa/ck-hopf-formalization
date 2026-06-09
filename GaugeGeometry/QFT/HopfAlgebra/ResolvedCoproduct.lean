@@ -228,4 +228,65 @@ noncomputable def strictCoproductSumCanonical (I : ResolvedProperForestFiniteInd
 
 end ResolvedProperForestFiniteIndex
 
+/-! ## Phase 3c — resolved finite index cover laws
+
+A cover wraps a finite payload with the two laws that make its forgetful image
+*exactly* the flat proper-forest index: `forget_complete` (every flat proper forest
+is hit) and `forget_injective` (no two payload members collapse to the same flat
+forest).  Together they reindex the canonical resolved coproduct sum onto the flat
+coproduct body sum. -/
+
+/-- A finite payload of resolved proper forests whose forgetful image is exactly
+the flat proper-forest index of `G.forget`. -/
+structure ResolvedProperForestFiniteCover (G : ResolvedFeynmanGraph) where
+  /-- The underlying finite payload. -/
+  index : ResolvedProperForestFiniteIndex G
+  /-- Surjectivity: every flat proper forest is the forget of some payload member. -/
+  forget_complete :
+    ∀ Aflat ∈ (G.forget.properDisjointAdmissibleDivergentSubgraphs).filter
+        (fun A => 0 < A.complementEdges.card),
+      ∃ Ares ∈ index.carrier, Ares.forget = Aflat
+  /-- Injectivity: no two payload members forget to the same flat forest. -/
+  forget_injective :
+    ∀ A₁ ∈ index.carrier, ∀ A₂ ∈ index.carrier,
+      A₁.forget = A₂.forget → A₁ = A₂
+
+namespace ResolvedProperForestFiniteCover
+
+/-- The forgetful image of the payload carrier is exactly the flat proper-forest
+index filter. -/
+theorem forget_image_eq_flatIndex (C : ResolvedProperForestFiniteCover G) :
+    C.index.carrier.image (fun A => A.forget) =
+      (G.forget.properDisjointAdmissibleDivergentSubgraphs).filter
+        (fun A => 0 < A.complementEdges.card) := by
+  apply Finset.ext
+  intro Aflat
+  constructor
+  · intro h
+    obtain ⟨Ares, hAres, rfl⟩ := Finset.mem_image.mp h
+    exact C.index.forget_mem_flat hAres
+  · intro h
+    obtain ⟨Ares, hAres, heq⟩ := C.forget_complete Aflat h
+    exact Finset.mem_image.mpr ⟨Ares, hAres, heq⟩
+
+/-- **Cover reindex (Phase 3c headline).**  The canonical resolved coproduct sum
+over the payload equals the flat coproduct body sum over the flat proper-forest
+index.  Pure Finset reindexing: each summand is the flat canonical summand of
+`A.forget`, the carrier forgets injectively onto the flat index. -/
+theorem strictCoproductSumCanonical_eq_flat (C : ResolvedProperForestFiniteCover G)
+    (hCD : ∀ B : AdmissibleSubgraph G.forget,
+      ∀ hB : B ∈ G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf G.forget B hB)).IsConnectedDivergent) :
+    C.index.strictCoproductSumCanonical hCD =
+      ∑ Aflat ∈ (G.forget.properDisjointAdmissibleDivergentSubgraphs).filter
+          (fun A => 0 < A.complementEdges.card),
+        FeynmanGraph.admissibleForestStrictSummandWithCanonicalStars G.forget hCD Aflat := by
+  rw [ResolvedProperForestFiniteIndex.strictCoproductSumCanonical_def]
+  simp only [ResolvedAdmissibleSubgraph.strictSummandCanonicalViaForget_eq]
+  rw [← C.forget_image_eq_flatIndex,
+    Finset.sum_image (fun A₁ h₁ A₂ h₂ h => C.forget_injective A₁ h₁ A₂ h₂ h)]
+
+end ResolvedProperForestFiniteCover
+
 end GaugeGeometry.QFT.Combinatorial
