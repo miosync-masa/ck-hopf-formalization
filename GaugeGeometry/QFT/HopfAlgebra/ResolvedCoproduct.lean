@@ -1,5 +1,6 @@
 import GaugeGeometry.QFT.HopfAlgebra.ResolvedCoproductIndex
 import GaugeGeometry.QFT.HopfAlgebra.Antipode
+import GaugeGeometry.QFT.HopfAlgebra.Coassoc
 
 /-!
 # Resolved coproduct summand (Track R-4-full, Phase 2c-ii)
@@ -434,6 +435,45 @@ strict-forest coproduct as a linear map. -/
 theorem resolvedCoproduct_toLinearMap_eq_flat (PF : ResolvedHopfPayloadFamily) :
     PF.resolvedCoproduct.toLinearMap = coproduct_strict_forest.toLinearMap :=
   congrArg AlgHom.toLinearMap PF.resolvedCoproduct_eq_flat
+
+/-! ### Phase 5 — coassociativity transfer
+
+Because the resolved coproduct equals the flat one as a linear map (Phase 4c),
+coassociativity is a *rewrite*, not a new proof: rewrite `PF.resolvedCoproduct`
+to the flat coproduct and discharge by the flat strict-forest coassociativity. -/
+
+/-- **Resolved coassociativity (transfer).**  The resolved coproduct is
+coassociative, inherited from the flat strict-forest coassociativity facade
+`CoassocStrictForestH58Ready` via the Phase 4c linear-map equality. -/
+theorem resolvedCoproduct_coassoc [CoassocStrictForestH58Ready]
+    (PF : ResolvedHopfPayloadFamily) :
+    (Algebra.TensorProduct.assoc ℚ ℚ ℚ HopfH HopfH HopfH).toLinearMap ∘ₗ
+        PF.resolvedCoproduct.toLinearMap.rTensor HopfH ∘ₗ
+        PF.resolvedCoproduct.toLinearMap
+      =
+    PF.resolvedCoproduct.toLinearMap.lTensor HopfH ∘ₗ
+      PF.resolvedCoproduct.toLinearMap := by
+  rw [PF.resolvedCoproduct_toLinearMap_eq_flat]
+  exact coassoc_strict_forest_linearMap
+
+/-- **Resolved coassociativity from the two boundary principles.**  The same
+transfer, but gated on exactly the two boundary-semantics facades (plus the
+power-counting reflection) instead of the coassociativity facade — both facades
+being theorems on the resolved carrier (Track R, Phase 1e/1f).  This is the
+coassociativity side of the JAR claim, read on the resolved coproduct. -/
+theorem resolvedCoproduct_coassoc_ofReflection
+    [IsDivergenceReflectedByAdmissibleForestContract]
+    [ForestGraphInsertionUniquenessModel]
+    [ForestQuotientForestSigmaForestCoverPromotedExternalLegsLiftableModel]
+    (PF : ResolvedHopfPayloadFamily) :
+    (Algebra.TensorProduct.assoc ℚ ℚ ℚ HopfH HopfH HopfH).toLinearMap ∘ₗ
+        PF.resolvedCoproduct.toLinearMap.rTensor HopfH ∘ₗ
+        PF.resolvedCoproduct.toLinearMap
+      =
+    PF.resolvedCoproduct.toLinearMap.lTensor HopfH ∘ₗ
+      PF.resolvedCoproduct.toLinearMap := by
+  rw [PF.resolvedCoproduct_toLinearMap_eq_flat]
+  exact coassoc_strict_forest_linearMap_ofReflection
 
 end ResolvedHopfPayloadFamily
 
