@@ -394,4 +394,47 @@ theorem resolvedCoproductX_eq_coproduct_strict_forest_X {g : HopfGen}
 
 end ResolvedHopfPayload
 
+/-! ## Phase 4c — resolved coproduct as an algebra/linear map, equal to the flat one
+
+A generator-indexed family of payloads assembles into a resolved coproduct algebra
+hom via `MvPolynomial.aeval`.  Agreeing on generators with the flat coproduct
+(Phase 4b) gives equality as an `AlgHom`, hence as a `LinearMap`.  This is the form
+coassociativity transfer (Phase 5) will rewrite with. -/
+
+/-- A generator-indexed family of resolved witness payloads, with the canonical
+connected-divergence hypothesis for each. -/
+structure ResolvedHopfPayloadFamily where
+  /-- A resolved payload for each generator. -/
+  payload : ∀ g : HopfGen, ResolvedHopfPayload g
+  /-- The canonical-contraction CD hypothesis for each generator's carrier. -/
+  hCD : ∀ g : HopfGen,
+    ∀ B : AdmissibleSubgraph (payload g).G.forget,
+      ∀ hB : B ∈ (payload g).G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars (payload g).G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf (payload g).G.forget B hB)).IsConnectedDivergent
+
+namespace ResolvedHopfPayloadFamily
+
+/-- The resolved coproduct algebra hom assembled from a payload family: the algebra
+extension of the resolved coproduct-on-generators. -/
+noncomputable def resolvedCoproduct (PF : ResolvedHopfPayloadFamily) :
+    HopfH →ₐ[ℚ] HopfH ⊗[ℚ] HopfH :=
+  MvPolynomial.aeval (fun g => (PF.payload g).resolvedCoproductX (PF.hCD g))
+
+/-- **The resolved coproduct equals the flat strict-forest coproduct as an algebra
+hom**: they agree on every generator (Phase 4b). -/
+theorem resolvedCoproduct_eq_flat (PF : ResolvedHopfPayloadFamily) :
+    PF.resolvedCoproduct = coproduct_strict_forest := by
+  refine MvPolynomial.algHom_ext (fun g => ?_)
+  simp only [resolvedCoproduct, MvPolynomial.aeval_X]
+  exact (PF.payload g).resolvedCoproductX_eq_coproduct_strict_forest_X (PF.hCD g)
+
+/-- **Phase 4c headline.**  Hence the resolved coproduct equals the flat
+strict-forest coproduct as a linear map. -/
+theorem resolvedCoproduct_toLinearMap_eq_flat (PF : ResolvedHopfPayloadFamily) :
+    PF.resolvedCoproduct.toLinearMap = coproduct_strict_forest.toLinearMap :=
+  congrArg AlgHom.toLinearMap PF.resolvedCoproduct_eq_flat
+
+end ResolvedHopfPayloadFamily
+
 end GaugeGeometry.QFT.Combinatorial
