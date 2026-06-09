@@ -1,4 +1,5 @@
 import GaugeGeometry.QFT.HopfAlgebra.ResolvedCoproductIndex
+import GaugeGeometry.QFT.HopfAlgebra.Antipode
 
 /-!
 # Resolved coproduct summand (Track R-4-full, Phase 2c-ii)
@@ -339,6 +340,57 @@ theorem resolvedCoproductX_eq {g : HopfGen} (P : ResolvedHopfPayload g)
           FeynmanGraph.admissibleForestStrictSummandWithCanonicalStars P.G.forget hCD Aflat := by
   unfold resolvedCoproductX
   rw [P.cover.strictCoproductSumCanonical_eq_flat hCD]
+
+/-! ### Phase 4b — `forget_eq` transport: resolved coproduct = flat `Δ(X g)`
+
+Free-index generic lemma + `subst` + proof irrelevance, no new graph mathematics.
+The canonical body of a graph depends (as a value) only on the graph, not on the
+`hCD` proof component (which only feeds the proof field of the right `HopfGen`), so
+two canonical bodies over equal graphs are equal. -/
+
+/-- **Canonical body, free-index transport.**  The flat canonical proper-forest
+body sum depends only on the graph: equal graphs (any `hCD`s) give equal bodies.
+Proof: `subst` the graph equality, then proof-irrelevance of the right `HopfGen`
+(its `.val`/class is `hCD`-independent). -/
+private theorem canonicalBody_eq_of_graph_eq {G₁ G₂ : FeynmanGraph}
+    (hG : G₁ = G₂)
+    (hCD₁ : ∀ A : AdmissibleSubgraph G₁,
+      ∀ hA : A ∈ G₁.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars G₁ A
+          (FeynmanGraph.admissibleForestCanonicalStarOf G₁ A hA)).IsConnectedDivergent)
+    (hCD₂ : ∀ A : AdmissibleSubgraph G₂,
+      ∀ hA : A ∈ G₂.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars G₂ A
+          (FeynmanGraph.admissibleForestCanonicalStarOf G₂ A hA)).IsConnectedDivergent) :
+    (∑ A ∈ G₁.properDisjointAdmissibleDivergentSubgraphs.filter
+        (fun A => 0 < A.complementEdges.card),
+        FeynmanGraph.admissibleForestStrictSummandWithCanonicalStars G₁ hCD₁ A)
+    = (∑ A ∈ G₂.properDisjointAdmissibleDivergentSubgraphs.filter
+        (fun A => 0 < A.complementEdges.card),
+        FeynmanGraph.admissibleForestStrictSummandWithCanonicalStars G₂ hCD₂ A) := by
+  subst hG
+  refine Finset.sum_congr rfl (fun A _ => ?_)
+  have hR : FeynmanGraph.admissibleForestRightWithCanonicalStars G₁ hCD₁ =
+      FeynmanGraph.admissibleForestRightWithCanonicalStars G₁ hCD₂ := by
+    funext B hB; exact Subtype.ext rfl
+  unfold FeynmanGraph.admissibleForestStrictSummandWithCanonicalStars
+  rw [hR]
+
+/-- **Phase 4b headline.**  The resolved coproduct-on-generator (primitive terms +
+canonical body over the payload) equals the flat `coproduct_strict_forest (X g)`.
+The `forget_eq` graph transport is closed by `canonicalBody_eq_of_graph_eq`; the
+primitive terms agree as `gen g = X g`, and the flat index is
+`forestCoproductProperForestIndex g` by definition. -/
+theorem resolvedCoproductX_eq_coproduct_strict_forest_X {g : HopfGen}
+    (P : ResolvedHopfPayload g)
+    (hCD : ∀ B : AdmissibleSubgraph P.G.forget,
+      ∀ hB : B ∈ P.G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars P.G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf P.G.forget B hB)).IsConnectedDivergent) :
+    P.resolvedCoproductX hCD = coproduct_strict_forest (MvPolynomial.X g) := by
+  rw [P.resolvedCoproductX_eq hCD, coproduct_strict_forest_X_canonicalBody_eq g]
+  unfold gen forestCoproductProperForestIndex
+  rw [canonicalBody_eq_of_graph_eq P.forget_eq hCD (antipodeForestCanonicalHCD g)]
 
 end ResolvedHopfPayload
 
