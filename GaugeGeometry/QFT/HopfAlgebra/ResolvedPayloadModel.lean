@@ -407,4 +407,75 @@ theorem ofForgetForest_isProperForest (Af : AdmissibleSubgraph (ofFlatGraph Gf).
         Multiset.card_map, Multiset.card_map]
     rw [hcard]; exact hcompl
 
+/-- Extensionality for resolved admissible subgraphs (determined by `elements`). -/
+private theorem resolvedAdmissibleSubgraph_ext {G : ResolvedFeynmanGraph}
+    {A₁ A₂ : ResolvedAdmissibleSubgraph G} (h : A₁.elements = A₂.elements) : A₁ = A₂ := by
+  obtain ⟨e₁, cd₁, pd₁⟩ := A₁; obtain ⟨e₂, cd₂, pd₂⟩ := A₂; cases h; rfl
+
+/-- Resolved admissible subgraphs compared by `elements` (proof-irrelevant
+otherwise); needed for the carrier `Finset.image`. -/
+instance instDecEqResolvedAdmissibleSubgraph (G : ResolvedFeynmanGraph) :
+    DecidableEq (ResolvedAdmissibleSubgraph G) := by
+  classical
+  intro A₁ A₂
+  by_cases h : A₁.elements = A₂.elements
+  · exact isTrue (resolvedAdmissibleSubgraph_ext h)
+  · exact isFalse (fun heq => h (by rw [heq]))
+
+/-! ### Phase 6c-3 — canonical cover, payload, and the inhabited family -/
+
+/-- The canonical finite proper-forest cover of `ofFlatGraph (repG g)`: the flat
+proper-forest index lifted edge-for-edge via the constant-id lift. -/
+noncomputable def canonicalCover (g : HopfGen) :
+    ResolvedProperForestFiniteCover (ofFlatGraph (repG g).toFeynmanGraph) where
+  index :=
+    { carrier := (((ofFlatGraph (repG g).toFeynmanGraph).forget.properDisjointAdmissibleDivergentSubgraphs).filter
+          (fun A => 0 < A.complementEdges.card)).attach.image
+        (fun A => ofForgetForest A.1
+          (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _
+            (Finset.mem_filter.mp A.2).1))
+      mem_proper := by
+        intro Ares hAres
+        obtain ⟨⟨Af, hAf⟩, _, rfl⟩ := Finset.mem_image.mp hAres
+        exact ofForgetForest_isProperForest Af hAf _ }
+  forget_complete := by
+    intro Aflat hAflat
+    refine ⟨ofForgetForest Aflat
+      (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _
+        (Finset.mem_filter.mp hAflat).1), ?_, forget_ofForgetForest _ _⟩
+    exact Finset.mem_image.mpr ⟨⟨Aflat, hAflat⟩, Finset.mem_attach _ _, rfl⟩
+  forget_injective := by
+    intro A₁ hA₁ A₂ hA₂ heq
+    obtain ⟨⟨B₁, hB₁⟩, _, rfl⟩ := Finset.mem_image.mp hA₁
+    obtain ⟨⟨B₂, hB₂⟩, _, rfl⟩ := Finset.mem_image.mp hA₂
+    rw [forget_ofForgetForest, forget_ofForgetForest] at heq
+    apply resolvedAdmissibleSubgraph_ext
+    rw [ofForgetForest_elements, ofForgetForest_elements, heq]
+
+/-- The canonical resolved Hopf payload for a generator `g`: the constant-id lift
+of `repG g`, with its canonical proper-forest cover. -/
+noncomputable def canonicalResolvedHopfPayload (g : HopfGen) : ResolvedHopfPayload g where
+  G := ofFlatGraph (repG g).toFeynmanGraph
+  forget_eq := forget_ofFlatGraph (repG g).toFeynmanGraph
+  cover := canonicalCover g
+
+/-- The canonical resolved Hopf payload **family**, supplying a payload for every
+generator (constant-id lift) together with the canonical-contraction CD
+hypothesis (from ambient preservation, transported along `forget_ofFlatGraph`). -/
+noncomputable def canonicalResolvedHopfPayloadFamily : ResolvedHopfPayloadFamily where
+  payload := canonicalResolvedHopfPayload
+  hCD := fun g =>
+    FeynmanGraph.admissibleForestCanonicalContractGraph_hCD_of_ambient_preservation
+      ((ofFlatGraph (repG g).toFeynmanGraph).forget)
+      ((forget_ofFlatGraph (repG g).toFeynmanGraph).symm ▸ repG_wellFormed g)
+      ((forget_ofFlatGraph (repG g).toFeynmanGraph).symm ▸ repG_isOnePI g)
+      ((forget_ofFlatGraph (repG g).toFeynmanGraph).symm ▸ repG_isConnectedDivergent g)
+
+/-- **Phase 6c-3 headline / non-vacuity.**  The resolved-payload-family hypothesis
+is inhabited: a canonical constant-id lift supplies a payload for every generator.
+Hence the resolved coproduct of Phase 4 (and its coassociativity, Phase 5) is not
+merely conditional on an abstract payload — such a family provably exists. -/
+theorem resolvedHopfPayloadFamily_exists : Nonempty ResolvedHopfPayloadFamily :=
+  ⟨canonicalResolvedHopfPayloadFamily⟩
+
 end GaugeGeometry.QFT.Combinatorial
