@@ -365,6 +365,7 @@ These complete the conditional resolved coproduct story (`ResolvedCoproduct.lean
 | 4c | `ResolvedHopfPayloadFamily.resolvedCoproduct`, `…_toLinearMap_eq_flat` | ✅ | resolved coproduct **= flat coproduct** as an `AlgHom`/`LinearMap` |
 | 5 | `resolvedCoproduct_coassoc`, `…_ofReflection` | ✅ | resolved **coassociativity by transfer**, gated only on the two boundary facades |
 | 6c | `resolvedHopfPayloadFamily_exists` | ✅ | **the payload family is inhabited** (canonical constant-id lift) |
+| 7 | `ResolvedHopfStructureCertificate`, `resolvedHopfStructureCertificate_holds`, `exists_resolvedHopfStructureCertificate` | ✅ | **Hopf-structure certificate** for the resolved-payload coproduct |
 
 **Non-vacuity (unicorn objection closed).**  Phases 4–5 show the resolved coproduct
 equals the flat one as a linear map and inherits coassociativity *given* a payload
@@ -381,9 +382,21 @@ Key design point: the lift targets subgraphs/forests of `(ofFlatGraph Gf).forget
 graph-type transport is needed; `EdgeIdsUnique` is not required (the coproduct
 transfer never uses it), and the algebra carrier stays flat `HopfH`.
 
-**Remaining (optional):** package a full unconditional resolved `HopfAlgebra`
-instance — the antipode is inherited from the carrier-independent convolution proof
-(§4) at no cost; only the bialgebra/coalgebra packaging is left.
+**Phase 7 — Hopf-structure certificate (`ResolvedHopfCertificate.lean`).**  We do
+**not** register a second `HopfAlgebra`/`Coalgebra`/`Bialgebra` typeclass instance
+on `HopfH` (it would clash with the existing flat instance on the same carrier).
+Instead we record a *certificate*: `ResolvedHopfStructureCertificate` bundles
+coassociativity, both counit laws, and both antipode axioms for the
+resolved-payload coproduct, and `resolvedHopfStructureCertificate_holds` proves it —
+every field transfers for free from the flat strict-forest coproduct via the Phase
+4c equalities.  `exists_resolvedHopfStructureCertificate` combines this with the
+Phase 6c non-vacuity: an explicit canonical payload family whose coproduct satisfies
+all the Hopf laws exists, depending only on `propext`/`Classical.choice`/`Quot.sound`.
+
+**R-4-full is effectively closed:** the boundary-resolved payload coproduct equals
+the flat coproduct as a linear map, satisfies the full Hopf-structure law bundle,
+and is inhabited by a canonical lift — the only thing deliberately *not* done is
+installing a duplicate typeclass instance on the flat carrier.
 
 *Completed since the last revision:* coassociativity `forest_inj` and the full
 forest-cover source connected-divergence (`forest_cd`) are theorems; the

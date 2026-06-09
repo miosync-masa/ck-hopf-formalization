@@ -88,12 +88,22 @@ modules, not yet wired into `Main`):
   resolved coproduct/coassociativity are not conditional on an abstract payload: an
   explicit, provably-existent model is exhibited.
 
+- **Phase 7** — `ResolvedHopfCertificate.lean`: an axiom-clean resolved Hopf
+  structure **certificate**. It is *not* registered as a competing Mathlib typeclass
+  instance (that would clash with the existing flat `Coalgebra`/`Bialgebra`/
+  `HopfAlgebra` instance on the same carrier `HopfH`); instead it certifies that the
+  explicitly inhabited boundary-resolved payload coproduct satisfies the Hopf laws —
+  coassociativity, both counit laws, and both antipode axioms
+  (`resolvedHopfStructureCertificate_holds`), with an explicit canonical family
+  exhibited (`exists_resolvedHopfStructureCertificate`).
+
 Design conclusions: the **algebra carrier stays flat `HopfH`** — no resolved
 generator type, no native resolved `Fintype`, no ambient id-uniqueness assumption;
-the resolved carrier is a *semantic witness layer* reached through `forget`. What is
-**not** yet packaged is a full unconditional resolved `HopfAlgebra` instance (the
-antipode would be inherited from the carrier-independent convolution proof; only the
-bialgebra/coalgebra packaging remains).
+the resolved carrier is a *semantic witness layer* reached through `forget`. The
+resolved-payload coproduct equals the flat coproduct as a linear map, satisfies the
+full Hopf-structure law bundle, and is inhabited by a canonical lift — the only
+thing deliberately *not* done is installing a duplicate typeclass instance on the
+flat carrier.
 
 ## Build
 

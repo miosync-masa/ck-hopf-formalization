@@ -109,14 +109,25 @@ ResolvedPayloadModel  ✅  (R-4-full Phase 6c)
      │  resolvedHopfPayloadFamily_exists   (axioms: propext, Classical.choice, Quot.sound)
      ▼
   non-vacuity / unicorn objection CLOSED ✅
+
+ResolvedHopfCertificate  ✅  (R-4-full Phase 7)
+  ResolvedPayloadModel      ─ payload existence ─┐
+  ResolvedCoproduct         ─ resolved Δ = flat Δ ┤
+  Coassoc/Antipode/Counit   ─ flat Hopf laws ─────┤  (all transferred by rw)
+                                                  ▼
+  ResolvedHopfStructureCertificate
+  resolvedHopfStructureCertificate_holds   (coassoc + counit×2 + antipode×2)
+  exists_resolvedHopfStructureCertificate  ✅  (inhabited + all Hopf laws)
 ```
 
-The resolved coproduct (= flat coproduct as a linear map) and its coassociativity
-are therefore **not** conditional on an abstract payload: a canonical constant-id
-lift provably supplies a payload family for every generator
-(`resolvedHopfPayloadFamily_exists`).  This does **not** yet package a full
-unconditional resolved `HopfAlgebra` instance (optional; the antipode is inherited
-from the carrier-independent convolution proof, leaving only bialgebra packaging).
+So the resolved-payload coproduct equals the flat coproduct as a linear map,
+satisfies the full Hopf-structure law bundle (`resolvedHopfStructureCertificate_holds`),
+and is inhabited by a canonical constant-id lift
+(`exists_resolvedHopfStructureCertificate`) — all depending only on
+`propext`/`Classical.choice`/`Quot.sound`.  We deliberately do **not** register a
+second `HopfAlgebra`/`Coalgebra`/`Bialgebra` typeclass instance on `HopfH` (it would
+clash with the existing flat instance on the same carrier); the certificate carries
+the full structural content without that clash.  **R-4-full is effectively closed.**
 
 ---
 
