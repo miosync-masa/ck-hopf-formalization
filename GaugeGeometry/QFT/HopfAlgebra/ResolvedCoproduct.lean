@@ -289,4 +289,57 @@ theorem strictCoproductSumCanonical_eq_flat (C : ResolvedProperForestFiniteCover
 
 end ResolvedProperForestFiniteCover
 
+/-! ## Phase 4a — generator-level resolved witness package
+
+To compare with `coproduct_strict_forest (X g)` we need, per generator `g`, a
+resolved graph whose forget is the flat representative `(repG g).toFeynmanGraph`,
+plus a finite proper-forest cover.  This is `ResolvedHopfPayload g`.  Phase 4a
+records the resolved coproduct-on-generator as *primitive terms + flat canonical
+body sum over `P.G.forget`* (Phase 3c via the cover).  Identifying that flat body
+with `coproduct_strict_forest (X g)` is the `forget_eq` transport between
+`P.G.forget` and `(repG g).toFeynmanGraph` (Phase 4b) — propositional, not
+definitional, because `AdmissibleSubgraph` is graph-type-indexed. -/
+
+/-- A generator-level resolved witness package: a resolved graph whose forget is
+the canonical flat representative of `g`, plus a finite proper-forest cover. -/
+structure ResolvedHopfPayload (g : HopfGen) where
+  /-- The resolved carrier graph. -/
+  G : ResolvedFeynmanGraph
+  /-- Its forget is the flat representative of `g`. -/
+  forget_eq : G.forget = (repG g).toFeynmanGraph
+  /-- A finite proper-forest cover of `G`. -/
+  cover : ResolvedProperForestFiniteCover G
+
+namespace ResolvedHopfPayload
+
+/-- The resolved coproduct on the generator `X g`, via the payload: primitive
+terms plus the canonical resolved body sum over the cover. -/
+noncomputable def resolvedCoproductX {g : HopfGen} (P : ResolvedHopfPayload g)
+    (hCD : ∀ B : AdmissibleSubgraph P.G.forget,
+      ∀ hB : B ∈ P.G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars P.G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf P.G.forget B hB)).IsConnectedDivergent) :
+    HopfH ⊗[ℚ] HopfH :=
+  MvPolynomial.X g ⊗ₜ[ℚ] (1 : HopfH) + (1 : HopfH) ⊗ₜ[ℚ] MvPolynomial.X g
+  + P.cover.index.strictCoproductSumCanonical hCD
+
+/-- The resolved coproduct-on-generator equals primitive terms plus the flat
+canonical body sum over `P.G.forget`'s proper-forest index (Phase 3c via the
+cover).  The remaining identification of this flat body with
+`coproduct_strict_forest (X g)` is the `forget_eq` transport step (Phase 4b). -/
+theorem resolvedCoproductX_eq {g : HopfGen} (P : ResolvedHopfPayload g)
+    (hCD : ∀ B : AdmissibleSubgraph P.G.forget,
+      ∀ hB : B ∈ P.G.forget.properDisjointAdmissibleDivergentSubgraphs,
+        (FeynmanGraph.admissibleForestContractGraphWithStars P.G.forget B
+          (FeynmanGraph.admissibleForestCanonicalStarOf P.G.forget B hB)).IsConnectedDivergent) :
+    P.resolvedCoproductX hCD =
+      MvPolynomial.X g ⊗ₜ[ℚ] (1 : HopfH) + (1 : HopfH) ⊗ₜ[ℚ] MvPolynomial.X g
+      + ∑ Aflat ∈ (P.G.forget.properDisjointAdmissibleDivergentSubgraphs).filter
+          (fun A => 0 < A.complementEdges.card),
+          FeynmanGraph.admissibleForestStrictSummandWithCanonicalStars P.G.forget hCD Aflat := by
+  unfold resolvedCoproductX
+  rw [P.cover.strictCoproductSumCanonical_eq_flat hCD]
+
+end ResolvedHopfPayload
+
 end GaugeGeometry.QFT.Combinatorial
