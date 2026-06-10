@@ -98,4 +98,77 @@ So weight instantiation needs **no new mathematics**: the concrete `imageWeight`
 `forestWeight`/`mixedWeight` are existing defs and the two `_eq` fields are existing
 lemmas — only the resolved-side wrappers + the σ-cover data fields remain. -/
 
+/-! ## Step 7J — concrete weight wrapper (via flat alignment)
+
+The flat H5.8 terms (`forestQuotientForestSigmaTerm`, `forestComponentSplitChoiceSigmaTerm`,
+`forestComponentSplitPhi`, `forestComponentSplitPhi_term_eq_of_split`) are **`private`**
+to `Coassoc.lean`, so they cannot be named from this standalone track.  We therefore
+keep the wrapper **abstract over an alignment**: the alignment carries the flat image
+type, term, branch map, the term-agreement, and the maps from the resolved layer's
+indices to the flat split indices, with the two commutation squares.  The concrete
+alignment (plugging the actual private defs) is the single point where this track meets
+`Coassoc.lean`'s privates — to be supplied there. -/
+
+/-- Alignment of a resolved finite branch-map layer to the flat H5.8 indices/terms.
+All flat data is abstracted (the concrete flat defs are `private` to `Coassoc.lean`). -/
+structure ResolvedFlatH58WeightAlignment (FL : ResolvedFiniteBranchMapLayer)
+    (Target : Type*) [AddCommMonoid Target] where
+  /-- The flat image type (`forestQuotientForestSigma g`). -/
+  FlatImage : Type*
+  /-- The flat split-choice index (`forestComponentSplitChoiceSigma g`). -/
+  SplitIdx : Type*
+  /-- The flat image term (`forestQuotientForestSigmaTerm`). -/
+  flatTerm : FlatImage → Target
+  /-- The flat split term (`forestComponentSplitChoiceSigmaTerm`). -/
+  splitTerm : SplitIdx → Target
+  /-- The flat branch map (`forestComponentSplitPhi`). -/
+  flatBranch : SplitIdx → FlatImage
+  /-- The term agreement (`forestComponentSplitPhi_term_eq_of_split`). -/
+  splitTerm_eq : ∀ s, splitTerm s = flatTerm (flatBranch s)
+  /-- Resolved image → flat image. -/
+  flatImageOf : FL.layer.Image → FlatImage
+  /-- Resolved forest index → flat split index. -/
+  forestSplitOf : FL.layer.ForestIdx → SplitIdx
+  /-- Resolved mixed index → flat split index. -/
+  mixedSplitOf : FL.layer.MixedIdx → SplitIdx
+  /-- Forest commutation square. -/
+  forest_comm : ∀ q, flatImageOf (FL.layer.forestImage q) = flatBranch (forestSplitOf q)
+  /-- Mixed commutation square. -/
+  mixed_comm : ∀ q, flatImageOf (FL.layer.mixedImage q) = flatBranch (mixedSplitOf q)
+
+/-- Pull the flat terms back through the alignment to a concrete `ResolvedH58WeightData`.
+The two `_eq` fields are two-line `rw`s using the supplied term agreement + commutation
+(no new mathematics). -/
+noncomputable def ResolvedFlatH58WeightAlignment.toWeightData {FL : ResolvedFiniteBranchMapLayer}
+    {Target : Type*} [AddCommMonoid Target] (A : ResolvedFlatH58WeightAlignment FL Target) :
+    ResolvedH58WeightData FL Target where
+  imageWeight := fun z => A.flatTerm (A.flatImageOf z)
+  forestWeight := fun q => A.splitTerm (A.forestSplitOf q)
+  mixedWeight := fun q => A.splitTerm (A.mixedSplitOf q)
+  forestWeight_eq := fun q => by rw [A.splitTerm_eq, A.forest_comm]
+  mixedWeight_eq := fun q => by rw [A.splitTerm_eq, A.mixed_comm]
+
+/-- **Concrete H5.8 sum equality** through the alignment: the flat-term sum over images
+splits into the flat split-term sums over the forest and mixed branches. -/
+theorem ResolvedFlatH58WeightAlignment.sum_reindex {FL : ResolvedFiniteBranchMapLayer}
+    {Target : Type*} [AddCommMonoid Target] (A : ResolvedFlatH58WeightAlignment FL Target) :
+    ∑ z ∈ FL.imageCarrier, A.flatTerm (A.flatImageOf z) =
+      (∑ q ∈ FL.forestCarrier, A.splitTerm (A.forestSplitOf q)) +
+      (∑ q ∈ FL.mixedCarrier, A.splitTerm (A.mixedSplitOf q)) :=
+  A.toWeightData.sum_reindex
+
+/-! **Report (7J).**
+* `ResolvedFlatH58WeightAlignment` + `toWeightData` + `sum_reindex` — landed, abstract
+  over the (private) flat data.  `forestWeight_eq`/`mixedWeight_eq` are discharged by
+  `rw [splitTerm_eq, forest_comm/​mixed_comm]` — exactly the existing
+  `forestComponentSplitPhi_term_eq_of_split` plus the commutation squares; **no new
+  mathematics**.
+* The only remaining flat-facing step is to *construct* the concrete alignment inside
+  `Coassoc.lean` (where the privates live): `flatTerm := forestQuotientForestSigmaTerm`,
+  `splitTerm := forestComponentSplitChoiceSigmaTerm`, `flatBranch := forestComponentSplitPhi`,
+  `splitTerm_eq := forestComponentSplitPhi_term_eq_of_split`, with `flatImageOf`/
+  `forestSplitOf`/`mixedSplitOf` the resolved→flat index maps and the two commutation
+  squares from the branch-map definitions.  That is the single contact point between this
+  standalone track and the flat H5.8 privates. -/
+
 end GaugeGeometry.QFT.Combinatorial
