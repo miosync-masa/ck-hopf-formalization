@@ -82,10 +82,77 @@ connectivity statement:
   one-vertex case (where positivity of `internalEdges.card` would force a self-loop,
   which `SupportAdj` drops).
 
-Per the HALT this reachability campaign is **not** entered here.  Step 6C-3 delivers
-edge-endpoint saturation (the structural half); the no-isolated-vertex half — hence
-full `component_vertices_subset_parent_of_edges`, hence the reverse source-vertex
-recovery and a constructive `remnant_vertex_recovery` — remains the precise next
-target. -/
+Step 6C-3 delivered edge-endpoint saturation (the structural half).  Step 6C-4 below
+discharges the no-isolated-vertex half via a `ReflTransGen.cases_head` first-step
+argument, completing component vertex-saturation. -/
+
+/-! ### Step 6C-4 — no isolated vertex (connected + positive edges) -/
+
+/-- **First-step lemma.**  If `v` reaches a *different* vertex `u`, the first hop is an
+internal edge incident to `v` (head of the reflexive-transitive `SupportAdj` chain). -/
+theorem incident_edge_of_reachable_ne {H : FeynmanGraph} {v u : VertexId}
+    (hReach : H.SupportReachable v u) (hne : v ≠ u) :
+    ∃ e ∈ H.internalEdges, e.source = v ∨ e.target = v := by
+  rw [FeynmanGraph.SupportReachable, SimpleGraph.reachable_iff_reflTransGen] at hReach
+  rcases hReach.cases_head with h | ⟨w, hadj, _⟩
+  · exact absurd h hne
+  · have hadj' : H.SupportAdj v w := hadj
+    obtain ⟨_, e, heH, hend⟩ := hadj'
+    rcases hend with ⟨hs, _⟩ | ⟨_, ht⟩
+    · exact ⟨e, heH, Or.inl hs⟩
+    · exact ⟨e, heH, Or.inr ht⟩
+
+/-- **No isolated vertex (flat).**  Every vertex of a connected subgraph with a
+positive internal-edge count is incident to some internal edge. -/
+theorem feynmanSubgraph_vertex_incident_edge_of_connected_pos
+    {Gf : FeynmanGraph} {γ : FeynmanSubgraph Gf}
+    (hConn : γ.IsConnected) (hPos : 0 < γ.internalEdges.card)
+    {v : VertexId} (hv : v ∈ γ.vertices) :
+    ∃ e ∈ γ.internalEdges, e.source = v ∨ e.target = v := by
+  obtain ⟨e₀, he₀⟩ := Multiset.card_pos_iff_exists_mem.mp hPos
+  have hu : e₀.source ∈ γ.vertices := (γ.edges_supported e₀ he₀).1
+  by_cases hvu : v = e₀.source
+  · exact ⟨e₀, he₀, Or.inl hvu.symm⟩
+  · have hReach : γ.toFeynmanGraph.SupportReachable v e₀.source := hConn hv hu
+    obtain ⟨e, heT, hend⟩ := incident_edge_of_reachable_ne hReach hvu
+    rw [FeynmanSubgraph.toFeynmanGraph_internalEdges] at heT
+    exact ⟨e, heT, hend⟩
+
+/-- **No isolated vertex (resolved).**  Lifted to resolved subgraphs through `forget`
+(`forget` preserves vertices, edge-count, and edge endpoints). -/
+theorem resolvedSubgraph_vertex_incident_edge_of_connected_pos
+    {γ : ResolvedFeynmanSubgraph G}
+    (hConn : γ.forget.IsConnected) (hPos : 0 < γ.internalEdges.card)
+    {v : VertexId} (hv : v ∈ γ.vertices) :
+    ∃ e ∈ γ.internalEdges, e.source = v ∨ e.target = v := by
+  have hPosF : 0 < γ.forget.internalEdges.card := by
+    rw [ResolvedFeynmanSubgraph.forget_internalEdges, Multiset.card_map]; exact hPos
+  have hvF : v ∈ γ.forget.vertices := hv
+  obtain ⟨ef, hef, hend⟩ :=
+    feynmanSubgraph_vertex_incident_edge_of_connected_pos hConn hPosF hvF
+  rw [ResolvedFeynmanSubgraph.forget_internalEdges, Multiset.mem_map] at hef
+  obtain ⟨e, heγ, hfe⟩ := hef
+  refine ⟨e, heγ, ?_⟩
+  rcases hend with h | h
+  · left; rw [← hfe] at h; exact h
+  · right; rw [← hfe] at h; exact h
+
+/-! ### Step 6C-5 — full component vertex-saturation -/
+
+/-- **Component vertex-saturation.**  If `γ` contains all of `Aout`'s internal edges
+and a component `η` is connected with positive edges, then `η`'s vertices lie in
+`γ.vertices` (every `η`-vertex is an `η`-edge endpoint, and those edges land in `γ`). -/
+theorem component_vertices_subset_parent_of_edges
+    (Aout : ResolvedAdmissibleSubgraph G) {η γ : ResolvedFeynmanSubgraph G}
+    (hη : η ∈ Aout.elements) (hConn : η.forget.IsConnected)
+    (hPos : 0 < η.internalEdges.card)
+    (hA : Aout.internalEdges ≤ γ.internalEdges) :
+    η.vertices ⊆ γ.vertices := by
+  intro v hv
+  obtain ⟨e, heη, hend⟩ := resolvedSubgraph_vertex_incident_edge_of_connected_pos hConn hPos hv
+  have hEnds := component_edge_endpoints_in_parent Aout hη hA heη
+  rcases hend with h | h
+  · rw [← h]; exact hEnds.1
+  · rw [← h]; exact hEnds.2
 
 end GaugeGeometry.QFT.Combinatorial
