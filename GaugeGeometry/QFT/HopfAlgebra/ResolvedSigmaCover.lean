@@ -76,4 +76,61 @@ theorem resolved_promotedComponent_externalLegs_le_plus
     η.externalLegs ≤ resolvedSourceExactPlusExternalLegs Aout starOf δVertices :=
   Finset.single_le_sum (fun _ _ => Multiset.zero_le _) hη
 
+/-! ## Step 6(A) — resolved insertion injOn packaging
+
+The resolved replacement for the flat forest-branch injectivity consumer
+`forestComponentForestChoiceParentRemnantBare_injOn`: a *direct wrapper* of
+`parent_eq_of_remainder_eq`.
+
+Note on `hV`: the source-vertex equality `γ₁.vertices = γ₂.vertices` **cannot** be
+recovered locally from the remnant equality, because the quotient vertices are
+`γ.vertices.image (Aout.retargetVertex starOf)` and `retargetVertex` collapses each
+component to its star (non-injective).  In flat, the recovery comes from a separate
+σ-index construction (B-forest-2a, remnant-source-vertices); here `hV` stays an
+explicit premise to be supplied by the resolved σ-index later. -/
+
+/-- Resolved parent-remnant map: the quotient/remainder of a parent subgraph through
+the outer forest. Mirrors the flat `ParentRemnant`. -/
+noncomputable def resolvedParentRemnant
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    ResolvedFeynmanSubgraph (Aout.contractWithStars starOf) :=
+  Aout.quotientRemainderSubgraph starOf γ
+
+/-- **Resolved insertion injectivity (Finset form).**  On a set `S` of parent
+subgraphs whose pairwise-equal remnants force equal source vertices (`hV`) and which
+all contain `Aout`'s edges (`hA`), the parent-remnant map is injective — the resolved
+replacement for the flat `forestComponentForestChoiceParentRemnantBare_injOn`, here a
+direct wrapper of `parent_eq_of_remainder_eq`. -/
+theorem resolvedParentRemnant_injOn_finset
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (hEdgeId : G.EdgeIdsUnique) (hLegId : G.LegIdsUnique)
+    {S : Finset (ResolvedFeynmanSubgraph G)}
+    (hV : ∀ γ₁ ∈ S, ∀ γ₂ ∈ S,
+        resolvedParentRemnant Aout starOf γ₁ = resolvedParentRemnant Aout starOf γ₂ →
+        γ₁.vertices = γ₂.vertices)
+    (hA : ∀ γ ∈ S, Aout.internalEdges ≤ γ.internalEdges)
+    {γ₁ γ₂ : ResolvedFeynmanSubgraph G} (hγ₁ : γ₁ ∈ S) (hγ₂ : γ₂ ∈ S)
+    (hRem : resolvedParentRemnant Aout starOf γ₁ = resolvedParentRemnant Aout starOf γ₂) :
+    γ₁ = γ₂ :=
+  Aout.parent_eq_of_remainder_eq hEdgeId hLegId starOf
+    (hV γ₁ hγ₁ γ₂ hγ₂ hRem) (hA γ₁ hγ₁) (hA γ₂ hγ₂) hRem
+
+/-- **Resolved insertion injectivity (`Set.InjOn` form).** -/
+theorem resolvedParentRemnant_injOn
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (hEdgeId : G.EdgeIdsUnique) (hLegId : G.LegIdsUnique)
+    {S : Finset (ResolvedFeynmanSubgraph G)}
+    (hV : ∀ γ₁ ∈ S, ∀ γ₂ ∈ S,
+        resolvedParentRemnant Aout starOf γ₁ = resolvedParentRemnant Aout starOf γ₂ →
+        γ₁.vertices = γ₂.vertices)
+    (hA : ∀ γ ∈ S, Aout.internalEdges ≤ γ.internalEdges) :
+    Set.InjOn (resolvedParentRemnant Aout starOf) ↑S := by
+  intro γ₁ hγ₁ γ₂ hγ₂ hRem
+  exact resolvedParentRemnant_injOn_finset Aout starOf hEdgeId hLegId hV hA
+    (Finset.mem_coe.mp hγ₁) (Finset.mem_coe.mp hγ₂) hRem
+
 end GaugeGeometry.QFT.Combinatorial
