@@ -39251,6 +39251,45 @@ theorem coassoc_strict_forest_linearMap_ofReflection
       coproduct_strict_forest.toLinearMap :=
   coassoc_strict_forest_linearMap
 
+/-! ### Public bridge wrappers (R-4-superfull Step 7L)
+
+Thin public aliases of the H5.8 split-reindex private objects, exposed for the
+standalone resolved track to construct `ResolvedFlatH58WeightAlignment` downstream.
+Alias-only: no proof changes, no behavioural change. -/
+
+/-- Public alias: flat RHS quotient-forest image type. -/
+abbrev h58BridgeQuotientSigma [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : Type := forestQuotientForestSigma g
+
+/-- Public alias: flat LHS split-choice index type. -/
+abbrev h58BridgeSplitChoiceSigma [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : Type := forestComponentSplitChoiceSigma g
+
+/-- Public alias: flat RHS quotient-forest finite index. -/
+noncomputable def h58BridgeQuotientIndex [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : Finset (forestQuotientForestSigma g) :=
+  forestQuotientForestSigmaIndex g
+
+/-- Public alias: flat LHS split-choice finite index. -/
+noncomputable def h58BridgeSplitChoiceIndex [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : Finset (forestComponentSplitChoiceSigma g) :=
+  forestComponentSplitChoiceSigmaIndex g
+
+/-- Public alias: flat RHS quotient-forest tensor term. -/
+noncomputable def h58BridgeQuotientTerm [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : forestQuotientForestSigma g → HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH) :=
+  forestQuotientForestSigmaTerm g
+
+/-- Public alias: flat LHS split-choice tensor term. -/
+noncomputable def h58BridgeSplitChoiceTerm [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : forestComponentSplitChoiceSigma g → HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH) :=
+  forestComponentSplitChoiceSigmaTerm g
+
+/-- Public alias: flat split branch map `φ`. -/
+noncomputable def h58BridgeSplitPhi [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : forestComponentSplitChoiceSigma g → forestQuotientForestSigma g :=
+  forestComponentSplitPhi g
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
