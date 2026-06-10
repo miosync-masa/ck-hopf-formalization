@@ -246,4 +246,81 @@ With `forest_sat` (ph.3) and `mixed_unsat` (here), the **discriminator half** of
 `ResolvedBranchMapLayer` is complete; remaining for instantiation: `forest_inj`
 (have, ph.1/ph.3), `mixed_inj` (field), `cover` (next). -/
 
+/-! ## Step 7D phase 5 — assemble `ResolvedBranchMapLayer`
+
+The wiring constructor: from forest/mixed image data plus the `mixed_inj`/`cover`
+fields, build an actual `ResolvedBranchMapLayer`.  `forest_sat`/`mixed_unsat` are now
+supplied automatically (ph.3/ph.4); `mixed_inj`/`cover` remain explicit fields. -/
+
+/-- Instantiation data for the branch-map layer: forest/mixed image families plus the
+remaining (`forest_inj`/`mixed_inj`/`cover`) obligations as explicit fields. -/
+structure ResolvedBranchMapInstantiation (D : ResolvedSigmaCoverData G) where
+  /-- Forest-branch index. -/
+  ForestIdx : Type*
+  /-- Mixed-branch index. -/
+  MixedIdx : Type*
+  /-- Forest image data per forest-branch index. -/
+  forestData : ForestIdx → ResolvedForestImageData D
+  /-- Mixed image data per mixed-branch index. -/
+  mixedData : MixedIdx → ResolvedMixedImageData D
+  /-- Forest-branch injectivity. -/
+  forest_inj : Function.Injective (fun x => (forestData x).toImage)
+  /-- Mixed-branch injectivity (field — branch-map injectivity, supplied later). -/
+  mixed_inj : Function.Injective (fun x => (mixedData x).toImage)
+  /-- Cover: every image is a forest or mixed image (field — supplied later). -/
+  cover : ∀ z : ResolvedActualQuotientImage D,
+    (∃ x, (forestData x).toImage = z) ∨ (∃ y, (mixedData y).toImage = z)
+
+/-- **Assemble the branch-map layer** from instantiation data.  `forest_sat`/`mixed_unsat`
+come for free (ph.3/ph.4); the discriminator is `resolvedIsForestByStar`. -/
+noncomputable def ResolvedBranchMapInstantiation.toLayer {D : ResolvedSigmaCoverData G}
+    (I : ResolvedBranchMapInstantiation D) : ResolvedBranchMapLayer where
+  ForestIdx := I.ForestIdx
+  MixedIdx := I.MixedIdx
+  Image := ResolvedActualQuotientImage D
+  forestImage := fun x => (I.forestData x).toImage
+  mixedImage := fun x => (I.mixedData x).toImage
+  isForestByStar := resolvedIsForestByStar D
+  forest_sat := fun x => (I.forestData x).forest_sat
+  mixed_unsat := fun x => (I.mixedData x).mixed_unsat
+  forest_inj := I.forest_inj
+  mixed_inj := I.mixed_inj
+  cover := I.cover
+
+/-- Cross-branch separation for the assembled layer (forest/mixed images never coincide). -/
+theorem ResolvedBranchMapInstantiation.cross {D : ResolvedSigmaCoverData G}
+    (I : ResolvedBranchMapInstantiation D) (qF : I.ForestIdx) (qM : I.MixedIdx) :
+    (I.forestData qF).toImage ≠ (I.mixedData qM).toImage :=
+  I.toLayer.cross qF qM
+
+/-- Separated cover for the assembled layer: every image lies in exactly one branch. -/
+theorem ResolvedBranchMapInstantiation.exactly_one_branch {D : ResolvedSigmaCoverData G}
+    (I : ResolvedBranchMapInstantiation D) (z : ResolvedActualQuotientImage D) :
+    ((∃ x, (I.forestData x).toImage = z) ∧ ¬ (∃ y, (I.mixedData y).toImage = z)) ∨
+      ((∃ y, (I.mixedData y).toImage = z) ∧ ¬ (∃ x, (I.forestData x).toImage = z)) :=
+  I.toLayer.exactly_one_branch z
+
+/-- **`forest_inj` helper.**  Forest-branch injectivity reduces to injectivity of the
+chosen-parent-set assignment (via the ph.3 forest-level lift). -/
+theorem forest_inj_of_choiceParents_inj {D : ResolvedSigmaCoverData G}
+    (hEdgeId : G.EdgeIdsUnique) (hLegId : G.LegIdsUnique)
+    {ForestIdx : Type*} (forestData : ForestIdx → ResolvedForestImageData D)
+    (h : Function.Injective (fun x => (forestData x).choiceParents)) :
+    Function.Injective (fun x => (forestData x).toImage) := by
+  intro x y hxy
+  exact h (ResolvedForestImageData.toImage_choiceParents_inj hEdgeId hLegId
+    (congrArg ResolvedAdmissibleSubgraph.elements hxy))
+
+/-! **Report (7D ph.5).**
+* `ResolvedBranchMapInstantiation` + `toLayer` — landed.  Given the two image families
+  and the `forest_inj`/`mixed_inj`/`cover` fields, an actual `ResolvedBranchMapLayer` is
+  produced; `forest_sat`/`mixed_unsat` are automatic.
+* `cross`, `exactly_one_branch` — exposed from `toLayer` (the H5.8 classifier inputs).
+* `forest_inj_of_choiceParents_inj` — reduces `forest_inj` to chosen-parent-set
+  injectivity (easy to supply).
+
+The remaining obligations have shrunk to: actual `mixed_inj`, actual `cover`, and the
+image-data graph-work fields (remnant / mixed-component admissibility, `avoidsStars`).
+The classifier side proceeds generically from `toLayer`. -/
+
 end GaugeGeometry.QFT.Combinatorial
