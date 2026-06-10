@@ -53,6 +53,69 @@ structure ResolvedSigmaParentSet
       resolvedParentRemnant Aout starOf γ₁ = resolvedParentRemnant Aout starOf γ₂ →
       γ₁.vertices = γ₂.vertices
 
+/-- **Generic constructor.**  Build a `ResolvedSigmaParentSet` from an explicit parent
+set together with its two hooks.  Trivial — but it is the interface a concrete σ-index
+construction targets. -/
+def ResolvedSigmaParentSet.ofParents
+    {Aout : ResolvedAdmissibleSubgraph G}
+    {starOf : ResolvedFeynmanSubgraph G → VertexId}
+    (parents : Finset (ResolvedFeynmanSubgraph G))
+    (hA : ∀ γ ∈ parents, Aout.internalEdges ≤ γ.internalEdges)
+    (hV : ∀ γ₁ ∈ parents, ∀ γ₂ ∈ parents,
+        resolvedParentRemnant Aout starOf γ₁ = resolvedParentRemnant Aout starOf γ₂ →
+        γ₁.vertices = γ₂.vertices) :
+    ResolvedSigmaParentSet Aout starOf where
+  parents := parents
+  containsAoutEdges := hA
+  remnant_vertex_recovery := hV
+
+/-! ### Source-vertex recovery: the `hV` discharge attempt
+
+The naive preimage recovery of the source vertices from a remnant. -/
+
+/-- Candidate source-vertex recovery: the `G`-vertices whose retarget lands in `δ`. -/
+noncomputable def resolvedRemainderSourceVertices
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) : Finset VertexId := by
+  classical
+  exact G.vertices.filter (fun v => Aout.retargetVertex starOf v ∈ δ.vertices)
+
+/-- **Easy direction (always holds).**  A parent's vertices are recovered by the
+preimage.  The *reverse* inclusion is where retarget collapse bites (see the report
+note below): a star in the remnant pulls back the *whole* `Aout`-component, so the
+preimage over-recovers unless `γ` is component-saturated. -/
+theorem subset_resolvedRemainderSourceVertices_parent
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    γ.vertices ⊆
+      resolvedRemainderSourceVertices Aout starOf (resolvedParentRemnant Aout starOf γ) := by
+  classical
+  intro v hv
+  rw [resolvedRemainderSourceVertices, Finset.mem_filter]
+  exact ⟨γ.vertices_subset hv,
+    Finset.mem_image.mpr ⟨v, hv, rfl⟩⟩
+
+/-! **Report (HALT — over-recovery).**  The reverse inclusion
+`resolvedRemainderSourceVertices … (remnant γ) ⊆ γ.vertices` is **false in general**:
+`Aout.retargetVertex starOf` sends every vertex of an `Aout`-component to that
+component's star (`retargetVertex … v = starOf γc` when `v` is in component `γc`,
+identity on the complement).  Hence if a star `s` lies in `(remnant γ).vertices`
+(because `γ` met component `γc` at *some* vertex), the preimage pulls back **all** of
+`γc`'s vertices — even those `γ` does not contain.  So `resolvedRemainderSourceVertices
+… = γ.vertices` requires `γ` to be **component-saturated** (contains a whole
+`Aout`-component whenever it meets it).
+
+The missing restriction is structural: saturation follows from `hA`
+(`Aout.internalEdges ≤ γ.internalEdges`, forcing each component's edges into `γ`, hence
+— by `edges_supported` — the component's edge-endpoint vertices) **only if** `Aout`
+components have no isolated (edge-free) vertices, i.e. component vertices = component
+edge-endpoints.  Establishing that is a connectivity/path argument on `Aout`
+components, not currently available.  Per the HALT this is *not* entered here:
+`remnant_vertex_recovery` therefore stays a hook field, to be discharged by the σ-index
+construction once component vertex-saturation is proved. -/
+
 /-! ## Phase 6C-2 — insertion injectivity from the parent set -/
 
 /-- **Insertion injectivity from the parent-set skeleton.**  Given the σ-index's two
