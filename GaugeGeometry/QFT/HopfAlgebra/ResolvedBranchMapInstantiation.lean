@@ -18,6 +18,8 @@ next phase — see the report note.
 
 set_option linter.unusedSectionVars false
 
+open scoped Classical
+
 namespace GaugeGeometry.QFT.Combinatorial
 
 variable [∀ H : FeynmanGraph, DivergenceMeasure H]
@@ -120,5 +122,73 @@ def resolvedIsForestByStar (D : ResolvedSigmaCoverData G)
 5. **`forest_sat`**: the forest-branch image must contain a component meeting a star —
    the resolved mirror of `…ActualQuotientSubgraph_exists_starVertex`; provable once the
    forest-valued `forestImage` is defined. -/
+
+/-! ## Step 7D phase 3 — forest-branch actual-quotient forest assembly
+
+The forest-valued forest image, assembled from per-parent remnants.  Component
+admissibility (CD, pairwise-disjointness) and the star witness are carried as
+*fields* of `ResolvedForestImageData` (per the HALT — remnant admissibility is the next
+graph-work item, isolated here so the layer assembly proceeds). -/
+
+/-- Data for one forest-branch image: a finite set of chosen parents whose remnants form
+an admissible forest meeting a star vertex. -/
+structure ResolvedForestImageData (D : ResolvedSigmaCoverData G) where
+  /-- The chosen parents of this forest branch. -/
+  choiceParents : Finset (ResolvedForestIdx D)
+  /-- Each remnant is connected divergent after forget. -/
+  remnantCD : ∀ γ ∈ choiceParents, (resolvedForestImage D γ).forget.IsConnectedDivergent
+  /-- The remnants are pairwise disjoint. -/
+  remnantDisjoint : ∀ γ ∈ choiceParents, ∀ δ ∈ choiceParents,
+    resolvedForestImage D γ ≠ resolvedForestImage D δ →
+    (resolvedForestImage D γ).Disjoint (resolvedForestImage D δ)
+  /-- Some remnant meets the outer forest's star vertices (gives `forest_sat`). -/
+  starWitness : ∃ γ ∈ choiceParents,
+    ¬ Disjoint (resolvedForestImage D γ).vertices (D.Aout.starVertices D.starOf)
+
+/-- The forest-branch image: the remnants assembled as an admissible forest in the
+contracted graph. -/
+noncomputable def ResolvedForestImageData.toImage {D : ResolvedSigmaCoverData G}
+    (F : ResolvedForestImageData D) : ResolvedActualQuotientImage D where
+  elements := F.choiceParents.image (resolvedForestImage D)
+  isConnectedDivergent := by
+    intro δ hδ; obtain ⟨γ, hγ, rfl⟩ := Finset.mem_image.mp hδ; exact F.remnantCD γ hγ
+  pairwiseDisjoint := by
+    intro δ₁ h₁ δ₂ h₂ hne
+    obtain ⟨γ₁, hγ₁, rfl⟩ := Finset.mem_image.mp h₁
+    obtain ⟨γ₂, hγ₂, rfl⟩ := Finset.mem_image.mp h₂
+    exact F.remnantDisjoint γ₁ hγ₁ γ₂ hγ₂ hne
+
+@[simp] theorem ResolvedForestImageData.toImage_elements {D : ResolvedSigmaCoverData G}
+    (F : ResolvedForestImageData D) :
+    F.toImage.elements = F.choiceParents.image (resolvedForestImage D) := rfl
+
+/-- **`forest_sat`**: the forest-branch image satisfies the discriminator (its star
+witness is a component meeting the outer star vertices). -/
+theorem ResolvedForestImageData.forest_sat {D : ResolvedSigmaCoverData G}
+    (F : ResolvedForestImageData D) : resolvedIsForestByStar D F.toImage := by
+  obtain ⟨γ, hγ, hstar⟩ := F.starWitness
+  exact ⟨resolvedForestImage D γ, Finset.mem_image.mpr ⟨γ, hγ, rfl⟩, hstar⟩
+
+/-- **Forest-level injectivity lift.**  Equal forest images have equal chosen-parent
+sets — the per-remnant injectivity (`resolvedForestImage_injective`) lifted through
+`Finset.image_injective`. -/
+theorem ResolvedForestImageData.toImage_choiceParents_inj {D : ResolvedSigmaCoverData G}
+    (hEdgeId : G.EdgeIdsUnique) (hLegId : G.LegIdsUnique)
+    {F₁ F₂ : ResolvedForestImageData D}
+    (h : F₁.toImage.elements = F₂.toImage.elements) :
+    F₁.choiceParents = F₂.choiceParents :=
+  Finset.image_injective (resolvedForestImage_injective D hEdgeId hLegId) h
+
+/-! **Report (7D ph.3).**
+* `ResolvedForestImageData` + `toImage` (forest-valued forest image) — landed; CD /
+  pairwise-disjointness / star-witness carried as fields (HALT: remnant admissibility
+  not derived here).
+* `forest_sat` — landed (from the star witness).
+* forest-level injectivity — landed as `toImage_choiceParents_inj` (elements-equality ⟹
+  chosen-parent-set equality, via per-remnant injectivity + `Finset.image_injective`).
+
+Remaining: derive `remnantCD` / `remnantDisjoint` (remnant admissibility — the next
+graph-work block); define the resolved mixed-boundary `mixedImage` into the same `Image`
++ `mixed_unsat`; prove `cover`.  Then `ResolvedBranchMapLayer` instantiates. -/
 
 end GaugeGeometry.QFT.Combinatorial
