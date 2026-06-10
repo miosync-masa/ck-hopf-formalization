@@ -323,4 +323,45 @@ The remaining obligations have shrunk to: actual `mixed_inj`, actual `cover`, an
 image-data graph-work fields (remnant / mixed-component admissibility, `avoidsStars`).
 The classifier side proceeds generically from `toLayer`. -/
 
+/-! ## Step 7E — forest image graph-work fields (verdict: field-level)
+
+Scout outcome for the forest-side graph-work (`remnantCD`, `remnantDisjoint`):
+
+* **`remnantCD`** (the remnant is connected divergent after forget) is **not
+  structural**: even flat only has `admissibleSubgraphQuotientRemainderSubgraph_isDivergent_reflect`,
+  a *conditional* divergence-*reflection* lemma (gated on a reflection hypothesis), plus
+  the connectedness/1PI of the remnant — all σ-cover-construction–specific.  It stays a
+  field, supplied by the actual σ-cover (where it is established, flat-side, within the
+  reflection model).
+* **`remnantDisjoint`** is σ-cover-structural too: distinct forest-branch remnants are
+  disjoint by the *cover's* construction, not by naive parent disjointness (parents all
+  contain `Aout`, so their raw vertex sets are not disjoint).  Stays a field.
+
+Both are **data the actual σ-cover provides**, not new mathematics — so the
+"no remaining math obstruction" framing holds.  We provide ergonomic named constructors
+that document the obligations and give a stable instantiation API. -/
+
+/-- Ergonomic constructor for a forest image datum. -/
+def ResolvedForestImageData.ofChoiceParents {D : ResolvedSigmaCoverData G}
+    (choiceParents : Finset (ResolvedForestIdx D))
+    (remnantCD : ∀ γ ∈ choiceParents, (resolvedForestImage D γ).forget.IsConnectedDivergent)
+    (remnantDisjoint : ∀ γ ∈ choiceParents, ∀ δ ∈ choiceParents,
+      resolvedForestImage D γ ≠ resolvedForestImage D δ →
+      (resolvedForestImage D γ).Disjoint (resolvedForestImage D δ))
+    (starWitness : ∃ γ ∈ choiceParents,
+      ¬ Disjoint (resolvedForestImage D γ).vertices (D.Aout.starVertices D.starOf)) :
+    ResolvedForestImageData D :=
+  { choiceParents := choiceParents, remnantCD := remnantCD,
+    remnantDisjoint := remnantDisjoint, starWitness := starWitness }
+
+/-- Ergonomic constructor for a mixed image datum. -/
+def ResolvedMixedImageData.ofComponents {D : ResolvedSigmaCoverData G}
+    (components : Finset (ResolvedFeynmanSubgraph (D.Aout.contractWithStars D.starOf)))
+    (componentCD : ∀ δ ∈ components, δ.forget.IsConnectedDivergent)
+    (componentDisjoint : ∀ δ₁ ∈ components, ∀ δ₂ ∈ components, δ₁ ≠ δ₂ → δ₁.Disjoint δ₂)
+    (avoidsStars : ∀ δ ∈ components, Disjoint δ.vertices (D.Aout.starVertices D.starOf)) :
+    ResolvedMixedImageData D :=
+  { components := components, componentCD := componentCD,
+    componentDisjoint := componentDisjoint, avoidsStars := avoidsStars }
+
 end GaugeGeometry.QFT.Combinatorial
