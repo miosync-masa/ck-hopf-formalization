@@ -155,4 +155,108 @@ theorem component_vertices_subset_parent_of_edges
   · rw [← h]; exact hEnds.1
   · rw [← h]; exact hEnds.2
 
+/-! ### Step 6C-6 — reverse source-vertex recovery (fresh stars)
+
+With full component saturation, the reverse inclusion of source-vertex recovery
+closes.  The only extra input is **star freshness** (`starOf η ∉ G.vertices`), which
+rules out a complement vertex coinciding with a star (the residual over-recovery from
+Step 6C-2). -/
+
+/-- Membership characterization of the source-vertex recovery. -/
+theorem mem_resolvedRemainderSourceVertices
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) {v : VertexId} :
+    v ∈ resolvedRemainderSourceVertices Aout starOf δ ↔
+      v ∈ G.vertices ∧ Aout.retargetVertex starOf v ∈ δ.vertices := by
+  classical
+  unfold resolvedRemainderSourceVertices
+  exact Finset.mem_filter
+
+/-- `retargetVertex` on a carrier vertex is its chosen component's star. -/
+theorem retargetVertex_eq_star_of_mem (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {v : VertexId} (hv : v ∈ Aout.vertices) :
+    Aout.retargetVertex starOf v = starOf (Aout.componentAt hv) := by
+  rw [ResolvedAdmissibleSubgraph.retargetVertex, Aout.componentAt?_of_mem hv]
+
+/-- **Reverse inclusion.**  Under star freshness + connected positive-edge components +
+`hA`, a vertex recovered from `γ`'s remnant really lies in `γ`. -/
+theorem mem_parent_of_mem_sourceVertices
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (hFresh : ∀ η ∈ Aout.elements, starOf η ∉ G.vertices)
+    (hCompCD : ∀ η ∈ Aout.elements, η.forget.IsConnected)
+    (hCompPos : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card)
+    {γ : ResolvedFeynmanSubgraph G} (hA : Aout.internalEdges ≤ γ.internalEdges)
+    {v : VertexId}
+    (hv : v ∈ resolvedRemainderSourceVertices Aout starOf
+      (resolvedParentRemnant Aout starOf γ)) :
+    v ∈ γ.vertices := by
+  rw [mem_resolvedRemainderSourceVertices] at hv
+  obtain ⟨hvG, hmem⟩ := hv
+  by_cases hvA : v ∈ Aout.vertices
+  · exact component_vertices_subset_parent_of_edges Aout (Aout.componentAt_mem hvA)
+      (hCompCD _ (Aout.componentAt_mem hvA)) (hCompPos _ (Aout.componentAt_mem hvA)) hA
+      (Aout.componentAt_vertex_mem hvA)
+  · rw [Aout.retargetVertex_of_not_mem starOf hvA, resolvedParentRemnant,
+      ResolvedAdmissibleSubgraph.quotientRemainderSubgraph_vertices] at hmem
+    obtain ⟨w, hwγ, hweq⟩ := Finset.mem_image.mp hmem
+    by_cases hwA : w ∈ Aout.vertices
+    · rw [retargetVertex_eq_star_of_mem Aout starOf hwA] at hweq
+      have hsG : starOf (Aout.componentAt hwA) ∈ G.vertices := by rw [hweq]; exact hvG
+      exact absurd hsG (hFresh _ (Aout.componentAt_mem hwA))
+    · rw [Aout.retargetVertex_of_not_mem starOf hwA] at hweq
+      rw [← hweq]; exact hwγ
+
+/-- **Source-vertex recovery is exact** (both inclusions). -/
+theorem resolvedRemainderSourceVertices_parent_eq
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (hFresh : ∀ η ∈ Aout.elements, starOf η ∉ G.vertices)
+    (hCompCD : ∀ η ∈ Aout.elements, η.forget.IsConnected)
+    (hCompPos : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card)
+    {γ : ResolvedFeynmanSubgraph G} (hA : Aout.internalEdges ≤ γ.internalEdges) :
+    resolvedRemainderSourceVertices Aout starOf (resolvedParentRemnant Aout starOf γ)
+      = γ.vertices :=
+  Finset.Subset.antisymm
+    (fun _ hv => mem_parent_of_mem_sourceVertices Aout starOf hFresh hCompCD hCompPos hA hv)
+    (subset_resolvedRemainderSourceVertices_parent Aout starOf γ)
+
+/-- **Constructive `remnant_vertex_recovery`.**  Equal remnants force equal source
+vertices, via the exact recovery. -/
+theorem remnant_vertex_recovery_of_sourceVertices
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (hFresh : ∀ η ∈ Aout.elements, starOf η ∉ G.vertices)
+    (hCompCD : ∀ η ∈ Aout.elements, η.forget.IsConnected)
+    (hCompPos : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card)
+    {γ₁ γ₂ : ResolvedFeynmanSubgraph G}
+    (hA₁ : Aout.internalEdges ≤ γ₁.internalEdges)
+    (hA₂ : Aout.internalEdges ≤ γ₂.internalEdges)
+    (hRem : resolvedParentRemnant Aout starOf γ₁ = resolvedParentRemnant Aout starOf γ₂) :
+    γ₁.vertices = γ₂.vertices := by
+  rw [← resolvedRemainderSourceVertices_parent_eq Aout starOf hFresh hCompCD hCompPos hA₁,
+    hRem, resolvedRemainderSourceVertices_parent_eq Aout starOf hFresh hCompCD hCompPos hA₂]
+
+/-! ### Step 6C-7 — constructive `ResolvedSigmaParentSet` -/
+
+/-- **Concrete σ-index parent set.**  With fresh stars + connected positive-edge
+components, any parent set of `Aout`-edge-containing subgraphs is a genuine
+`ResolvedSigmaParentSet` — `remnant_vertex_recovery` is now *constructed*, no longer a
+hook. -/
+def ResolvedSigmaParentSet.ofSaturatedParents
+    {Aout : ResolvedAdmissibleSubgraph G}
+    {starOf : ResolvedFeynmanSubgraph G → VertexId}
+    (hFresh : ∀ η ∈ Aout.elements, starOf η ∉ G.vertices)
+    (hCompCD : ∀ η ∈ Aout.elements, η.forget.IsConnected)
+    (hCompPos : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card)
+    (parents : Finset (ResolvedFeynmanSubgraph G))
+    (hA : ∀ γ ∈ parents, Aout.internalEdges ≤ γ.internalEdges) :
+    ResolvedSigmaParentSet Aout starOf :=
+  ResolvedSigmaParentSet.ofParents parents hA
+    (fun _ hγ₁ _ hγ₂ hRem =>
+      remnant_vertex_recovery_of_sourceVertices Aout starOf hFresh hCompCD hCompPos
+        (hA _ hγ₁) (hA _ hγ₂) hRem)
+
 end GaugeGeometry.QFT.Combinatorial
