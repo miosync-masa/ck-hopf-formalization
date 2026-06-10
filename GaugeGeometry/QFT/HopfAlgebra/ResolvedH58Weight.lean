@@ -110,43 +110,56 @@ alignment (plugging the actual private defs) is the single point where this trac
 `Coassoc.lean`'s privates — to be supplied there. -/
 
 /-- Alignment of a resolved finite branch-map layer to the flat H5.8 indices/terms.
-All flat data is abstracted (the concrete flat defs are `private` to `Coassoc.lean`). -/
+All flat data is abstracted (the concrete flat defs are `private` to `Coassoc.lean`).
+
+The term agreement is **index-conditional** (`splitMem`), matching the flat
+`forestComponentSplitPhi_term_eq_of_split` which holds only on
+`forestComponentSplitChoiceSigmaIndex`; the resolved split-index maps must land in that
+index (`forestSplitOf_mem`/`mixedSplitOf_mem`). -/
 structure ResolvedFlatH58WeightAlignment (FL : ResolvedFiniteBranchMapLayer)
     (Target : Type*) [AddCommMonoid Target] where
   /-- The flat image type (`forestQuotientForestSigma g`). -/
   FlatImage : Type*
-  /-- The flat split-choice index (`forestComponentSplitChoiceSigma g`). -/
+  /-- The flat split-choice index type (`forestComponentSplitChoiceSigma g`). -/
   SplitIdx : Type*
+  /-- Membership in the flat split-choice index (`· ∈ forestComponentSplitChoiceSigmaIndex g`). -/
+  splitMem : SplitIdx → Prop
   /-- The flat image term (`forestQuotientForestSigmaTerm`). -/
   flatTerm : FlatImage → Target
   /-- The flat split term (`forestComponentSplitChoiceSigmaTerm`). -/
   splitTerm : SplitIdx → Target
   /-- The flat branch map (`forestComponentSplitPhi`). -/
   flatBranch : SplitIdx → FlatImage
-  /-- The term agreement (`forestComponentSplitPhi_term_eq_of_split`). -/
-  splitTerm_eq : ∀ s, splitTerm s = flatTerm (flatBranch s)
+  /-- The term agreement, index-conditional (`forestComponentSplitPhi_term_eq_of_split`). -/
+  splitTerm_eq : ∀ s, splitMem s → splitTerm s = flatTerm (flatBranch s)
   /-- Resolved image → flat image. -/
   flatImageOf : FL.layer.Image → FlatImage
   /-- Resolved forest index → flat split index. -/
   forestSplitOf : FL.layer.ForestIdx → SplitIdx
   /-- Resolved mixed index → flat split index. -/
   mixedSplitOf : FL.layer.MixedIdx → SplitIdx
+  /-- Forest split indices land in the flat split index. -/
+  forestSplitOf_mem : ∀ q, splitMem (forestSplitOf q)
+  /-- Mixed split indices land in the flat split index. -/
+  mixedSplitOf_mem : ∀ q, splitMem (mixedSplitOf q)
   /-- Forest commutation square. -/
   forest_comm : ∀ q, flatImageOf (FL.layer.forestImage q) = flatBranch (forestSplitOf q)
   /-- Mixed commutation square. -/
   mixed_comm : ∀ q, flatImageOf (FL.layer.mixedImage q) = flatBranch (mixedSplitOf q)
 
 /-- Pull the flat terms back through the alignment to a concrete `ResolvedH58WeightData`.
-The two `_eq` fields are two-line `rw`s using the supplied term agreement + commutation
-(no new mathematics). -/
+The two `_eq` fields are two-line `rw`s using the index-conditional term agreement (at the
+`…SplitOf_mem` witness) + the commutation square (no new mathematics). -/
 noncomputable def ResolvedFlatH58WeightAlignment.toWeightData {FL : ResolvedFiniteBranchMapLayer}
     {Target : Type*} [AddCommMonoid Target] (A : ResolvedFlatH58WeightAlignment FL Target) :
     ResolvedH58WeightData FL Target where
   imageWeight := fun z => A.flatTerm (A.flatImageOf z)
   forestWeight := fun q => A.splitTerm (A.forestSplitOf q)
   mixedWeight := fun q => A.splitTerm (A.mixedSplitOf q)
-  forestWeight_eq := fun q => by rw [A.splitTerm_eq, A.forest_comm]
-  mixedWeight_eq := fun q => by rw [A.splitTerm_eq, A.mixed_comm]
+  forestWeight_eq := fun q => by
+    rw [A.splitTerm_eq _ (A.forestSplitOf_mem q), A.forest_comm]
+  mixedWeight_eq := fun q => by
+    rw [A.splitTerm_eq _ (A.mixedSplitOf_mem q), A.mixed_comm]
 
 /-- **Concrete H5.8 sum equality** through the alignment: the flat-term sum over images
 splits into the flat split-term sums over the forest and mixed branches. -/
@@ -170,5 +183,38 @@ theorem ResolvedFlatH58WeightAlignment.sum_reindex {FL : ResolvedFiniteBranchMap
   `forestSplitOf`/`mixedSplitOf` the resolved→flat index maps and the two commutation
   squares from the branch-map definitions.  That is the single contact point between this
   standalone track and the flat H5.8 privates. -/
+
+/-! ## Step 7K — Coassoc-local alignment scout (import-cycle + visibility)
+
+**Cycle confirmed (HALT).**  The resolved track imports `Coassoc` (chain:
+`ResolvedH58Weight → … → ResolvedCoproduct → Coassoc`).  Therefore `Coassoc.lean`
+**cannot** import the resolved files — that would be an import cycle.  So the concrete
+alignment can be built *only* in a downstream file (one that imports both `Coassoc` and
+this file), using **public wrappers** exposed from `Coassoc`.
+
+**Public wrappers needed in `Coassoc.lean`** (currently `private`; thin public aliases,
+no proof change, but they touch the `Main` build — a deliberate step to confirm before
+making):
+* types: `forestQuotientForestSigma g`, `forestComponentSplitChoiceSigma g`
+* index membership: `· ∈ forestQuotientForestSigmaIndex g`,
+  `· ∈ forestComponentSplitChoiceSigmaIndex g`
+* terms: `forestQuotientForestSigmaTerm g`, `forestComponentSplitChoiceSigmaTerm g`
+* branch: `forestComponentSplitPhi g`
+* agreement: `forestComponentSplitPhi_term_eq_of_split g` (with its per-branch
+  `hForestTerm`/`hMixedTerm` already discharged in the canonical instance)
+
+**Type-fit finding.**  `flatTerm`/`splitTerm`/`flatBranch` fit the fields directly
+(target `HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH)` matches).  The agreement
+`forestComponentSplitPhi_term_eq_of_split` is **index-conditional** (`q ∈
+forestComponentSplitChoiceSigmaIndex`) — which is exactly why this file's
+`ResolvedFlatH58WeightAlignment` was refined (7K) to a conditional `splitTerm_eq` +
+`forestSplitOf_mem`/`mixedSplitOf_mem`.  With that shape the private agreement plugs in
+directly.
+
+**Plan.**  (1) expose the public wrappers in `Coassoc` (Main-touching — confirm first);
+(2) in a new downstream file `ResolvedH58Bridge.lean` (imports `Coassoc` + this file),
+construct `ResolvedFlatH58WeightAlignment` from them; (3) `sum_reindex` then gives the
+concrete H5.8 split identity resolved-side.  No new mathematics — only the wrappers + the
+resolved→flat index maps + commutation squares. -/
 
 end GaugeGeometry.QFT.Combinatorial
