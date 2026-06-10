@@ -70,4 +70,55 @@ The forest side (`ForestIdx`, `forestImage`, `forest_inj`) is the half tied to t
 already-discharged insertion repair; it is closed.  The mixed/discriminator/cover half
 is the resolved actual-quotient construction, the next building block. -/
 
+/-! ## Step 7D phase 2 — actual-quotient image strategy (scout + discriminator)
+
+**Flat finding.**  `forestQuotientForestSigma g := Σ A : forestOuterProperIndex g,
+AdmissibleSubgraph (forestOuterQuotientGraph g A)` — a *dependent Σ*: an outer proper
+forest `A` plus an admissible subgraph (a *forest*, with `.elements`) of the
+outer-contracted graph.  The discriminator is
+`isForestByStar g r := ∃ δ ∈ (ActualQuotientSubgraph g r).elements,
+  ¬ Disjoint δ.vertices (r.1.1.starVertices (canonicalStarOf …))`,
+i.e. **a component of the actual-quotient forest meets the outer forest's star
+vertices** (option (d): a relation between outer-forest stars and the
+quotient-forest components).
+
+**Decision.**  Remnant-only `Image` is *ruled out*: the discriminator needs the
+quotient *forest* (components) and the outer star vertices, not a single remnant
+subgraph.  Within one `ResolvedSigmaCoverData` (fixed `Aout`/`starOf`), the resolved
+`Image` is the quotient forest of the contracted graph, and the discriminator is
+resolved-native (`D.Aout.starVertices D.starOf` exists). -/
+
+/-- The resolved actual-quotient image (fixed outer forest): an admissible subgraph
+(forest) of the contracted graph.  Replaces the remnant-only image. -/
+abbrev ResolvedActualQuotientImage (D : ResolvedSigmaCoverData G) :=
+  ResolvedAdmissibleSubgraph (D.Aout.contractWithStars D.starOf)
+
+/-- **Resolved `isForestByStar` discriminator.**  Some component of the quotient forest
+meets the outer forest's star vertices — the resolved-native mirror of the flat
+discriminator. -/
+def resolvedIsForestByStar (D : ResolvedSigmaCoverData G)
+    (img : ResolvedActualQuotientImage D) : Prop :=
+  ∃ δ ∈ img.elements, ¬ Disjoint δ.vertices (D.Aout.starVertices D.starOf)
+
+/-! **Report (7D ph.2).**
+1. **Flat `isForestByStar`**: `∃ δ ∈ (ActualQuotientSubgraph r).elements,
+   ¬ Disjoint δ.vertices (outer.starVertices …)` — inspects the quotient *forest's*
+   components against the outer star vertices.
+2. **Chosen `Image`**: `ResolvedActualQuotientImage D =
+   ResolvedAdmissibleSubgraph (D.Aout.contractWithStars D.starOf)` (a forest), with
+   `resolvedIsForestByStar` the discriminator — both landed here.
+3. **Consequence for `forestImage`**: the layer's `forestImage` must be **forest-valued**
+   (an actual-quotient forest), *not* the single remnant of phase 1.  So
+   `resolvedForestImage` (single remnant) is a per-component building block; the real
+   `forestImage` assembles a forest, and `forest_inj` must be proved at the forest level
+   (built from the per-component remnant injectivity).  **This is the exact extra data
+   the HALT warned about: the image carries a forest, not just a remnant.**
+4. **Mixed branch**: can target the *same* `Image` (a quotient forest of the same
+   contracted graph) — the mixed-boundary image is another admissible subgraph there.
+   `mixed_unsat` is `resolvedIsForestByStar img` failing, i.e. *no* component meets the
+   star vertices (the resolved mirror of `…ActualRightQuotientSubgraph_no_starVertices`).
+5. **`forest_sat`**: the forest-branch image must contain a component meeting a star —
+   the resolved mirror of `…ActualQuotientSubgraph_exists_starVertex`; provable once the
+   forest-valued `forestImage` is defined. -/
+
 end GaugeGeometry.QFT.Combinatorial
