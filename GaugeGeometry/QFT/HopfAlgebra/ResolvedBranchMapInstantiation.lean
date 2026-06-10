@@ -191,4 +191,59 @@ Remaining: derive `remnantCD` / `remnantDisjoint` (remnant admissibility — the
 graph-work block); define the resolved mixed-boundary `mixedImage` into the same `Image`
 + `mixed_unsat`; prove `cover`.  Then `ResolvedBranchMapLayer` instantiates. -/
 
+/-! ## Step 7D phase 4 — mixed branch image + `mixed_unsat`
+
+The mixed-boundary branch image, into the *same* `Image` (a forest of the contracted
+graph).  Its components are right/exact-quotient components that **avoid** the outer
+forest's star vertices, so it violates the discriminator — `mixed_unsat` is one line
+from `avoidsStars`.  Component admissibility and the star-avoidance are carried as
+fields (the exact mixed-side graph obligation). -/
+
+/-- Data for the mixed branch image: contracted-graph components that avoid the outer
+forest's star vertices. -/
+structure ResolvedMixedImageData (D : ResolvedSigmaCoverData G) where
+  /-- The mixed-branch components (already in the contracted graph). -/
+  components : Finset (ResolvedFeynmanSubgraph (D.Aout.contractWithStars D.starOf))
+  /-- Each component is connected divergent after forget. -/
+  componentCD : ∀ δ ∈ components, δ.forget.IsConnectedDivergent
+  /-- The components are pairwise disjoint. -/
+  componentDisjoint : ∀ δ₁ ∈ components, ∀ δ₂ ∈ components, δ₁ ≠ δ₂ → δ₁.Disjoint δ₂
+  /-- Every component avoids the outer forest's star vertices (the mixed-side obligation,
+  resolved mirror of `…ActualRightQuotientSubgraph_no_starVertices`). -/
+  avoidsStars : ∀ δ ∈ components, Disjoint δ.vertices (D.Aout.starVertices D.starOf)
+
+/-- The mixed-branch image: the components assembled as an admissible forest. -/
+noncomputable def ResolvedMixedImageData.toImage {D : ResolvedSigmaCoverData G}
+    (M : ResolvedMixedImageData D) : ResolvedActualQuotientImage D where
+  elements := M.components
+  isConnectedDivergent := M.componentCD
+  pairwiseDisjoint := by
+    intro γ hγ δ hδ hne
+    exact M.componentDisjoint γ hγ δ hδ hne
+
+@[simp] theorem ResolvedMixedImageData.toImage_elements {D : ResolvedSigmaCoverData G}
+    (M : ResolvedMixedImageData D) : M.toImage.elements = M.components := rfl
+
+/-- **`mixed_unsat`**: the mixed-branch image violates the discriminator — no component
+meets a star vertex.  One line from `avoidsStars`. -/
+theorem ResolvedMixedImageData.mixed_unsat {D : ResolvedSigmaCoverData G}
+    (M : ResolvedMixedImageData D) : ¬ resolvedIsForestByStar D M.toImage := by
+  rintro ⟨δ, hδ, hmeet⟩
+  exact hmeet (M.avoidsStars δ hδ)
+
+/-! **Report (7D ph.4).**
+* `ResolvedMixedImageData` + `toImage` + `mixed_unsat` — landed.  `mixed_unsat` is a
+  one-liner from the `avoidsStars` field (the discriminator is exactly "some component
+  meets a star"; mixed avoids all stars).
+* Component CD / disjointness / `avoidsStars` carried as fields — `avoidsStars` is the
+  precise mixed-side graph obligation (resolved
+  `…ActualRightQuotientSubgraph_no_starVertices`).
+* **`mixed_inj`**: NOT immediate — like the flat side it is a branch-map injectivity
+  (HEq-prone); kept as a layer field, to be supplied from the mixed-boundary choice
+  structure.  Not run here.
+
+With `forest_sat` (ph.3) and `mixed_unsat` (here), the **discriminator half** of
+`ResolvedBranchMapLayer` is complete; remaining for instantiation: `forest_inj`
+(have, ph.1/ph.3), `mixed_inj` (field), `cover` (next). -/
+
 end GaugeGeometry.QFT.Combinatorial
