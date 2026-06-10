@@ -259,4 +259,44 @@ def ResolvedSigmaParentSet.ofSaturatedParents
       remnant_vertex_recovery_of_sourceVertices Aout starOf hFresh hCompCD hCompPos
         (hA _ hγ₁) (hA _ hγ₂) hRem)
 
+/-! ### Step 6D — packaged σ-cover data
+
+The minimal data interface H5.8 actually needs from the resolved σ-cover, with the
+constructive `ResolvedSigmaParentSet` derived from it.  `componentConnected` is
+*derived* from `Aout`'s `isConnectedDivergent`; the rest stays explicit (supplied by
+the σ-cover: `canonicalStarOf` freshness, proper-forest positivity). -/
+
+/-- The minimal resolved σ-cover data: an outer forest, a star assignment, a parent
+set, and the four facts the constructive σ-index consumes. -/
+structure ResolvedSigmaCoverData (G : ResolvedFeynmanGraph) where
+  /-- The outer resolved forest. -/
+  Aout : ResolvedAdmissibleSubgraph G
+  /-- The star assignment. -/
+  starOf : ResolvedFeynmanSubgraph G → VertexId
+  /-- The parent set. -/
+  parents : Finset (ResolvedFeynmanSubgraph G)
+  /-- Each parent contains `Aout`'s edges. -/
+  containsAoutEdges : ∀ γ ∈ parents, Aout.internalEdges ≤ γ.internalEdges
+  /-- Stars are fresh (outside `G`'s vertices). -/
+  starFresh : ∀ η ∈ Aout.elements, starOf η ∉ G.vertices
+  /-- Each component has positive internal-edge count. -/
+  componentPositiveEdges : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card
+
+/-- Component connectedness is *derived* from `Aout.isConnectedDivergent`. -/
+theorem ResolvedSigmaCoverData.componentConnected (D : ResolvedSigmaCoverData G)
+    {η : ResolvedFeynmanSubgraph G} (hη : η ∈ D.Aout.elements) : η.forget.IsConnected :=
+  (D.Aout.isConnectedDivergent η hη).isConnected
+
+/-- The constructive σ-index parent set from packaged cover data. -/
+noncomputable def ResolvedSigmaCoverData.parentSet (D : ResolvedSigmaCoverData G) :
+    ResolvedSigmaParentSet D.Aout D.starOf :=
+  ResolvedSigmaParentSet.ofSaturatedParents D.starFresh
+    (fun _ hη => D.componentConnected hη) D.componentPositiveEdges D.parents D.containsAoutEdges
+
+/-- **Insertion injectivity on the actual σ-cover parent set.** -/
+theorem ResolvedSigmaCoverData.parentRemnant_injOn (D : ResolvedSigmaCoverData G)
+    (hEdgeId : G.EdgeIdsUnique) (hLegId : G.LegIdsUnique) :
+    Set.InjOn (resolvedParentRemnant D.Aout D.starOf) ↑D.parents :=
+  D.parentSet.parentRemnant_injOn hEdgeId hLegId
+
 end GaugeGeometry.QFT.Combinatorial
