@@ -68,4 +68,34 @@ theorem ResolvedH58WeightData.sum_reindex {FL : ResolvedFiniteBranchMapLayer}
   `coassoc_strict_forest_linear`.  Plus the σ-cover data fields (Step 7E) for the actual
   finite layer.  No new abstract structure needed — only the concrete weight + data. -/
 
+/-! ## Step 7I — concrete weight extraction scout (flat term names)
+
+採寸: the exact flat sources for each `ResolvedH58WeightData` field (all in
+`Coassoc.lean`).
+
+| field | flat concrete source | status |
+|-------|----------------------|--------|
+| `Target` | `HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH)` | direct (codomain of the term) |
+| `imageWeight` | `forestQuotientForestSigmaTerm g` (≈14427) | existing def |
+| `forestWeight` | `forestComponentSplitChoiceSigmaTerm g ∘ Sum.inl` (27517) = `forestComponentChoiceSigmaTerm g` | existing def |
+| `mixedWeight` | `forestComponentSplitChoiceSigmaTerm g ∘ Sum.inr` (27517) = `forestComponentChoiceSigmaTerm g` | existing def |
+| `forestWeight_eq` | `forestComponentSplitPhi_term_eq_of_split` (27718), forest branch | existing lemma, fed `hForestTerm` |
+| `mixedWeight_eq` | `forestComponentSplitPhi_term_eq_of_split` (27718), mixed branch | existing lemma, fed `hMixedTerm` |
+| (per-branch term agreement) | `forestComponentChoiceSigmaTerm_eq_quotientForestSigmaTerm_of_factorization` (27348) | existing lemma |
+| (branch map φ) | `forestComponentSplitPhi g` (27537) | existing def |
+| (LHS index) | `forestComponentSplitChoiceSigmaIndex = forestIdx.disjSum mixedIdx` (27510) | existing |
+| (RHS index) | `forestQuotientForestSigmaIndex g` | existing |
+| (closest pure sum equality) | reindex inside `coassoc_strict_forest_linear_of_h58_indexed_classifier` (37025), via the bijective `forestComponentSplitPhiIndexedBranchClassifier` (28031) | existing |
+
+**Key finding.**  The term agreement `forestWeight_eq`/`mixedWeight_eq` is *exactly*
+`forestComponentSplitPhi_term_eq_of_split` — already flat-proven, assembled from the
+per-branch factorization lemma (27348).  And the flat `…IndexedBranchClassifier` (28031)
+is a *bijection* (`preimage` + `right_inv` + `forest_inv`/`mixed_inv`), richer than the
+Prop `∃!` of `ResolvedIndexedBranchClassifier`; the resolved instantiation reuses
+`inverse` (Step 7F) for the computational `preimage` and the `∃!` for the inverse laws.
+
+So weight instantiation needs **no new mathematics**: the concrete `imageWeight`/
+`forestWeight`/`mixedWeight` are existing defs and the two `_eq` fields are existing
+lemmas — only the resolved-side wrappers + the σ-cover data fields remain. -/
+
 end GaugeGeometry.QFT.Combinatorial
