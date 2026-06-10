@@ -149,4 +149,107 @@ theorem forget_liftUniqueFromForgetSubgraph
     (liftUniqueFromForgetSubgraph_forget_internalEdges γf)
     (liftUniqueFromForgetSubgraph_forget_externalLegs γf)
 
+/-- The unique-id subgraph lift is injective (forget is a left inverse). -/
+theorem liftUniqueFromForgetSubgraph_injective {Gf : FeynmanGraph} :
+    Function.Injective (liftUniqueFromForgetSubgraph (Gf := Gf)) := by
+  intro γ₁ γ₂ h
+  have := congrArg ResolvedFeynmanSubgraph.forget h
+  rwa [forget_liftUniqueFromForgetSubgraph, forget_liftUniqueFromForgetSubgraph] at this
+
+/-- Per-component edge-count is preserved by the unique-id lift. -/
+theorem liftUniqueFromForgetSubgraph_internalEdges_card
+    (γf : FeynmanSubgraph (ofFlatGraphWithUniqueIds Gf).forget) :
+    (liftUniqueFromForgetSubgraph γf).internalEdges.card = γf.internalEdges.card := by
+  have h : (liftUniqueFromForgetSubgraph γf).internalEdges.map ResolvedFeynmanEdge.forget
+      = γf.internalEdges :=
+    (ResolvedFeynmanSubgraph.forget_internalEdges _).symm.trans
+      (liftUniqueFromForgetSubgraph_forget_internalEdges γf)
+  rw [← Multiset.card_map ResolvedFeynmanEdge.forget, h]
+
+/-! ### Step 2c — unique-id forest lift -/
+
+variable [∀ H : FeynmanGraph, DivergenceMeasure H]
+         [∀ H : FeynmanGraph, IsPermInvariantDivergence H]
+         [∀ H : FeynmanGraph, IsIsoInvariantDivergence H]
+         [∀ H : FeynmanGraph, Fintype (FeynmanSubgraph H)]
+         [IsAmbientInvariantDivergence] [IsDivergencePreservedByContract]
+         [IsDivergencePreservedByAdmissibleForestContract]
+
+/-- (local) flat admissible-subgraph extensionality. -/
+private theorem admissibleSubgraph_ext' {G : FeynmanGraph} [DivergenceMeasure G]
+    {A₁ A₂ : AdmissibleSubgraph G} (h : A₁.elements = A₂.elements) : A₁ = A₂ := by
+  obtain ⟨⟨e₁, d₁, nd₁⟩, cd₁⟩ := A₁
+  obtain ⟨⟨e₂, d₂, nd₂⟩, cd₂⟩ := A₂
+  cases h; rfl
+
+/-- The unique-id lift of a pairwise-disjoint forest of `(ofFlatGraphWithUniqueIds Gf).forget`
+to a resolved forest of `ofFlatGraphWithUniqueIds Gf` (transport-free; same forgetful ambient). -/
+noncomputable def ofUniqueForgetForest
+    (Af : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hDisj : Af.IsPairwiseDisjoint) :
+    ResolvedAdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf) where
+  elements := Af.elements.image liftUniqueFromForgetSubgraph
+  isConnectedDivergent := by
+    intro γ hγ
+    obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hγ
+    rw [forget_liftUniqueFromForgetSubgraph]
+    exact Af.isConnectedDivergent_of_mem hδf
+  pairwiseDisjoint := by
+    intro γ₁ h₁ γ₂ h₂ hne
+    obtain ⟨δf₁, hδf₁, rfl⟩ := Finset.mem_image.mp h₁
+    obtain ⟨δf₂, hδf₂, rfl⟩ := Finset.mem_image.mp h₂
+    exact hDisj hδf₁ hδf₂ (fun h => hne (by rw [h]))
+
+@[simp] theorem ofUniqueForgetForest_elements
+    (Af : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hDisj : Af.IsPairwiseDisjoint) :
+    (ofUniqueForgetForest Af hDisj).elements = Af.elements.image liftUniqueFromForgetSubgraph := rfl
+
+/-- The unique-id forest lift round-trips (same forgetful ambient, no transport). -/
+theorem forget_ofUniqueForgetForest
+    (Af : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hDisj : Af.IsPairwiseDisjoint) : (ofUniqueForgetForest Af hDisj).forget = Af := by
+  apply admissibleSubgraph_ext'
+  rw [ResolvedAdmissibleSubgraph.forget_elements, ofUniqueForgetForest_elements,
+    Finset.image_image,
+    show (ResolvedFeynmanSubgraph.forget ∘ liftUniqueFromForgetSubgraph (Gf := Gf))
+      = id from funext (fun γf => forget_liftUniqueFromForgetSubgraph γf),
+    Finset.image_id]
+
+/-- `Multiset.map forget` distributes over a finite sum of component edges. -/
+private theorem map_forget_finset_sum {ι : Type*} (s : Finset ι)
+    (f : ι → Multiset ResolvedFeynmanEdge) :
+    (∑ i ∈ s, f i).map ResolvedFeynmanEdge.forget
+      = ∑ i ∈ s, (f i).map ResolvedFeynmanEdge.forget := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert i s his ih =>
+    rw [Finset.sum_insert his, Finset.sum_insert his, Multiset.map_add, ih]
+
+/-- Forgetting the aggregate edges of the unique-id forest lift recovers the flat
+forest's edges (occurrence-faithfully). -/
+theorem ofUniqueForgetForest_internalEdges_forget
+    (Af : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hDisj : Af.IsPairwiseDisjoint) :
+    (ofUniqueForgetForest Af hDisj).internalEdges.map ResolvedFeynmanEdge.forget
+      = Af.internalEdges := by
+  show (∑ γ ∈ (ofUniqueForgetForest Af hDisj).elements, γ.internalEdges).map
+      ResolvedFeynmanEdge.forget = Af.internalEdges
+  rw [ofUniqueForgetForest_elements,
+    Finset.sum_image (fun δ₁ _ δ₂ _ h => liftUniqueFromForgetSubgraph_injective h),
+    map_forget_finset_sum,
+    show Af.internalEdges = ∑ δ ∈ Af.elements, δ.internalEdges from rfl]
+  exact Finset.sum_congr rfl (fun δf _ =>
+    (ResolvedFeynmanSubgraph.forget_internalEdges _).symm.trans
+      (liftUniqueFromForgetSubgraph_forget_internalEdges δf))
+
+/-- Aggregate edge-count is preserved by the unique-id forest lift. -/
+theorem ofUniqueForgetForest_internalEdges_card
+    (Af : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hDisj : Af.IsPairwiseDisjoint) :
+    (ofUniqueForgetForest Af hDisj).internalEdges.card = Af.internalEdges.card := by
+  rw [← Multiset.card_map ResolvedFeynmanEdge.forget,
+    ofUniqueForgetForest_internalEdges_forget]
+
 end GaugeGeometry.QFT.Combinatorial
