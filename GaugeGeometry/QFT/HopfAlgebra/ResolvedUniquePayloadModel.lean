@@ -252,4 +252,174 @@ theorem ofUniqueForgetForest_internalEdges_card
   rw [← Multiset.card_map ResolvedFeynmanEdge.forget,
     ofUniqueForgetForest_internalEdges_forget]
 
+/-! ### Step 3 — id-unique payload family
+
+The one new structural lemma needed (the unique-id lift is not a clean map, so the
+constant-id `map_le_map` route does not transfer): a *resolved* pairwise-disjoint
+forest has its aggregate edges contained in the ambient — proved by the count
+argument, mirroring the flat `admissibleSubgraph_internalEdges_le_of_pairwise`. -/
+
+/-- A resolved edge of a forest lies in some component. -/
+private theorem resolved_mem_internalEdges {G : ResolvedFeynmanGraph}
+    {A : ResolvedAdmissibleSubgraph G} {e : ResolvedFeynmanEdge}
+    (he : e ∈ A.internalEdges) : ∃ γ ∈ A.elements, e ∈ γ.internalEdges := by
+  classical
+  have hpos : 0 < Multiset.count e A.internalEdges := Multiset.count_pos.mpr he
+  unfold ResolvedAdmissibleSubgraph.internalEdges at hpos
+  rw [multiset_count_finset_sum] at hpos
+  obtain ⟨γ, hγ, hγ0⟩ := Finset.exists_ne_zero_of_sum_ne_zero hpos.ne'
+  exact ⟨γ, hγ, Multiset.count_ne_zero.mp hγ0⟩
+
+/-- **Resolved disjoint-forest edge containment.**  A pairwise-disjoint resolved
+forest has its aggregate internal edges below the ambient (count argument via
+vertex-disjointness + component `internalEdges_le`). Mirrors the flat lemma. -/
+theorem resolvedAdmissibleSubgraph_internalEdges_le_of_pairwise
+    {G : ResolvedFeynmanGraph} (A : ResolvedAdmissibleSubgraph G)
+    (hA : A.IsPairwiseDisjoint) : A.internalEdges ≤ G.internalEdges := by
+  classical
+  rw [Multiset.le_iff_count]
+  intro e
+  by_cases heA : e ∈ A.internalEdges
+  · obtain ⟨γ, hγ, heγ⟩ := resolved_mem_internalEdges heA
+    have hzero : ∀ δ ∈ A.elements, δ ≠ γ → δ.internalEdges.count e = 0 := by
+      intro δ hδ hne
+      by_cases heδ : e ∈ δ.internalEdges
+      · have hdisj := hA hδ hγ hne
+        have hsuppδ := δ.edges_supported e heδ
+        have hsuppγ := γ.edges_supported e heγ
+        exact False.elim ((Finset.disjoint_left.mp hdisj hsuppδ.1) hsuppγ.1)
+      · exact Multiset.count_eq_zero.mpr heδ
+    unfold ResolvedAdmissibleSubgraph.internalEdges
+    rw [multiset_count_finset_sum]
+    calc (∑ x ∈ A.elements, Multiset.count e x.internalEdges)
+        = γ.internalEdges.count e := by
+          rw [Finset.sum_eq_single γ]
+          · intro δ hδ hne; exact hzero δ hδ hne
+          · intro hγnot; exact False.elim (hγnot hγ)
+      _ ≤ G.internalEdges.count e := Multiset.count_le_of_le e γ.internalEdges_le
+  · rw [Multiset.count_eq_zero.mpr heA]; exact Nat.zero_le _
+
+/-- (local) resolved admissible-subgraph extensionality (determined by `elements`). -/
+private theorem resolvedAdmissibleSubgraph_ext' {G : ResolvedFeynmanGraph}
+    {A₁ A₂ : ResolvedAdmissibleSubgraph G} (h : A₁.elements = A₂.elements) : A₁ = A₂ := by
+  obtain ⟨e₁, cd₁, pd₁⟩ := A₁; obtain ⟨e₂, cd₂, pd₂⟩ := A₂; cases h; rfl
+
+/-- A flat proper forest of `(ofFlatGraphWithUniqueIds Gf).forget` lifts to a resolved
+proper forest of the unique-id graph (transport-free; card conditions via forget). -/
+theorem ofUniqueForgetForest_isProperForest
+    (Af : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hAf : Af ∈ ((ofFlatGraphWithUniqueIds Gf).forget.properDisjointAdmissibleDivergentSubgraphs).filter
+      (fun A => 0 < A.complementEdges.card))
+    (hDisj : Af.IsPairwiseDisjoint) :
+    (ofUniqueForgetForest Af hDisj).IsProperForest := by
+  rw [Finset.mem_filter] at hAf
+  obtain ⟨hpd, hcompl⟩ := hAf
+  rw [FeynmanGraph.mem_properDisjointAdmissibleDivergentSubgraphs] at hpd
+  obtain ⟨hnd, hhnc, hiec, hhpiec⟩ := hpd
+  rw [FeynmanGraph.mem_nonemptyDisjointAdmissibleDivergentSubgraphs] at hnd
+  obtain ⟨_, hne⟩ := hnd
+  refine ⟨hne.image _, ?_, ?_, ?_, ?_⟩
+  · intro γ hγ
+    obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hγ
+    simpa [ResolvedFeynmanSubgraph.IsNonempty, ResolvedFeynmanSubgraph.vertexCount,
+      FeynmanSubgraph.IsNonempty, FeynmanSubgraph.vertexCount] using hhnc δf hδf
+  · rw [ofUniqueForgetForest_internalEdges_card]; exact hiec
+  · intro γ hγ
+    obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hγ
+    rw [liftUniqueFromForgetSubgraph_internalEdges_card]; exact hhpiec δf hδf
+  · have hle' : Af.internalEdges ≤ Gf.internalEdges := by
+      have hle := admissibleSubgraph_internalEdges_le_of_pairwise Af hDisj
+      rwa [congrArg FeynmanGraph.internalEdges (forget_ofFlatGraphWithUniqueIds Gf)] at hle
+    have hleR : (ofUniqueForgetForest Af hDisj).internalEdges
+        ≤ (ofFlatGraphWithUniqueIds Gf).internalEdges :=
+      resolvedAdmissibleSubgraph_internalEdges_le_of_pairwise _
+        (ofUniqueForgetForest Af hDisj).isPairwiseDisjoint
+    have hambient : (ofFlatGraphWithUniqueIds Gf).internalEdges.card = Gf.internalEdges.card := by
+      rw [ofFlatGraphWithUniqueIds_internalEdges, ← Multiset.card_map ResolvedFeynmanEdge.forget,
+        map_forget_uniqueIdEdges]
+    have hcard : (ofUniqueForgetForest Af hDisj).complementEdges.card = Af.complementEdges.card := by
+      show ((ofFlatGraphWithUniqueIds Gf).internalEdges
+          - (ofUniqueForgetForest Af hDisj).internalEdges).card
+          = ((ofFlatGraphWithUniqueIds Gf).forget.internalEdges - Af.internalEdges).card
+      rw [Multiset.card_sub hleR, ofUniqueForgetForest_internalEdges_card, hambient,
+        congrArg FeynmanGraph.internalEdges (forget_ofFlatGraphWithUniqueIds Gf),
+        Multiset.card_sub hle']
+    rw [hcard]; exact hcompl
+
+/-- The canonical unique-id finite proper-forest cover of `ofFlatGraphWithUniqueIds (repG g)`. -/
+noncomputable def canonicalUniqueCover (g : HopfGen) :
+    ResolvedProperForestFiniteCover (ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) where
+  index :=
+    { carrier := (((ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph).forget.properDisjointAdmissibleDivergentSubgraphs).filter
+          (fun A => 0 < A.complementEdges.card)).attach.image
+        (fun A => ofUniqueForgetForest A.1
+          (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _
+            (Finset.mem_filter.mp A.2).1))
+      mem_proper := by
+        intro Ares hAres
+        obtain ⟨⟨Af, hAf⟩, _, rfl⟩ := Finset.mem_image.mp hAres
+        exact ofUniqueForgetForest_isProperForest Af hAf _ }
+  forget_complete := by
+    intro Aflat hAflat
+    refine ⟨ofUniqueForgetForest Aflat
+      (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _
+        (Finset.mem_filter.mp hAflat).1), ?_, forget_ofUniqueForgetForest _ _⟩
+    exact Finset.mem_image.mpr ⟨⟨Aflat, hAflat⟩, Finset.mem_attach _ _, rfl⟩
+  forget_injective := by
+    intro A₁ hA₁ A₂ hA₂ heq
+    obtain ⟨⟨B₁, hB₁⟩, _, rfl⟩ := Finset.mem_image.mp hA₁
+    obtain ⟨⟨B₂, hB₂⟩, _, rfl⟩ := Finset.mem_image.mp hA₂
+    rw [forget_ofUniqueForgetForest, forget_ofUniqueForgetForest] at heq
+    apply resolvedAdmissibleSubgraph_ext'
+    rw [ofUniqueForgetForest_elements, ofUniqueForgetForest_elements, heq]
+
+/-- The canonical **unique-id** resolved Hopf payload for `g`: the unique-id lift of
+`repG g`, with its proper-forest cover. -/
+noncomputable def canonicalUniqueResolvedHopfPayload (g : HopfGen) : ResolvedHopfPayload g where
+  G := ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph
+  forget_eq := forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph
+  cover := canonicalUniqueCover g
+
+/-- The unique-id payload carrier has unique edge ids. -/
+theorem canonicalUniquePayload_edgeIdsUnique (g : HopfGen) :
+    (canonicalUniqueResolvedHopfPayload g).G.EdgeIdsUnique :=
+  edgeIdsUnique_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph
+
+/-- The unique-id payload carrier has unique leg ids. -/
+theorem canonicalUniquePayload_legIdsUnique (g : HopfGen) :
+    (canonicalUniqueResolvedHopfPayload g).G.LegIdsUnique :=
+  legIdsUnique_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph
+
+/-- The canonical **unique-id** resolved Hopf payload family. -/
+noncomputable def canonicalUniqueResolvedHopfPayloadFamily : ResolvedHopfPayloadFamily where
+  payload := canonicalUniqueResolvedHopfPayload
+  hCD := fun g =>
+    FeynmanGraph.admissibleForestCanonicalContractGraph_hCD_of_ambient_preservation
+      ((ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph).forget)
+      ((forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph).symm ▸ repG_wellFormed g)
+      ((forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph).symm ▸ repG_isOnePI g)
+      ((forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph).symm ▸ repG_isConnectedDivergent g)
+
+/-- A payload family whose every carrier graph satisfies the identity-uniqueness
+hypotheses required by the resolved boundary repair theorems. -/
+structure ResolvedHopfPayloadFamilyWithUniqueIds extends ResolvedHopfPayloadFamily where
+  edgeIdsUnique : ∀ g, (payload g).G.EdgeIdsUnique
+  legIdsUnique : ∀ g, (payload g).G.LegIdsUnique
+
+/-- The canonical id-unique payload family. -/
+noncomputable def canonicalResolvedHopfPayloadFamilyWithUniqueIds :
+    ResolvedHopfPayloadFamilyWithUniqueIds where
+  toResolvedHopfPayloadFamily := canonicalUniqueResolvedHopfPayloadFamily
+  edgeIdsUnique := canonicalUniquePayload_edgeIdsUnique
+  legIdsUnique := canonicalUniquePayload_legIdsUnique
+
+/-- **R-4-superfull Step 3 headline.**  The id-unique resolved payload family is
+inhabited: a canonical unique-id lift supplies, for every generator, a payload whose
+carrier graph satisfies `EdgeIdsUnique` and `LegIdsUnique` — exactly the hypotheses
+the resolved boundary repair theorems (`parent_eq_of_remainder_eq`,
+`externalLegs_lift_unique`) require. -/
+theorem resolvedHopfPayloadFamilyWithUniqueIds_exists :
+    Nonempty ResolvedHopfPayloadFamilyWithUniqueIds :=
+  ⟨canonicalResolvedHopfPayloadFamilyWithUniqueIds⟩
+
 end GaugeGeometry.QFT.Combinatorial
