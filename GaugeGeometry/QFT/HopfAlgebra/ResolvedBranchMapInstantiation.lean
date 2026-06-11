@@ -430,4 +430,27 @@ theorem forest_remnantDisjoint_of_vertices {D : ResolvedSigmaCoverData G}
       resolvedForestImage D γ ≠ resolvedForestImage D δ →
       (resolvedForestImage D γ).Disjoint (resolvedForestImage D δ) := hDisj
 
+/-! ### Field filling — CD fields
+
+Scout verdict.  **`remnantCD`** (forest) is NOT structural: it is the divergence of the
+quotient *remainder*, which even flat-side reflects only under
+`IsDivergenceReflectedByAdmissibleForestContract` (the reflection class).  It stays a
+field / reflection-gated supply.  **`componentCD`** (mixed) and `componentDisjoint`,
+however, come **for free** when the mixed components are the elements of a resolved
+admissible subgraph of the contracted graph — that structure already carries
+`isConnectedDivergent` and `pairwiseDisjoint`.  So the mixed image needs only
+`avoidsStars` (Field Filling 2). -/
+
+/-- **Mixed image from an admissible subgraph.**  When the mixed components are the
+elements of a resolved admissible forest of the contracted graph, `componentCD` and
+`componentDisjoint` are supplied by that structure; only `avoidsStars` remains. -/
+def ResolvedMixedImageData.ofAdmissibleSubgraph {D : ResolvedSigmaCoverData G}
+    (A : ResolvedAdmissibleSubgraph (D.Aout.contractWithStars D.starOf))
+    (avoidsStars : ∀ δ ∈ A.elements, Disjoint δ.vertices (D.Aout.starVertices D.starOf)) :
+    ResolvedMixedImageData D :=
+  { components := A.elements
+    componentCD := A.isConnectedDivergent
+    componentDisjoint := A.pairwiseDisjoint
+    avoidsStars := avoidsStars }
+
 end GaugeGeometry.QFT.Combinatorial
