@@ -402,4 +402,32 @@ theorem avoidsStars_of_vertices_offStar (D : ResolvedSigmaCoverData G)
   obtain ⟨η, hη, rfl⟩ := ResolvedAdmissibleSubgraph.mem_starVertices.mp hvs
   exact D.starFresh η hη (Finset.mem_sdiff.mp (hδ hv)).1
 
+/-! ### Field filling — disjoint fields are pairwise vertex-disjointness
+
+`ResolvedFeynmanSubgraph.Disjoint` is *defined* as vertex-set disjointness, so the
+`componentDisjoint` / `remnantDisjoint` fields are **literally** pairwise vertex
+disjointness — geometric data supplied by the actual construction, no graph-work. -/
+
+/-- `Disjoint` of resolved subgraphs is vertex-set disjointness (definitional). -/
+theorem resolvedSubgraph_disjoint_iff_vertices {H : ResolvedFeynmanGraph}
+    {γ δ : ResolvedFeynmanSubgraph H} :
+    γ.Disjoint δ ↔ Disjoint γ.vertices δ.vertices := Iff.rfl
+
+/-- Mixed `componentDisjoint` from pairwise vertex-disjointness (definitional repackage). -/
+theorem mixed_componentDisjoint_of_vertices {D : ResolvedSigmaCoverData G}
+    {components : Finset (ResolvedFeynmanSubgraph (D.Aout.contractWithStars D.starOf))}
+    (hDisj : ∀ δ₁ ∈ components, ∀ δ₂ ∈ components,
+      δ₁ ≠ δ₂ → Disjoint δ₁.vertices δ₂.vertices) :
+    ∀ δ₁ ∈ components, ∀ δ₂ ∈ components, δ₁ ≠ δ₂ → δ₁.Disjoint δ₂ := hDisj
+
+/-- Forest `remnantDisjoint` from pairwise vertex-disjointness of remnants (definitional). -/
+theorem forest_remnantDisjoint_of_vertices {D : ResolvedSigmaCoverData G}
+    {choiceParents : Finset (ResolvedForestIdx D)}
+    (hDisj : ∀ γ ∈ choiceParents, ∀ δ ∈ choiceParents,
+      resolvedForestImage D γ ≠ resolvedForestImage D δ →
+      Disjoint (resolvedForestImage D γ).vertices (resolvedForestImage D δ).vertices) :
+    ∀ γ ∈ choiceParents, ∀ δ ∈ choiceParents,
+      resolvedForestImage D γ ≠ resolvedForestImage D δ →
+      (resolvedForestImage D γ).Disjoint (resolvedForestImage D δ) := hDisj
+
 end GaugeGeometry.QFT.Combinatorial
