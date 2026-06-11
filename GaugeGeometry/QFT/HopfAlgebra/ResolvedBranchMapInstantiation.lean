@@ -453,4 +453,59 @@ def ResolvedMixedImageData.ofAdmissibleSubgraph {D : ResolvedSigmaCoverData G}
     componentDisjoint := A.pairwiseDisjoint
     avoidsStars := avoidsStars }
 
+/-! ### Final sprint — `cover` from a discriminator case split
+
+The layer's `cover` (every image is a forest or mixed branch image) follows from a
+**case split on the discriminator** `resolvedIsForestByStar`: a forest-by-star image is a
+forest branch image, a non-forest-by-star image is a mixed branch image.  We isolate the
+two case-preimage obligations as `ResolvedCoverPreimageData` and discharge `cover`
+generically — **no flat `PromotedExternalLegsLiftableModel`**; the case constructions use
+the resolved promoted-leg containment and the discriminator. -/
+
+/-- The two case-preimage obligations for `cover`: a forest-by-star image has a forest
+preimage; a non-forest-by-star image has a mixed preimage. -/
+structure ResolvedCoverPreimageData {D : ResolvedSigmaCoverData G}
+    {ForestIdx MixedIdx : Type*}
+    (forestData : ForestIdx → ResolvedForestImageData D)
+    (mixedData : MixedIdx → ResolvedMixedImageData D) where
+  /-- A forest-by-star image is a forest branch image. -/
+  forest_case : ∀ z : ResolvedActualQuotientImage D,
+    resolvedIsForestByStar D z → ∃ x, (forestData x).toImage = z
+  /-- A non-forest-by-star image is a mixed branch image. -/
+  mixed_case : ∀ z : ResolvedActualQuotientImage D,
+    ¬ resolvedIsForestByStar D z → ∃ y, (mixedData y).toImage = z
+
+/-- **`cover` from the case-preimage data.**  Every image is a forest or mixed branch
+image — by case split on the discriminator.  Facade-free. -/
+theorem ResolvedCoverPreimageData.cover {D : ResolvedSigmaCoverData G}
+    {ForestIdx MixedIdx : Type*}
+    {forestData : ForestIdx → ResolvedForestImageData D}
+    {mixedData : MixedIdx → ResolvedMixedImageData D}
+    (P : ResolvedCoverPreimageData forestData mixedData) :
+    ∀ z : ResolvedActualQuotientImage D,
+      (∃ x, (forestData x).toImage = z) ∨ (∃ y, (mixedData y).toImage = z) := by
+  classical
+  intro z
+  by_cases h : resolvedIsForestByStar D z
+  · exact Or.inl (P.forest_case z h)
+  · exact Or.inr (P.mixed_case z h)
+
+/-- (local) resolved admissible-subgraph extensionality (elements determine it). -/
+private theorem resolvedAdmissibleSubgraph_ext'' {H : ResolvedFeynmanGraph}
+    {A₁ A₂ : ResolvedAdmissibleSubgraph H} (h : A₁.elements = A₂.elements) : A₁ = A₂ := by
+  obtain ⟨e₁, cd₁, pd₁⟩ := A₁; obtain ⟨e₂, cd₂, pd₂⟩ := A₂; cases h; rfl
+
+/-- **`mixed_case` discharged structurally.**  A non-forest-by-star image is its own mixed
+preimage: its components avoid the stars (that is exactly `¬ resolvedIsForestByStar`), so
+`ofAdmissibleSubgraph` rebuilds it.  This closes the mixed half of `cover` — no flat
+facade — leaving only the forest case. -/
+theorem exists_mixed_preimage_of_not_forest (D : ResolvedSigmaCoverData G)
+    {z : ResolvedActualQuotientImage D} (hz : ¬ resolvedIsForestByStar D z) :
+    ∃ M : ResolvedMixedImageData D, M.toImage = z := by
+  refine ⟨ResolvedMixedImageData.ofAdmissibleSubgraph z (fun δ hδ => ?_), ?_⟩
+  · by_contra hcon
+    exact hz ⟨δ, hδ, hcon⟩
+  · apply resolvedAdmissibleSubgraph_ext''
+    rfl
+
 end GaugeGeometry.QFT.Combinatorial
