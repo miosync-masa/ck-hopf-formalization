@@ -382,4 +382,24 @@ theorem mixed_inj_of_components_inj {D : ResolvedSigmaCoverData G}
   intro x y h
   exact hCompInj (ResolvedMixedImageData.components_eq_of_toImage_eq h)
 
+/-! ### Field filling — `avoidsStars` reduced to off-star vertices
+
+The contracted graph's vertices split as `(G.vertices \ Aout.vertices) ∪ starVertices`.
+Star freshness (`D.starFresh`) makes the off-star part disjoint from the stars, so a
+mixed component **avoids the stars** as soon as its vertices lie in the off-star part —
+no separate `avoidsStars` graph-work, only the structural off-star property the actual
+mixed/right construction has. -/
+
+/-- **`avoidsStars` from off-star vertices.**  A contracted-graph subgraph whose vertices
+lie in the off-`Aout` part avoids the star vertices — using star freshness.  (Resolved
+analogue of the flat `forestComponentChoiceRight_vertices_not_mem_forestOuterSubgraph`.) -/
+theorem avoidsStars_of_vertices_offStar (D : ResolvedSigmaCoverData G)
+    {δ : ResolvedFeynmanSubgraph (D.Aout.contractWithStars D.starOf)}
+    (hδ : δ.vertices ⊆ G.vertices \ D.Aout.vertices) :
+    Disjoint δ.vertices (D.Aout.starVertices D.starOf) := by
+  rw [Finset.disjoint_left]
+  intro v hv hvs
+  obtain ⟨η, hη, rfl⟩ := ResolvedAdmissibleSubgraph.mem_starVertices.mp hvs
+  exact D.starFresh η hη (Finset.mem_sdiff.mp (hδ hv)).1
+
 end GaugeGeometry.QFT.Combinatorial
