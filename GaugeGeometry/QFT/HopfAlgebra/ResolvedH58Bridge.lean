@@ -136,4 +136,50 @@ theorem ResolvedH58ConcreteData.concrete_sum_reindex
   resolvedH58ConcreteWeightSumReindex g FL D.flatImageOf D.forestSplitOf D.mixedSplitOf
     D.forestSplit_mem D.mixedSplit_mem D.forest_comm D.mixed_comm D.splitTerm_agreement
 
+/-! ## Field Filling 5 — separate the index maps from the flat term agreement
+
+`ResolvedH58ConcreteData` bundles both the resolved-specific index maps/commutation and
+the flat `splitTerm_agreement`.  We split them: `ResolvedH58ConcreteIndexMaps` carries
+only the resolved-side maps (the genuinely new data), and `toConcreteData` adds the flat
+agreement (the public form of `forestComponentSplitPhi_term_eq_of_split`, a non-facade
+fact suppliable separately). -/
+
+/-- The resolved-side index-map data: resolved→flat index maps, their landing in the flat
+split index, and the commutation squares.  Everything in `ResolvedH58ConcreteData` *except*
+the flat term agreement. -/
+structure ResolvedH58ConcreteIndexMaps [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (FL : ResolvedFiniteBranchMapLayer) where
+  /-- Resolved image → flat quotient image. -/
+  flatImageOf : FL.layer.Image → h58BridgeQuotientSigma g
+  /-- Resolved forest index → flat split index. -/
+  forestSplitOf : FL.layer.ForestIdx → h58BridgeSplitChoiceSigma g
+  /-- Resolved mixed index → flat split index. -/
+  mixedSplitOf : FL.layer.MixedIdx → h58BridgeSplitChoiceSigma g
+  /-- Forest split indices land in the flat split index. -/
+  forestSplit_mem : ∀ q, forestSplitOf q ∈ h58BridgeSplitChoiceIndex g
+  /-- Mixed split indices land in the flat split index. -/
+  mixedSplit_mem : ∀ q, mixedSplitOf q ∈ h58BridgeSplitChoiceIndex g
+  /-- Forest commutation square. -/
+  forest_comm : ∀ q,
+    flatImageOf (FL.layer.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q)
+  /-- Mixed commutation square. -/
+  mixed_comm : ∀ q,
+    flatImageOf (FL.layer.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q)
+
+/-- Add the flat split-term agreement to the index maps to obtain the full concrete data. -/
+def ResolvedH58ConcreteIndexMaps.toConcreteData
+    [IsDivergencePreservedByAdmissibleForestContract] {g : HopfGen}
+    {FL : ResolvedFiniteBranchMapLayer} (M : ResolvedH58ConcreteIndexMaps g FL)
+    (splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
+      h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)) :
+    ResolvedH58ConcreteData g FL :=
+  { flatImageOf := M.flatImageOf
+    forestSplitOf := M.forestSplitOf
+    mixedSplitOf := M.mixedSplitOf
+    forestSplit_mem := M.forestSplit_mem
+    mixedSplit_mem := M.mixedSplit_mem
+    forest_comm := M.forest_comm
+    mixed_comm := M.mixed_comm
+    splitTerm_agreement := splitTerm_agreement }
+
 end GaugeGeometry.QFT.Combinatorial
