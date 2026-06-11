@@ -364,4 +364,22 @@ def ResolvedMixedImageData.ofComponents {D : ResolvedSigmaCoverData G}
   { components := components, componentCD := componentCD,
     componentDisjoint := componentDisjoint, avoidsStars := avoidsStars }
 
+/-! ### Field filling — `mixed_inj` reduced to component injectivity -/
+
+/-- Equal mixed images have equal component sets (the image forgets only proof fields). -/
+theorem ResolvedMixedImageData.components_eq_of_toImage_eq {D : ResolvedSigmaCoverData G}
+    {M₁ M₂ : ResolvedMixedImageData D} (h : M₁.toImage = M₂.toImage) :
+    M₁.components = M₂.components := by
+  have he := congrArg ResolvedAdmissibleSubgraph.elements h
+  rwa [ResolvedMixedImageData.toImage_elements, ResolvedMixedImageData.toImage_elements] at he
+
+/-- **`mixed_inj` helper.**  Mixed-branch injectivity reduces to injectivity of the
+component-set assignment — the mixed analogue of `forest_inj_of_choiceParents_inj`. -/
+theorem mixed_inj_of_components_inj {D : ResolvedSigmaCoverData G}
+    {MixedIdx : Type*} (mixedData : MixedIdx → ResolvedMixedImageData D)
+    (hCompInj : Function.Injective (fun x => (mixedData x).components)) :
+    Function.Injective (fun x => (mixedData x).toImage) := by
+  intro x y h
+  exact hCompInj (ResolvedMixedImageData.components_eq_of_toImage_eq h)
+
 end GaugeGeometry.QFT.Combinatorial
