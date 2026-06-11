@@ -99,4 +99,45 @@ resolved σ-cover (its forest/mixed image data) and supply the resolved→flat i
 flat term agreement.  All four are σ-cover data (non-facade); no abstract structure or new
 mathematics remains. -/
 
+/-! ## Construction scout — `canonicalResolvedActualSigmaCover g` field-source table
+
+Target: `noncomputable def canonicalResolvedActualSigmaCover (g) : ResolvedActualSigmaCover g`.
+The critical discipline is that **no field may reuse a flat boundary facade** — where flat
+used one, the resolved replacement must be used.
+
+| field (path) | source | theorem? | facade status |
+|---|---|---|---|
+| `PFU` | `canonicalResolvedHopfPayloadFamilyWithUniqueIds` | ✅ exists | facade-free (axiom-clean) |
+| `FL.layer.forest_inj` | `resolvedForestImage_injective` ← `parentRemnant_injOn` | ✅ | **resolved repair** (replaces `ForestGraphInsertionUniquenessModel`) |
+| `FL.layer.mixed_inj` | `mixed_inj_of_components_inj` | ✅ | facade-free (index design) |
+| `FL` componentCD/disjoint | `ResolvedMixedImageData.ofAdmissibleSubgraph` | ✅ free | facade-free |
+| `FL` avoidsStars | `avoidsStars_of_vertices_offStar` | ✅ | facade-free (star freshness) |
+| `FL` remnantDisjoint | pairwise vertex (defeq) | ✅ | facade-free |
+| `FL` remnantCD | reflection class | needs class | not facade (power-counting reflection) |
+| `concreteIndexMaps` | resolved→flat forget maps + `h58Bridge*` + commutation | to construct | facade-free (forget maps) |
+| `splitTerm_agreement` | σ-cover factorization (`RemnantPositiveComponentsCertificate`) | construction data | non-facade |
+| **`FL.layer.cover`** | **⚠ flat cover is facade-gated — must rebuild resolved-native** | **genuine remaining** | **flat: PromotedExternalLegs-DEPENDENT; resolved replacement: `resolved_promotedComponent_externalLegs_le_plus`** |
+
+**Critical scout answers.**
+- **(A)** ForestIdx/MixedIdx/Image are **resolved-native** (`Image = ResolvedAdmissibleSubgraph
+  (Aout.contractWithStars starOf)`; branch maps are resolved parent-remnants / mixed
+  components), *not* flat indices transported through `forget`.
+- **(B/C)** The only fields where flat used a facade are `forest_inj` (→
+  `ForestGraphInsertionUniquenessModel`) and `cover` (→ `PromotedExternalLegsLiftableModel`):
+  confirmed by `CoassocStrictForestH58Ready_ofBoundaryFacades` (Coassoc), gated on exactly
+  those two.  `forest_inj` already has its resolved replacement (`parentRemnant_injOn`).
+- **(D) HALT.**  The flat `cover` certificate is **facade-dependent**
+  (`PromotedExternalLegsLiftableModel`) — it cannot be transported.  It must be **rebuilt
+  resolved-natively** using `resolved_promotedComponent_externalLegs_le_plus` (the resolved
+  promoted-leg containment, built precisely for this) plus the resolved σ-cover
+  surjectivity.  **This is the genuine remaining construction sprint** — the one field that
+  is not a direct source lookup.
+
+**Verdict.**  Every field except `cover` is sourced facade-free (resolved repairs + index
+design + structural lemmas + reflection class).  `cover` is the single genuine remaining
+piece: a resolved-native surjectivity built on the resolved promoted-leg containment — the
+exact place R-4-superfull's containment lemma was designed to plug in.  So
+`canonicalResolvedActualSigmaCover g` is feasible **iff** the resolved cover surjectivity
+is constructed; that is the final sprint, and it does **not** reintroduce any flat facade. -/
+
 end GaugeGeometry.QFT.Combinatorial
