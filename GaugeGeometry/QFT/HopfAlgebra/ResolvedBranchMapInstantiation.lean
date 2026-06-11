@@ -508,4 +508,54 @@ theorem exists_mixed_preimage_of_not_forest (D : ResolvedSigmaCoverData G)
   · apply resolvedAdmissibleSubgraph_ext''
     rfl
 
+/-! ### Final sprint — `forest_case`
+
+A forest-by-star image `z` is *entirely* a forest branch image (the discriminator only
+classifies forest-vs-mixed; within the forest branch every component of `z` is a parent
+remnant).  So the genuine remaining datum is the **lift of `z`'s components back to
+parents** (`parentOf` with `parent_remnant_eq`); from it, the forest image data's
+`remnantCD`/`remnantDisjoint`/`starWitness` and `toImage = z` all follow from `z`'s own
+admissible-subgraph structure + the discriminator witness. -/
+
+/-- The forest-case datum: a lift of each component of `z` back to a parent whose remnant
+is that component. -/
+structure ResolvedForestCasePreimageData (D : ResolvedSigmaCoverData G)
+    (z : ResolvedActualQuotientImage D) where
+  /-- Parent of a contracted-graph component. -/
+  parentOf : ResolvedFeynmanSubgraph (D.Aout.contractWithStars D.starOf) → ResolvedForestIdx D
+  /-- Each component of `z` is the remnant of its parent. -/
+  parent_remnant_eq : ∀ δ ∈ z.elements, resolvedForestImage D (parentOf δ) = δ
+
+/-- **`forest_case` from the component-lift datum.**  A forest-by-star image is a forest
+branch image: assemble the forest image data from the parents of `z`'s components.
+Facade-free; the forest decomposition lives entirely in `parentOf`. -/
+theorem forest_case_of_preimageData (D : ResolvedSigmaCoverData G)
+    {z : ResolvedActualQuotientImage D} (P : ResolvedForestCasePreimageData D z)
+    (hz : resolvedIsForestByStar D z) :
+    ∃ F : ResolvedForestImageData D, F.toImage = z := by
+  classical
+  refine ⟨{ choiceParents := z.elements.image P.parentOf
+            remnantCD := ?_, remnantDisjoint := ?_, starWitness := ?_ }, ?_⟩
+  · intro γ hγ
+    obtain ⟨δ, hδ, rfl⟩ := Finset.mem_image.mp hγ
+    rw [P.parent_remnant_eq δ hδ]; exact z.isConnectedDivergent δ hδ
+  · intro γ₁ hγ₁ γ₂ hγ₂ hne
+    obtain ⟨δ₁, hδ₁, rfl⟩ := Finset.mem_image.mp hγ₁
+    obtain ⟨δ₂, hδ₂, rfl⟩ := Finset.mem_image.mp hγ₂
+    rw [P.parent_remnant_eq δ₁ hδ₁, P.parent_remnant_eq δ₂ hδ₂]
+    rw [P.parent_remnant_eq δ₁ hδ₁, P.parent_remnant_eq δ₂ hδ₂] at hne
+    exact z.pairwiseDisjoint hδ₁ hδ₂ hne
+  · obtain ⟨δ, hδ, hstar⟩ := hz
+    refine ⟨P.parentOf δ, Finset.mem_image.mpr ⟨δ, hδ, rfl⟩, ?_⟩
+    rw [P.parent_remnant_eq δ hδ]; exact hstar
+  · apply resolvedAdmissibleSubgraph_ext''
+    show (z.elements.image P.parentOf).image (resolvedForestImage D) = z.elements
+    ext w
+    simp only [Finset.mem_image]
+    constructor
+    · rintro ⟨γ, ⟨δ, hδ, rfl⟩, rfl⟩
+      rw [P.parent_remnant_eq δ hδ]; exact hδ
+    · intro hw
+      exact ⟨P.parentOf w, ⟨w, hw, rfl⟩, P.parent_remnant_eq w hw⟩
+
 end GaugeGeometry.QFT.Combinatorial
