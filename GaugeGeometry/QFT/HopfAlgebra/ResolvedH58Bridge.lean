@@ -182,4 +182,25 @@ def ResolvedH58ConcreteIndexMaps.toConcreteData
     mixed_comm := M.mixed_comm
     splitTerm_agreement := splitTerm_agreement }
 
+/-! ## Field Filling 6 — `splitTerm_agreement` verdict (σ-cover data, not a free wrapper)
+
+Scouted: the flat split-term agreement `forestComponentSplitPhi_term_eq_of_split` is
+**not** unconditionally provable.  It is assembled (Coassoc
+`forestComponentSplitPhiBranchReindexingOfFactorization`) from per-branch agreements that
+require:
+* `forestComponentForestChoiceRemnantPositiveComponentsCertificate` (a forest-side
+  σ-cover certificate), and
+* a `forestComponentSplitPhiBranchTermFactorization` payload (`forest_product`,
+  `forest_right`, `mixed_right`; only `mixed_product` is discharged unconditionally).
+
+These are **σ-cover construction data** (non-facade, but produced by the actual cover),
+not a free algebraic identity.  Exposing the assembled reindexing bundle as a public
+wrapper would hand the resolved track flat's facade-discharged injectivity/cover data,
+defeating the resolved reconstruction — so we do **not** expose it.
+
+**Verdict.**  `splitTerm_agreement` reclassifies into the **σ-cover data-supply** group
+(alongside the index maps and `remnantCD`): it stays a parameter of `toConcreteData`,
+to be supplied when the actual resolved σ-cover is constructed (which produces the
+remnant-positive certificate + factorization).  It is *not* a quick structural win. -/
+
 end GaugeGeometry.QFT.Combinatorial
