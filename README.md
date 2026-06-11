@@ -124,6 +124,14 @@ standalone modules, axiom-clean):
   construction of a *single explicit finite data package*, `ResolvedActualSigmaCover g`
   — **not yet constructed**. Its fields (the finite branch-map layer, the resolved→flat
   index maps, the flat split-term agreement) are all σ-cover data, not boundary facades.
+- The layer's `cover` (every quotient image is a forest or mixed branch image) is reduced
+  *facade-free* to a single datum: the **mixed** case is structural
+  (`exists_mixed_preimage_of_not_forest`), the **forest** case is built from a
+  component-to-parent lift (`ResolvedForestCasePreimageData` →
+  `forest_case_of_preimageData`), consolidated as `ResolvedForestCaseSupply.cover`. No flat
+  `…PromotedExternalLegsLiftableModel` is used — the cover obstruction is now the single
+  facade-free datum `ResolvedForestCaseSupply` (`resolvedParentRemnant` component-level
+  surjectivity).
 
 All R-4-superfull modules depend only on `propext`/`Classical.choice`/`Quot.sound`; `Main`
 is unaffected apart from the thin public aliases added to `Coassoc.lean`.

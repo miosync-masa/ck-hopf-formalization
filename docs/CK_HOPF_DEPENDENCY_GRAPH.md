@@ -366,6 +366,21 @@ boundary facades.  The architecture above reaches the concrete flat H5.8 tensor
 reindexing identity; only this finite data object remains.  `Main` is unaffected apart
 from the thin public aliases in `Coassoc.lean`.
 
+**Cover consolidation.**  The `cover` field is reduced facade-free to one datum:
+```
+ResolvedCoverPreimageData.cover            (case split on resolvedIsForestByStar)
+  ├─ mixed_case  := exists_mixed_preimage_of_not_forest   (structural; ofAdmissibleSubgraph)
+  └─ forest_case := forest_case_of_preimageData           (from ResolvedForestCasePreimageData)
+        ▲  parentOf : component → parent, parent_remnant_eq
+        │
+ResolvedForestCaseSupply.cover   ◄── the entire cover obstruction (one datum)
+```
+`ResolvedForestCaseSupply` = a `parentOf` component-to-parent lift per forest-by-star
+image (`resolvedParentRemnant` component-level surjectivity, σ-cover data).  **No flat
+`ForestQuotientForestSigmaForestCoverPromotedExternalLegsLiftableModel` is used.**  Full
+native resolved H5.8 is **not** claimed complete; the cover obstruction / construction
+interface is consolidated to σ-cover data supply.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

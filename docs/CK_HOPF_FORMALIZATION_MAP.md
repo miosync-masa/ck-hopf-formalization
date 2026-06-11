@@ -442,6 +442,25 @@ admissible-subgraph structure; `avoidsStars` is structural from star freshness;
 `remnantCD` is reflection-class gated; `splitTerm_agreement` is the σ-cover
 factorization data.
 
+**Cover consolidation.**  The branch-map layer's `cover` (every quotient image is a
+forest or mixed branch image) is reduced — *facade-free* — to a single datum.  By a case
+split on the `resolvedIsForestByStar` discriminator (`ResolvedCoverPreimageData.cover`):
+the **mixed** case is discharged *structurally* (`exists_mixed_preimage_of_not_forest`: a
+non-forest-by-star image is its own mixed preimage, since `avoidsStars` is exactly
+`¬ resolvedIsForestByStar`); the **forest** case is constructed from
+`ResolvedForestCasePreimageData` (a `parentOf` lift of the image's components back to
+parents, with `parent_remnant_eq`) via `forest_case_of_preimageData` (the forest image's
+`remnantCD`/`remnantDisjoint`/`starWitness` and `toImage = z` all derive from the image's
+own admissible structure).  Consolidated as `ResolvedForestCaseSupply.cover`.  **No flat
+`ForestQuotientForestSigmaForestCoverPromotedExternalLegsLiftableModel` is used** — the
+cover obstruction is now the single facade-free datum `ResolvedForestCaseSupply`
+(equivalently, a component-to-parent lift for forest-by-star quotient images:
+`resolvedParentRemnant` component-level surjectivity, σ-cover data).  The remaining
+`ResolvedActualSigmaCover g` construction is therefore pure σ-cover data supply
+(`parentOf` / concrete index maps / `splitTerm_agreement` / `remnantCD` / finite
+carriers) — **full native resolved H5.8 is not claimed complete; the construction
+interface is consolidated**.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
