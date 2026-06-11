@@ -105,6 +105,29 @@ full Hopf-structure law bundle, and is inhabited by a canonical lift — the onl
 thing deliberately *not* done is installing a duplicate typeclass instance on the
 flat carrier.
 
+R-4-superfull (identity-unique payload + native H5.8 reindexing architecture;
+standalone modules, axiom-clean):
+
+- The payload is upgraded to an *identity-unique* lift
+  (`ResolvedHopfPayloadFamilyWithUniqueIds`, `ResolvedUniquePayloadModel.lean`), so the
+  resolved boundary repairs apply to the actual payload graphs
+  (`ResolvedBoundaryRepairCertificate`).
+- A full resolved H5.8 reindexing architecture is built: a branch-map layer
+  (`ResolvedBranchMapLayer`), its separated-cover classifier
+  (`ResolvedIndexedBranchClassifier`), the finite sum-reindex
+  (`ResolvedFiniteBranchMapLayer.sum_reindex`: `∑ image = ∑ forest + ∑ mixed`), and a
+  bridge to the **concrete flat H5.8 tensor terms** (`ResolvedH58Bridge`, via thin
+  public aliases of the flat σ-objects in `Coassoc.lean`).
+- The architecture **reaches the concrete flat H5.8 tensor reindexing identity**
+  (`ResolvedActualSigmaCover.concrete_sum_reindex`). The full native resolved H5.8
+  proof is **not** claimed complete: the entire remaining task is isolated as the
+  construction of a *single explicit finite data package*, `ResolvedActualSigmaCover g`
+  — **not yet constructed**. Its fields (the finite branch-map layer, the resolved→flat
+  index maps, the flat split-term agreement) are all σ-cover data, not boundary facades.
+
+All R-4-superfull modules depend only on `propext`/`Classical.choice`/`Quot.sound`; `Main`
+is unaffected apart from the thin public aliases added to `Coassoc.lean`.
+
 ## Build
 
 ```bash

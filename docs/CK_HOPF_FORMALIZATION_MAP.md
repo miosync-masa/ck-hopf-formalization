@@ -409,6 +409,39 @@ right antipode axiom is discharged via the convolution / local-nilpotency route*
 `HopfAlgebra ℚ HopfH` from the two boundary facades + power-counting reflection
 alone — no antipode kernel**).
 
+### R-4-superfull consolidation — native H5.8 architecture and the final obstruction
+
+Beyond `R-4-full` (which leaves coassociativity gated on the two boundary facades),
+the boundary-resolved track is extended to a **native resolved H5.8 reindexing
+architecture**, all standalone and axiom-clean:
+
+- an *identity-unique* payload lift (`ResolvedHopfPayloadFamilyWithUniqueIds`,
+  `ResolvedUniquePayloadModel.lean`) so the resolved boundary repairs
+  (`parent_eq_of_remainder_eq`, `externalLegs_lift_unique`) apply to the actual payload
+  graphs (`ResolvedBoundaryRepairCertificate`);
+- a constructive σ-index parent set (`ResolvedSigmaParentSet`, with the source-vertex
+  recovery `remnant_vertex_recovery` *proved* — no longer a hook — from a pure-graph
+  connectivity lemma + star freshness);
+- a branch-map layer (`ResolvedBranchMapLayer`), its separated-cover classifier
+  (`ResolvedIndexedBranchClassifier`), and the finite sum-reindex
+  (`ResolvedFiniteBranchMapLayer.sum_reindex`: `∑ image = ∑ forest + ∑ mixed`);
+- a bridge to the **concrete flat H5.8 tensor terms** (`ResolvedH58Bridge`, through thin
+  public aliases of the private flat σ-objects in `Coassoc.lean` — `Main` stays green).
+
+The architecture **reaches the concrete flat H5.8 tensor reindexing identity**
+(`ResolvedActualSigmaCover.concrete_sum_reindex`).  We do **not** claim the full native
+resolved H5.8 proof is complete: the entire remaining obstruction is isolated as the
+construction of a **single explicit finite data package**,
+`ResolvedActualSigmaCover g` (`ResolvedActualSigmaCover.lean`), which is **not yet
+constructed**.  Its fields — the finite branch-map layer `FL` (carrying cover, branch
+injectivity, and the image-data CD/disjointness/star-avoidance), the resolved→flat
+`ResolvedH58ConcreteIndexMaps`, and the flat `splitTerm_agreement` — are all *σ-cover
+data* (non-facade); no abstract framework or new mathematics remains.  Branch
+injectivity reduces to index injectivity; `componentCD`/disjointness come free from the
+admissible-subgraph structure; `avoidsStars` is structural from star freshness;
+`remnantCD` is reflection-class gated; `splitTerm_agreement` is the σ-cover
+factorization data.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

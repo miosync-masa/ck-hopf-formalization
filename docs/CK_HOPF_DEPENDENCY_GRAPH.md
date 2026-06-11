@@ -331,6 +331,43 @@ local-nilpotency route (§4) — the right antipode axiom is a theorem, not a ke
 
 ---
 
+## R-4-superfull — native H5.8 reindexing architecture (standalone, axiom-clean)
+
+```
+ResolvedBoundaryRepairCertificate         (resolved repairs on id-unique payload)
+        │     (ResolvedUniquePayloadModel: ResolvedHopfPayloadFamilyWithUniqueIds)
+        ▼
+ResolvedSigmaParentSet                     (constructive σ-index; remnant_vertex_recovery
+        │                                    PROVED via connectivity + star freshness)
+        ▼
+ResolvedBranchMapLayer ───────► ResolvedIndexedBranchClassifier   (∃! preimage)
+        │   (forest/mixed image + isForestByStar + inj + cover)
+        ▼
+ResolvedFiniteBranchMapLayer.sum_reindex   (∑ image = ∑ forest + ∑ mixed)
+        ▼
+ResolvedH58WeightData / ResolvedFlatH58WeightAlignment   (coassoc-language reindex)
+        │
+        ▼   [Coassoc public aliases: h58Bridge{QuotientSigma,SplitChoiceSigma,
+        │    QuotientIndex,SplitChoiceIndex,QuotientTerm,SplitChoiceTerm,SplitPhi}]
+        ▼
+ResolvedH58Bridge.resolvedH58ConcreteWeightSumReindex     (CONCRETE flat tensor terms)
+        ▼
+ResolvedH58ConcreteData ──► ResolvedH58ConcreteIndexMaps
+        ▼
+ResolvedActualSigmaCover.concrete_sum_reindex   ◄── FINAL OBSTRUCTION
+```
+
+**Final obstruction (single node):** construct one `ResolvedActualSigmaCover g`
+(`ResolvedActualSigmaCover.lean`) — **not yet constructed**.  Fields: `FL`
+(`ResolvedFiniteBranchMapLayer`, carrying cover/injectivity/CD/disjoint/avoidsStars),
+`ResolvedH58ConcreteIndexMaps` (resolved→flat index maps + commutation), and
+`splitTerm_agreement` (flat σ-cover factorization data).  All σ-cover data, **not**
+boundary facades.  The architecture above reaches the concrete flat H5.8 tensor
+reindexing identity; only this finite data object remains.  `Main` is unaffected apart
+from the thin public aliases in `Coassoc.lean`.
+
+---
+
 *Keep this file in sync with the Lean source line numbers when the kernels move.
 Reader-facing narrative lives in `CK_HOPF_FORMALIZATION_MAP.md`; do not duplicate
 sprint logs here.*
