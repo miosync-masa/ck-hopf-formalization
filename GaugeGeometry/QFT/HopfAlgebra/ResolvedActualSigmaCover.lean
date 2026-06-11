@@ -140,4 +140,50 @@ exact place R-4-superfull's containment lemma was designed to plug in.  So
 `canonicalResolvedActualSigmaCover g` is feasible **iff** the resolved cover surjectivity
 is constructed; that is the final sprint, and it does **not** reintroduce any flat facade. -/
 
+/-! ## Cover supply — `parentOf` consolidated into the cover preimage data
+
+The cover sprint reduced both cases (mixed: structural; forest: the `parentOf`
+component-lift).  Here we consolidate them: a **forest-case supply** (a `parentOf` datum
+per forest-by-star image) yields the full `ResolvedCoverPreimageData` — hence the cover —
+over the identity-indexed image families.  The only genuine remaining datum is the
+forest-case supply (`resolvedParentRemnant` component-level surjectivity, σ-cover data,
+facade-free); the mixed half is already structural. -/
+
+/-- The forest-case supply: a parent-lift datum for every forest-by-star image. -/
+def ResolvedForestCaseSupply (D : ResolvedSigmaCoverData G) : Type _ :=
+  ∀ z : ResolvedActualQuotientImage D, resolvedIsForestByStar D z →
+    ResolvedForestCasePreimageData D z
+
+/-- From a forest-case supply: the cover preimage data over the identity-indexed image
+families (constructed `forest_case` + structural `mixed_case`). -/
+def ResolvedForestCaseSupply.toCoverPreimageData {D : ResolvedSigmaCoverData G}
+    (S : ResolvedForestCaseSupply D) :
+    ResolvedCoverPreimageData
+      (forestData := (fun F => F : ResolvedForestImageData D → ResolvedForestImageData D))
+      (mixedData := (fun M => M : ResolvedMixedImageData D → ResolvedMixedImageData D)) where
+  forest_case := fun z hz => forest_case_of_preimageData D (S z hz) hz
+  mixed_case := fun _ hz => exists_mixed_preimage_of_not_forest D hz
+
+/-- **The cover, from the forest-case supply.**  Every image is a forest or mixed branch
+image — the layer's `cover` content, reduced to the single forest-case `parentOf`
+supply (facade-free). -/
+theorem ResolvedForestCaseSupply.cover {D : ResolvedSigmaCoverData G}
+    (S : ResolvedForestCaseSupply D) :
+    ∀ z : ResolvedActualQuotientImage D,
+      (∃ F : ResolvedForestImageData D, F.toImage = z) ∨
+        (∃ M : ResolvedMixedImageData D, M.toImage = z) :=
+  S.toCoverPreimageData.cover
+
+/-! **Final report.**  The entire R-4-superfull cover obstruction is now the single datum
+`ResolvedForestCaseSupply D` — for each forest-by-star image, a `parentOf` lifting its
+components back to parents (`resolvedParentRemnant` component-level surjectivity).  This is
+σ-cover data, **not** a flat facade.  Together with the (already-isolated)
+`ResolvedH58ConcreteIndexMaps`, `splitTerm_agreement` (σ-cover factorization), and
+`remnantCD` (reflection-class), constructing one actual resolved σ-cover supplies every
+field of `ResolvedActualSigmaCover g`.  The remaining engineering — assembling these into a
+finite branch-map layer (`ResolvedFiniteBranchMapLayer`: finite carriers over the actual
+σ-cover's finite branch indices, where `forestImage`/`mixedImage` are injective) — is the
+actual σ-cover finiteness construction; it introduces no facade and no new mathematics
+beyond the σ-cover data itself. -/
+
 end GaugeGeometry.QFT.Combinatorial
