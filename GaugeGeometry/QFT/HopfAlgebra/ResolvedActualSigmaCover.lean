@@ -315,6 +315,50 @@ outer proper forest of the canonical payload graph, `starOf` = canonical fresh s
 `parents` = the inner proper-forest parents, with `starFresh`/`componentPositiveEdges` from
 the canonical construction. -/
 
+/-! ## Outer-forest sum layer (the H5.8 double sum)
+
+The full H5.8 RHS is the **sum over outer proper forests** of the per-outer-forest inner
+reindex identities.  `ResolvedH58OuterSumSupply` carries a finite family of per-outer
+supplies; `outer_sum_reindex` sums their `concrete_sum_reindex` identities — no new
+mathematics, just `Finset.sum_congr`. -/
+
+/-- A finite family of per-outer-forest σ-cover supplies (one inner supply per outer
+proper forest). -/
+structure ResolvedH58OuterSumSupply (g : HopfGen) where
+  /-- The outer proper-forest index. -/
+  OuterIdx : Type*
+  /-- The finite outer carrier (resolved analogue of `forestOuterProperFinset g`). -/
+  outerCarrier : Finset OuterIdx
+  /-- The per-outer inner σ-cover supply. -/
+  innerSupply : OuterIdx → CanonicalResolvedActualSigmaCoverSupply g
+
+namespace ResolvedH58OuterSumSupply
+
+variable {g : HopfGen} (S : ResolvedH58OuterSumSupply g)
+
+/-- The inner image-weight sum for one outer forest. -/
+noncomputable def innerImageSum (A : S.OuterIdx) : HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH) :=
+  ∑ z ∈ (S.innerSupply A).toSupply.toActualSigmaCover.FL.imageCarrier,
+    h58BridgeQuotientTerm g ((S.innerSupply A).toSupply.toActualSigmaCover.concreteData.flatImageOf z)
+
+/-- The inner forest+mixed branch-weight sum for one outer forest. -/
+noncomputable def innerBranchSum (A : S.OuterIdx) : HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH) :=
+  (∑ q ∈ (S.innerSupply A).toSupply.toActualSigmaCover.FL.forestCarrier,
+      h58BridgeSplitChoiceTerm g
+        ((S.innerSupply A).toSupply.toActualSigmaCover.concreteData.forestSplitOf q)) +
+  (∑ q ∈ (S.innerSupply A).toSupply.toActualSigmaCover.FL.mixedCarrier,
+      h58BridgeSplitChoiceTerm g
+        ((S.innerSupply A).toSupply.toActualSigmaCover.concreteData.mixedSplitOf q))
+
+/-- **The H5.8 double sum.**  The outer sum of inner image-weight sums equals the outer sum
+of inner branch-weight sums — the full reindex, assembled from the per-outer-forest
+`concrete_sum_reindex` identities by `Finset.sum_congr`. -/
+theorem outer_sum_reindex :
+    ∑ A ∈ S.outerCarrier, S.innerImageSum A = ∑ A ∈ S.outerCarrier, S.innerBranchSum A :=
+  Finset.sum_congr rfl (fun A _ => (S.innerSupply A).concrete_sum_reindex)
+
+end ResolvedH58OuterSumSupply
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
