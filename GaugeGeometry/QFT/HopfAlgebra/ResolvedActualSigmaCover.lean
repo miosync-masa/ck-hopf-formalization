@@ -162,6 +162,12 @@ def ResolvedBranchCarriers.toFiniteCarriers {D : ResolvedSigmaCoverData G}
     C.mixed_components_inj M₁ hM₁ M₂ hM₂
       (ResolvedMixedImageData.components_eq_of_toImage_eq hImg)
 
+/-- The carrier-based finite layer directly from branch carriers (+ id-uniqueness). -/
+noncomputable def ResolvedBranchCarriers.toLayer {D : ResolvedSigmaCoverData G}
+    (C : ResolvedBranchCarriers D) (hEdgeId : G.EdgeIdsUnique) (hLegId : G.LegIdsUnique) :
+    ResolvedCarrierFiniteBranchMapLayer :=
+  (C.toFiniteCarriers hEdgeId hLegId).toCarrierLayer
+
 /-- **The actual resolved σ-cover package.**  Consolidates the remaining R-4-superfull
 obligations: the finite branch-map layer (carrying cover/injectivity/CD/disjoint), the
 id-unique payload family, the resolved→flat index maps, and the flat split-term
@@ -194,6 +200,51 @@ theorem concrete_sum_reindex :
   S.concreteData.concrete_sum_reindex
 
 end ResolvedActualSigmaCover
+
+/-! ## Final constructor (FC-4)
+
+The remaining concrete data, bundled, with the constructor to `ResolvedActualSigmaCover`.
+The finite branch-map layer `FL` is built from `branchCarriers` (+ the payload's
+id-uniqueness); the package adds the concrete index maps and the flat term agreement.
+So the entire R-4-superfull obstruction is now `ResolvedActualSigmaCoverSupply g`. -/
+
+/-- All remaining concrete σ-cover data for one generator: the id-unique payload family,
+the σ-cover data, the finite branch carriers, the resolved→flat index maps, and the flat
+term agreement. -/
+structure ResolvedActualSigmaCoverSupply (g : HopfGen) where
+  /-- The id-unique payload family. -/
+  PFU : ResolvedHopfPayloadFamilyWithUniqueIds
+  /-- The σ-cover data on the payload graph. -/
+  D : ResolvedSigmaCoverData (PFU.payload g).G
+  /-- The finite branch carriers. -/
+  branchCarriers : ResolvedBranchCarriers D
+  /-- The resolved→flat index maps for the layer built from `branchCarriers`. -/
+  concreteIndexMaps : ResolvedH58ConcreteIndexMaps g
+    (branchCarriers.toLayer (PFU.edgeIdsUnique g) (PFU.legIdsUnique g))
+  /-- The flat split-term agreement. -/
+  splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- **Assemble `ResolvedActualSigmaCover` from the supply.**  The single remaining
+R-4-superfull obstruction is to construct one `ResolvedActualSigmaCoverSupply g`. -/
+noncomputable def ResolvedActualSigmaCoverSupply.toActualSigmaCover {g : HopfGen}
+    (S : ResolvedActualSigmaCoverSupply g) : ResolvedActualSigmaCover g where
+  PFU := S.PFU
+  FL := S.branchCarriers.toLayer (S.PFU.edgeIdsUnique g) (S.PFU.legIdsUnique g)
+  concreteIndexMaps := S.concreteIndexMaps
+  splitTerm_agreement := S.splitTerm_agreement
+
+/-- The concrete H5.8 sum-reindex delivered by the supply (with the actual flat tensor
+terms). -/
+theorem ResolvedActualSigmaCoverSupply.concrete_sum_reindex {g : HopfGen}
+    (S : ResolvedActualSigmaCoverSupply g) :
+    ∑ z ∈ S.toActualSigmaCover.FL.imageCarrier,
+        h58BridgeQuotientTerm g (S.toActualSigmaCover.concreteData.flatImageOf z) =
+      (∑ q ∈ S.toActualSigmaCover.FL.forestCarrier,
+          h58BridgeSplitChoiceTerm g (S.toActualSigmaCover.concreteData.forestSplitOf q)) +
+      (∑ q ∈ S.toActualSigmaCover.FL.mixedCarrier,
+          h58BridgeSplitChoiceTerm g (S.toActualSigmaCover.concreteData.mixedSplitOf q)) :=
+  S.toActualSigmaCover.concrete_sum_reindex
 
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
