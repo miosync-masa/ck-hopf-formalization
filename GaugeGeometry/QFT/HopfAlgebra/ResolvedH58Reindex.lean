@@ -88,4 +88,75 @@ end ResolvedFiniteBranchMapLayer
   this identity with the `HopfH ⊗ (HopfH ⊗ HopfH)` tensor-term weight `w` — the final
   step is to supply that weight and match it to the flat double-sum. -/
 
+/-! ## Carrier-based finite layer (案A — infinite `Image`, finite quotient carrier)
+
+`ResolvedFiniteBranchMapLayer` above states completeness/cover over the **whole** `Image`
+type, which forces `Image` finite.  For the actual construction `Image =
+ResolvedAdmissibleSubgraph (contracted)` is *infinite*, and H5.8 sums only over the finite
+RHS quotient carrier.  This carrier-based variant fixes that: `Image` may be any type;
+everything is stated over `imageCarrier` (the finite quotient index).  `cover_on` is the
+genuine σ-cover surjectivity over that carrier. -/
+
+/-- A branch-map layer with a **finite quotient carrier** — completeness/cover stated over
+`imageCarrier` only, so `Image` may be an infinite type. -/
+structure ResolvedCarrierFiniteBranchMapLayer where
+  /-- The underlying branch-map layer (`Image` may be infinite). -/
+  layer : ResolvedBranchMapLayer
+  /-- Finite forest-index carrier. -/
+  forestCarrier : Finset layer.ForestIdx
+  /-- Finite mixed-index carrier. -/
+  mixedCarrier : Finset layer.MixedIdx
+  /-- Finite image (quotient) carrier — the set actually summed over. -/
+  imageCarrier : Finset layer.Image
+  /-- Forest images land in the image carrier. -/
+  forestImage_mem : ∀ q ∈ forestCarrier, layer.forestImage q ∈ imageCarrier
+  /-- Mixed images land in the image carrier. -/
+  mixedImage_mem : ∀ q ∈ mixedCarrier, layer.mixedImage q ∈ imageCarrier
+  /-- Cover over the carrier: every carrier image is a forest or mixed branch image. -/
+  cover_on : ∀ z ∈ imageCarrier,
+    (∃ q ∈ forestCarrier, layer.forestImage q = z) ∨
+      (∃ q ∈ mixedCarrier, layer.mixedImage q = z)
+  /-- Forest injectivity on the carrier. -/
+  forest_inj_on : ∀ q₁ ∈ forestCarrier, ∀ q₂ ∈ forestCarrier,
+    layer.forestImage q₁ = layer.forestImage q₂ → q₁ = q₂
+  /-- Mixed injectivity on the carrier. -/
+  mixed_inj_on : ∀ q₁ ∈ mixedCarrier, ∀ q₂ ∈ mixedCarrier,
+    layer.mixedImage q₁ = layer.mixedImage q₂ → q₁ = q₂
+
+namespace ResolvedCarrierFiniteBranchMapLayer
+
+variable (FL : ResolvedCarrierFiniteBranchMapLayer)
+
+/-- **Carrier-based H5.8 sum-reindex.**  The sum over the finite quotient carrier splits
+into the forest and mixed branch sums — `Image` may be infinite; only the carrier is
+summed.  This is the correct finite-reindex formulation. -/
+theorem sum_reindex {M : Type*} [AddCommMonoid M] (w : FL.layer.Image → M) :
+    ∑ z ∈ FL.imageCarrier, w z =
+      (∑ q ∈ FL.forestCarrier, w (FL.layer.forestImage q)) +
+      (∑ q ∈ FL.mixedCarrier, w (FL.layer.mixedImage q)) := by
+  have hpart : FL.imageCarrier =
+      FL.forestCarrier.image FL.layer.forestImage ∪
+        FL.mixedCarrier.image FL.layer.mixedImage := by
+    apply Finset.Subset.antisymm
+    · intro z hz
+      rcases FL.cover_on z hz with ⟨q, hq, rfl⟩ | ⟨q, hq, rfl⟩
+      · exact Finset.mem_union_left _ (Finset.mem_image_of_mem _ hq)
+      · exact Finset.mem_union_right _ (Finset.mem_image_of_mem _ hq)
+    · intro z hz
+      rcases Finset.mem_union.mp hz with hz | hz
+      · obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hz; exact FL.forestImage_mem q hq
+      · obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hz; exact FL.mixedImage_mem q hq
+  have hdisj : Disjoint (FL.forestCarrier.image FL.layer.forestImage)
+      (FL.mixedCarrier.image FL.layer.mixedImage) := by
+    rw [Finset.disjoint_left]
+    intro z hzF hzM
+    obtain ⟨qF, _, hqF⟩ := Finset.mem_image.mp hzF
+    obtain ⟨qM, _, hqM⟩ := Finset.mem_image.mp hzM
+    exact FL.layer.cross qF qM (hqF.trans hqM.symm)
+  rw [hpart, Finset.sum_union hdisj,
+    Finset.sum_image (fun x hx y hy h => FL.forest_inj_on x hx y hy h),
+    Finset.sum_image (fun x hx y hy h => FL.mixed_inj_on x hx y hy h)]
+
+end ResolvedCarrierFiniteBranchMapLayer
+
 end GaugeGeometry.QFT.Combinatorial
