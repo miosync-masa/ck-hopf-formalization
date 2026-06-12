@@ -86,6 +86,45 @@ noncomputable def resolvedActualCarrierLayer (D : ResolvedSigmaCoverData G)
   forest_inj_on := forest_inj_on
   mixed_inj_on := mixed_inj_on
 
+/-! ## Actual construction — finite carriers (FC-2, option C)
+
+Taking `imageCarrier := forest images ∪ mixed images` makes `forestImage_mem`,
+`mixedImage_mem`, and `cover_on` immediate (by construction).  So the finite-carrier data
+reduces to just the two finite branch carriers and their carrier-injectivity; the layer is
+then assembled with no further membership/cover proofs.  (Matching this union carrier to the
+flat RHS quotient index is deferred to `ResolvedH58ConcreteIndexMaps`.) -/
+
+/-- The finite branch carriers (forest/mixed image data) with carrier-injectivity.  The
+image carrier is their union of branch images, so cover/membership are automatic. -/
+structure ResolvedActualFiniteCarriers (D : ResolvedSigmaCoverData G) where
+  /-- Finite forest image-data carrier. -/
+  forestCarrier : Finset (ResolvedForestImageData D)
+  /-- Finite mixed image-data carrier. -/
+  mixedCarrier : Finset (ResolvedMixedImageData D)
+  /-- Carrier forest-injectivity. -/
+  forest_inj_on : ∀ F₁ ∈ forestCarrier, ∀ F₂ ∈ forestCarrier,
+    F₁.toImage = F₂.toImage → F₁ = F₂
+  /-- Carrier mixed-injectivity. -/
+  mixed_inj_on : ∀ M₁ ∈ mixedCarrier, ∀ M₂ ∈ mixedCarrier,
+    M₁.toImage = M₂.toImage → M₁ = M₂
+
+/-- **The carrier-based finite layer from the finite branch carriers** (option C: the image
+carrier is the union of branch images, so cover/membership are by construction). -/
+noncomputable def ResolvedActualFiniteCarriers.toCarrierLayer {D : ResolvedSigmaCoverData G}
+    (C : ResolvedActualFiniteCarriers D) : ResolvedCarrierFiniteBranchMapLayer := by
+  classical
+  refine resolvedActualCarrierLayer D C.forestCarrier C.mixedCarrier
+    (C.forestCarrier.image (fun F => F.toImage) ∪ C.mixedCarrier.image (fun M => M.toImage))
+    ?_ ?_ ?_ C.forest_inj_on C.mixed_inj_on
+  · intro F hF
+    exact Finset.mem_union_left _ (Finset.mem_image_of_mem _ hF)
+  · intro M hM
+    exact Finset.mem_union_right _ (Finset.mem_image_of_mem _ hM)
+  · intro z hz
+    rcases Finset.mem_union.mp hz with hz | hz
+    · obtain ⟨F, hF, rfl⟩ := Finset.mem_image.mp hz; exact Or.inl ⟨F, hF, rfl⟩
+    · obtain ⟨M, hM, rfl⟩ := Finset.mem_image.mp hz; exact Or.inr ⟨M, hM, rfl⟩
+
 /-- **The actual resolved σ-cover package.**  Consolidates the remaining R-4-superfull
 obligations: the finite branch-map layer (carrying cover/injectivity/CD/disjoint), the
 id-unique payload family, the resolved→flat index maps, and the flat split-term
