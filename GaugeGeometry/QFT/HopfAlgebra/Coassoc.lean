@@ -39290,6 +39290,16 @@ noncomputable def h58BridgeSplitPhi [IsDivergencePreservedByAdmissibleForestCont
     (g : HopfGen) : forestComponentSplitChoiceSigma g → forestQuotientForestSigma g :=
   forestComponentSplitPhi g
 
+/-- Public alias: flat outer proper-forest index type. -/
+abbrev h58BridgeOuterIndex [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : Type := forestOuterProperIndex g
+
+/-- Public alias: flat outer proper-forest finite carrier (those with nonempty complement —
+the outer part of `forestQuotientForestSigmaIndex`). -/
+noncomputable def h58BridgeOuterCarrier [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : Finset (forestOuterProperIndex g) :=
+  (forestOuterProperFinset g).filter (fun A => 0 < A.1.complementEdges.card)
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial

@@ -359,6 +359,34 @@ theorem outer_sum_reindex :
 
 end ResolvedH58OuterSumSupply
 
+/-! ## Outer carrier fixed to the flat outer proper-forest index
+
+Using the flat outer proper-forest index (`h58BridgeOuterIndex`/`h58BridgeOuterCarrier`,
+public wrappers of `forestOuterProperIndex`/`forestOuterProperFinset`-filtered) as the
+outer carrier — the resolved lift happens inside `innerSupply`.  So the only remaining datum
+is `innerSupply`: a per-outer-forest σ-cover supply for each flat outer proper forest. -/
+
+/-- The outer-sum skeleton: a per-outer-forest inner supply for each flat outer proper
+forest.  The outer carrier is fixed (`h58BridgeOuterCarrier g`); only `innerSupply` remains. -/
+structure ResolvedH58OuterSkeleton (g : HopfGen) where
+  /-- The per-outer-forest inner σ-cover supply, indexed by the flat outer proper forest. -/
+  innerSupply : h58BridgeOuterIndex g → CanonicalResolvedActualSigmaCoverSupply g
+
+/-- Assemble the outer-sum supply with the flat outer proper-forest carrier. -/
+noncomputable def ResolvedH58OuterSkeleton.toOuterSumSupply {g : HopfGen}
+    (Sk : ResolvedH58OuterSkeleton g) : ResolvedH58OuterSumSupply g where
+  OuterIdx := h58BridgeOuterIndex g
+  outerCarrier := h58BridgeOuterCarrier g
+  innerSupply := Sk.innerSupply
+
+/-- **The H5.8 double sum over the actual flat outer proper-forest carrier**, from the
+skeleton — `∑ A ∈ h58BridgeOuterCarrier g, (inner image sum) = ∑ A, (inner branch sum)`. -/
+theorem ResolvedH58OuterSkeleton.outer_sum_reindex {g : HopfGen}
+    (Sk : ResolvedH58OuterSkeleton g) :
+    ∑ A ∈ h58BridgeOuterCarrier g, Sk.toOuterSumSupply.innerImageSum A =
+      ∑ A ∈ h58BridgeOuterCarrier g, Sk.toOuterSumSupply.innerBranchSum A :=
+  Sk.toOuterSumSupply.outer_sum_reindex
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
