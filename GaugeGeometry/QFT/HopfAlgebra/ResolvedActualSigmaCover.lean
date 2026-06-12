@@ -289,6 +289,32 @@ theorem CanonicalResolvedActualSigmaCoverSupply.concrete_sum_reindex {g : HopfGe
           h58BridgeSplitChoiceTerm g (S.toSupply.toActualSigmaCover.concreteData.mixedSplitOf q)) :=
   S.toSupply.concrete_sum_reindex
 
+/-! ## Construction scout — `D` is per-outer-forest (index-parameter finding)
+
+**Critical scout (D source / index granularity).**  The flat RHS quotient index is a
+*sigma over outer proper forests*:
+`forestQuotientForestSigmaIndex g = (forestOuterProperFinset g).filter (…).sigma
+(fun A => forestCoproductProperForestIndex (forestOuterQuotientHopfGen g A))` — for each
+outer proper forest `A`, an inner index of quotients of the `A`-contracted graph.  But
+`ResolvedSigmaCoverData G` fixes a **single** `Aout`.  So `D` is **per-outer-forest** (one
+`Aout`), *not* per-`g`, and the per-`D` `concrete_sum_reindex` is the **inner** sum for one
+outer forest.
+
+**Design implication (not a collapse — an outer index).**  The full H5.8 RHS is
+`∑ A ∈ outerProperForests, (inner sum for A)`.  So the resolved reindex assembles as an
+**outer sum over outer forests of the per-`D` `concrete_sum_reindex`**.  Concretely, either:
+* index the supply by the outer forest — `CanonicalResolvedActualSigmaCoverSupply` carries
+  a finite family `D`/carriers per outer forest; or
+* add a thin `ResolvedH58OuterSum` layer that sums the per-`D` identities over the outer
+  proper-forest carrier.
+
+Everything built stays valid: the per-`D` (per-outer-forest) reindex *is* the inner
+summand.  The remaining design step is the outer sum over outer proper forests — the last
+index parameter, not new mathematics or a facade.  `D` itself is then: `Aout` = a resolved
+outer proper forest of the canonical payload graph, `starOf` = canonical fresh stars,
+`parents` = the inner proper-forest parents, with `starFresh`/`componentPositiveEdges` from
+the canonical construction. -/
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
