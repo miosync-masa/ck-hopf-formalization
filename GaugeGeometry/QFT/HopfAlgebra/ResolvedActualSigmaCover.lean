@@ -174,7 +174,33 @@ theorem ResolvedForestCaseSupply.cover {D : ResolvedSigmaCoverData G}
         (∃ M : ResolvedMixedImageData D, M.toImage = z) :=
   S.toCoverPreimageData.cover
 
-/-! **Final report.**  The entire R-4-superfull cover obstruction is now the single datum
+/-! **Construction scout (parentOf / finite-layer design — knife-edge).**
+
+P1.  `ResolvedForestCasePreimageData.parent_remnant_eq : ∀ δ ∈ z.elements, …` requires a
+parent lift for **every** component of `z`, not only the star-touching ones; `forest_case`
+asserts `z` is *entirely* a forest branch image (all components are parent remnants).
+
+P2.  `ResolvedFiniteBranchMapLayer` requires `image_mem : ∀ z, z ∈ imageCarrier` and the
+layer `cover : ∀ z : Image, …` — both over the **whole** `Image` type.  With
+`Image = ResolvedActualQuotientImage D = ResolvedAdmissibleSubgraph (contracted)` (an
+*infinite* type) these are unsatisfiable: there are admissible subgraphs of the contracted
+graph that are neither forest nor mixed branch images, and `imageCarrier : Finset` cannot
+be all of an infinite type.
+
+**Verdict / design for the construction.**  The *finite* layer must take `Image` to be the
+σ-cover's **finite** RHS quotient index (a `Fintype` / `Finset`-bundled index), **not** all
+admissible subgraphs.  Over the finite quotient index: `image_mem` holds (the carrier is
+`univ`); `cover` is exactly the σ-cover surjectivity (every quotient index is hit by a
+forest or mixed branch — the genuine content); and `forest_case`'s all-components lift is
+*correct* (a genuine forest-branch image's components are all parent remnants).  The
+abstract `Image = ResolvedAdmissibleSubgraph` of Step 7D is fine for the *discriminator*
+and `toImage`, but the finite-layer construction must index by the finite quotient set and
+map into the admissible subgraphs.  So the next construction step is **not** `parentOf` in
+isolation; it is choosing `Image := the finite resolved quotient index` and building the
+finite layer on it (then `parentOf` is over that index's components and is correct).
+*(No flat facade is involved in this design choice.)*
+
+**Final report.**  The entire R-4-superfull cover obstruction is now the single datum
 `ResolvedForestCaseSupply D` — for each forest-by-star image, a `parentOf` lifting its
 components back to parents (`resolvedParentRemnant` component-level surjectivity).  This is
 σ-cover data, **not** a flat facade.  Together with the (already-isolated)
