@@ -125,6 +125,43 @@ noncomputable def ResolvedActualFiniteCarriers.toCarrierLayer {D : ResolvedSigma
     · obtain ⟨F, hF, rfl⟩ := Finset.mem_image.mp hz; exact Or.inl ⟨F, hF, rfl⟩
     · obtain ⟨M, hM, rfl⟩ := Finset.mem_image.mp hz; exact Or.inr ⟨M, hM, rfl⟩
 
+/-! ## Actual construction — branch carriers, `inj_on` reduced (FC-3)
+
+The carrier injectivity (`forest_inj_on`/`mixed_inj_on`, stated on `toImage`) reduces to
+injectivity at the natural σ-cover index level — `choiceParents` for forest, `components`
+for mixed — via the established `toImage_choiceParents_inj` / `components_eq_of_toImage_eq`.
+So the branch-carrier data is just the two finite sets with index-level injectivity. -/
+
+/-- The finite branch carriers with **index-level** injectivity (`choiceParents` for forest,
+`components` for mixed). -/
+structure ResolvedBranchCarriers (D : ResolvedSigmaCoverData G) where
+  /-- Finite forest image-data carrier. -/
+  forestCarrier : Finset (ResolvedForestImageData D)
+  /-- Finite mixed image-data carrier. -/
+  mixedCarrier : Finset (ResolvedMixedImageData D)
+  /-- Forest carrier is injective in `choiceParents`. -/
+  forest_choiceParents_inj : ∀ x ∈ forestCarrier, ∀ y ∈ forestCarrier,
+    x.choiceParents = y.choiceParents → x = y
+  /-- Mixed carrier is injective in `components`. -/
+  mixed_components_inj : ∀ x ∈ mixedCarrier, ∀ y ∈ mixedCarrier,
+    x.components = y.components → x = y
+
+/-- Reduce to `ResolvedActualFiniteCarriers`: the `toImage` injectivity follows from
+index-level injectivity (forest via `toImage_choiceParents_inj`, mixed via
+`components_eq_of_toImage_eq`), fed the payload's `EdgeIdsUnique`/`LegIdsUnique`. -/
+def ResolvedBranchCarriers.toFiniteCarriers {D : ResolvedSigmaCoverData G}
+    (C : ResolvedBranchCarriers D) (hEdgeId : G.EdgeIdsUnique) (hLegId : G.LegIdsUnique) :
+    ResolvedActualFiniteCarriers D where
+  forestCarrier := C.forestCarrier
+  mixedCarrier := C.mixedCarrier
+  forest_inj_on := fun F₁ hF₁ F₂ hF₂ hImg =>
+    C.forest_choiceParents_inj F₁ hF₁ F₂ hF₂
+      (ResolvedForestImageData.toImage_choiceParents_inj hEdgeId hLegId
+        (congrArg ResolvedAdmissibleSubgraph.elements hImg))
+  mixed_inj_on := fun M₁ hM₁ M₂ hM₂ hImg =>
+    C.mixed_components_inj M₁ hM₁ M₂ hM₂
+      (ResolvedMixedImageData.components_eq_of_toImage_eq hImg)
+
 /-- **The actual resolved σ-cover package.**  Consolidates the remaining R-4-superfull
 obligations: the finite branch-map layer (carrying cover/injectivity/CD/disjoint), the
 id-unique payload family, the resolved→flat index maps, and the flat split-term
