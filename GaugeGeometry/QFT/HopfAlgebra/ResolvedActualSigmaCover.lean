@@ -387,6 +387,34 @@ theorem ResolvedH58OuterSkeleton.outer_sum_reindex {g : HopfGen}
       ∑ A ∈ h58BridgeOuterCarrier g, Sk.toOuterSumSupply.innerBranchSum A :=
   Sk.toOuterSumSupply.outer_sum_reindex
 
+/-! ## InnerSupply-1 scout — constructing `D` per outer forest
+
+The remaining datum is `innerSupply A : CanonicalResolvedActualSigmaCoverSupply g` for each
+flat outer forest `A : h58BridgeOuterIndex g`.  Its first field is
+`D : ResolvedSigmaCoverData (ofFlatGraphWithUniqueIds (repG g))` (the canonical payload
+graph).  Scouted field sources:
+
+* `flat A` is `{A : AdmissibleSubgraph (repG g) // A ∈ properDisjointAdmissibleDivergent
+  Subgraphs}` — `A.1` is the outer forest, `A.2` its properness.
+* **`Aout`** := lift `A.1` (an `AdmissibleSubgraph (repG g) = AdmissibleSubgraph
+  ((ofFlatGraphWithUniqueIds (repG g)).forget)`, via `forget_ofFlatGraphWithUniqueIds`) into
+  `ResolvedAdmissibleSubgraph (ofFlatGraphWithUniqueIds (repG g))` by **`ofUniqueForgetForest`**
+  (the forgetful-ambient lift, same-type round-trip).  The one technical step is the
+  `forget`-transport of `A.1` along `forget_ofFlatGraphWithUniqueIds (repG g)`.
+* **`starOf`** := the resolved lift of `FeynmanGraph.admissibleForestCanonicalStarOf` (public).
+* **`starFresh`** := from canonical-star freshness (a fresh-vertex theorem — needs a public
+  `h58Bridge` wrapper if private).
+* **`componentPositiveEdges`** := from `A.2` (`properDisjointAdmissibleDivergentSubgraphs`
+  membership ⟹ `HasPositiveInternalEdgesComponents`).
+* **`parents`** := the inner proper-forest parents
+  (`forestCoproductProperForestIndex (forestOuterQuotientHopfGen g A)`) lifted.
+* **`containsAoutEdges`** := from the parent construction (may stay a field).
+
+The construction is a fresh sub-sprint: the `forget`-transport for `Aout` + thin public
+wrappers for the canonical-star freshness / inner-parent carrier (alias-only, no proof
+change to `Coassoc`).  No facade, no new mathematics — `Aout`/`starOf`/`parents` are the
+resolved lifts of the (public or wrappable) flat outer-forest data. -/
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
