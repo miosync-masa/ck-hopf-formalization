@@ -34,6 +34,58 @@ variable [∀ H : FeynmanGraph, DivergenceMeasure H]
          [IsAmbientInvariantDivergence] [IsDivergencePreservedByContract]
          [IsDivergencePreservedByAdmissibleForestContract]
 
+variable {G : ResolvedFeynmanGraph}
+
+/-! ## Actual construction — the separation data (FC-1)
+
+The branch-map layer's `sep` (the non-carrier, whole-`Image` part) is constructible *now*:
+`ForestIdx`/`MixedIdx` are the resolved forest/mixed image-data types, `Image` is the
+quotient-forest type, the branch maps are `·.toImage`, and `forest_sat`/`mixed_unsat`
+are exactly the `ResolvedForestImageData.forest_sat` / `ResolvedMixedImageData.mixed_unsat`
+fields (from `starWitness` / `avoidsStars`).  This is the satisfiable whole-`Image`
+separation; the *finite carriers* + `cover_on` + `inj_on` are the remaining σ-cover data. -/
+
+/-- The resolved σ-cover separation data: forest/mixed image data with the
+`resolvedIsForestByStar` discriminator.  Satisfiable over *all* image data. -/
+noncomputable def resolvedActualSep (D : ResolvedSigmaCoverData G) :
+    ResolvedBranchSeparationData where
+  ForestIdx := ResolvedForestImageData D
+  MixedIdx := ResolvedMixedImageData D
+  Image := ResolvedActualQuotientImage D
+  discriminator := resolvedIsForestByStar D
+  forestImage := fun F => F.toImage
+  mixedImage := fun M => M.toImage
+  forest_sat := fun F => F.forest_sat
+  mixed_unsat := fun M => M.mixed_unsat
+
+/-- **Assemble the carrier-based finite layer** from the actual σ-cover finite data: the
+finite forest/mixed/quotient carriers (`ResolvedForestImageData`/`ResolvedMixedImageData`/
+quotient images) plus their membership, carrier-cover, and carrier-injectivity.  The
+separation data (`sep`) is supplied automatically (`resolvedActualSep`); this constructor
+reduces the layer to exactly the remaining finite σ-cover obligations. -/
+noncomputable def resolvedActualCarrierLayer (D : ResolvedSigmaCoverData G)
+    (forestCarrier : Finset (ResolvedForestImageData D))
+    (mixedCarrier : Finset (ResolvedMixedImageData D))
+    (imageCarrier : Finset (ResolvedActualQuotientImage D))
+    (forestImage_mem : ∀ F ∈ forestCarrier, F.toImage ∈ imageCarrier)
+    (mixedImage_mem : ∀ M ∈ mixedCarrier, M.toImage ∈ imageCarrier)
+    (cover_on : ∀ z ∈ imageCarrier,
+      (∃ F ∈ forestCarrier, F.toImage = z) ∨ (∃ M ∈ mixedCarrier, M.toImage = z))
+    (forest_inj_on : ∀ F₁ ∈ forestCarrier, ∀ F₂ ∈ forestCarrier,
+      F₁.toImage = F₂.toImage → F₁ = F₂)
+    (mixed_inj_on : ∀ M₁ ∈ mixedCarrier, ∀ M₂ ∈ mixedCarrier,
+      M₁.toImage = M₂.toImage → M₁ = M₂) :
+    ResolvedCarrierFiniteBranchMapLayer where
+  sep := resolvedActualSep D
+  forestCarrier := forestCarrier
+  mixedCarrier := mixedCarrier
+  imageCarrier := imageCarrier
+  forestImage_mem := forestImage_mem
+  mixedImage_mem := mixedImage_mem
+  cover_on := cover_on
+  forest_inj_on := forest_inj_on
+  mixed_inj_on := mixed_inj_on
+
 /-- **The actual resolved σ-cover package.**  Consolidates the remaining R-4-superfull
 obligations: the finite branch-map layer (carrying cover/injectivity/CD/disjoint), the
 id-unique payload family, the resolved→flat index maps, and the flat split-term
