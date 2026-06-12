@@ -246,6 +246,49 @@ theorem ResolvedActualSigmaCoverSupply.concrete_sum_reindex {g : HopfGen}
           h58BridgeSplitChoiceTerm g (S.toActualSigmaCover.concreteData.mixedSplitOf q)) :=
   S.toActualSigmaCover.concrete_sum_reindex
 
+/-! ## Canonical specialization — PFU fixed
+
+Fixing `PFU` to the canonical id-unique payload family (`Phase 6c`/`Steps 2–3`, already
+constructed) removes it from the final obstruction.  The remaining data is just the
+σ-cover data, the branch carriers, the index maps, and the term agreement — over the
+canonical payload. -/
+
+/-- The remaining concrete data over the **canonical** id-unique payload family (PFU fixed).
+The entire R-4-superfull obstruction is to construct one of these. -/
+structure CanonicalResolvedActualSigmaCoverSupply (g : HopfGen) where
+  /-- σ-cover data on the canonical payload graph. -/
+  D : ResolvedSigmaCoverData (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G
+  /-- The finite branch carriers. -/
+  branchCarriers : ResolvedBranchCarriers D
+  /-- The resolved→flat index maps for the canonical layer. -/
+  concreteIndexMaps : ResolvedH58ConcreteIndexMaps g
+    (branchCarriers.toLayer
+      (canonicalResolvedHopfPayloadFamilyWithUniqueIds.edgeIdsUnique g)
+      (canonicalResolvedHopfPayloadFamilyWithUniqueIds.legIdsUnique g))
+  /-- The flat split-term agreement. -/
+  splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- Reduce the canonical supply to the general supply (PFU := canonical). -/
+noncomputable def CanonicalResolvedActualSigmaCoverSupply.toSupply {g : HopfGen}
+    (S : CanonicalResolvedActualSigmaCoverSupply g) : ResolvedActualSigmaCoverSupply g where
+  PFU := canonicalResolvedHopfPayloadFamilyWithUniqueIds
+  D := S.D
+  branchCarriers := S.branchCarriers
+  concreteIndexMaps := S.concreteIndexMaps
+  splitTerm_agreement := S.splitTerm_agreement
+
+/-- The concrete H5.8 sum-reindex from the canonical supply. -/
+theorem CanonicalResolvedActualSigmaCoverSupply.concrete_sum_reindex {g : HopfGen}
+    (S : CanonicalResolvedActualSigmaCoverSupply g) :
+    ∑ z ∈ S.toSupply.toActualSigmaCover.FL.imageCarrier,
+        h58BridgeQuotientTerm g (S.toSupply.toActualSigmaCover.concreteData.flatImageOf z) =
+      (∑ q ∈ S.toSupply.toActualSigmaCover.FL.forestCarrier,
+          h58BridgeSplitChoiceTerm g (S.toSupply.toActualSigmaCover.concreteData.forestSplitOf q)) +
+      (∑ q ∈ S.toSupply.toActualSigmaCover.FL.mixedCarrier,
+          h58BridgeSplitChoiceTerm g (S.toSupply.toActualSigmaCover.concreteData.mixedSplitOf q)) :=
+  S.toSupply.concrete_sum_reindex
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
