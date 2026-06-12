@@ -33,16 +33,16 @@ resolved→flat index maps, their landing in the flat split index, the commutati
 squares, and the flat split-term agreement `hTerm`. -/
 noncomputable def resolvedH58WeightAlignmentOfFlat
     [IsDivergencePreservedByAdmissibleForestContract] (g : HopfGen)
-    (FL : ResolvedFiniteBranchMapLayer)
-    (flatImageOf : FL.layer.Image → h58BridgeQuotientSigma g)
-    (forestSplitOf : FL.layer.ForestIdx → h58BridgeSplitChoiceSigma g)
-    (mixedSplitOf : FL.layer.MixedIdx → h58BridgeSplitChoiceSigma g)
+    (FL : ResolvedCarrierFiniteBranchMapLayer)
+    (flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g)
+    (forestSplitOf : FL.sep.ForestIdx → h58BridgeSplitChoiceSigma g)
+    (mixedSplitOf : FL.sep.MixedIdx → h58BridgeSplitChoiceSigma g)
     (forestSplitOf_mem : ∀ q, forestSplitOf q ∈ h58BridgeSplitChoiceIndex g)
     (mixedSplitOf_mem : ∀ q, mixedSplitOf q ∈ h58BridgeSplitChoiceIndex g)
     (forest_comm : ∀ q,
-      flatImageOf (FL.layer.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q))
+      flatImageOf (FL.sep.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q))
     (mixed_comm : ∀ q,
-      flatImageOf (FL.layer.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q))
+      flatImageOf (FL.sep.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q))
     (hTerm : ∀ s ∈ h58BridgeSplitChoiceIndex g,
       h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)) :
     ResolvedFlatH58WeightAlignment FL (HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH)) where
@@ -67,16 +67,16 @@ branches — the H5.8 reindexing identity, resolved-side, with the actual flat t
 terms. -/
 theorem resolvedH58ConcreteWeightSumReindex
     [IsDivergencePreservedByAdmissibleForestContract] (g : HopfGen)
-    (FL : ResolvedFiniteBranchMapLayer)
-    (flatImageOf : FL.layer.Image → h58BridgeQuotientSigma g)
-    (forestSplitOf : FL.layer.ForestIdx → h58BridgeSplitChoiceSigma g)
-    (mixedSplitOf : FL.layer.MixedIdx → h58BridgeSplitChoiceSigma g)
+    (FL : ResolvedCarrierFiniteBranchMapLayer)
+    (flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g)
+    (forestSplitOf : FL.sep.ForestIdx → h58BridgeSplitChoiceSigma g)
+    (mixedSplitOf : FL.sep.MixedIdx → h58BridgeSplitChoiceSigma g)
     (forestSplitOf_mem : ∀ q, forestSplitOf q ∈ h58BridgeSplitChoiceIndex g)
     (mixedSplitOf_mem : ∀ q, mixedSplitOf q ∈ h58BridgeSplitChoiceIndex g)
     (forest_comm : ∀ q,
-      flatImageOf (FL.layer.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q))
+      flatImageOf (FL.sep.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q))
     (mixed_comm : ∀ q,
-      flatImageOf (FL.layer.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q))
+      flatImageOf (FL.sep.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q))
     (hTerm : ∀ s ∈ h58BridgeSplitChoiceIndex g,
       h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)) :
     ∑ z ∈ FL.imageCarrier, h58BridgeQuotientTerm g (flatImageOf z) =
@@ -96,23 +96,23 @@ squares, and the flat split-term agreement.  Constructing one
 squares + the flat split-term agreement.  Everything `resolvedH58WeightAlignmentOfFlat`
 needs, packaged. -/
 structure ResolvedH58ConcreteData [IsDivergencePreservedByAdmissibleForestContract]
-    (g : HopfGen) (FL : ResolvedFiniteBranchMapLayer) where
+    (g : HopfGen) (FL : ResolvedCarrierFiniteBranchMapLayer) where
   /-- Resolved image → flat quotient image. -/
-  flatImageOf : FL.layer.Image → h58BridgeQuotientSigma g
+  flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g
   /-- Resolved forest index → flat split index. -/
-  forestSplitOf : FL.layer.ForestIdx → h58BridgeSplitChoiceSigma g
+  forestSplitOf : FL.sep.ForestIdx → h58BridgeSplitChoiceSigma g
   /-- Resolved mixed index → flat split index. -/
-  mixedSplitOf : FL.layer.MixedIdx → h58BridgeSplitChoiceSigma g
+  mixedSplitOf : FL.sep.MixedIdx → h58BridgeSplitChoiceSigma g
   /-- Forest split indices land in the flat split index. -/
   forestSplit_mem : ∀ q, forestSplitOf q ∈ h58BridgeSplitChoiceIndex g
   /-- Mixed split indices land in the flat split index. -/
   mixedSplit_mem : ∀ q, mixedSplitOf q ∈ h58BridgeSplitChoiceIndex g
   /-- Forest commutation square. -/
   forest_comm : ∀ q,
-    flatImageOf (FL.layer.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q)
+    flatImageOf (FL.sep.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q)
   /-- Mixed commutation square. -/
   mixed_comm : ∀ q,
-    flatImageOf (FL.layer.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q)
+    flatImageOf (FL.sep.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q)
   /-- The flat split-term agreement (public form of `forestComponentSplitPhi_term_eq_of_split`). -/
   splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
     h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
@@ -120,7 +120,7 @@ structure ResolvedH58ConcreteData [IsDivergencePreservedByAdmissibleForestContra
 /-- The alignment assembled from concrete bridge data. -/
 noncomputable def ResolvedH58ConcreteData.toAlignment
     [IsDivergencePreservedByAdmissibleForestContract] {g : HopfGen}
-    {FL : ResolvedFiniteBranchMapLayer} (D : ResolvedH58ConcreteData g FL) :
+    {FL : ResolvedCarrierFiniteBranchMapLayer} (D : ResolvedH58ConcreteData g FL) :
     ResolvedFlatH58WeightAlignment FL (HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH)) :=
   resolvedH58WeightAlignmentOfFlat g FL D.flatImageOf D.forestSplitOf D.mixedSplitOf
     D.forestSplit_mem D.mixedSplit_mem D.forest_comm D.mixed_comm D.splitTerm_agreement
@@ -129,7 +129,7 @@ noncomputable def ResolvedH58ConcreteData.toAlignment
 identity with the actual flat tensor terms. -/
 theorem ResolvedH58ConcreteData.concrete_sum_reindex
     [IsDivergencePreservedByAdmissibleForestContract] {g : HopfGen}
-    {FL : ResolvedFiniteBranchMapLayer} (D : ResolvedH58ConcreteData g FL) :
+    {FL : ResolvedCarrierFiniteBranchMapLayer} (D : ResolvedH58ConcreteData g FL) :
     ∑ z ∈ FL.imageCarrier, h58BridgeQuotientTerm g (D.flatImageOf z) =
       (∑ q ∈ FL.forestCarrier, h58BridgeSplitChoiceTerm g (D.forestSplitOf q)) +
       (∑ q ∈ FL.mixedCarrier, h58BridgeSplitChoiceTerm g (D.mixedSplitOf q)) :=
@@ -148,28 +148,28 @@ fact suppliable separately). -/
 split index, and the commutation squares.  Everything in `ResolvedH58ConcreteData` *except*
 the flat term agreement. -/
 structure ResolvedH58ConcreteIndexMaps [IsDivergencePreservedByAdmissibleForestContract]
-    (g : HopfGen) (FL : ResolvedFiniteBranchMapLayer) where
+    (g : HopfGen) (FL : ResolvedCarrierFiniteBranchMapLayer) where
   /-- Resolved image → flat quotient image. -/
-  flatImageOf : FL.layer.Image → h58BridgeQuotientSigma g
+  flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g
   /-- Resolved forest index → flat split index. -/
-  forestSplitOf : FL.layer.ForestIdx → h58BridgeSplitChoiceSigma g
+  forestSplitOf : FL.sep.ForestIdx → h58BridgeSplitChoiceSigma g
   /-- Resolved mixed index → flat split index. -/
-  mixedSplitOf : FL.layer.MixedIdx → h58BridgeSplitChoiceSigma g
+  mixedSplitOf : FL.sep.MixedIdx → h58BridgeSplitChoiceSigma g
   /-- Forest split indices land in the flat split index. -/
   forestSplit_mem : ∀ q, forestSplitOf q ∈ h58BridgeSplitChoiceIndex g
   /-- Mixed split indices land in the flat split index. -/
   mixedSplit_mem : ∀ q, mixedSplitOf q ∈ h58BridgeSplitChoiceIndex g
   /-- Forest commutation square. -/
   forest_comm : ∀ q,
-    flatImageOf (FL.layer.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q)
+    flatImageOf (FL.sep.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q)
   /-- Mixed commutation square. -/
   mixed_comm : ∀ q,
-    flatImageOf (FL.layer.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q)
+    flatImageOf (FL.sep.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q)
 
 /-- Add the flat split-term agreement to the index maps to obtain the full concrete data. -/
 def ResolvedH58ConcreteIndexMaps.toConcreteData
     [IsDivergencePreservedByAdmissibleForestContract] {g : HopfGen}
-    {FL : ResolvedFiniteBranchMapLayer} (M : ResolvedH58ConcreteIndexMaps g FL)
+    {FL : ResolvedCarrierFiniteBranchMapLayer} (M : ResolvedH58ConcreteIndexMaps g FL)
     (splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
       h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)) :
     ResolvedH58ConcreteData g FL :=

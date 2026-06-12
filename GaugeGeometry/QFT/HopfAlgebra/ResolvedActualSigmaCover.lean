@@ -8,7 +8,7 @@ actual resolved σ-cover.  This file consolidates the remaining obligations into
 package `ResolvedActualSigmaCover g`, and shows it delivers the concrete H5.8 sum-reindex
 identity and the branch classifier.
 
-What is **embedded in `FL`** (`ResolvedFiniteBranchMapLayer`) and so *not* duplicated
+What is **embedded in `FL`** (`ResolvedCarrierFiniteBranchMapLayer`) and so *not* duplicated
 here: the layer's `cover` (branch-map surjectivity), `forest_inj`/`mixed_inj`, and the
 forest/mixed image data carrying `componentCD`/`remnantCD`/disjointness/`avoidsStars`
 (all baked in when `FL` is built from the forest/mixed image data via
@@ -42,7 +42,7 @@ structure ResolvedActualSigmaCover (g : HopfGen) where
   /-- The id-unique payload family (supplies `EdgeIdsUnique`/`LegIdsUnique`). -/
   PFU : ResolvedHopfPayloadFamilyWithUniqueIds
   /-- The finite branch-map layer (carries cover/injectivity/CD/disjoint via its build). -/
-  FL : ResolvedFiniteBranchMapLayer
+  FL : ResolvedCarrierFiniteBranchMapLayer
   /-- Resolved→flat index maps + commutation squares. -/
   concreteIndexMaps : ResolvedH58ConcreteIndexMaps g FL
   /-- The flat split-term agreement (σ-cover data). -/
@@ -65,11 +65,6 @@ theorem concrete_sum_reindex :
       (∑ q ∈ S.FL.mixedCarrier, h58BridgeSplitChoiceTerm g (S.concreteData.mixedSplitOf q)) :=
   S.concreteData.concrete_sum_reindex
 
-/-- The branch classifier delivered by the package (unique preimage in exactly one
-branch). -/
-def classifier : ResolvedIndexedBranchClassifier :=
-  S.FL.layer.toClassifier
-
 end ResolvedActualSigmaCover
 
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
@@ -77,14 +72,14 @@ obligations.  Dependency diagram:
 
 ```
 ResolvedActualSigmaCover g
-  ├─ FL : ResolvedFiniteBranchMapLayer        (carries cover, forest_inj, mixed_inj,
+  ├─ FL : ResolvedCarrierFiniteBranchMapLayer        (carries cover, forest_inj, mixed_inj,
   │       └─ layer + carriers                  componentCD/remnantCD, disjoint, avoidsStars)
   ├─ concreteIndexMaps : ResolvedH58ConcreteIndexMaps g FL   (resolved→flat maps + comm)
   └─ splitTerm_agreement                       (flat σ-cover term agreement)
 
   .concreteData        = concreteIndexMaps.toConcreteData splitTerm_agreement
   .concrete_sum_reindex = the flat-term H5.8 split identity
-  .classifier          = FL.layer.toClassifier
+  .classifier          = FL.sep.toClassifier
 ```
 
 **Embedded vs external.**  `cover`, branch injectivity, and the image-data graph-work
@@ -108,15 +103,15 @@ used one, the resolved replacement must be used.
 | field (path) | source | theorem? | facade status |
 |---|---|---|---|
 | `PFU` | `canonicalResolvedHopfPayloadFamilyWithUniqueIds` | ✅ exists | facade-free (axiom-clean) |
-| `FL.layer.forest_inj` | `resolvedForestImage_injective` ← `parentRemnant_injOn` | ✅ | **resolved repair** (replaces `ForestGraphInsertionUniquenessModel`) |
-| `FL.layer.mixed_inj` | `mixed_inj_of_components_inj` | ✅ | facade-free (index design) |
+| `FL.sep.forest_inj` | `resolvedForestImage_injective` ← `parentRemnant_injOn` | ✅ | **resolved repair** (replaces `ForestGraphInsertionUniquenessModel`) |
+| `FL.sep.mixed_inj` | `mixed_inj_of_components_inj` | ✅ | facade-free (index design) |
 | `FL` componentCD/disjoint | `ResolvedMixedImageData.ofAdmissibleSubgraph` | ✅ free | facade-free |
 | `FL` avoidsStars | `avoidsStars_of_vertices_offStar` | ✅ | facade-free (star freshness) |
 | `FL` remnantDisjoint | pairwise vertex (defeq) | ✅ | facade-free |
 | `FL` remnantCD | reflection class | needs class | not facade (power-counting reflection) |
 | `concreteIndexMaps` | resolved→flat forget maps + `h58Bridge*` + commutation | to construct | facade-free (forget maps) |
 | `splitTerm_agreement` | σ-cover factorization (`RemnantPositiveComponentsCertificate`) | construction data | non-facade |
-| **`FL.layer.cover`** | **⚠ flat cover is facade-gated — must rebuild resolved-native** | **genuine remaining** | **flat: PromotedExternalLegs-DEPENDENT; resolved replacement: `resolved_promotedComponent_externalLegs_le_plus`** |
+| **`FL.sep.cover`** | **⚠ flat cover is facade-gated — must rebuild resolved-native** | **genuine remaining** | **flat: PromotedExternalLegs-DEPENDENT; resolved replacement: `resolved_promotedComponent_externalLegs_le_plus`** |
 
 **Critical scout answers.**
 - **(A)** ForestIdx/MixedIdx/Image are **resolved-native** (`Image = ResolvedAdmissibleSubgraph
@@ -180,7 +175,7 @@ P1.  `ResolvedForestCasePreimageData.parent_remnant_eq : ∀ δ ∈ z.elements, 
 parent lift for **every** component of `z`, not only the star-touching ones; `forest_case`
 asserts `z` is *entirely* a forest branch image (all components are parent remnants).
 
-P2.  `ResolvedFiniteBranchMapLayer` requires `image_mem : ∀ z, z ∈ imageCarrier` and the
+P2.  `ResolvedCarrierFiniteBranchMapLayer` requires `image_mem : ∀ z, z ∈ imageCarrier` and the
 layer `cover : ∀ z : Image, …` — both over the **whole** `Image` type.  With
 `Image = ResolvedActualQuotientImage D = ResolvedAdmissibleSubgraph (contracted)` (an
 *infinite* type) these are unsatisfiable: there are admissible subgraphs of the contracted
@@ -207,7 +202,7 @@ components back to parents (`resolvedParentRemnant` component-level surjectivity
 `ResolvedH58ConcreteIndexMaps`, `splitTerm_agreement` (σ-cover factorization), and
 `remnantCD` (reflection-class), constructing one actual resolved σ-cover supplies every
 field of `ResolvedActualSigmaCover g`.  The remaining engineering — assembling these into a
-finite branch-map layer (`ResolvedFiniteBranchMapLayer`: finite carriers over the actual
+finite branch-map layer (`ResolvedCarrierFiniteBranchMapLayer`: finite carriers over the actual
 σ-cover's finite branch indices, where `forestImage`/`mixedImage` are injective) — is the
 actual σ-cover finiteness construction; it introduces no facade and no new mathematics
 beyond the σ-cover data itself. -/

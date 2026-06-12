@@ -27,23 +27,23 @@ namespace GaugeGeometry.QFT.Combinatorial
 /-- **Coassoc weight package.**  An image weight plus forest/mixed weights agreeing with
 it along the branch maps — the data a coassociativity reindex needs on top of a finite
 branch-map layer.  `Target` is kept generic (concretely `HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH)`). -/
-structure ResolvedH58WeightData (FL : ResolvedFiniteBranchMapLayer)
+structure ResolvedH58WeightData (FL : ResolvedCarrierFiniteBranchMapLayer)
     (Target : Type*) [AddCommMonoid Target] where
   /-- The weight on images (concretely the σ-quotient tensor term). -/
-  imageWeight : FL.layer.Image → Target
+  imageWeight : FL.sep.Image → Target
   /-- The weight on forest indices. -/
-  forestWeight : FL.layer.ForestIdx → Target
+  forestWeight : FL.sep.ForestIdx → Target
   /-- The weight on mixed indices. -/
-  mixedWeight : FL.layer.MixedIdx → Target
+  mixedWeight : FL.sep.MixedIdx → Target
   /-- Forest weight agrees with the image weight along the forest branch map. -/
-  forestWeight_eq : ∀ q, forestWeight q = imageWeight (FL.layer.forestImage q)
+  forestWeight_eq : ∀ q, forestWeight q = imageWeight (FL.sep.forestImage q)
   /-- Mixed weight agrees with the image weight along the mixed branch map. -/
-  mixedWeight_eq : ∀ q, mixedWeight q = imageWeight (FL.layer.mixedImage q)
+  mixedWeight_eq : ∀ q, mixedWeight q = imageWeight (FL.sep.mixedImage q)
 
 /-- **Coassoc-shaped sum-reindex.**  The image-weight sum splits into the forest- and
 mixed-weight sums — the Step 7G identity in coassociativity language, ready to receive
 the concrete tensor-term weight. -/
-theorem ResolvedH58WeightData.sum_reindex {FL : ResolvedFiniteBranchMapLayer}
+theorem ResolvedH58WeightData.sum_reindex {FL : ResolvedCarrierFiniteBranchMapLayer}
     {Target : Type*} [AddCommMonoid Target] (W : ResolvedH58WeightData FL Target) :
     ∑ z ∈ FL.imageCarrier, W.imageWeight z =
       (∑ q ∈ FL.forestCarrier, W.forestWeight q) +
@@ -116,7 +116,7 @@ The term agreement is **index-conditional** (`splitMem`), matching the flat
 `forestComponentSplitPhi_term_eq_of_split` which holds only on
 `forestComponentSplitChoiceSigmaIndex`; the resolved split-index maps must land in that
 index (`forestSplitOf_mem`/`mixedSplitOf_mem`). -/
-structure ResolvedFlatH58WeightAlignment (FL : ResolvedFiniteBranchMapLayer)
+structure ResolvedFlatH58WeightAlignment (FL : ResolvedCarrierFiniteBranchMapLayer)
     (Target : Type*) [AddCommMonoid Target] where
   /-- The flat image type (`forestQuotientForestSigma g`). -/
   FlatImage : Type*
@@ -133,24 +133,24 @@ structure ResolvedFlatH58WeightAlignment (FL : ResolvedFiniteBranchMapLayer)
   /-- The term agreement, index-conditional (`forestComponentSplitPhi_term_eq_of_split`). -/
   splitTerm_eq : ∀ s, splitMem s → splitTerm s = flatTerm (flatBranch s)
   /-- Resolved image → flat image. -/
-  flatImageOf : FL.layer.Image → FlatImage
+  flatImageOf : FL.sep.Image → FlatImage
   /-- Resolved forest index → flat split index. -/
-  forestSplitOf : FL.layer.ForestIdx → SplitIdx
+  forestSplitOf : FL.sep.ForestIdx → SplitIdx
   /-- Resolved mixed index → flat split index. -/
-  mixedSplitOf : FL.layer.MixedIdx → SplitIdx
+  mixedSplitOf : FL.sep.MixedIdx → SplitIdx
   /-- Forest split indices land in the flat split index. -/
   forestSplitOf_mem : ∀ q, splitMem (forestSplitOf q)
   /-- Mixed split indices land in the flat split index. -/
   mixedSplitOf_mem : ∀ q, splitMem (mixedSplitOf q)
   /-- Forest commutation square. -/
-  forest_comm : ∀ q, flatImageOf (FL.layer.forestImage q) = flatBranch (forestSplitOf q)
+  forest_comm : ∀ q, flatImageOf (FL.sep.forestImage q) = flatBranch (forestSplitOf q)
   /-- Mixed commutation square. -/
-  mixed_comm : ∀ q, flatImageOf (FL.layer.mixedImage q) = flatBranch (mixedSplitOf q)
+  mixed_comm : ∀ q, flatImageOf (FL.sep.mixedImage q) = flatBranch (mixedSplitOf q)
 
 /-- Pull the flat terms back through the alignment to a concrete `ResolvedH58WeightData`.
 The two `_eq` fields are two-line `rw`s using the index-conditional term agreement (at the
 `…SplitOf_mem` witness) + the commutation square (no new mathematics). -/
-noncomputable def ResolvedFlatH58WeightAlignment.toWeightData {FL : ResolvedFiniteBranchMapLayer}
+noncomputable def ResolvedFlatH58WeightAlignment.toWeightData {FL : ResolvedCarrierFiniteBranchMapLayer}
     {Target : Type*} [AddCommMonoid Target] (A : ResolvedFlatH58WeightAlignment FL Target) :
     ResolvedH58WeightData FL Target where
   imageWeight := fun z => A.flatTerm (A.flatImageOf z)
@@ -163,7 +163,7 @@ noncomputable def ResolvedFlatH58WeightAlignment.toWeightData {FL : ResolvedFini
 
 /-- **Concrete H5.8 sum equality** through the alignment: the flat-term sum over images
 splits into the flat split-term sums over the forest and mixed branches. -/
-theorem ResolvedFlatH58WeightAlignment.sum_reindex {FL : ResolvedFiniteBranchMapLayer}
+theorem ResolvedFlatH58WeightAlignment.sum_reindex {FL : ResolvedCarrierFiniteBranchMapLayer}
     {Target : Type*} [AddCommMonoid Target] (A : ResolvedFlatH58WeightAlignment FL Target) :
     ∑ z ∈ FL.imageCarrier, A.flatTerm (A.flatImageOf z) =
       (∑ q ∈ FL.forestCarrier, A.splitTerm (A.forestSplitOf q)) +
