@@ -1387,6 +1387,42 @@ noncomputable def CanonicalOuterForestQuotientSupply.toBranchCarriers {g : HopfG
   forest_choiceParents_inj := S.forest_choiceParents_inj
   mixed_components_inj := M.mixed_components_inj
 
+/-! ### BranchCarriers (7) — the inner supply package for one outer forest
+
+`CanonicalOuterInnerSupplyData g A` is the finishing package for a single outer forest `A`:
+the forest quotient supply (de-contraction parents) + the mixed carrier supply + the
+resolved→flat index maps + the flat split-term agreement.  It assembles directly into a
+`CanonicalResolvedActualSigmaCoverSupply g` (with `D` derived from the de-contraction). -/
+
+/-- The per-outer-forest inner supply built from genuine de-contraction data: a forest
+quotient supply, a mixed carrier supply over the derived `D`, the resolved→flat index maps,
+and the flat split-term agreement. -/
+structure CanonicalOuterInnerSupplyData (g : HopfGen) (A : h58BridgeOuterIndex g) where
+  /-- The forest quotient supply (de-contraction parents). -/
+  forestSupply : CanonicalOuterForestQuotientSupply g A
+  /-- The mixed carrier supply over the derived σ-cover data. -/
+  mixedSupply : ResolvedMixedCarrierSupply
+    (canonicalSigmaCoverDataOfParents forestSupply.parentsData)
+  /-- The resolved→flat index maps for the assembled layer. -/
+  concreteIndexMaps : ResolvedH58ConcreteIndexMaps g
+    ((forestSupply.toBranchCarriers mixedSupply).toLayer
+      (canonicalResolvedHopfPayloadFamilyWithUniqueIds.edgeIdsUnique g)
+      (canonicalResolvedHopfPayloadFamilyWithUniqueIds.legIdsUnique g))
+  /-- The flat split-term agreement. -/
+  splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- **BranchCarriers (7): assembly to the canonical supply.**  The inner supply package
+reduces to a `CanonicalResolvedActualSigmaCoverSupply g` with `D` derived from the
+de-contraction parents and the branch carriers assembled from the forest/mixed supplies. -/
+noncomputable def CanonicalOuterInnerSupplyData.toCanonicalSupply {g : HopfGen}
+    {A : h58BridgeOuterIndex g} (S : CanonicalOuterInnerSupplyData g A) :
+    CanonicalResolvedActualSigmaCoverSupply g where
+  D := canonicalSigmaCoverDataOfParents S.forestSupply.parentsData
+  branchCarriers := S.forestSupply.toBranchCarriers S.mixedSupply
+  concreteIndexMaps := S.concreteIndexMaps
+  splitTerm_agreement := S.splitTerm_agreement
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
