@@ -1815,6 +1815,55 @@ noncomputable def CanonicalOuterForestQuotientSupply.parentsData {g : HopfGen}
     CanonicalOuterParentsData g A :=
   canonicalOuterParentsDataOfQuotientCarrier g A S.Q
 
+/-! ### Forest Native Carrier-2 — parent-generated forest supply
+
+The forest carrier built **resolved-natively from parents** `γ ⊇ Aout` (not from a flat lift).
+Its quotient images are the parent remnants; `hStars` is automatic
+(`remnant_contains_all_starVertices_of_containsAoutEdges`), so the only supplied facts are the
+remnant CD / saturation / star-touching (parent-side σ-cover data). -/
+
+/-- A finite carrier of resolved parents `γ ⊇ Aout`, with the remnant facts. -/
+structure CanonicalOuterNativeParentSupply (g : HopfGen) (A : h58BridgeOuterIndex g) where
+  /-- The parents (resolved subgraphs containing the outer forest's edges). -/
+  parentCarrier : Finset (ResolvedFeynmanSubgraph
+    (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G)
+  /-- Each parent contains the outer forest's edges. -/
+  containsAoutEdges : ∀ γ ∈ parentCarrier,
+    (canonicalOuterAoutOfFlatOuter g A).internalEdges ≤ γ.internalEdges
+  /-- Each parent's remnant is connected divergent after forget. -/
+  remnantCD : ∀ γ ∈ parentCarrier,
+    (resolvedParentRemnant (canonicalOuterAoutOfFlatOuter g A) (canonicalOuterStarOf g A)
+      γ).forget.IsConnectedDivergent
+  /-- Each parent's remnant is vertex-covered (saturation). -/
+  remnantCovered : ∀ γ ∈ parentCarrier,
+    QuotientVertexCovered (canonicalOuterAoutOfFlatOuter g A) (canonicalOuterStarOf g A)
+      (resolvedParentRemnant (canonicalOuterAoutOfFlatOuter g A) (canonicalOuterStarOf g A) γ)
+  /-- Each parent's remnant meets the outer stars (the forest discriminator). -/
+  remnantTouches : ∀ γ ∈ parentCarrier,
+    ¬ Disjoint (resolvedParentRemnant (canonicalOuterAoutOfFlatOuter g A)
+        (canonicalOuterStarOf g A) γ).vertices
+      ((canonicalOuterAoutOfFlatOuter g A).starVertices (canonicalOuterStarOf g A))
+
+/-- **Forest Native Carrier-2: parents ⇒ forest quotient supply.**  The quotient images are the
+parent remnants; `hStars` is automatic from the all-star lemma, the rest are the supplied
+remnant facts. -/
+noncomputable def CanonicalOuterNativeParentSupply.toForestQuotientSupply {g : HopfGen}
+    {A : h58BridgeOuterIndex g} (S : CanonicalOuterNativeParentSupply g A) :
+    CanonicalOuterForestQuotientSupply g A where
+  Q := S.parentCarrier.image
+    (resolvedParentRemnant (canonicalOuterAoutOfFlatOuter g A) (canonicalOuterStarOf g A))
+  quotientCD := by
+    intro δ hδ; obtain ⟨γ, hγ, rfl⟩ := Finset.mem_image.mp hδ; exact S.remnantCD γ hγ
+  hStars := by
+    intro δ hδ; obtain ⟨γ, hγ, rfl⟩ := Finset.mem_image.mp hδ
+    exact remnant_contains_all_starVertices_of_containsAoutEdges _ _ (S.containsAoutEdges γ hγ)
+      (fun η hη => ((canonicalOuterAoutOfFlatOuter g A).isConnectedDivergent η hη).isConnected)
+      (canonicalOuterComponentPositiveEdges g A)
+  hCovered := by
+    intro δ hδ; obtain ⟨γ, hγ, rfl⟩ := Finset.mem_image.mp hδ; exact S.remnantCovered γ hγ
+  hTouches := by
+    intro δ hδ; obtain ⟨γ, hγ, rfl⟩ := Finset.mem_image.mp hδ; exact S.remnantTouches γ hγ
+
 open Classical in
 /-- The finite forest image carrier: each quotient image as a single-parent forest image. -/
 noncomputable def CanonicalOuterForestQuotientSupply.forestCarrier {g : HopfGen}
