@@ -481,6 +481,25 @@ are the concrete finite quotient/mixed carriers (with their CD/star facts), the 
 `ResolvedH58ConcreteIndexMaps`, and the `splitTerm_agreement` factorization — all σ-cover
 data, no facade.  **Full native resolved H5.8 remains not claimed complete.**
 
+**Track S — σ-cover finite-data supply (carrier import).**  The machinery to import the flat
+σ-cover's finite carriers into the resolved coordinate is **built** (S-2 + S-3).  *S-2:* the
+contracted-graph forget bridge `forget_canonicalOuterContractedGraph :
+((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A)).forget =
+h58BridgeOuterActualQuotientGraph g A` (the flat *actual* quotient graph).  Its keystone is the
+**id-uniqueness payoff at the graph level**: `forget` is faithful across the complement
+subtraction (`map_forget_complementEdges_canonicalOuterAout` — `map` distributes over `-` for
+`B ≤ A`, and the id-unique lift forgets edges occurrence-faithfully), together with the
+star / retargetVertex / retargetEdge / retargetLeg / starVertices alignments.  *S-3:* a generic
+forget-subgraph lift `resolvedSubgraphOfForget` (submultiset preimage; no id-uniqueness needed
+for the lift itself), specialised through the bridge to `liftFlatQuotientSubgraphToCres` and the
+forest version `liftFlatQuotientForestToCres`, each with a (heterogeneous) forget round-trip.
+So flat quotient subgraphs/forests lift into the resolved contracted graph.  **Remaining:** build
+the concrete carriers (`CanonicalOuterForestQuotientSupply.Q` / `ResolvedMixedCarrierSupply.mixedQ`)
+from the lifted images with the CD/star/saturation facts transported (S-3c); the resolved→flat
+`ResolvedH58ConcreteIndexMaps` (facade-free coordinate dictionary, S-4); and `splitTerm_agreement`
+(resolved-native-or-supplied — the genuine boundary, *not* imported from flat, S-5).  **Full
+native resolved H5.8 remains not claimed complete.**
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

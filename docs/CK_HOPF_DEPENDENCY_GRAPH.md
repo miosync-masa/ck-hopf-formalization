@@ -402,6 +402,26 @@ concrete finite quotient/mixed carriers (+ CD/star facts), `ResolvedH58ConcreteI
 `splitTerm_agreement` — all σ-cover data.  Full native resolved H5.8 still **not** claimed
 complete.
 
+**Track S — σ-cover finite-data supply (carrier import, in progress).**  The carrier-import
+machinery (S-2 + S-3) is **built**:
+```
+forget_canonicalOuterContractedGraph     ◄── S-2 contracted-graph forget bridge
+  Cres.forget = h58BridgeOuterActualQuotientGraph g A   (Cres := Aout.contractWithStars starOf)
+  └─ id-uniqueness payoff: forget distributes over the complement subtraction
+     (map_forget_complementEdges_canonicalOuterAout) + star / retargetVertex/Edge/Leg / starVertices align
+        │
+resolvedSubgraphOfForget (generic forget-subgraph lift, exists_le_map; no id-uniqueness)
+  ├─ liftFlatQuotientSubgraphToCres + forget round-trip (HEq, via the bridge)   ◄── S-3a'
+  └─ liftFlatQuotientForestToCres   + forget round-trip (HEq)                    ◄── S-3b
+```
+So flat quotient subgraphs/forests now lift into the resolved contracted graph `Cres` with
+(heterogeneous) forget round-trips.  Remaining: **S-3c** build the concrete carriers
+(`CanonicalOuterForestQuotientSupply.Q` / `ResolvedMixedCarrierSupply.mixedQ`) from the lifted
+images with the CD/star/saturation facts transported; **S-4** `ResolvedH58ConcreteIndexMaps`
+(resolved→flat coordinate dictionary, facade-free); **S-5** `splitTerm_agreement`
+(resolved-native-or-supplied — the genuine boundary, NOT imported from flat).  Full native
+resolved H5.8 still **not** claimed complete.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

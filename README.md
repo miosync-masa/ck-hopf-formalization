@@ -142,6 +142,16 @@ standalone modules, axiom-clean):
   `CanonicalResolvedActualSigmaCoverSupply g`. The remaining inputs are the concrete finite
   quotient/mixed carriers, the resolved→flat index maps, and the split-term factorization — all
   σ-cover data. Full native resolved H5.8 is still **not** claimed complete.
+- **Carrier import (Track S, in progress).** The machinery to import the flat σ-cover's finite
+  carriers into the resolved coordinate is built: the contracted-graph forget bridge
+  `forget_canonicalOuterContractedGraph` (whose keystone is the id-uniqueness payoff — `forget`
+  is faithful across the complement subtraction — plus the star/retarget/vertices alignments),
+  and a generic forget-subgraph lift `resolvedSubgraphOfForget` specialised to
+  `liftFlatQuotientSubgraphToCres` / `liftFlatQuotientForestToCres` (flat quotient
+  subgraphs/forests lift into the resolved contracted graph, with forget round-trips). Remaining:
+  build the concrete carriers with CD/star facts, the resolved→flat coordinate dictionary, and
+  `splitTerm_agreement` (the genuine boundary, not imported from flat). Full native resolved H5.8
+  is still **not** claimed complete.
 
 All R-4-superfull modules depend only on `propext`/`Classical.choice`/`Quot.sound`; `Main`
 is unaffected apart from the thin public aliases added to `Coassoc.lean`.
