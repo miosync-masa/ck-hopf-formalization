@@ -709,6 +709,50 @@ facade (`ForestGraphInsertionUniquenessModel` is *replaced* by `retarget_residua
 and its carrier is fixed; the only genuine content is the vertex-saturation law, which is the
 forward use of the already-proved `remnant_vertex_recovery` saturation.** -/
 
+/-! ### DeContraction-1 — `quotientEdgePreimage` (the edge half of the section)
+
+The unique-up-to-`retargetEdge` submultiset of `Aout.complementEdges` that the contracted
+subgraph `δ`'s internal edges come from.  Existence is `exists_le_map`; this is generic (no
+id-uniqueness needed yet — uniqueness enters later for `parent_remnant_eq`). -/
+
+/-- Existence of an edge preimage: `δ`'s internal edges are the `retargetEdge`-image of a
+submultiset of `Aout.complementEdges` (since `δ.internalEdges ≤ (contract).internalEdges =
+complementEdges.map retargetEdge`). -/
+private theorem quotientEdgePreimage_exists
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) :
+    ∃ t ≤ Aout.complementEdges, t.map (Aout.retargetEdge starOf) = δ.internalEdges :=
+  exists_le_map (Aout.retargetEdge starOf) (s := Aout.complementEdges) (M := δ.internalEdges)
+    (by rw [← Aout.contractWithStars_internalEdges starOf]; exact δ.internalEdges_le)
+
+/-- **DeContraction-1: the edge preimage.**  A submultiset of `Aout.complementEdges`
+(`= G.internalEdges - Aout.internalEdges`) whose `retargetEdge`-image is `δ.internalEdges` —
+the edge half of the parent-section carrier. -/
+noncomputable def quotientEdgePreimage
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) :
+    Multiset ResolvedFeynmanEdge :=
+  (quotientEdgePreimage_exists Aout starOf δ).choose
+
+/-- The edge preimage lies in `Aout.complementEdges` (definitionally `G.internalEdges -
+Aout.internalEdges`). -/
+theorem quotientEdgePreimage_le
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) :
+    quotientEdgePreimage Aout starOf δ ≤ Aout.complementEdges :=
+  (quotientEdgePreimage_exists Aout starOf δ).choose_spec.1
+
+/-- The edge preimage retargets back to `δ`'s internal edges. -/
+theorem quotientEdgePreimage_map
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) :
+    (quotientEdgePreimage Aout starOf δ).map (Aout.retargetEdge starOf) = δ.internalEdges :=
+  (quotientEdgePreimage_exists Aout starOf δ).choose_spec.2
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
