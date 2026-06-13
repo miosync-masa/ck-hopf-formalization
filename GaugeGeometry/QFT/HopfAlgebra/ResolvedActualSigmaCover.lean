@@ -1337,6 +1337,40 @@ theorem CanonicalOuterForestQuotientSupply.forest_choiceParents_inj {g : HopfGen
       x.choiceParents = y.choiceParents → x = y :=
   fun _ _ _ _ hcp => ResolvedForestImageData.ext_choiceParents hcp
 
+/-! ### BranchCarriers (5) — mixed side (generic over `D`, no de-contraction)
+
+The mixed branch needs no de-contraction: a mixed image is an admissible subgraph of the
+contracted graph whose components avoid the outer stars (`ResolvedMixedImageData.ofAdmissibleSubgraph`,
+`componentCD`/`componentDisjoint` free).  Bundled generically over any `D`. -/
+
+/-- `ResolvedMixedImageData` is determined by its component set (other fields are
+propositions — proof-irrelevant). -/
+theorem ResolvedMixedImageData.ext_components {D : ResolvedSigmaCoverData G}
+    {M N : ResolvedMixedImageData D} (h : M.components = N.components) : M = N := by
+  cases M; cases N; cases h; rfl
+
+/-- A finite mixed-image carrier: contracted-graph admissible subgraphs whose components avoid
+the outer stars. -/
+structure ResolvedMixedCarrierSupply (D : ResolvedSigmaCoverData G) where
+  /-- The mixed-branch admissible subgraphs (already in the contracted graph). -/
+  mixedQ : Finset (ResolvedAdmissibleSubgraph (D.Aout.contractWithStars D.starOf))
+  /-- Every component of every mixed subgraph avoids the outer stars. -/
+  avoidsStars : ∀ M ∈ mixedQ, ∀ δ ∈ M.elements,
+    Disjoint δ.vertices (D.Aout.starVertices D.starOf)
+
+open Classical in
+/-- The finite mixed image carrier. -/
+noncomputable def ResolvedMixedCarrierSupply.mixedCarrier {D : ResolvedSigmaCoverData G}
+    (S : ResolvedMixedCarrierSupply D) : Finset (ResolvedMixedImageData D) :=
+  S.mixedQ.attach.image (fun M =>
+    ResolvedMixedImageData.ofAdmissibleSubgraph M.1 (S.avoidsStars M.1 M.2))
+
+/-- **BranchCarriers (5): mixed carrier injectivity** — immediate from `ext_components`. -/
+theorem ResolvedMixedCarrierSupply.mixed_components_inj {D : ResolvedSigmaCoverData G}
+    (S : ResolvedMixedCarrierSupply D) :
+    ∀ x ∈ S.mixedCarrier, ∀ y ∈ S.mixedCarrier, x.components = y.components → x = y :=
+  fun _ _ _ _ h => ResolvedMixedImageData.ext_components h
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
