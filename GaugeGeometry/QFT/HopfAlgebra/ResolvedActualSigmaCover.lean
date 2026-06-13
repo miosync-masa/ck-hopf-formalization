@@ -1421,6 +1421,52 @@ theorem canonicalOuter_retargetLeg_forget (g : HopfGen) (A : h58BridgeOuterIndex
       (A.1.retargetVertex (h58BridgeOuterCanonicalStar g A) l.attachedTo) l.sector
   rw [canonicalOuter_retargetVertex_eq g A l.attachedTo]
 
+/-! ### S-2e-pre — ambient legs forget + starVertices alignment -/
+
+/-- The canonical payload graph's external legs forget to `repG g`'s (mirror of the edge case). -/
+theorem canonicalPayload_externalLegs_forget (g : HopfGen) :
+    (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.externalLegs.map
+        ResolvedExternalLeg.forget = (repG g).toFeynmanGraph.externalLegs :=
+  map_forget_uniqueIdLegs (repG g).toFeynmanGraph.externalLegs
+
+/-- The forgetful-lift forest's star vertices equal the flat forest's (forget coordinate). -/
+theorem ofUniqueForgetForest_starVertices_eq {Gf : FeynmanGraph}
+    (A : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hA : A ∈ ((ofFlatGraphWithUniqueIds Gf).forget).properDisjointAdmissibleDivergentSubgraphs) :
+    (ofUniqueForgetForest A
+        (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _ hA)).starVertices
+        (fun η => FeynmanGraph.admissibleForestCanonicalStarOf
+          ((ofFlatGraphWithUniqueIds Gf).forget) A hA η.forget)
+      = A.starVertices
+          (FeynmanGraph.admissibleForestCanonicalStarOf ((ofFlatGraphWithUniqueIds Gf).forget) A hA) := by
+  unfold ResolvedAdmissibleSubgraph.starVertices AdmissibleSubgraph.starVertices
+  rw [ofUniqueForgetForest_elements, Finset.image_image]
+  apply Finset.image_congr
+  intro δf _
+  show FeynmanGraph.admissibleForestCanonicalStarOf _ A hA (liftUniqueFromForgetSubgraph δf).forget
+    = FeynmanGraph.admissibleForestCanonicalStarOf _ A hA δf
+  rw [forget_liftUniqueFromForgetSubgraph]
+
+/-- (transport) Canonical-level starVertices alignment. -/
+private theorem starVertices_canonicalOuter_transport {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G') (hA : A ∈ G'.properDisjointAdmissibleDivergentSubgraphs) :
+    (aoutOfTransport h A
+        (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _ hA)).starVertices
+        (starOfTransport h A hA)
+      = A.starVertices (FeynmanGraph.admissibleForestCanonicalStarOf G' A hA) := by
+  subst h
+  rw [aoutOfTransport_rfl]
+  exact ofUniqueForgetForest_starVertices_eq A hA
+
+/-- **S-2e-pre: starVertices alignment.**  The canonical resolved star vertices equal the flat
+forest's star vertices. -/
+theorem canonicalOuter_starVertices_eq (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    (canonicalOuterAoutOfFlatOuter g A).starVertices (canonicalOuterStarOf g A)
+      = A.1.starVertices (h58BridgeOuterCanonicalStar g A) :=
+  starVertices_canonicalOuter_transport
+    (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
