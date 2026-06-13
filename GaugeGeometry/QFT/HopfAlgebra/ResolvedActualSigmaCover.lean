@@ -2088,6 +2088,36 @@ noncomputable def canonicalFlatImageOf (g : HopfGen) (A : h58BridgeOuterIndex g)
   h58BridgeActualQuotientToSigma g A
     (admissibleAlongForgetEq (forget_canonicalOuterContractedGraph g A) z)
 
+/-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
+
+To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
+split-choice), the index maps must be **carrier-based**.  Scout verdict: they are currently
+**whole-type total**, and that is over-strong (the P2 pattern, again).
+
+* `ResolvedH58WeightData.forestWeight_eq : ∀ q, forestWeight q = imageWeight (forestImage q)`
+  is whole-type, but `sum_reindex` proves the split via `simp only [forestWeight_eq, …]` —
+  a *rewrite*, so it only ever fires on the `forestCarrier` summands.  The equation is therefore
+  **needed only on the carrier** (`Finset.sum_congr rfl (fun q hq => …)` would replace the simp).
+* This propagates up: `ResolvedFlatH58WeightAlignment.forest_comm`/`mixed_comm`,
+  `ResolvedH58ConcreteIndexMaps.forest_comm`/`mixed_comm`, and our
+  `ResolvedFlatH58Correspondence.forest_comm`/`mixed_comm` are all `∀ q` whole-type.
+
+**Consequence.**  With whole-type commutation, `mixedSplitOf` must be a *total* map
+`FL.sep.MixedIdx → split` satisfying the square *everywhere* — so "remember the origin on the
+carrier" does **not** suffice (and a junk off-carrier value cannot satisfy the square, nor is
+`h58BridgeSplitChoiceSigma g` known nonempty).
+
+**Fix (P3 = P2 pattern).**  Make the dictionary carrier-based: either (a) keep total split maps
+but weaken the commutation to `∀ q ∈ carrier` (needs the `sum_reindex` proofs to use
+`Finset.sum_congr` instead of `simp only`), or (b) give the split maps the **carrier-subtype
+domain** `{q // q ∈ forestCarrier} → split` (cleanest — no off-carrier junk).  Recommend (b).
+Cascade: `ResolvedH58WeightData` → `…WeightAlignment` → `ResolvedH58ConcreteIndexMaps` →
+`ResolvedFlatH58Correspondence`.  After the refactor, `mixedSplitOf`/`mixed_comm` close by
+carrier-origin projection (mixed is flat-mechanical), isolating the genuine boundary to the
+**forest** split dictionary + `term_agreement`.
+
+(`flatImageOf` (G-1a) is already total and fine — it needs no carrier restriction.) -/
+
 /-- The dictionary half of the correspondence. -/
 def ResolvedFlatH58Correspondence.toConcreteIndexMaps {g : HopfGen}
     {FL : ResolvedCarrierFiniteBranchMapLayer} (C : ResolvedFlatH58Correspondence g FL) :
