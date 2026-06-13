@@ -880,6 +880,35 @@ theorem parentOfQuotient_containsAoutEdges
   show Aout.internalEdges ≤ Aout.internalEdges + quotientEdgePreimage Aout starOf δ
   exact Multiset.le_add_right _ _
 
+/-- **DeContraction-2: remnant internal edges.**  The parent's remnant has exactly `δ`'s
+internal edges — the edge half of `parent_remnant_eq` (constructive: `(Aout + M) - Aout = M`,
+then `quotientEdgePreimage_map`). -/
+theorem parentOfQuotient_remnant_internalEdges
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices) :
+    (resolvedParentRemnant Aout starOf (parentOfQuotient Aout starOf δ hE hL)).internalEdges
+      = δ.internalEdges := by
+  show ((Aout.internalEdges + quotientEdgePreimage Aout starOf δ) - Aout.internalEdges).map
+    (Aout.retargetEdge starOf) = δ.internalEdges
+  rw [add_tsub_cancel_left]
+  exact quotientEdgePreimage_map Aout starOf δ
+
+/-- **DeContraction-2: remnant external legs.**  The parent's remnant has exactly `δ`'s
+external legs — the leg half of `parent_remnant_eq` (`quotientLegPreimage_map`). -/
+theorem parentOfQuotient_remnant_externalLegs
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices) :
+    (resolvedParentRemnant Aout starOf (parentOfQuotient Aout starOf δ hE hL)).externalLegs
+      = δ.externalLegs := by
+  show (quotientLegPreimage Aout starOf δ).map (Aout.retargetExternalLeg starOf) = δ.externalLegs
+  exact quotientLegPreimage_map Aout starOf δ
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
