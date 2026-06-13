@@ -1373,6 +1373,54 @@ theorem ofUniqueForgetForest_retargetVertex_eq {Gf : FeynmanGraph}
       (ofUniqueForgetForest A hDisj).retargetVertex_of_not_mem _
         (by rw [ofUniqueForgetForest_vertices]; exact hv)]
 
+/-- (transport) Canonical-level retargetVertex alignment from the forget-coordinate one. -/
+private theorem retargetVertex_canonicalOuter_transport {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G') (hA : A ∈ G'.properDisjointAdmissibleDivergentSubgraphs)
+    (v : VertexId) :
+    (aoutOfTransport h A
+        (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _ hA)).retargetVertex
+        (starOfTransport h A hA) v
+      = A.retargetVertex (FeynmanGraph.admissibleForestCanonicalStarOf G' A hA) v := by
+  subst h
+  rw [aoutOfTransport_rfl]
+  exact ofUniqueForgetForest_retargetVertex_eq A hA v
+
+/-- **S-2d (canonical): retargetVertex alignment.**  The canonical resolved retarget equals the
+flat retarget with the flat canonical star. -/
+theorem canonicalOuter_retargetVertex_eq (g : HopfGen) (A : h58BridgeOuterIndex g) (v : VertexId) :
+    (canonicalOuterAoutOfFlatOuter g A).retargetVertex (canonicalOuterStarOf g A) v
+      = A.1.retargetVertex (h58BridgeOuterCanonicalStar g A) v :=
+  retargetVertex_canonicalOuter_transport
+    (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2 v
+
+/-- **S-2d: edge retarget alignment.**  Forgetting the resolved retargeted edge equals the flat
+retargeted edge of the forgotten edge (rides on the retargetVertex alignment). -/
+theorem canonicalOuter_retargetEdge_forget (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (e : ResolvedFeynmanEdge) :
+    ((canonicalOuterAoutOfFlatOuter g A).retargetEdge (canonicalOuterStarOf g A) e).forget
+      = A.1.retargetEdge (h58BridgeOuterCanonicalStar g A) e.forget := by
+  show FeynmanEdge.mk
+      ((canonicalOuterAoutOfFlatOuter g A).retargetVertex (canonicalOuterStarOf g A) e.source)
+      ((canonicalOuterAoutOfFlatOuter g A).retargetVertex (canonicalOuterStarOf g A) e.target)
+      e.sector
+    = FeynmanEdge.mk
+      (A.1.retargetVertex (h58BridgeOuterCanonicalStar g A) e.source)
+      (A.1.retargetVertex (h58BridgeOuterCanonicalStar g A) e.target) e.sector
+  rw [canonicalOuter_retargetVertex_eq g A e.source, canonicalOuter_retargetVertex_eq g A e.target]
+
+/-- **S-2d: leg retarget alignment.** -/
+theorem canonicalOuter_retargetLeg_forget (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (l : ResolvedExternalLeg) :
+    ((canonicalOuterAoutOfFlatOuter g A).retargetExternalLeg (canonicalOuterStarOf g A) l).forget
+      = A.1.retargetExternalLeg (h58BridgeOuterCanonicalStar g A) l.forget := by
+  show ExternalLeg.mk
+      ((canonicalOuterAoutOfFlatOuter g A).retargetVertex (canonicalOuterStarOf g A) l.attachedTo)
+      l.sector
+    = ExternalLeg.mk
+      (A.1.retargetVertex (h58BridgeOuterCanonicalStar g A) l.attachedTo) l.sector
+  rw [canonicalOuter_retargetVertex_eq g A l.attachedTo]
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
