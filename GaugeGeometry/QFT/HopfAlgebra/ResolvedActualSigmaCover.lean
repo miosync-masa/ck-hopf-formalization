@@ -533,6 +533,60 @@ theorem canonicalOuterStarOf_forget (g : HopfGen) (A : h58BridgeOuterIndex g)
         (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph ▸ η.forget) :=
   starOfTransport_eq (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2 η
 
+/-! ### S-2c — complement-faithful forget (the id-uniqueness payoff)
+
+`Aout.complementEdges.map forget = A.1.complementEdges`.  `forget` commutes with the complement
+subtraction because the subtracted forest edges are `≤` the ambient edges (`map` distributes
+over `-` whenever `B ≤ A`, no injectivity needed); the *faithfulness* is that `Aout`'s edges
+forget occurrence-faithfully to `A.1`'s (`canonicalOuterAout_internalEdges_forget`, from the
+id-unique lift), unlike the lossy `ResolvedAdmissibleSubgraph.forget`. -/
+
+/-- `Multiset.map` distributes over subtraction when the subtrahend is contained (no
+injectivity needed). -/
+private theorem multiset_map_sub_of_le' {α β : Type*} [DecidableEq α] [DecidableEq β]
+    (f : α → β) {A B : Multiset α} (hBA : B ≤ A) :
+    (A - B).map f = A.map f - B.map f := by
+  calc (A - B).map f = ((A - B).map f + B.map f) - B.map f := by
+        rw [Multiset.add_sub_cancel_right]
+    _ = ((A - B + B).map f) - B.map f := by rw [Multiset.map_add]
+    _ = A.map f - B.map f := by rw [Multiset.sub_add_cancel hBA]
+
+/-- The transport forest's aggregate edges forget occurrence-faithfully to the flat forest's. -/
+private theorem aoutOfTransport_internalEdges_forget {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G') (hDisj : A.IsPairwiseDisjoint) :
+    (aoutOfTransport h A hDisj).internalEdges.map ResolvedFeynmanEdge.forget = A.internalEdges := by
+  subst h
+  rw [aoutOfTransport_rfl]
+  exact ofUniqueForgetForest_internalEdges_forget A hDisj
+
+/-- The canonical outer forest's aggregate edges forget faithfully to `A.1`'s. -/
+theorem canonicalOuterAout_internalEdges_forget (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    (canonicalOuterAoutOfFlatOuter g A).internalEdges.map ResolvedFeynmanEdge.forget
+      = A.1.internalEdges :=
+  aoutOfTransport_internalEdges_forget _ A.1 _
+
+/-- **S-2c: complement-faithful forget.**  Forgetting the canonical outer forest's complement
+edges recovers `A.1`'s complement edges — the id-uniqueness payoff making `forget` faithful
+across the complement subtraction. -/
+theorem map_forget_complementEdges_canonicalOuterAout (g : HopfGen)
+    (A : h58BridgeOuterIndex g) :
+    (canonicalOuterAoutOfFlatOuter g A).complementEdges.map ResolvedFeynmanEdge.forget
+      = A.1.complementEdges := by
+  have hle : (canonicalOuterAoutOfFlatOuter g A).internalEdges ≤
+      (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.internalEdges :=
+    resolvedAdmissibleSubgraph_internalEdges_le_of_pairwise _
+      (canonicalOuterAoutOfFlatOuter g A).isPairwiseDisjoint
+  have hAmb : (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.internalEdges.map
+      ResolvedFeynmanEdge.forget = (repG g).toFeynmanGraph.internalEdges :=
+    map_forget_uniqueIdEdges (repG g).toFeynmanGraph.internalEdges
+  show ((canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.internalEdges
+      - (canonicalOuterAoutOfFlatOuter g A).internalEdges).map ResolvedFeynmanEdge.forget
+      = A.1.complementEdges
+  rw [multiset_map_sub_of_le' ResolvedFeynmanEdge.forget hle, hAmb,
+    canonicalOuterAout_internalEdges_forget]
+  rfl
+
 /-! ### InnerSupply-1c — component positive-edge count
 
 `componentPositiveEdges : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card`.  The flat outer
