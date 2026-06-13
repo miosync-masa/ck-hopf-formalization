@@ -1679,6 +1679,55 @@ theorem forget_liftFlatQuotientForestToCres (g : HopfGen) (A : h58BridgeOuterInd
     HEq (liftFlatQuotientForestToCres g A Af hDisj).forget Af :=
   forget_liftFlatAdmissibleAlongForgetEq (forget_canonicalOuterContractedGraph g A) Af hDisj
 
+/-! ## Track S Scout (S-3c) — per-`A` carrier sources: forest vs mixed asymmetry
+
+With the lift machinery built (S-2/S-3), S-3c builds the actual carriers.  Source inventory of
+the flat per-`A` quotient data (`Coassoc`, all private — the contracted-graph alias is
+`h58BridgeOuterActualQuotientGraph g A = forestOuterActualQuotientGraph g A`):
+
+* flat actual quotient subgraph: `forestQuotientForestSigmaActualQuotientSubgraph g r :
+  AdmissibleSubgraph (forestOuterActualQuotientGraph g r.1)` (`r = (A, inner forest)`).
+* **forest discriminator (`exists_starVertex`)**:
+  `forestComponentForestChoiceActualQuotientSubgraph_exists_starVertex` =
+  `∃ δ ∈ elements, ¬ Disjoint δ.vertices (A.starVertices flatStar)` — **SOME component meets
+  SOME star**.
+* **mixed discriminator (`no_starVertices`)**:
+  `forestComponentMixedBoundaryActualRightQuotientSubgraph_no_starVertices` =
+  `∀ δ ∈ elements, Disjoint δ.vertices (A.starVertices flatStar)` — **ALL components avoid
+  stars**.
+
+**Decisive finding (forest/mixed asymmetry).**
+
+* **Mixed carrier — FLAT-MECHANICAL.**  The flat `no_starVertices` is *exactly* the resolved
+  `ResolvedMixedCarrierSupply.avoidsStars` (per-component disjoint from stars).  So `mixedQ` =
+  the lift (`liftFlatQuotientForestToCres`) of the flat mixed actual-right-quotient subgraphs,
+  with `avoidsStars` transported through the forget round-trip.  No new mathematics.
+
+* **Forest carrier — `hStars` is NOT flat-available.**  The resolved single-parent design
+  (decision (i)) needs each forest image to **contain all outer stars**
+  (`hStars : Aout.starVertices ⊆ δ.vertices`), but flat only provides `exists_starVertex`
+  (some component meets *some* star).  This is the all-star knife-edge again: the flat
+  forest-branch sums over *(outer, multi-component inner forest)* pairs, the resolved one over
+  *single full remnants `γ/Aout`* (each containing all stars).  These are **different
+  decompositions**; the reconciliation is precisely the `splitTerm_agreement` factorization
+  (S-5).
+
+**Strategy implication.**  `hStars` is *not* imported from flat — it is **provable
+resolved-natively**: the remnant of any parent `γ ⊇ Aout` contains all of `Aout.starVertices`
+(every `Aout`-component vertex retargets to its star; cf. the DeContraction-3 all-star
+observation).  So the forest carrier should be built **resolved-natively from the finite set of
+proper divergent subgraphs containing `Aout`** (their remnants give `Q`, with `hStars`/`hCovered`/
+`hTouches` from the parent structure), *not* by lifting the flat forest carrier.  The flat
+forest carrier enters only through the resolved→flat dictionary (S-4) and the genuine
+`splitTerm_agreement` matching (S-5).
+
+**Verdict.**  S-3c splits cleanly: the **mixed** carrier is flat-mechanical (lift +
+`avoidsStars`); the **forest** carrier is resolved-native (parents `⊇ Aout`, `hStars` provable),
+and its matching to the flat forest sum is the S-5 boundary.  So the lift machinery (S-3a/b) is
+used for the *mixed* side and for the *dictionary*; the *forest* carrier does not need it.  The
+genuine remaining mathematics is concentrated in S-5 (the forest-sum factorization), exactly as
+the Track-S boundary scout predicted. -/
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
