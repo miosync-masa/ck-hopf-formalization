@@ -1164,6 +1164,71 @@ theorem parentOfQuotient_remnant_eq
   · exact parentOfQuotient_remnant_internalEdges Aout starOf δ hE hL
   · exact parentOfQuotient_remnant_externalLegs Aout starOf δ hE hL
 
+/-! ### DeContraction-4 — payload well-formedness + parents-from-quotient-carrier
+
+The de-contraction needs the ambient graph edge/leg-supported (`hE`/`hL`).  For the canonical
+payload graph this is `repG_wellFormed` transported through `ofFlatGraphWithUniqueIds`
+(`forget` keeps endpoints; the id-tag does not move them).  Then a finite quotient-image
+carrier yields a `CanonicalOuterParentsData` by imaging `parentOfQuotient` — non-circular
+(the carrier is supplied externally, not derived from `D.parents`). -/
+
+/-- The unique-id lift of a well-formed flat graph is edge-supported. -/
+theorem ofFlatGraphWithUniqueIds_edges_supported {Gf : FeynmanGraph} (hGf : Gf.WellFormed) :
+    ∀ e ∈ (ofFlatGraphWithUniqueIds Gf).internalEdges,
+      e.source ∈ (ofFlatGraphWithUniqueIds Gf).vertices ∧
+        e.target ∈ (ofFlatGraphWithUniqueIds Gf).vertices := by
+  intro e he
+  have hfe : e.forget ∈ Gf.internalEdges := by
+    rw [← map_forget_uniqueIdEdges Gf.internalEdges]
+    exact Multiset.mem_map_of_mem ResolvedFeynmanEdge.forget he
+  have hsupp := hGf.1 e.forget hfe
+  rw [FeynmanEdge.supportedOn_def] at hsupp
+  exact hsupp
+
+/-- The unique-id lift of a well-formed flat graph is leg-supported. -/
+theorem ofFlatGraphWithUniqueIds_legs_supported {Gf : FeynmanGraph} (hGf : Gf.WellFormed) :
+    ∀ ℓ ∈ (ofFlatGraphWithUniqueIds Gf).externalLegs,
+      ℓ.attachedTo ∈ (ofFlatGraphWithUniqueIds Gf).vertices := by
+  intro ℓ hℓ
+  have hfℓ : ℓ.forget ∈ Gf.externalLegs := by
+    rw [← map_forget_uniqueIdLegs Gf.externalLegs]
+    exact Multiset.mem_map_of_mem ResolvedExternalLeg.forget hℓ
+  have hsupp := hGf.2 ℓ.forget hfℓ
+  rw [ExternalLeg.supportedOn_def] at hsupp
+  exact hsupp
+
+/-- The canonical payload graph is edge-supported (`hE` for `parentOfQuotient`). -/
+theorem canonicalPayload_edges_supported (g : HopfGen) :
+    ∀ e ∈ (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.internalEdges,
+      e.source ∈ (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.vertices ∧
+        e.target ∈ (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.vertices :=
+  ofFlatGraphWithUniqueIds_edges_supported (repG_wellFormed g)
+
+/-- The canonical payload graph is leg-supported (`hL` for `parentOfQuotient`). -/
+theorem canonicalPayload_legs_supported (g : HopfGen) :
+    ∀ ℓ ∈ (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.externalLegs,
+      ℓ.attachedTo ∈ (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.vertices :=
+  ofFlatGraphWithUniqueIds_legs_supported (repG_wellFormed g)
+
+/-- **DeContraction-4: parents from a quotient-image carrier.**  An externally-supplied finite
+carrier of contracted-graph subgraphs yields a `CanonicalOuterParentsData` by imaging
+`parentOfQuotient` — non-circular (the carrier is *not* derived from `D.parents`).  This is
+the genuine `parents` source the σ-cover needs. -/
+noncomputable def canonicalOuterParentsDataOfQuotientCarrier (g : HopfGen)
+    (A : h58BridgeOuterIndex g)
+    (quotientCarrier : Finset (ResolvedFeynmanSubgraph
+      ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A)))) :
+    CanonicalOuterParentsData g A where
+  parents := quotientCarrier.image (fun δ =>
+    parentOfQuotient (canonicalOuterAoutOfFlatOuter g A) (canonicalOuterStarOf g A) δ
+      (canonicalPayload_edges_supported g) (canonicalPayload_legs_supported g))
+  containsAoutEdges := by
+    intro γ hγ
+    obtain ⟨δ, _, rfl⟩ := Finset.mem_image.mp hγ
+    exact parentOfQuotient_containsAoutEdges (canonicalOuterAoutOfFlatOuter g A)
+      (canonicalOuterStarOf g A) δ (canonicalPayload_edges_supported g)
+      (canonicalPayload_legs_supported g)
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
