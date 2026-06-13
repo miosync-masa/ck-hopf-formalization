@@ -39300,6 +39300,21 @@ noncomputable def h58BridgeOuterCarrier [IsDivergencePreservedByAdmissibleForest
     (g : HopfGen) : Finset (forestOuterProperIndex g) :=
   (forestOuterProperFinset g).filter (fun A => 0 < A.1.complementEdges.card)
 
+/-- Public alias: the flat **actual** quotient graph of an outer proper forest (the genuine
+forest contraction `A.1.contractWithStars` with the flat canonical star — *not* the `repG`
+representative).  The forget of the resolved contracted graph lands here. -/
+noncomputable def h58BridgeOuterActualQuotientGraph
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (A : h58BridgeOuterIndex g) : FeynmanGraph :=
+  forestOuterActualQuotientGraph g A
+
+/-- Public alias: the flat canonical component-star of an outer proper forest. -/
+noncomputable def h58BridgeOuterCanonicalStar
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    FeynmanSubgraph (repG g).toFeynmanGraph → VertexId :=
+  FeynmanGraph.admissibleForestCanonicalStarOf (repG g).toFeynmanGraph A.1 A.2
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
