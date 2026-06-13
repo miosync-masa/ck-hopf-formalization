@@ -1693,6 +1693,47 @@ theorem liftFlatAdmissibleAlongForgetEq_avoidsStars {G : ResolvedFeynmanGraph} {
   obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hδ
   exact hAvoid δf hδf
 
+/-! ## Track S Scout (S-4) — the concrete index dictionary, and why S-4 ⟂ S-5 do not cleanly split
+
+`ResolvedH58ConcreteIndexMaps g FL` (with `FL.sep = resolvedActualSep D`) requires **total**
+maps over the whole resolved index types, plus total commutation:
+```
+flatImageOf  : ResolvedActualQuotientImage D → forestQuotientForestSigma g
+forestSplitOf : ResolvedForestImageData D     → forestComponentSplitChoiceSigma g
+mixedSplitOf  : ResolvedMixedImageData D      → forestComponentSplitChoiceSigma g
+forest_comm   : ∀ q, flatImageOf q.toImage = h58BridgeSplitPhi g (forestSplitOf q)
+mixed_comm    : ∀ q, flatImageOf q.toImage = h58BridgeSplitPhi g (mixedSplitOf q)
+```
+
+**Findings.**
+1. **`flatImageOf` is the mechanical half** — a resolved quotient forest `δ :
+   ResolvedAdmissibleSubgraph Cres` maps to the flat `(A, inner forest)` by `δ.forget` (through
+   the S-2e bridge `Cres.forget = h58BridgeOuterActualQuotientGraph g A`) + the flat
+   **actual↔rep transport** (`forestOuterActualToRepSubgraph` / `mapPermAdmissibleSubgraphPreimage`,
+   currently *private* in `Coassoc` — would need alias-only wrappers), packaged with the per-`A`
+   outer coordinate (fixed by `D`).  Facade-free.
+2. **`forestSplitOf` / `mixedSplitOf` are NOT a forget** — the *split choice* is the **LHS**
+   index, and recovering it from a resolved forest/mixed image is exactly the
+   resolved-forest-image ↔ flat-split-choice correspondence.  That correspondence is the *same
+   data* the weight equality `splitTerm_agreement` (S-5) needs.
+3. The commutation is **total** (`∀ q` over *all* image data, not just the carrier), so the
+   dictionary must be globally consistent.
+
+**Verdict — S-4 and S-5 are two faces of ONE boundary.**  The index dictionary
+(`forestSplitOf`/`mixedSplitOf` + `forest_comm`/`mixed_comm`) and the weight equality
+(`splitTerm_agreement`) both encode the **resolved σ-cover ↔ flat H5.8 forest-branch
+correspondence**.  `flatImageOf` is mechanically constructible (forget + actual↔rep wrapper);
+the *split* maps are not separable from S-5.  So the honest finishing-line is:
+
+> *the carrier construction is resolved-native and complete; the single remaining datum is the
+> resolved↔flat forest-branch dictionary-with-weights (`concreteIndexMaps` + `splitTerm_agreement`
+> together), supplied as the `CanonicalOuterInnerSupplyData` fields.*
+
+This refines the Track-S boundary: it is **not** "mechanical S-4 then hard S-5", but one
+correspondence.  `flatImageOf` can still be landed mechanically (needs the Coassoc actual↔rep
+wrappers); the split dictionary + weights stay the genuine supplied boundary.  Full native
+resolved H5.8 remains **not** claimed complete. -/
+
 /-! ## Track S Scout (S-3c) — per-`A` carrier sources: forest vs mixed asymmetry
 
 With the lift machinery built (S-2/S-3), S-3c builds the actual carriers.  Source inventory of
