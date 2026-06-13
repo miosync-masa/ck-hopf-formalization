@@ -1423,6 +1423,33 @@ noncomputable def CanonicalOuterInnerSupplyData.toCanonicalSupply {g : HopfGen}
   concreteIndexMaps := S.concreteIndexMaps
   splitTerm_agreement := S.splitTerm_agreement
 
+/-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
+
+The last wrapper: a per-outer-forest family of inner supply packages assembles into the
+`ResolvedH58OuterSkeleton`, hence the full native H5.8 double-sum reindex
+(`outer_sum_reindex`).  Every inner supply is built from genuine de-contraction data
+(`CanonicalOuterInnerSupplyData`); the outer carrier is the fixed `h58BridgeOuterCarrier g`. -/
+
+/-- A per-outer-forest family of inner supply packages — the full data of an
+`ResolvedH58OuterSkeleton g`, with every inner supply built from genuine de-contraction. -/
+structure CanonicalResolvedH58OuterSkeletonSupply (g : HopfGen) where
+  /-- The inner supply package for each outer proper forest. -/
+  innerData : ∀ A : h58BridgeOuterIndex g, CanonicalOuterInnerSupplyData g A
+
+/-- The outer skeleton from the per-outer-forest inner supply family. -/
+noncomputable def CanonicalResolvedH58OuterSkeletonSupply.toOuterSkeleton {g : HopfGen}
+    (S : CanonicalResolvedH58OuterSkeletonSupply g) : ResolvedH58OuterSkeleton g where
+  innerSupply := fun A => (S.innerData A).toCanonicalSupply
+
+/-- **The full native H5.8 double-sum reindex** delivered by a genuine-de-contraction outer
+skeleton supply: the outer sum of the inner image-weight sums equals the outer sum of the
+inner forest+mixed branch-weight sums, over the outer proper-forest carrier. -/
+theorem CanonicalResolvedH58OuterSkeletonSupply.outer_sum_reindex {g : HopfGen}
+    (S : CanonicalResolvedH58OuterSkeletonSupply g) :
+    ∑ A ∈ h58BridgeOuterCarrier g, S.toOuterSkeleton.toOuterSumSupply.innerImageSum A =
+      ∑ A ∈ h58BridgeOuterCarrier g, S.toOuterSkeleton.toOuterSumSupply.innerBranchSum A :=
+  S.toOuterSkeleton.outer_sum_reindex
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
