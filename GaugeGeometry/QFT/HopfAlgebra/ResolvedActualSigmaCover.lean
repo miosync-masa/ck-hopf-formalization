@@ -2028,6 +2028,74 @@ noncomputable def CanonicalOuterInnerSupplyData.toCanonicalSupply {g : HopfGen}
   concreteIndexMaps := S.concreteIndexMaps
   splitTerm_agreement := S.splitTerm_agreement
 
+/-! ### The single remaining boundary — `ResolvedFlatH58Correspondence`
+
+The Track-S scout established that the index dictionary (`concreteIndexMaps`) and the weight
+equality (`splitTerm_agreement`) are **two faces of one datum**: the identification of the
+resolved σ-cover's forest/mixed images with the flat H5.8 split-choice index.  We name it
+`ResolvedFlatH58Correspondence` and route the supply through it.
+
+This makes the honest statement precise: the carrier / de-contraction / cover / reindex
+skeleton is **complete and resolved-native**; *full native H5.8 is reduced to constructing one
+`ResolvedFlatH58Correspondence`* (not yet constructed — the genuine remaining mathematics, the
+agreement of the two H5.8 decompositions). -/
+
+/-- The single remaining boundary datum: the resolved↔flat H5.8 forest/mixed correspondence —
+the index dictionary (`flatImageOf`/`forestSplitOf`/`mixedSplitOf` + commutation) **and** the
+split-choice term agreement, bundled.  Constructing one of these (per outer forest) is exactly
+what "full native resolved H5.8" requires beyond the (complete) resolved σ-cover skeleton. -/
+structure ResolvedFlatH58Correspondence (g : HopfGen)
+    (FL : ResolvedCarrierFiniteBranchMapLayer) where
+  /-- Resolved quotient image → flat quotient index. -/
+  flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g
+  /-- Resolved forest image → flat split-choice index. -/
+  forestSplitOf : FL.sep.ForestIdx → h58BridgeSplitChoiceSigma g
+  /-- Resolved mixed image → flat split-choice index. -/
+  mixedSplitOf : FL.sep.MixedIdx → h58BridgeSplitChoiceSigma g
+  /-- Forest split indices land in the flat split index. -/
+  forestSplit_mem : ∀ q, forestSplitOf q ∈ h58BridgeSplitChoiceIndex g
+  /-- Mixed split indices land in the flat split index. -/
+  mixedSplit_mem : ∀ q, mixedSplitOf q ∈ h58BridgeSplitChoiceIndex g
+  /-- Forest dictionary commutation. -/
+  forest_comm : ∀ q,
+    flatImageOf (FL.sep.forestImage q) = h58BridgeSplitPhi g (forestSplitOf q)
+  /-- Mixed dictionary commutation. -/
+  mixed_comm : ∀ q,
+    flatImageOf (FL.sep.mixedImage q) = h58BridgeSplitPhi g (mixedSplitOf q)
+  /-- The flat split-choice term agreement (the weight equality). -/
+  term_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- The dictionary half of the correspondence. -/
+def ResolvedFlatH58Correspondence.toConcreteIndexMaps {g : HopfGen}
+    {FL : ResolvedCarrierFiniteBranchMapLayer} (C : ResolvedFlatH58Correspondence g FL) :
+    ResolvedH58ConcreteIndexMaps g FL where
+  flatImageOf := C.flatImageOf
+  forestSplitOf := C.forestSplitOf
+  mixedSplitOf := C.mixedSplitOf
+  forestSplit_mem := C.forestSplit_mem
+  mixedSplit_mem := C.mixedSplit_mem
+  forest_comm := C.forest_comm
+  mixed_comm := C.mixed_comm
+
+/-- **Assemble the inner supply from carriers + the single correspondence datum.**  The forest
+parent carrier and mixed carrier are resolved-native; the only remaining input is one
+`ResolvedFlatH58Correspondence`. -/
+noncomputable def CanonicalOuterInnerSupplyData.ofCorrespondence {g : HopfGen}
+    {A : h58BridgeOuterIndex g}
+    (forestSupply : CanonicalOuterForestQuotientSupply g A)
+    (mixedSupply : ResolvedMixedCarrierSupply
+      (canonicalSigmaCoverDataOfParents forestSupply.parentsData))
+    (corr : ResolvedFlatH58Correspondence g
+      ((forestSupply.toBranchCarriers mixedSupply).toLayer
+        (canonicalResolvedHopfPayloadFamilyWithUniqueIds.edgeIdsUnique g)
+        (canonicalResolvedHopfPayloadFamilyWithUniqueIds.legIdsUnique g))) :
+    CanonicalOuterInnerSupplyData g A where
+  forestSupply := forestSupply
+  mixedSupply := mixedSupply
+  concreteIndexMaps := corr.toConcreteIndexMaps
+  splitTerm_agreement := corr.term_agreement
+
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
 The last wrapper: a per-outer-forest family of inner supply packages assembles into the
