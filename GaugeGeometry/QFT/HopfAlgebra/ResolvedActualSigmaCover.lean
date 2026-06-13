@@ -447,6 +447,73 @@ theorem forget_canonicalOuterAoutOfFlatOuter (g : HopfGen) (A : h58BridgeOuterIn
     HEq (canonicalOuterAoutOfFlatOuter g A).forget A.1 :=
   forget_aoutOfTransport _ A.1 _
 
+/-! ### InnerSupply-1b — the `starOf` lift (canonical component-star, forget coordinate)
+
+`starOf` for the resolved σ-cover data is the resolved lift of the public
+`FeynmanGraph.admissibleForestCanonicalStarOf`.  Since that flat star takes a flat
+`FeynmanSubgraph` and `admissibleForestCanonicalStarOf` requires *no* membership, the lift
+is just "forget the resolved component, feed the flat canonical star".  All of it stays in
+the **forgotten** coordinate (the `subst`-eliminated free index), so no `▸`/`HEq` clutter
+reaches the definition; the only transport is the same `subst` on `G'` used for `Aout`. -/
+
+/-- (transport helper) The canonical component-star of an admissible forest of *any* graph
+`G'` equal to the forgotten unique-id graph, evaluated on the *forgotten* resolved component
+`η.forget`.  `subst` on the free index `G'` avoids the `▸` motive failure. -/
+private noncomputable def starOfTransport {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G')
+    (hA : A ∈ G'.properDisjointAdmissibleDivergentSubgraphs)
+    (η : ResolvedFeynmanSubgraph (ofFlatGraphWithUniqueIds Gf)) : VertexId := by
+  subst h; exact FeynmanGraph.admissibleForestCanonicalStarOf _ A hA η.forget
+
+/-- `aoutOfTransport` at `rfl` is definitionally the forgetful-ambient lift. -/
+private theorem aoutOfTransport_rfl {Gf : FeynmanGraph}
+    (A : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hDisj : A.IsPairwiseDisjoint) :
+    aoutOfTransport rfl A hDisj = ofUniqueForgetForest A hDisj := rfl
+
+/-- `starOfTransport` at `rfl` is definitionally the forget-then-canonical-star. -/
+private theorem starOfTransport_rfl {Gf : FeynmanGraph}
+    (A : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hA : A ∈ ((ofFlatGraphWithUniqueIds Gf).forget).properDisjointAdmissibleDivergentSubgraphs)
+    (η : ResolvedFeynmanSubgraph (ofFlatGraphWithUniqueIds Gf)) :
+    starOfTransport rfl A hA η
+      = FeynmanGraph.admissibleForestCanonicalStarOf _ A hA η.forget := rfl
+
+/-- The transport star is **fresh**: it lands outside the unique-id graph's vertices for
+every component of the lifted forest.  (Forget preserves vertices definitionally, so the
+flat `IsFreshStarAssignment.fresh` lands directly.) -/
+private theorem starOfTransport_fresh {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G')
+    (hA : A ∈ G'.properDisjointAdmissibleDivergentSubgraphs)
+    {η : ResolvedFeynmanSubgraph (ofFlatGraphWithUniqueIds Gf)}
+    (hη : η ∈ (aoutOfTransport h A
+      (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _ hA)).elements) :
+    starOfTransport h A hA η ∉ (ofFlatGraphWithUniqueIds Gf).vertices := by
+  subst h
+  rw [aoutOfTransport_rfl, ofUniqueForgetForest_elements] at hη
+  obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hη
+  rw [starOfTransport_rfl, forget_liftUniqueFromForgetSubgraph]
+  exact (FeynmanGraph.admissibleForestCanonicalStarOf_isFreshStarAssignment _ A hA).fresh hδf
+
+/-- **InnerSupply-1b: `starOf` lift.**  The canonical component-star of the outer flat
+forest `A.1`, lifted to the resolved σ-cover data's `starOf` (forget the resolved
+component, feed the flat canonical star — no membership needed). -/
+noncomputable def canonicalOuterStarOf (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    ResolvedFeynmanSubgraph (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G →
+      VertexId :=
+  starOfTransport (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2
+
+/-- **InnerSupply-1b: `starFresh`.**  Every star of `canonicalOuterStarOf` lands outside the
+canonical payload graph's vertices — the resolved σ-cover data's `starFresh` obligation. -/
+theorem canonicalOuterStarOf_fresh (g : HopfGen) (A : h58BridgeOuterIndex g)
+    {η : ResolvedFeynmanSubgraph (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G}
+    (hη : η ∈ (canonicalOuterAoutOfFlatOuter g A).elements) :
+    canonicalOuterStarOf g A η ∉
+      (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.vertices :=
+  starOfTransport_fresh (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2 hη
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
