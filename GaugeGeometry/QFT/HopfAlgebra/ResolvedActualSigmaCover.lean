@@ -1251,6 +1251,39 @@ theorem canonicalOuterAout_components_nonempty (g : HopfGen) (A : h58BridgeOuter
     (Multiset.card_pos.mp (canonicalOuterComponentPositiveEdges g A η hη))
   exact ⟨e.source, (η.edges_supported e he).1⟩
 
+/-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
+the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
+parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
+CD (`hCD`), the star-containment `hStars` and saturation `hCovered` (for `remnant = δ`), and
+the discriminator witness `hTouches` (for `forest_sat`). -/
+noncomputable def canonicalForestImageDataOfQuotient
+    (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (Q : Finset (ResolvedFeynmanSubgraph
+      ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A))))
+    {δ : ResolvedFeynmanSubgraph
+      ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A))}
+    (hδ : δ ∈ Q)
+    (hCD : δ.forget.IsConnectedDivergent)
+    (hStars : (canonicalOuterAoutOfFlatOuter g A).starVertices (canonicalOuterStarOf g A)
+      ⊆ δ.vertices)
+    (hCovered : QuotientVertexCovered (canonicalOuterAoutOfFlatOuter g A)
+      (canonicalOuterStarOf g A) δ)
+    (hTouches : ¬ Disjoint δ.vertices
+      ((canonicalOuterAoutOfFlatOuter g A).starVertices (canonicalOuterStarOf g A))) :
+    ResolvedForestImageData
+      (canonicalSigmaCoverDataOfParents
+        (canonicalOuterParentsDataOfQuotientCarrier g A Q)) :=
+  let D := canonicalSigmaCoverDataOfParents (canonicalOuterParentsDataOfQuotientCarrier g A Q)
+  let parent : ResolvedForestIdx D :=
+    ⟨parentOfQuotient (canonicalOuterAoutOfFlatOuter g A) (canonicalOuterStarOf g A) δ
+        (canonicalPayload_edges_supported g) (canonicalPayload_legs_supported g),
+      parentOfQuotient_mem_canonicalParents g A Q hδ⟩
+  have hRem : resolvedForestImage D parent = δ :=
+    parentOfQuotient_remnant_eq (canonicalOuterAoutOfFlatOuter g A) (canonicalOuterStarOf g A) δ
+      (canonicalPayload_edges_supported g) (canonicalPayload_legs_supported g)
+      (canonicalOuterAout_components_nonempty g A) hStars hCovered
+  singletonForestImageDataOfParent D parent (by rw [hRem]; exact hCD) (by rw [hRem]; exact hTouches)
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
