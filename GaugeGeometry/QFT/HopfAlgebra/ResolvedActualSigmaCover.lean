@@ -1450,6 +1450,56 @@ theorem CanonicalResolvedH58OuterSkeletonSupply.outer_sum_reindex {g : HopfGen}
       ∑ A ∈ h58BridgeOuterCarrier g, S.toOuterSkeleton.toOuterSumSupply.innerBranchSum A :=
   S.toOuterSkeleton.outer_sum_reindex
 
+/-! ## Track S Scout (S-1) — flat σ-cover finite-data source inventory
+
+To construct `canonicalResolvedH58OuterSkeletonSupply g` we must supply, per outer forest `A`,
+the four `CanonicalOuterInnerSupplyData` fields.  Source inventory in `Coassoc.lean`:
+
+**Already public** (the `concreteIndexMaps` targets + the `splitTerm_agreement` statement, via
+the thin `Coassoc` aliases): `h58BridgeQuotientSigma`, `h58BridgeSplitChoiceSigma`,
+`h58BridgeQuotientIndex`, `h58BridgeSplitChoiceIndex`, `h58BridgeQuotientTerm`,
+`h58BridgeSplitChoiceTerm`, `h58BridgeSplitPhi`, `h58BridgeOuterIndex`, `h58BridgeOuterCarrier`.
+
+**Private flat per-`A` carriers** (would need alias-only wrappers IF imported):
+`forestQuotientForestSigmaIndex` (the Σ index; per-`A` inner part =
+`forestCoproductProperForestIndex (forestOuterQuotientHopfGen g A)`),
+`forestQuotientForestSigmaActualQuotientSubgraph`, `forestQuotientForestSigma_isForestByStar`,
+`forestQuotientForestSigmaMixedCover*` (mixed machinery), and the flat contracted graph
+`forestOuterQuotientGraph`/`forestOuterActualQuotientGraph`.
+
+**Critical findings (Track S is NOT mechanical alias+lift):**
+
+1. **Coordinate mismatch (S-2/S-3 need a contracted-graph forget lift).**  The flat carriers
+   live over the *flat* contracted graph `forestOuterQuotientGraph g A`, but the resolved `Q`
+   must be `Finset (ResolvedFeynmanSubgraph ((canonicalOuterAoutOfFlatOuter g A).contractWithStars
+   (canonicalOuterStarOf g A)))` — over the *resolved* contracted graph.  So lifting the flat
+   quotient/mixed carriers is a **forget round-trip on the contracted graph** (analogous to
+   `ofUniqueForgetForest`, but the resolved contracted graph's `forget` must be related to the
+   flat contracted graph — a new lift, feasible but genuine, not an alias).
+
+2. **`splitTerm_agreement` must NOT be imported from flat (S-5 is the genuine boundary).**
+   Per Field-Filling-6 (`ResolvedH58Bridge`), the flat split-term agreement is assembled
+   (`forestComponentSplitPhiBranchReindexingOfFactorization`) from
+   `forestComponentForestChoiceRemnantPositiveComponentsCertificate` +
+   a `forestComponentSplitPhiBranchTermFactorization` payload — which carry flat's
+   **facade-discharged injectivity/cover data**.  Exposing them would hand the resolved track
+   exactly the facades it is reconstructing away, defeating the point.  So `splitTerm_agreement`
+   is either *proven resolved-natively* (the real remaining mathematics) or *accepted as a
+   supplied σ-cover datum* (the honest "not complete" boundary).
+
+3. **`concreteIndexMaps.forest_comm`/`mixed_comm`** are the genuine resolved→flat bridge
+   (resolved branch image ↦ flat split-`φ`).  They need the index maps defined and the squares
+   proven — real content, but facade-free (it is a coordinate dictionary, not a cover/injectivity
+   claim).
+
+**Verdict.**  S-2/S-3 (carrier lifts) are feasible genuine lifts (contracted-graph forget
+round-trip).  S-4 (commutation dictionary) is facade-free real content.  **S-5
+(`splitTerm_agreement`) is the genuine boundary** — it is exactly where importing flat would
+smuggle facade-discharged data, so it stays resolved-native-or-supplied.  This is why full
+native resolved H5.8 is *not yet* claimed complete: the skeleton + de-contraction are built,
+but `splitTerm_agreement` (and the genuine commutation dictionary) are the remaining
+non-mechanical work. -/
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
