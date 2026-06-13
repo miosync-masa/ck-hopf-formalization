@@ -381,6 +381,27 @@ image (`resolvedParentRemnant` component-level surjectivity, σ-cover data).  **
 native resolved H5.8 is **not** claimed complete; the cover obstruction / construction
 interface is consolidated to σ-cover data supply.
 
+**De-contraction section (constructed).**  The `parentOf` lift is now **built**, not assumed:
+```
+parentOfQuotient Aout starOf δ            (edges Aout.internalEdges + quotientEdgePreimage,
+  ▲                                        legs quotientLegPreimage — id-preimages via
+  │                                        exists_le_map + retarget_residual_*_injective)
+  ├─ parentOfQuotient_containsAoutEdges    (le_add_right)
+  └─ parentOfQuotient_remnant_eq : resolvedParentRemnant Aout starOf (parentOfQuotient … δ) = δ
+        (edge/leg halves constructive; vertex half = hStars + QuotientVertexCovered saturation)
+        │
+singletonForestImageDataOfParent          (single-parent forest image — all-star containment
+  │                                          forces single-parent granularity)
+  ├─ CanonicalOuterForestQuotientSupply.forestCarrier / .forest_choiceParents_inj
+  └─ ResolvedMixedCarrierSupply.mixedCarrier / .mixed_components_inj   (star-avoiding, no de-contraction)
+        │
+CanonicalOuterInnerSupplyData.toCanonicalSupply : CanonicalResolvedActualSigmaCoverSupply g
+```
+So the inner supply is obtainable from genuine de-contraction data; remaining inputs are the
+concrete finite quotient/mixed carriers (+ CD/star facts), `ResolvedH58ConcreteIndexMaps`, and
+`splitTerm_agreement` — all σ-cover data.  Full native resolved H5.8 still **not** claimed
+complete.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

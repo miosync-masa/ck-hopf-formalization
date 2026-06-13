@@ -461,6 +461,26 @@ cover obstruction is now the single facade-free datum `ResolvedForestCaseSupply`
 carriers) — **full native resolved H5.8 is not claimed complete; the construction
 interface is consolidated**.
 
+**De-contraction section (constructed).**  The `parentOf` datum above is no longer only a
+*hypothesis*: it is now **constructed**.  For a contracted-graph subgraph `δ`, the parent
+`parentOfQuotient Aout starOf δ` (edges `Aout.internalEdges + quotientEdgePreimage`, legs
+`quotientLegPreimage`, both recovered as `retargetEdge`/`retargetExternalLeg` submultiset
+preimages via the identity-unique payload's `exists_le_map` + `retarget_residual_*_injective`)
+satisfies `containsAoutEdges` (`le_add_right`) and, under the saturation datum
+`QuotientVertexCovered` + star-containment, `parentOfQuotient_remnant_eq :
+resolvedParentRemnant Aout starOf (parentOfQuotient … δ) = δ` — a genuine *section* of the
+parent-remnant map.  Forest-branch images are then single-parent
+(`singletonForestImageDataOfParent`; the all-star containment of a parent ⊇ `Aout` forces the
+single-parent granularity, with the multi-component RHS recovered by the outer-forest sum).
+Assembled: `CanonicalOuterForestQuotientSupply` (a finite quotient carrier + per-image
+CD/star/saturation facts) → `forestCarrier`; `ResolvedMixedCarrierSupply` → `mixedCarrier`
+(star-avoiding subgraphs, no de-contraction); both → `ResolvedBranchCarriers` →
+`CanonicalOuterInnerSupplyData.toCanonicalSupply : CanonicalResolvedActualSigmaCoverSupply g`.
+So the inner supply is now obtainable from genuine de-contraction data; the remaining inputs
+are the concrete finite quotient/mixed carriers (with their CD/star facts), the resolved→flat
+`ResolvedH58ConcreteIndexMaps`, and the `splitTerm_agreement` factorization — all σ-cover
+data, no facade.  **Full native resolved H5.8 remains not claimed complete.**
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

@@ -132,6 +132,16 @@ standalone modules, axiom-clean):
   `…PromotedExternalLegsLiftableModel` is used — the cover obstruction is now the single
   facade-free datum `ResolvedForestCaseSupply` (`resolvedParentRemnant` component-level
   surjectivity).
+- **De-contraction section (constructed).** That `parentOf` lift is now *built*, not assumed:
+  `parentOfQuotient` de-contracts a quotient subgraph `δ` to a parent `γ ⊇ Aout` (edge/leg
+  submultiset preimages via the id-unique payload's `exists_le_map`), with
+  `parentOfQuotient_remnant_eq : resolvedParentRemnant … (parentOfQuotient … δ) = δ` (a genuine
+  section). Forest-branch images are single-parent (`singletonForestImageDataOfParent`); with
+  the mixed side (`ResolvedMixedCarrierSupply`, star-avoiding subgraphs) they assemble via
+  `CanonicalOuterInnerSupplyData.toCanonicalSupply` into a
+  `CanonicalResolvedActualSigmaCoverSupply g`. The remaining inputs are the concrete finite
+  quotient/mixed carriers, the resolved→flat index maps, and the split-term factorization — all
+  σ-cover data. Full native resolved H5.8 is still **not** claimed complete.
 
 All R-4-superfull modules depend only on `propext`/`Classical.choice`/`Quot.sound`; `Main`
 is unaffected apart from the thin public aliases added to `Coassoc.lean`.
