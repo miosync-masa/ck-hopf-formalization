@@ -548,6 +548,97 @@ theorem canonicalOuterComponentPositiveEdges (g : HopfGen) (A : h58BridgeOuterIn
   fun _ hη => componentPositiveEdges_aoutOfTransport
     (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2 hη
 
+/-! ### InnerSupply-1d — the `parents` data interface (de-contraction section, packaged)
+
+The scout (above) found `parents` is **not** a liftable predicate field: it is the genuine
+σ-cover insertion set (full subgraphs `γ ⊇ Aout`), and realizing it is the *same*
+de-contraction section already isolated as the forest-case `cover` datum
+(`ResolvedForestCaseSupply` / `parentOf`).  So rather than construct `parents` in isolation
+(which would chase that obstruction twice), we **package it as a supplied datum**: a finite
+parent set with the `containsAoutEdges` inclusion.  The four already-landed canonical fields
+(`Aout`, `starOf`, `starFresh`, `componentPositiveEdges`) then assemble it into the full
+`ResolvedSigmaCoverData` over the canonical payload graph. -/
+
+/-- **InnerSupply-1d data interface.**  The genuine σ-cover parents over the canonical
+payload graph: a finite parent set, each containing the canonical outer forest's edges.
+This is the de-contraction section as a *supplied datum* (it coincides with the forest-case
+`cover` obligation), not a separately-constructed field. -/
+structure CanonicalOuterParentsData (g : HopfGen) (A : h58BridgeOuterIndex g) where
+  /-- The σ-cover parents (full subgraphs of the payload graph). -/
+  parents : Finset (ResolvedFeynmanSubgraph
+    (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G)
+  /-- Each parent contains the canonical outer forest's internal edges. -/
+  containsAoutEdges : ∀ γ ∈ parents,
+    (canonicalOuterAoutOfFlatOuter g A).internalEdges ≤ γ.internalEdges
+
+/-- **InnerSupply-1d: assemble `ResolvedSigmaCoverData`.**  From the parents datum plus the
+four already-landed canonical fields (`Aout` = `canonicalOuterAoutOfFlatOuter`, `starOf` =
+`canonicalOuterStarOf`, `starFresh` = `canonicalOuterStarOf_fresh`, `componentPositiveEdges`
+= `canonicalOuterComponentPositiveEdges`), the full resolved σ-cover data over the canonical
+payload graph.  Every field is now sourced; `parents`/`containsAoutEdges` is the only
+supplied datum (the de-contraction section). -/
+noncomputable def canonicalSigmaCoverDataOfParents {g : HopfGen} {A : h58BridgeOuterIndex g}
+    (P : CanonicalOuterParentsData g A) :
+    ResolvedSigmaCoverData (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G where
+  Aout := canonicalOuterAoutOfFlatOuter g A
+  starOf := canonicalOuterStarOf g A
+  parents := P.parents
+  containsAoutEdges := P.containsAoutEdges
+  starFresh := fun _ hη => canonicalOuterStarOf_fresh g A hη
+  componentPositiveEdges := canonicalOuterComponentPositiveEdges g A
+
+/-! ### InnerSupply-1d assembly — parents datum ⇒ canonical supply
+
+The scout established that in the **carrier-based** layer the cover surjectivity is
+*definitional* (`imageCarrier := forestCarrier.image toImage ∪ mixedCarrier.image toImage`,
+so `cover_on` holds by construction).  Hence the canonical supply needs **no** separate
+`cover`/`forestCaseSupply` field: once the σ-cover data `D` carries the supplied `parents`,
+`branchCarriers` enumerates the forest/mixed image data over `D` and the layer is built
+directly.  `CanonicalOuterResolvedSupplyData` packages the per-outer-forest supply with `D`
+*derived* from the parents datum — the assembly that turns "supply genuine `parents`" into a
+full `CanonicalResolvedActualSigmaCoverSupply g`. -/
+
+/-- Per-outer-forest resolved supply, with `D` *derived* from the supplied parents datum.
+Bundles the parents datum (the de-contraction section), the finite branch carriers over the
+derived `D`, the resolved→flat index maps, and the flat split-term agreement. -/
+structure CanonicalOuterResolvedSupplyData (g : HopfGen) (A : h58BridgeOuterIndex g) where
+  /-- The σ-cover parents datum (de-contraction section). -/
+  parentsData : CanonicalOuterParentsData g A
+  /-- The finite branch carriers over the derived σ-cover data. -/
+  branchCarriers : ResolvedBranchCarriers (canonicalSigmaCoverDataOfParents parentsData)
+  /-- The resolved→flat index maps for the derived layer. -/
+  concreteIndexMaps : ResolvedH58ConcreteIndexMaps g
+    (branchCarriers.toLayer
+      (canonicalResolvedHopfPayloadFamilyWithUniqueIds.edgeIdsUnique g)
+      (canonicalResolvedHopfPayloadFamilyWithUniqueIds.legIdsUnique g))
+  /-- The flat split-term agreement. -/
+  splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- **InnerSupply-1d assembly.**  A per-outer-forest supply with `D` derived from the parents
+datum reduces to the canonical supply (`D := canonicalSigmaCoverDataOfParents parentsData`). -/
+noncomputable def CanonicalOuterResolvedSupplyData.toCanonicalSupply {g : HopfGen}
+    {A : h58BridgeOuterIndex g} (S : CanonicalOuterResolvedSupplyData g A) :
+    CanonicalResolvedActualSigmaCoverSupply g where
+  D := canonicalSigmaCoverDataOfParents S.parentsData
+  branchCarriers := S.branchCarriers
+  concreteIndexMaps := S.concreteIndexMaps
+  splitTerm_agreement := S.splitTerm_agreement
+
+/-- The concrete H5.8 sum-reindex from the parents-datum supply. -/
+theorem CanonicalOuterResolvedSupplyData.concrete_sum_reindex {g : HopfGen}
+    {A : h58BridgeOuterIndex g} (S : CanonicalOuterResolvedSupplyData g A) :
+    ∑ z ∈ S.toCanonicalSupply.toSupply.toActualSigmaCover.FL.imageCarrier,
+        h58BridgeQuotientTerm g
+          (S.toCanonicalSupply.toSupply.toActualSigmaCover.concreteData.flatImageOf z) =
+      (∑ q ∈ S.toCanonicalSupply.toSupply.toActualSigmaCover.FL.forestCarrier,
+          h58BridgeSplitChoiceTerm g
+            (S.toCanonicalSupply.toSupply.toActualSigmaCover.concreteData.forestSplitOf q)) +
+      (∑ q ∈ S.toCanonicalSupply.toSupply.toActualSigmaCover.FL.mixedCarrier,
+          h58BridgeSplitChoiceTerm g
+            (S.toCanonicalSupply.toSupply.toActualSigmaCover.concreteData.mixedSplitOf q)) :=
+  S.toCanonicalSupply.concrete_sum_reindex
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
