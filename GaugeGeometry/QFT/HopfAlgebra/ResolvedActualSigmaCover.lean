@@ -514,6 +514,25 @@ theorem canonicalOuterStarOf_fresh (g : HopfGen) (A : h58BridgeOuterIndex g)
       (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.vertices :=
   starOfTransport_fresh (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2 hη
 
+/-- (transport helper) `starOfTransport` is the flat canonical star of the (transported)
+forgotten component. -/
+private theorem starOfTransport_eq {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G') (hA : A ∈ G'.properDisjointAdmissibleDivergentSubgraphs)
+    (η : ResolvedFeynmanSubgraph (ofFlatGraphWithUniqueIds Gf)) :
+    starOfTransport h A hA η = FeynmanGraph.admissibleForestCanonicalStarOf G' A hA (h ▸ η.forget) := by
+  subst h; rfl
+
+/-- **S-2b: star alignment.**  `canonicalOuterStarOf` is the flat canonical star
+(`h58BridgeOuterCanonicalStar`) of the forgotten component, transported along
+`forget_ofFlatGraphWithUniqueIds`. -/
+theorem canonicalOuterStarOf_forget (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (η : ResolvedFeynmanSubgraph (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G) :
+    canonicalOuterStarOf g A η =
+      h58BridgeOuterCanonicalStar g A
+        (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph ▸ η.forget) :=
+  starOfTransport_eq (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2 η
+
 /-! ### InnerSupply-1c — component positive-edge count
 
 `componentPositiveEdges : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card`.  The flat outer
