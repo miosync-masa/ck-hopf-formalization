@@ -966,6 +966,58 @@ multi-forest RHS), and the vertex half then reduces to the clean
 landing would be `parent_remnant_eq` for `δ` = a full quotient image, with `hStars :
 Aout.starVertices starOf ⊆ δ.vertices` as the explicit hypothesis. -/
 
+/-! ### DeContraction-3 — single-parent forest image (the correct granularity)
+
+Per the all-star scout (decision (i)): a forest-branch image is the quotient remnant of a
+**single** parent, so `choiceParents` is a singleton, `remnantDisjoint` is trivial, and the
+image's one component genuinely contains all outer stars.  (The multi-forest RHS is recovered
+by the outer-forest sum, not by multi-component inner images.) -/
+
+/-- A forest-branch image from a **single** parent (`choiceParents := {parent}`).  The
+consistent granularity: `remnantDisjoint` is trivial, and the image is the one quotient
+remnant of `parent`. -/
+noncomputable def singletonForestImageDataOfParent (D : ResolvedSigmaCoverData G)
+    (parent : ResolvedForestIdx D)
+    (hCD : (resolvedForestImage D parent).forget.IsConnectedDivergent)
+    (hStar : ¬ Disjoint (resolvedForestImage D parent).vertices (D.Aout.starVertices D.starOf)) :
+    ResolvedForestImageData D where
+  choiceParents := {parent}
+  remnantCD := by intro γ hγ; rw [Finset.mem_singleton] at hγ; subst hγ; exact hCD
+  remnantDisjoint := by
+    intro γ₁ h₁ γ₂ h₂ hne
+    rw [Finset.mem_singleton] at h₁ h₂; subst h₁; subst h₂; exact absurd rfl hne
+  starWitness := ⟨parent, Finset.mem_singleton_self parent, hStar⟩
+
+/-- The singleton forest image is the single quotient remnant of its parent. -/
+@[simp] theorem singletonForestImageDataOfParent_toImage_elements (D : ResolvedSigmaCoverData G)
+    (parent : ResolvedForestIdx D)
+    (hCD : (resolvedForestImage D parent).forget.IsConnectedDivergent)
+    (hStar : ¬ Disjoint (resolvedForestImage D parent).vertices (D.Aout.starVertices D.starOf)) :
+    (singletonForestImageDataOfParent D parent hCD hStar).toImage.elements
+      = {resolvedForestImage D parent} := by
+  show ({parent} : Finset (ResolvedForestIdx D)).image (resolvedForestImage D)
+    = {resolvedForestImage D parent}
+  exact Finset.image_singleton (resolvedForestImage D) parent
+
+/-- The singleton forest image satisfies the forest discriminator (inherited from
+`forest_sat`). -/
+theorem singletonForestImageDataOfParent_forest_sat (D : ResolvedSigmaCoverData G)
+    (parent : ResolvedForestIdx D)
+    (hCD : (resolvedForestImage D parent).forget.IsConnectedDivergent)
+    (hStar : ¬ Disjoint (resolvedForestImage D parent).vertices (D.Aout.starVertices D.starOf)) :
+    resolvedIsForestByStar D (singletonForestImageDataOfParent D parent hCD hStar).toImage :=
+  (singletonForestImageDataOfParent D parent hCD hStar).forest_sat
+
+/-- Singleton forest images are injective in their parent: equal chosen-parent singletons
+force equal parents. -/
+theorem singletonForestImageDataOfParent_inj (D : ResolvedSigmaCoverData G)
+    {p₁ p₂ : ResolvedForestIdx D}
+    {hCD₁ hStar₁} {hCD₂ hStar₂}
+    (h : (singletonForestImageDataOfParent D p₁ hCD₁ hStar₁).choiceParents
+       = (singletonForestImageDataOfParent D p₂ hCD₂ hStar₂).choiceParents) :
+    p₁ = p₂ :=
+  Finset.singleton_inj.mp h
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
