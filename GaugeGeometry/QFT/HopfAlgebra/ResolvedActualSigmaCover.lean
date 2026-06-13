@@ -514,6 +514,40 @@ theorem canonicalOuterStarOf_fresh (g : HopfGen) (A : h58BridgeOuterIndex g)
       (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G.vertices :=
   starOfTransport_fresh (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2 hη
 
+/-! ### InnerSupply-1c — component positive-edge count
+
+`componentPositiveEdges : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card`.  The flat outer
+forest `A.1` is a *proper* disjoint admissible forest, so membership in
+`properDisjointAdmissibleDivergentSubgraphs` yields `HasPositiveInternalEdgesComponents`
+(its fourth conjunct).  The unique-id lift preserves per-component edge count
+(`liftUniqueFromForgetSubgraph_internalEdges_card`), so each lifted component inherits the
+positive count — all in the forgotten coordinate. -/
+
+/-- The transport forest has positive-edge components: every lifted component inherits the
+flat forest's positive internal-edge count. -/
+private theorem componentPositiveEdges_aoutOfTransport {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G')
+    (hA : A ∈ G'.properDisjointAdmissibleDivergentSubgraphs)
+    {η : ResolvedFeynmanSubgraph (ofFlatGraphWithUniqueIds Gf)}
+    (hη : η ∈ (aoutOfTransport h A
+      (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _ hA)).elements) :
+    0 < η.internalEdges.card := by
+  subst h
+  rw [aoutOfTransport_rfl, ofUniqueForgetForest_elements] at hη
+  obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hη
+  rw [liftUniqueFromForgetSubgraph_internalEdges_card]
+  exact ((((ofFlatGraphWithUniqueIds Gf).forget).mem_properDisjointAdmissibleDivergentSubgraphs
+    A).mp hA).2.2.2 δf hδf
+
+/-- **InnerSupply-1c: `componentPositiveEdges`.**  Every component of the lifted outer forest
+has a positive internal-edge count — the resolved σ-cover data's `componentPositiveEdges`
+obligation, from the flat forest's properness (`HasPositiveInternalEdgesComponents`). -/
+theorem canonicalOuterComponentPositiveEdges (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    ∀ η ∈ (canonicalOuterAoutOfFlatOuter g A).elements, 0 < η.internalEdges.card :=
+  fun _ hη => componentPositiveEdges_aoutOfTransport
+    (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2 hη
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
