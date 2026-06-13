@@ -1284,6 +1284,45 @@ noncomputable def canonicalForestImageDataOfQuotient
       (canonicalOuterAout_components_nonempty g A) hStars hCovered
   singletonForestImageDataOfParent D parent (by rw [hRem]; exact hCD) (by rw [hRem]; exact hTouches)
 
+/-! ### BranchCarriers (3) — forest quotient supply ⇒ forest carrier
+
+A finite quotient-image carrier with its per-δ CD / star-containment / saturation /
+discriminator facts, bundled.  It yields both the `parentsData` (hence `D`) and the finite
+forest image carrier (`Q.attach.image` of the single-δ forest images). -/
+
+/-- A finite forest-by-star quotient-image carrier `Q` with the per-element facts the
+forest-branch construction needs. -/
+structure CanonicalOuterForestQuotientSupply (g : HopfGen) (A : h58BridgeOuterIndex g) where
+  /-- The finite forest-by-star quotient images. -/
+  Q : Finset (ResolvedFeynmanSubgraph
+    ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A)))
+  /-- Each image is connected divergent after forget. -/
+  quotientCD : ∀ δ ∈ Q, δ.forget.IsConnectedDivergent
+  /-- Each image contains all outer stars (for `remnant = δ`). -/
+  hStars : ∀ δ ∈ Q, (canonicalOuterAoutOfFlatOuter g A).starVertices (canonicalOuterStarOf g A)
+    ⊆ δ.vertices
+  /-- Each image is vertex-covered (saturation, for `remnant = δ`). -/
+  hCovered : ∀ δ ∈ Q, QuotientVertexCovered (canonicalOuterAoutOfFlatOuter g A)
+    (canonicalOuterStarOf g A) δ
+  /-- Each image meets the outer stars (the forest discriminator). -/
+  hTouches : ∀ δ ∈ Q, ¬ Disjoint δ.vertices
+    ((canonicalOuterAoutOfFlatOuter g A).starVertices (canonicalOuterStarOf g A))
+
+/-- The parents datum from the forest quotient supply. -/
+noncomputable def CanonicalOuterForestQuotientSupply.parentsData {g : HopfGen}
+    {A : h58BridgeOuterIndex g} (S : CanonicalOuterForestQuotientSupply g A) :
+    CanonicalOuterParentsData g A :=
+  canonicalOuterParentsDataOfQuotientCarrier g A S.Q
+
+open Classical in
+/-- The finite forest image carrier: each quotient image as a single-parent forest image. -/
+noncomputable def CanonicalOuterForestQuotientSupply.forestCarrier {g : HopfGen}
+    {A : h58BridgeOuterIndex g} (S : CanonicalOuterForestQuotientSupply g A) :
+    Finset (ResolvedForestImageData (canonicalSigmaCoverDataOfParents S.parentsData)) :=
+  S.Q.attach.image (fun q =>
+    canonicalForestImageDataOfQuotient g A S.Q q.2
+      (S.quotientCD q.1 q.2) (S.hStars q.1 q.2) (S.hCovered q.1 q.2) (S.hTouches q.1 q.2))
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
