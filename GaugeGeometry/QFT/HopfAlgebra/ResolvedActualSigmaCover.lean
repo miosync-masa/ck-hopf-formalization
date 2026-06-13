@@ -794,6 +794,80 @@ theorem quotientLegPreimage_map
     (quotientLegPreimage Aout starOf δ).map (Aout.retargetExternalLeg starOf) = δ.externalLegs :=
   (quotientLegPreimage_exists Aout starOf δ).choose_spec.2
 
+/-! ### DeContraction-2 — `parentOfQuotient` (the parent-section carrier)
+
+The parent subgraph `γ ⊇ Aout` whose remnant is `δ`: edges `Aout.internalEdges + edgePreimage`,
+legs `legPreimage`, vertices the `G`-vertices that are in `Aout` or are an endpoint of a
+preimage edge/leg.  `vertices_subset` is the filter; `internalEdges_le` is
+`Aout.internalEdges + (G.internalEdges - Aout.internalEdges) = G.internalEdges`; the support
+proofs need only that `G` is **edge/leg-supported** (the well-formedness `hE`/`hL` — true for
+the payload graph, raw `ResolvedFeynmanGraph` does not carry it). -/
+
+/-- Membership in a resolved forest's aggregate internal edges (mirror of flat
+`mem_internalEdges`). -/
+private theorem resolvedAdmissible_mem_internalEdges
+    {A : ResolvedAdmissibleSubgraph G} {e : ResolvedFeynmanEdge} :
+    e ∈ A.internalEdges ↔ ∃ γ ∈ A.elements, e ∈ γ.internalEdges := by
+  classical
+  unfold ResolvedAdmissibleSubgraph.internalEdges
+  induction A.elements using Finset.induction_on with
+  | empty => simp
+  | insert γ s hγs ih => simp [Finset.sum_insert, hγs, ih, Multiset.mem_add]
+
+open Classical in
+/-- **DeContraction-2: the parent-section carrier.**  For a contracted-graph subgraph `δ`,
+the parent `γ ⊇ Aout` with edges `Aout.internalEdges + quotientEdgePreimage` and legs
+`quotientLegPreimage`.  Requires `G` edge/leg-supported (`hE`/`hL`). -/
+noncomputable def parentOfQuotient
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices) :
+    ResolvedFeynmanSubgraph G where
+  vertices := G.vertices.filter (fun v =>
+    v ∈ Aout.vertices ∨
+    (∃ e ∈ quotientEdgePreimage Aout starOf δ, e.source = v ∨ e.target = v) ∨
+    (∃ ℓ ∈ quotientLegPreimage Aout starOf δ, ℓ.attachedTo = v))
+  internalEdges := Aout.internalEdges + quotientEdgePreimage Aout starOf δ
+  externalLegs := quotientLegPreimage Aout starOf δ
+  vertices_subset := Finset.filter_subset _ _
+  internalEdges_le := by
+    have hle : Aout.internalEdges ≤ G.internalEdges :=
+      resolvedAdmissibleSubgraph_internalEdges_le_of_pairwise Aout Aout.isPairwiseDisjoint
+    calc Aout.internalEdges + quotientEdgePreimage Aout starOf δ
+        ≤ Aout.internalEdges + Aout.complementEdges := by
+          gcongr
+          exact quotientEdgePreimage_le Aout starOf δ
+      _ = Aout.internalEdges + (G.internalEdges - Aout.internalEdges) := by
+          rw [ResolvedAdmissibleSubgraph.complementEdges]
+      _ = G.internalEdges := add_tsub_cancel_of_le hle
+  externalLegs_le := quotientLegPreimage_le Aout starOf δ
+  edges_supported := by
+    intro e he
+    rw [Multiset.mem_add] at he
+    rcases he with heA | heM
+    · obtain ⟨γ, hγ, heγ⟩ := resolvedAdmissible_mem_internalEdges.mp heA
+      obtain ⟨hs, ht⟩ := γ.edges_supported e heγ
+      have heG : e ∈ G.internalEdges := Multiset.mem_of_le
+        (resolvedAdmissibleSubgraph_internalEdges_le_of_pairwise Aout Aout.isPairwiseDisjoint) heA
+      obtain ⟨hsG, htG⟩ := hE e heG
+      exact ⟨Finset.mem_filter.mpr ⟨hsG, Or.inl (ResolvedAdmissibleSubgraph.mem_vertices.mpr
+              ⟨γ, hγ, hs⟩)⟩,
+             Finset.mem_filter.mpr ⟨htG, Or.inl (ResolvedAdmissibleSubgraph.mem_vertices.mpr
+              ⟨γ, hγ, ht⟩)⟩⟩
+    · have hsub : quotientEdgePreimage Aout starOf δ ≤ G.internalEdges :=
+        le_trans (quotientEdgePreimage_le Aout starOf δ)
+          (by rw [ResolvedAdmissibleSubgraph.complementEdges]; exact tsub_le_self)
+      have heG : e ∈ G.internalEdges := Multiset.mem_of_le hsub heM
+      obtain ⟨hsG, htG⟩ := hE e heG
+      exact ⟨Finset.mem_filter.mpr ⟨hsG, Or.inr (Or.inl ⟨e, heM, Or.inl rfl⟩)⟩,
+             Finset.mem_filter.mpr ⟨htG, Or.inr (Or.inl ⟨e, heM, Or.inr rfl⟩)⟩⟩
+  legs_supported := by
+    intro ℓ hℓ
+    have hℓG : ℓ ∈ G.externalLegs := Multiset.mem_of_le (quotientLegPreimage_le Aout starOf δ) hℓ
+    exact Finset.mem_filter.mpr ⟨hL ℓ hℓG, Or.inr (Or.inr ⟨ℓ, hℓ, rfl⟩)⟩
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
