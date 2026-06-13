@@ -1323,6 +1323,20 @@ noncomputable def CanonicalOuterForestQuotientSupply.forestCarrier {g : HopfGen}
     canonicalForestImageDataOfQuotient g A S.Q q.2
       (S.quotientCD q.1 q.2) (S.hStars q.1 q.2) (S.hCovered q.1 q.2) (S.hTouches q.1 q.2))
 
+/-- `ResolvedForestImageData` is determined by its chosen-parent set (the other fields are
+propositions — proof-irrelevant). -/
+theorem ResolvedForestImageData.ext_choiceParents {D : ResolvedSigmaCoverData G}
+    {F₁ F₂ : ResolvedForestImageData D} (h : F₁.choiceParents = F₂.choiceParents) : F₁ = F₂ := by
+  cases F₁; cases F₂; cases h; rfl
+
+/-- **BranchCarriers (4): forest carrier injectivity.**  Immediate from
+`ext_choiceParents` — equal chosen-parent sets force equal forest image data. -/
+theorem CanonicalOuterForestQuotientSupply.forest_choiceParents_inj {g : HopfGen}
+    {A : h58BridgeOuterIndex g} (S : CanonicalOuterForestQuotientSupply g A) :
+    ∀ x ∈ S.forestCarrier, ∀ y ∈ S.forestCarrier,
+      x.choiceParents = y.choiceParents → x = y :=
+  fun _ _ _ _ hcp => ResolvedForestImageData.ext_choiceParents hcp
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
