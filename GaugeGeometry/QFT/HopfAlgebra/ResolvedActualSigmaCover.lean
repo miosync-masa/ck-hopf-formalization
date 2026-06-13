@@ -2066,6 +2066,28 @@ structure ResolvedFlatH58Correspondence (g : HopfGen)
   term_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
     h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
 
+/-! ### Gold Sprint G-1a — `flatImageOf` (the mechanical dictionary half, constructed)
+
+A resolved quotient image (admissible subgraph of `Cres`) maps to the flat RHS quotient index
+by `forget` (through the S-2e bridge) + the actual↔rep transport
+(`h58BridgeActualQuotientToSigma`).  This constructs the `flatImageOf` field genuinely (no
+longer supplied). -/
+
+/-- (free-index helper) Forget a resolved admissible subgraph along a graph-forget equality
+(avoids the `▸` motive failure on the instance-dependent `AdmissibleSubgraph`). -/
+noncomputable def admissibleAlongForgetEq {G : ResolvedFeynmanGraph} {Gf : FeynmanGraph}
+    (h : G.forget = Gf) (z : ResolvedAdmissibleSubgraph G) : AdmissibleSubgraph Gf := by
+  subst h; exact z.forget
+
+/-- **G-1a: `flatImageOf` constructed.**  The resolved quotient image's flat RHS quotient index:
+forget to the actual quotient graph (S-2e bridge) and transport to the `repG` representative. -/
+noncomputable def canonicalFlatImageOf (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (z : ResolvedAdmissibleSubgraph
+      ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A))) :
+    h58BridgeQuotientSigma g :=
+  h58BridgeActualQuotientToSigma g A
+    (admissibleAlongForgetEq (forget_canonicalOuterContractedGraph g A) z)
+
 /-- The dictionary half of the correspondence. -/
 def ResolvedFlatH58Correspondence.toConcreteIndexMaps {g : HopfGen}
     {FL : ResolvedCarrierFiniteBranchMapLayer} (C : ResolvedFlatH58Correspondence g FL) :

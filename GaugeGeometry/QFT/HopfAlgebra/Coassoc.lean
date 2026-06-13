@@ -39315,6 +39315,25 @@ noncomputable def h58BridgeOuterCanonicalStar
     FeynmanSubgraph (repG g).toFeynmanGraph → VertexId :=
   FeynmanGraph.admissibleForestCanonicalStarOf (repG g).toFeynmanGraph A.1 A.2
 
+/-- Public exposure (alias-only, `rfl`): the actual quotient graph is the flat
+`contractWithStars` of the outer forest by its canonical star — lets the standalone resolved
+track compute its fields. -/
+theorem h58BridgeOuterActualQuotientGraph_eq
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    h58BridgeOuterActualQuotientGraph g A
+      = A.1.contractWithStars (h58BridgeOuterCanonicalStar g A) := rfl
+
+/-- Public exposure: an admissible subgraph of the actual quotient graph, packaged as a flat
+RHS quotient-forest index (transported to the `repG` representative via the actual↔rep
+permutation).  This is the `flatImageOf` dictionary half for the resolved track. -/
+noncomputable def h58BridgeActualQuotientToSigma
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (M : AdmissibleSubgraph (h58BridgeOuterActualQuotientGraph g A)) :
+    h58BridgeQuotientSigma g :=
+  ⟨A, mapPermAdmissibleSubgraph (forestOuterActualToRepPerm_spec g A) M⟩
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
