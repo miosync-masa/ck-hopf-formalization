@@ -868,6 +868,18 @@ noncomputable def parentOfQuotient
     have hℓG : ℓ ∈ G.externalLegs := Multiset.mem_of_le (quotientLegPreimage_le Aout starOf δ) hℓ
     exact Finset.mem_filter.mpr ⟨hL ℓ hℓG, Or.inr (Or.inr ⟨ℓ, hℓ, rfl⟩)⟩
 
+/-- **DeContraction-2: `containsAoutEdges`.**  The parent contains the outer forest's edges
+(by construction: its edges are `Aout.internalEdges + _`). -/
+theorem parentOfQuotient_containsAoutEdges
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices) :
+    Aout.internalEdges ≤ (parentOfQuotient Aout starOf δ hE hL).internalEdges := by
+  show Aout.internalEdges ≤ Aout.internalEdges + quotientEdgePreimage Aout starOf δ
+  exact Multiset.le_add_right _ _
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
