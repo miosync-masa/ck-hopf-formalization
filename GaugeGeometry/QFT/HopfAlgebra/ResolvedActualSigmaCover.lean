@@ -1070,6 +1070,79 @@ theorem parentOfQuotient_remnant_vertices_subset
     rw [← hatt]
     exact hs
 
+/-! ### DeContraction-3 — `parent_remnant_eq` vertex half, ⊇ direction
+
+The reverse inclusion needs that every vertex of `δ` is *covered* — a star, or an endpoint of
+one of `δ`'s edges/legs (so it has a preimage that retargets onto it).  Packaged as
+`QuotientVertexCovered` (the saturation datum, true for genuine σ-cover images: no isolated
+vertices). -/
+
+/-- A carrier vertex retargets to its element's star (the `componentAt` is that element, by
+pairwise-disjointness). -/
+theorem retargetVertex_eq_star_of_mem_element
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {η : ResolvedFeynmanSubgraph G} (hη : η ∈ Aout.elements)
+    {u : VertexId} (hu : u ∈ η.vertices) :
+    Aout.retargetVertex starOf u = starOf η := by
+  have huA : u ∈ Aout.vertices := ResolvedAdmissibleSubgraph.mem_vertices.mpr ⟨η, hη, hu⟩
+  rw [retargetVertex_eq_star_of_mem Aout starOf huA]
+  congr 1
+  by_contra hne
+  exact Finset.disjoint_left.mp (Aout.pairwiseDisjoint (Aout.componentAt_mem huA) hη hne)
+    (Aout.componentAt_vertex_mem huA) hu
+
+/-- **Saturation datum.**  Every vertex of the contracted-graph subgraph `δ` is an outer star
+or an endpoint of one of `δ`'s edges/legs (no isolated vertices) — true for genuine σ-cover
+forest images. -/
+def QuotientVertexCovered (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) : Prop :=
+  ∀ w ∈ δ.vertices,
+    w ∈ Aout.starVertices starOf ∨
+      (∃ e ∈ δ.internalEdges, e.source = w ∨ e.target = w) ∨
+      (∃ l ∈ δ.externalLegs, l.attachedTo = w)
+
+open Classical in
+/-- **⊇ direction of the vertex half.**  Every vertex of `δ` is the retarget of a parent
+vertex — stars via a component vertex (`hCompNonempty`), edge/leg endpoints via their
+preimage in the parent. -/
+theorem parentOfQuotient_vertices_subset_remnant
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices)
+    (hCompNonempty : ∀ η ∈ Aout.elements, η.vertices.Nonempty)
+    (hCovered : QuotientVertexCovered Aout starOf δ) :
+    δ.vertices ⊆ (parentOfQuotient Aout starOf δ hE hL).vertices.image
+      (Aout.retargetVertex starOf) := by
+  intro w hw
+  rcases hCovered w hw with hStar | ⟨e, heδ, hw'⟩ | ⟨ℓ, hℓδ, hw'⟩
+  · obtain ⟨η, hη, rfl⟩ := ResolvedAdmissibleSubgraph.mem_starVertices.mp hStar
+    obtain ⟨u, hu⟩ := hCompNonempty η hη
+    refine Finset.mem_image.mpr ⟨u, ?_, retargetVertex_eq_star_of_mem_element Aout starOf hη hu⟩
+    rw [parentOfQuotient_vertices, Finset.mem_filter]
+    exact ⟨η.vertices_subset hu, Or.inl (ResolvedAdmissibleSubgraph.mem_vertices.mpr ⟨η, hη, hu⟩)⟩
+  · rw [← quotientEdgePreimage_map] at heδ
+    obtain ⟨e0, he0, rfl⟩ := Multiset.mem_map.mp heδ
+    have he0G : e0 ∈ G.internalEdges := Multiset.mem_of_le
+      (le_trans (quotientEdgePreimage_le Aout starOf δ)
+        (by rw [ResolvedAdmissibleSubgraph.complementEdges]; exact tsub_le_self)) he0
+    rcases hw' with hw' | hw'
+    · refine Finset.mem_image.mpr ⟨e0.source, ?_, hw'⟩
+      rw [parentOfQuotient_vertices, Finset.mem_filter]
+      exact ⟨(hE e0 he0G).1, Or.inr (Or.inl ⟨e0, he0, Or.inl rfl⟩)⟩
+    · refine Finset.mem_image.mpr ⟨e0.target, ?_, hw'⟩
+      rw [parentOfQuotient_vertices, Finset.mem_filter]
+      exact ⟨(hE e0 he0G).2, Or.inr (Or.inl ⟨e0, he0, Or.inr rfl⟩)⟩
+  · rw [← quotientLegPreimage_map] at hℓδ
+    obtain ⟨ℓ0, hℓ0, rfl⟩ := Multiset.mem_map.mp hℓδ
+    refine Finset.mem_image.mpr ⟨ℓ0.attachedTo, ?_, hw'⟩
+    rw [parentOfQuotient_vertices, Finset.mem_filter]
+    exact ⟨hL ℓ0 (Multiset.mem_of_le (quotientLegPreimage_le Aout starOf δ) hℓ0),
+      Or.inr (Or.inr ⟨ℓ0, hℓ0, rfl⟩)⟩
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
