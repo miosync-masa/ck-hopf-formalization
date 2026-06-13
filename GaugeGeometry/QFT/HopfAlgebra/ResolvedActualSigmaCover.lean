@@ -868,6 +868,18 @@ noncomputable def parentOfQuotient
     have hℓG : ℓ ∈ G.externalLegs := Multiset.mem_of_le (quotientLegPreimage_le Aout starOf δ) hℓ
     exact Finset.mem_filter.mpr ⟨hL ℓ hℓG, Or.inr (Or.inr ⟨ℓ, hℓ, rfl⟩)⟩
 
+open Classical in
+@[simp] theorem parentOfQuotient_vertices
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices) :
+    (parentOfQuotient Aout starOf δ hE hL).vertices = G.vertices.filter (fun v =>
+      v ∈ Aout.vertices ∨
+      (∃ e ∈ quotientEdgePreimage Aout starOf δ, e.source = v ∨ e.target = v) ∨
+      (∃ ℓ ∈ quotientLegPreimage Aout starOf δ, ℓ.attachedTo = v)) := rfl
+
 /-- **DeContraction-2: `containsAoutEdges`.**  The parent contains the outer forest's edges
 (by construction: its edges are `Aout.internalEdges + _`). -/
 theorem parentOfQuotient_containsAoutEdges
@@ -1017,6 +1029,46 @@ theorem singletonForestImageDataOfParent_inj (D : ResolvedSigmaCoverData G)
        = (singletonForestImageDataOfParent D p₂ hCD₂ hStar₂).choiceParents) :
     p₁ = p₂ :=
   Finset.singleton_inj.mp h
+
+/-! ### DeContraction-3 — `parent_remnant_eq` vertex half, ⊆ direction
+
+The forward inclusion `(parent).vertices.image retargetVertex ⊆ δ.vertices`: each vertex of
+the parent retargets into `δ` — `Aout` vertices to stars (`hStars`), preimage-edge/leg
+endpoints to `δ`'s supported endpoints. -/
+
+open Classical in
+/-- **⊆ direction of the vertex half.**  The parent's remnant vertices are contained in `δ`
+(given `hStars : Aout.starVertices ⊆ δ.vertices`). -/
+theorem parentOfQuotient_remnant_vertices_subset
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices)
+    (hStars : Aout.starVertices starOf ⊆ δ.vertices) :
+    (parentOfQuotient Aout starOf δ hE hL).vertices.image (Aout.retargetVertex starOf)
+      ⊆ δ.vertices := by
+  intro v hv
+  obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hv
+  rw [parentOfQuotient_vertices, Finset.mem_filter] at hu
+  obtain ⟨_, hcase⟩ := hu
+  rcases hcase with hAout | ⟨e, he, hsrc⟩ | ⟨ℓ, hℓ, hatt⟩
+  · rw [retargetVertex_eq_star_of_mem Aout starOf hAout]
+    exact hStars (ResolvedAdmissibleSubgraph.mem_starVertices.mpr
+      ⟨Aout.componentAt hAout, Aout.componentAt_mem hAout, rfl⟩)
+  · have hmem : Aout.retargetEdge starOf e ∈ δ.internalEdges := by
+      have h := Multiset.mem_map_of_mem (Aout.retargetEdge starOf) he
+      rwa [quotientEdgePreimage_map] at h
+    obtain ⟨hs, ht⟩ := δ.edges_supported _ hmem
+    rcases hsrc with rfl | rfl
+    · exact hs
+    · exact ht
+  · have hmem : Aout.retargetExternalLeg starOf ℓ ∈ δ.externalLegs := by
+      have h := Multiset.mem_map_of_mem (Aout.retargetExternalLeg starOf) hℓ
+      rwa [quotientLegPreimage_map] at h
+    have hs := δ.legs_supported _ hmem
+    rw [← hatt]
+    exact hs
 
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
