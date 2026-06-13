@@ -753,6 +753,47 @@ theorem quotientEdgePreimage_map
     (quotientEdgePreimage Aout starOf δ).map (Aout.retargetEdge starOf) = δ.internalEdges :=
   (quotientEdgePreimage_exists Aout starOf δ).choose_spec.2
 
+/-! ### DeContraction-1 — `quotientLegPreimage` (the leg half of the section)
+
+Identical to the edge half, on `G.externalLegs` (no complement subtraction — the contracted
+graph's legs are all of `G`'s legs retargeted). -/
+
+/-- Existence of a leg preimage: `δ`'s external legs are the `retargetExternalLeg`-image of a
+submultiset of `G.externalLegs` (since `δ.externalLegs ≤ (contract).externalLegs =
+G.externalLegs.map retargetExternalLeg`). -/
+private theorem quotientLegPreimage_exists
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) :
+    ∃ L ≤ G.externalLegs, L.map (Aout.retargetExternalLeg starOf) = δ.externalLegs :=
+  exists_le_map (Aout.retargetExternalLeg starOf) (s := G.externalLegs) (M := δ.externalLegs)
+    (by rw [← Aout.contractWithStars_externalLegs starOf]; exact δ.externalLegs_le)
+
+/-- **DeContraction-1: the leg preimage.**  A submultiset of `G.externalLegs` whose
+`retargetExternalLeg`-image is `δ.externalLegs` — the leg half of the parent-section carrier. -/
+noncomputable def quotientLegPreimage
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) :
+    Multiset ResolvedExternalLeg :=
+  (quotientLegPreimage_exists Aout starOf δ).choose
+
+/-- The leg preimage lies in `G.externalLegs`. -/
+theorem quotientLegPreimage_le
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) :
+    quotientLegPreimage Aout starOf δ ≤ G.externalLegs :=
+  (quotientLegPreimage_exists Aout starOf δ).choose_spec.1
+
+/-- The leg preimage retargets back to `δ`'s external legs. -/
+theorem quotientLegPreimage_map
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) :
+    (quotientLegPreimage Aout starOf δ).map (Aout.retargetExternalLeg starOf) = δ.externalLegs :=
+  (quotientLegPreimage_exists Aout starOf δ).choose_spec.2
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
