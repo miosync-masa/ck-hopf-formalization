@@ -1500,6 +1500,52 @@ native resolved H5.8 is *not yet* claimed complete: the skeleton + de-contractio
 but `splitTerm_agreement` (and the genuine commutation dictionary) are the remaining
 non-mechanical work. -/
 
+/-! ## Track S Scout (S-2) — the contracted-graph forget bridge (feasibility + lemma chain)
+
+S-2/S-3 lift flat quotient/mixed subgraphs into the resolved contracted graph
+`Cres := (canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A)`.
+The keystone is the graph-level forget bridge:
+
+```
+Cres.forget  =  the flat actual contraction of (repG g) by A.1 with the flat canonical star
+```
+
+**Target correction.**  The flat target is `forestOuterActualQuotientGraph g A`
+(`= A.1.contractWithStars (admissibleForestCanonicalStarOf (repG g).toFeynmanGraph A.1 A.2)`,
+the *actual* contraction), **not** `forestOuterQuotientGraph g A` (the `repG`-representative of
+the quotient class — only *isomorphic*).  A Coassoc alias-only wrapper
+`h58BridgeOuterActualQuotientGraph g A := forestOuterActualQuotientGraph g A` is needed (the
+flat def is private); that is a `Main` touch (rebuild required), proof-change-free.
+
+**Feasibility (the id-uniqueness payoff).**  `forget_contractWithStars` gives `Cres.forget` as
+the *honest projection*: vertices `(payload.vertices \ Aout.vertices) ∪ Aout.starVertices`,
+internal edges `(Aout.complementEdges.map forget)` endpoint-rewritten by `Aout.retargetVertex`.
+The doc-warning that `forget` does **not** distribute over the `complementEdges` subtraction is
+for a *general* resolved graph — but here `Aout = ofUniqueForgetForest A.1` over the **id-unique**
+payload, so `forget` is **injective on `payload.internalEdges`** (distinct edgeIds), and an
+injective map *does* distribute over multiset subtraction:
+`Aout.complementEdges.map forget = payload.internalEdges.map forget - Aout.internalEdges.map forget
+= (repG g).internalEdges - A.1.internalEdges = A.1.complementEdges`.  **This is exactly the
+id-uniqueness payoff** — the contracted-graph bridge holds *because* the payload is id-unique
+(the same reason the boundary repairs apply).
+
+**Lemma chain to land (next sprint):**
+1. Coassoc alias `h58BridgeOuterActualQuotientGraph` (+ rebuild Main).
+2. star alignment: `canonicalOuterStarOf g A (liftUniqueFromForgetSubgraph δf) =
+   admissibleForestCanonicalStarOf … A.1 … δf` (from `starOfTransport` + `forget_liftUnique…`),
+   hence `Aout.starVertices (canonicalOuterStarOf) = A.1.starVertices (flat star)`.
+3. complement faithful-forget: `Aout.complementEdges.map forget = A.1.complementEdges` (injective
+   map distributes over `-`; `Multiset.map_sub` under injectivity / count argument).
+4. retargetVertex/retargetEdge forget alignment (`forget` of the resolved retarget = flat
+   retarget of the forgotten endpoint, mirroring `forget_quotientRemainderSubgraph_*`).
+5. assemble `forget_canonicalOuterContractedGraph : Cres.forget = forestOuterActualQuotientGraph g A`.
+
+Then `Cres` is itself **id-unique** (its edges ⊆ `payload.internalEdges` via `retargetEdge`,
+which preserves edgeId), so a `liftUniqueFromForgetSubgraph`-analogue lifts flat quotient
+subgraphs into `Cres` with a faithful forget round-trip — giving S-2/S-3's
+`liftFlatQuotientSubgraphToResolvedContracted` + `forget_…`.  `splitTerm_agreement` stays
+untouched (S-5, resolved-native-or-supplied).  **Feasible, facade-free, genuine (not alias).** -/
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
