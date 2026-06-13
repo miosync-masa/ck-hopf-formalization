@@ -1728,6 +1728,30 @@ used for the *mixed* side and for the *dictionary*; the *forest* carrier does no
 genuine remaining mathematics is concentrated in S-5 (the forest-sum factorization), exactly as
 the Track-S boundary scout predicted. -/
 
+/-! ### Forest Native Carrier-1 — the all-star lemma (`hStars`, resolved-native)
+
+The keystone making the forest carrier's `hStars` resolved-native: the remnant of **any** parent
+`γ ⊇ Aout` contains **all** of `Aout`'s star vertices.  (Each `Aout`-component's vertices lie in
+`γ` — `component_vertices_subset_parent_of_edges` from `hA` + connectivity/positivity — and
+retarget to that component's star.)  No flat import; this is why the forest carrier need not
+match the flat forest carrier. -/
+theorem remnant_contains_all_starVertices_of_containsAoutEdges
+    (Aout : ResolvedAdmissibleSubgraph G) (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {γ : ResolvedFeynmanSubgraph G} (hA : Aout.internalEdges ≤ γ.internalEdges)
+    (hCompConn : ∀ η ∈ Aout.elements, η.forget.IsConnected)
+    (hCompPos : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card) :
+    Aout.starVertices starOf ⊆ (resolvedParentRemnant Aout starOf γ).vertices := by
+  intro s hs
+  obtain ⟨η, hη, rfl⟩ := ResolvedAdmissibleSubgraph.mem_starVertices.mp hs
+  obtain ⟨e, he⟩ := Multiset.exists_mem_of_ne_zero (Multiset.card_pos.mp (hCompPos η hη))
+  have hv : e.source ∈ η.vertices := (η.edges_supported e he).1
+  have hvγ : e.source ∈ γ.vertices :=
+    component_vertices_subset_parent_of_edges Aout hη (hCompConn η hη) (hCompPos η hη) hA hv
+  rw [← retargetVertex_eq_star_of_mem_element Aout starOf hη hv]
+  show Aout.retargetVertex starOf e.source ∈ (Aout.quotientRemainderSubgraph starOf γ).vertices
+  rw [ResolvedAdmissibleSubgraph.quotientRemainderSubgraph_vertices]
+  exact Finset.mem_image_of_mem _ hvγ
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
