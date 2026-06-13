@@ -1532,6 +1532,60 @@ theorem forget_canonicalOuterContractedGraph (g : HopfGen) (A : h58BridgeOuterIn
         rw [hv, he, hl]
     _ = A.1.contractWithStars (h58BridgeOuterCanonicalStar g A) := rfl
 
+/-! ### S-3a — generic forget-subgraph lift
+
+A subgraph of any resolved graph's forget lifts back to a resolved subgraph (submultiset
+preimage by `exists_le_map`; no id-uniqueness needed for the lift or its forget round-trip).
+Applied to the contracted graph `Cres` (which is the forget-target of the bridge), this lifts
+flat quotient subgraphs into the resolved contracted graph. -/
+
+private theorem feynmanSubgraph_ext_local {G : FeynmanGraph} {γ₁ γ₂ : FeynmanSubgraph G}
+    (hv : γ₁.vertices = γ₂.vertices) (hi : γ₁.internalEdges = γ₂.internalEdges)
+    (he : γ₁.externalLegs = γ₂.externalLegs) : γ₁ = γ₂ := by
+  cases γ₁; cases γ₂; cases hv; cases hi; cases he; rfl
+
+private theorem resolvedSubgraphOfForget_edges_exists {G : ResolvedFeynmanGraph}
+    (γf : FeynmanSubgraph G.forget) :
+    ∃ t ≤ G.internalEdges, t.map ResolvedFeynmanEdge.forget = γf.internalEdges :=
+  exists_le_map ResolvedFeynmanEdge.forget (s := G.internalEdges) (M := γf.internalEdges)
+    γf.internalEdges_le
+
+private theorem resolvedSubgraphOfForget_legs_exists {G : ResolvedFeynmanGraph}
+    (γf : FeynmanSubgraph G.forget) :
+    ∃ t ≤ G.externalLegs, t.map ResolvedExternalLeg.forget = γf.externalLegs :=
+  exists_le_map ResolvedExternalLeg.forget (s := G.externalLegs) (M := γf.externalLegs)
+    γf.externalLegs_le
+
+/-- **S-3a: generic forget-subgraph lift.**  Lift a subgraph of `G.forget` back to a resolved
+subgraph of `G` (occurrence-faithful submultiset preimage of the edges/legs). -/
+noncomputable def resolvedSubgraphOfForget {G : ResolvedFeynmanGraph}
+    (γf : FeynmanSubgraph G.forget) : ResolvedFeynmanSubgraph G where
+  vertices := γf.vertices
+  internalEdges := (resolvedSubgraphOfForget_edges_exists γf).choose
+  externalLegs := (resolvedSubgraphOfForget_legs_exists γf).choose
+  vertices_subset := γf.vertices_subset
+  internalEdges_le := (resolvedSubgraphOfForget_edges_exists γf).choose_spec.1
+  externalLegs_le := (resolvedSubgraphOfForget_legs_exists γf).choose_spec.1
+  edges_supported := by
+    intro e he
+    have hfe : e.forget ∈ γf.internalEdges := by
+      have hmem := Multiset.mem_map_of_mem ResolvedFeynmanEdge.forget he
+      rwa [(resolvedSubgraphOfForget_edges_exists γf).choose_spec.2] at hmem
+    exact γf.edges_supported e.forget hfe
+  legs_supported := by
+    intro ℓ hℓ
+    have hfℓ : ℓ.forget ∈ γf.externalLegs := by
+      have hmem := Multiset.mem_map_of_mem ResolvedExternalLeg.forget hℓ
+      rwa [(resolvedSubgraphOfForget_legs_exists γf).choose_spec.2] at hmem
+    exact γf.legs_supported ℓ.forget hfℓ
+
+/-- The generic lift round-trips under forget. -/
+theorem forget_resolvedSubgraphOfForget {G : ResolvedFeynmanGraph}
+    (γf : FeynmanSubgraph G.forget) : (resolvedSubgraphOfForget γf).forget = γf :=
+  feynmanSubgraph_ext_local rfl
+    (resolvedSubgraphOfForget_edges_exists γf).choose_spec.2
+    (resolvedSubgraphOfForget_legs_exists γf).choose_spec.2
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
