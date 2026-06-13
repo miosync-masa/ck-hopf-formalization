@@ -1679,6 +1679,20 @@ theorem forget_liftFlatQuotientForestToCres (g : HopfGen) (A : h58BridgeOuterInd
     HEq (liftFlatQuotientForestToCres g A Af hDisj).forget Af :=
   forget_liftFlatAdmissibleAlongForgetEq (forget_canonicalOuterContractedGraph g A) Af hDisj
 
+/-- **Star-avoidance transports across the forest lift.**  If every flat component avoids a
+vertex set `V`, so does every lifted component (the lift preserves component vertices).  This is
+the mixed branch's `avoidsStars` content. -/
+theorem liftFlatAdmissibleAlongForgetEq_avoidsStars {G : ResolvedFeynmanGraph} {Gf : FeynmanGraph}
+    (h : G.forget = Gf) (Af : AdmissibleSubgraph Gf) (hDisj : Af.IsPairwiseDisjoint)
+    (V : Finset VertexId) (hAvoid : ∀ δf ∈ Af.elements, Disjoint δf.vertices V) :
+    ∀ δ ∈ (liftFlatAdmissibleAlongForgetEq h Af hDisj).elements, Disjoint δ.vertices V := by
+  subst h
+  intro δ hδ
+  rw [show (liftFlatAdmissibleAlongForgetEq rfl Af hDisj).elements
+      = Af.elements.image resolvedSubgraphOfForget from rfl] at hδ
+  obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hδ
+  exact hAvoid δf hδf
+
 /-! ## Track S Scout (S-3c) — per-`A` carrier sources: forest vs mixed asymmetry
 
 With the lift machinery built (S-2/S-3), S-3c builds the actual carriers.  Source inventory of
