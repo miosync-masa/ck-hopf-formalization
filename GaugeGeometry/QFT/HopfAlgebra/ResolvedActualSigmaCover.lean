@@ -909,6 +909,63 @@ theorem parentOfQuotient_remnant_externalLegs
   show (quotientLegPreimage Aout starOf δ).map (Aout.retargetExternalLeg starOf) = δ.externalLegs
   exact quotientLegPreimage_map Aout starOf δ
 
+/-! ### DeContraction-3 Scout — the all-star vertex knife-edge
+
+The edge/leg halves of `parent_remnant_eq` are done.  The vertex half
+`(parentOfQuotient …).vertices.image (Aout.retargetVertex starOf) = δ.vertices` runs into a
+**structural obstruction**, identified here before committing to a proof.
+
+**Observation (all-star containment).**  `parentOfQuotient` puts `Aout.vertices` wholesale into
+its vertex filter (`v ∈ Aout.vertices ∨ …`), because `containsAoutEdges` forces the parent to
+contain *all* of `Aout`'s edges and (with `componentPositiveEdges` ⟹ no isolated vertices) all
+of `Aout.vertices`.  Hence the remnant's vertices
+`= (parentOfQuotient …).vertices.image (Aout.retargetVertex starOf)` contain `retargetVertex w =
+starOf (componentAt w)` for *every* component's vertex `w` — i.e. **the remnant contains the
+entire `Aout.starVertices` (all outer stars).**
+
+**Necessary condition for `parent_remnant_eq`.**  Therefore `resolvedParentRemnant … = δ`
+forces `Aout.starVertices starOf ⊆ δ.vertices`: the target component `δ` must contain **all**
+outer stars.
+
+**But genuine forest images need not.**  The discriminator `resolvedIsForestByStar` (and its
+flat original) only asserts *some* component meets *some* star:
+`∃ δ ∈ img.elements, ¬ Disjoint δ.vertices (Aout.starVertices)`.  And
+`forest_case_of_preimageData` lifts **each component `δ ∈ z.elements` separately** via
+`parentOf`, proving `remnantDisjoint` from `z.pairwiseDisjoint` *after* `parent_remnant_eq`
+rewrites each remnant to its `δ`.  So if a forest-by-star image `z` has ≥2 components, each
+`δ` is a *small* (often single-star) piece — **not containing all stars** — and the
+all-star-containing `parentOfQuotient δ` remnant cannot equal it.  (Equivalently: two parents
+`⊇ Aout` both yield remnants containing all stars, so their remnants are never disjoint —
+incompatible with `remnantDisjoint` for a genuine multi-component forest.)
+
+**Verdict — the framing knife-edge (the user's earlier prediction).**  `resolvedForestImage`
+quotients by the **whole** `Aout`, collapsing every component to its star, so any parent
+`⊇ Aout` exposes all stars.  This is consistent **only** when the forest-branch image is the
+*single* quotient of *one* parent (`choiceParents` a singleton, `z` = that one quotient, which
+genuinely contains all stars).  For a multi-component inner forest, the per-component
+`parentOf δ` of the de-contraction is **over-strong** — `containsAoutEdges` (parent ⊇ whole
+`Aout`) does not match a small inner component `δ`.
+
+**Decision needed (architectural, before proving the vertex half).**  Either:
+- **(i) single-parent forest images** — accept that each `ResolvedForestImageData` has a
+  singleton `choiceParents` (`z` = one full quotient `γ/Aout`, which contains all stars); then
+  `parentOfQuotient` works and `parent_remnant_eq` needs only `Aout.starVertices ⊆ δ.vertices`
+  with `δ = z` the full quotient.  Matches the CK *insertion* picture (one divergent `γ ⊇ Aout`,
+  one cograph `γ/Aout`); the multi-component RHS is recovered by summing over *outer forests*
+  (the existing `ResolvedH58OuterSkeleton` outer sum), not by multi-component inner images.
+- **(ii) per-component `Aout`** — make the σ-cover's `Aout` a *single* outer component (so
+  `resolvedParentRemnant` quotients by just that component); each inner `δ` then touches only
+  that one star.  This changes `ResolvedSigmaCoverData` to per-component, a larger refactor.
+- **(iii) restrict the forest-case datum** — keep `Aout` the whole forest but supply
+  `parentOf` only for images that genuinely contain all stars, documenting the rest as handled
+  by the mixed branch / outer sum.
+
+Recommendation: **(i)** — it requires no refactor (the outer sum already supplies the
+multi-forest RHS), and the vertex half then reduces to the clean
+`Aout.starVertices ⊆ δ.vertices` (a single hypothesis, true for full quotients).  The next
+landing would be `parent_remnant_eq` for `δ` = a full quotient image, with `hStars :
+Aout.starVertices starOf ⊆ δ.vertices` as the explicit hypothesis. -/
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
