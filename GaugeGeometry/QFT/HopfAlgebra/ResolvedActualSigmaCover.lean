@@ -1143,6 +1143,27 @@ theorem parentOfQuotient_vertices_subset_remnant
     exact ⟨hL ℓ0 (Multiset.mem_of_le (quotientLegPreimage_le Aout starOf δ) hℓ0),
       Or.inr (Or.inr ⟨ℓ0, hℓ0, rfl⟩)⟩
 
+/-- **DeContraction-3: `parent_remnant_eq`.**  The remnant of `parentOfQuotient` is exactly
+`δ` — the de-contraction section is a genuine section of `resolvedParentRemnant`.  Assembled
+from the edge/leg halves (constructive) and the vertex half (`hStars` + saturation
+`hCovered`/`hCompNonempty`). -/
+theorem parentOfQuotient_remnant_eq
+    (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices)
+    (hCompNonempty : ∀ η ∈ Aout.elements, η.vertices.Nonempty)
+    (hStars : Aout.starVertices starOf ⊆ δ.vertices)
+    (hCovered : QuotientVertexCovered Aout starOf δ) :
+    resolvedParentRemnant Aout starOf (parentOfQuotient Aout starOf δ hE hL) = δ := by
+  apply ResolvedFeynmanSubgraph.ext
+  · exact Finset.Subset.antisymm
+      (parentOfQuotient_remnant_vertices_subset Aout starOf δ hE hL hStars)
+      (parentOfQuotient_vertices_subset_remnant Aout starOf δ hE hL hCompNonempty hCovered)
+  · exact parentOfQuotient_remnant_internalEdges Aout starOf δ hE hL
+  · exact parentOfQuotient_remnant_externalLegs Aout starOf δ hE hL
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
