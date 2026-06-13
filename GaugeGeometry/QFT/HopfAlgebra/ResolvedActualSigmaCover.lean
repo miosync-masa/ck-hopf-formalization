@@ -1586,6 +1586,33 @@ theorem forget_resolvedSubgraphOfForget {G : ResolvedFeynmanGraph}
     (resolvedSubgraphOfForget_edges_exists γf).choose_spec.2
     (resolvedSubgraphOfForget_legs_exists γf).choose_spec.2
 
+/-- (free-index helper) Lift a subgraph of any flat graph equal to `G.forget`, transporting
+along the forget equality. -/
+noncomputable def liftFlatSubgraphAlongForgetEq {G : ResolvedFeynmanGraph} {Gf : FeynmanGraph}
+    (h : G.forget = Gf) (δf : FeynmanSubgraph Gf) : ResolvedFeynmanSubgraph G :=
+  resolvedSubgraphOfForget (h.symm ▸ δf)
+
+/-- The free-index lift round-trips (heterogeneous — the round-trip lands in the forgotten
+coordinate). -/
+theorem forget_liftFlatSubgraphAlongForgetEq {G : ResolvedFeynmanGraph} {Gf : FeynmanGraph}
+    (h : G.forget = Gf) (δf : FeynmanSubgraph Gf) :
+    HEq (liftFlatSubgraphAlongForgetEq h δf).forget δf := by
+  subst h
+  exact heq_of_eq (forget_resolvedSubgraphOfForget δf)
+
+/-- **S-3a': lift a flat quotient subgraph into the resolved contracted graph.** -/
+noncomputable def liftFlatQuotientSubgraphToCres (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (δf : FeynmanSubgraph (h58BridgeOuterActualQuotientGraph g A)) :
+    ResolvedFeynmanSubgraph
+      ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A)) :=
+  liftFlatSubgraphAlongForgetEq (forget_canonicalOuterContractedGraph g A) δf
+
+/-- **S-3a': forget round-trip** (heterogeneous, via the contracted-graph bridge). -/
+theorem forget_liftFlatQuotientSubgraphToCres (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (δf : FeynmanSubgraph (h58BridgeOuterActualQuotientGraph g A)) :
+    HEq (liftFlatQuotientSubgraphToCres g A δf).forget δf :=
+  forget_liftFlatSubgraphAlongForgetEq (forget_canonicalOuterContractedGraph g A) δf
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
