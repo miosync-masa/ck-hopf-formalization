@@ -688,4 +688,70 @@ finite branch-map layer (`ResolvedCarrierFiniteBranchMapLayer`: finite carriers 
 actual σ-cover finiteness construction; it introduces no facade and no new mathematics
 beyond the σ-cover data itself. -/
 
+/-! ## InnerSupply-1d Scout — `parents` carrier (the genuine σ-cover insertion set)
+
+Target fields of `ResolvedSigmaCoverData`:
+```
+parents          : Finset (ResolvedFeynmanSubgraph G)
+containsAoutEdges : ∀ γ ∈ parents, Aout.internalEdges ≤ γ.internalEdges
+```
+(`remnant_vertex_recovery` is **not** a separate obligation: `ofSaturatedParents` derives it
+from `starFresh`/`componentConnected`/`componentPositiveEdges`, all of which are now landed
+for the canonical `Aout`.)
+
+**Finding 1 — framing.**  `parents` is the σ-cover **insertion** set: each `γ` is a *full*
+subgraph of the payload graph that *contains the whole* `Aout` (`containsAoutEdges`), and the
+forest-branch image is its **remnant** `resolvedForestImage D γ = resolvedParentRemnant
+D.Aout D.starOf γ` (the quotient of `γ` by `Aout`).  Confirmed by `ResolvedForestIdx D =
+{γ // γ ∈ D.parents}` and `resolvedForestImage = resolvedParentRemnant`.  The forest sum is
+over `choiceParents ⊆ parents`, mapped to remnants.
+
+**Finding 2 — the flat side never forms `γ ⊇ Aout`.**  The flat carrier
+`forestComponentForestChoiceForestParentsAttach g q` is a *filter of `A.1.elements`* — the
+**components of the outer forest** (so `γ ∈ A.1.elements`, giving `γ.internalEdges ≤
+Aout.internalEdges`, the *opposite* inclusion), and `forestQuotientForestSigma g := Σ A,
+AdmissibleSubgraph (forestOuterQuotientGraph g A)` indexes by *(outer forest, quotient
+subgraph)* pairs — the quotient subgraph **is** the remnant directly.  So neither the
+per-component flat carrier nor the flat Σ-index produces the resolved `γ ⊇ Aout` parents by
+a `liftUniqueFromForgetSubgraph` transport.  The light forget-coordinate `subst` pattern
+that closed `Aout`/`starOf`/`starFresh`/`componentPositiveEdges` **does not apply** here.
+
+**Finding 3 — `parents` needs a *section* of the remnant map (de-contraction).**  To
+realize the genuine σ-cover, for each inner proper forest / quotient component `δ` we need a
+parent `γ ⊇ Aout` with `resolvedParentRemnant Aout starOf γ = δ`.  That is exactly the datum
+`ResolvedForestCasePreimageData.parentOf` (with `parent_remnant_eq`) already isolated as the
+**cover** obstruction (`ResolvedForestCaseSupply`).  So **building genuine `parents` is the
+same de-contraction construction as the remaining cover sprint** — they are one piece, not
+two.  No existing machinery inverts `resolvedParentRemnant` (`uncontract`/`parentOf` search:
+none).
+
+**Finding 4 — facade check: clean.**  The flat per-component injectivity
+(`forestComponentForestChoiceParentRemnant_injOn`) consumes `ForestGraphInsertionUniquenessModel`,
+but the resolved side **already replaces** it with `resolvedParentRemnant_injOn` (facade-free,
+landed).  The carrier *construction* (de-contraction) is a graph operation needing **no**
+facade.  Facades remain only in the (separate) cover/factorization layer as documented.
+
+**Finding 5 — wrapper need: none for the carrier shape.**  `parents`/`containsAoutEdges`
+live entirely on resolved types; the obstruction is mathematical (de-contraction section),
+not visibility.  A thin Coassoc wrapper would only matter if the *flat inner-forest index*
+were needed to drive the section — but the section maps *into* `parents`, so the index is
+not consumed as a flat private.
+
+**Verdict / fork.**  Three landings are *not* equal in weight:
+- **(A) Genuine full σ-cover parents** — construct the de-contraction section
+  (`parentOf`/`ResolvedForestCaseSupply`) and take `parents` = its image.  This is the heart
+  of the remaining R-4-superfull work (intertwined with `cover`), a real multi-step sprint
+  with no existing machinery — *not* a one-field landing.
+- **(B) Minimal genuine base carrier** — `parents := {γ_Aout}` where `γ_Aout` has
+  `internalEdges = Aout.internalEdges` (the `γ = Aout` primitive coproduct term, remnant =
+  empty inner forest).  `containsAoutEdges` is `le_refl`.  Genuine (no facade, non-empty),
+  but covers only the primitive term, *not* the full inner-forest enumeration.  Lands the D
+  field honestly as a partial carrier; the full enumeration stays the de-contraction sprint.
+- **(C) Defer** — leave `parents` as the documented remaining construction (mirroring the
+  `cover` obstruction it coincides with) and record that D's four predicate fields are
+  landed.
+
+The light-field run ends here: `parents` is where the genuine de-contraction sprint begins,
+and it is the *same* obstruction already isolated as `cover`. -/
+
 end GaugeGeometry.QFT.Combinatorial
