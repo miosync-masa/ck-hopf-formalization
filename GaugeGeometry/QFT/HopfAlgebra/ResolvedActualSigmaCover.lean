@@ -1371,6 +1371,22 @@ theorem ResolvedMixedCarrierSupply.mixed_components_inj {D : ResolvedSigmaCoverD
     ∀ x ∈ S.mixedCarrier, ∀ y ∈ S.mixedCarrier, x.components = y.components → x = y :=
   fun _ _ _ _ h => ResolvedMixedImageData.ext_components h
 
+/-! ### BranchCarriers (6) — assemble `ResolvedBranchCarriers`
+
+Both branch supplies (forest via de-contraction, mixed via star-avoiding subgraphs) over the
+same derived `D` assemble directly into `ResolvedBranchCarriers`. -/
+
+/-- **BranchCarriers (6): assembly.**  The forest quotient supply plus a mixed carrier supply
+over the derived `D` give the full `ResolvedBranchCarriers`. -/
+noncomputable def CanonicalOuterForestQuotientSupply.toBranchCarriers {g : HopfGen}
+    {A : h58BridgeOuterIndex g} (S : CanonicalOuterForestQuotientSupply g A)
+    (M : ResolvedMixedCarrierSupply (canonicalSigmaCoverDataOfParents S.parentsData)) :
+    ResolvedBranchCarriers (canonicalSigmaCoverDataOfParents S.parentsData) where
+  forestCarrier := S.forestCarrier
+  mixedCarrier := M.mixedCarrier
+  forest_choiceParents_inj := S.forest_choiceParents_inj
+  mixed_components_inj := M.mixed_components_inj
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
