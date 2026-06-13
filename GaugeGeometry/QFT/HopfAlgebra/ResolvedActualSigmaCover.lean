@@ -639,6 +639,76 @@ theorem CanonicalOuterResolvedSupplyData.concrete_sum_reindex {g : HopfGen}
             (S.toCanonicalSupply.toSupply.toActualSigmaCover.concreteData.mixedSplitOf q)) :=
   S.toCanonicalSupply.concrete_sum_reindex
 
+/-! ## DeContraction Scout — the parent-section carrier (the genuine `parents` source)
+
+Target: a section of `resolvedParentRemnant Aout starOf` — for a contracted-graph subgraph
+`δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)`, build a parent
+`γ : ResolvedFeynmanSubgraph G` with `Aout.internalEdges ≤ γ.internalEdges` (containsAoutEdges)
+and `resolvedParentRemnant Aout starOf γ = δ` (parent_remnant_eq).  This is the genuine
+`CanonicalOuterParentsData` source (and, simultaneously, the forest-case `parentOf`).
+
+**Forward map (fully characterised).**  `resolvedParentRemnant Aout starOf γ =
+Aout.quotientRemainderSubgraph starOf γ`, with
+```
+vertices      := γ.vertices.image (Aout.retargetVertex starOf)
+internalEdges := (γ.internalEdges - Aout.internalEdges).map (Aout.retargetEdge starOf)
+externalLegs  := γ.externalLegs.map (Aout.retargetExternalLeg starOf)
+```
+where `retargetVertex` collapses each `Aout`-component to its star (identity off `Aout.vertices`)
+and `retargetEdge`/`retargetExternalLeg` are **identity-preserving on `edgeId`/`legId`**.
+
+**KEY FINDING — de-contraction is a submultiset preimage (the id-unique payload was built for
+exactly this).**  Because `retargetEdge`/`retargetExternalLeg` keep ids and are **injective on
+submultisets of `G.internalEdges`/`G.externalLegs`** under `EdgeIdsUnique`/`LegIdsUnique`
+(`retarget_residual_edges_injective` / `retarget_residual_legs_injective`), the edge/leg parts
+of the section are *uniquely determined* and *constructible*:
+- `δ.internalEdges ≤ (Aout.contractWithStars starOf).internalEdges =
+  Aout.complementEdges.map (Aout.retargetEdge starOf)`, so by **`exists_le_map`** there is a
+  unique `M ≤ Aout.complementEdges` with `M.map (retargetEdge) = δ.internalEdges`.
+- likewise a unique `L ≤ G.externalLegs` with `L.map (retargetExternalLeg) = δ.externalLegs`.
+
+**Decided carrier.**
+```
+γ.internalEdges := Aout.internalEdges + M          -- M = edge preimage of δ in complementEdges
+γ.externalLegs  := L                                -- L = leg preimage of δ
+γ.vertices      := Aout.vertices
+                     ∪ (endpoints of M in G) ∪ (attachments of L in G)
+```
+Then `γ.internalEdges - Aout.internalEdges = M` (M ≤ complementEdges = G.internalEdges -
+Aout.internalEdges is disjoint from Aout.internalEdges), so the edge/leg halves of
+`parent_remnant_eq` hold by construction, and `containsAoutEdges` is `Multiset.le_add_right`.
+
+**HALT — the vertices half is the genuine residual.**  `parent_remnant_eq` needs
+`γ.vertices.image (retargetVertex) = δ.vertices`.  With the carrier above, the image is
+`Aout.starVertices ∪ (off-Aout endpoints/attachments of M,L)`.  This equals `δ.vertices`
+**iff `δ` has no isolated vertices** (every vertex of `δ` is an endpoint of one of its edges
+or an attachment of one of its legs) **and** the star vertices appearing in `δ` are exactly
+the stars of the `Aout`-components met by `M`,`L`.  Both hold for the **genuine σ-cover
+images** (connected-divergent components — the no-isolated-vertex campaign 6C-4/5/6 is
+already resolved-side: `feynmanSubgraph_vertex_incident_edge_of_connected_pos` + forget
+lift).  So the vertices law is *not* a new obstruction but the saturation argument already
+proved for `remnant_vertex_recovery`, re-used in the forward direction.
+
+**Minimal API to land (next sprint, in dependency order).**
+1. `edgePreimage Aout starOf δ : Multiset ResolvedFeynmanEdge` (= `(exists_le_map …).choose`
+   on `δ.internalEdges ≤ Aout.complementEdges.map retargetEdge`) + `_le` (≤ complementEdges)
+   + `_map` (`.map retargetEdge = δ.internalEdges`).  Uniqueness: `retarget_residual_edges_injective`.
+2. `legPreimage Aout starOf δ` + `_le` + `_map` (analogous, `retarget_residual_legs_injective`).
+3. `parentOfQuotient Aout starOf δ : ResolvedFeynmanSubgraph G` (the carrier above) — the
+   `vertices_subset`/`edges_supported`/`legs_supported` proofs from the preimage `_le` + the
+   endpoint-union vertex set.
+4. `parentOfQuotient_containsAoutEdges` (`le_add_right`) and `parentOfQuotient_remnant_eq`
+   (edge/leg halves by `_map`; vertex half by the saturation lemma, restricted to genuine
+   σ-cover `δ` — likely a hypothesis `δ` has-no-isolated-vertices / is the image of a CD
+   forest).
+
+**Facade check: clean.**  Everything above is the id-unique payload's own
+`exists_le_map`/retarget-injectivity machinery + the resolved saturation lemmas.  No flat
+facade (`ForestGraphInsertionUniquenessModel` is *replaced* by `retarget_residual_*_injective`;
+`PromotedExternalLegsLiftableModel` is unused).  **Verdict: the parent-section is feasible
+and its carrier is fixed; the only genuine content is the vertex-saturation law, which is the
+forward use of the already-proved `remnant_vertex_recovery` saturation.** -/
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
