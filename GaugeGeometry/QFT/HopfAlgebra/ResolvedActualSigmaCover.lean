@@ -1467,6 +1467,71 @@ theorem canonicalOuter_starVertices_eq (g : HopfGen) (A : h58BridgeOuterIndex g)
   starVertices_canonicalOuter_transport
     (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1 A.2
 
+/-! ### S-2e — the contracted-graph forget bridge (summit)
+
+`Cres.forget = h58BridgeOuterActualQuotientGraph g A`, assembled from the field alignments
+(vertices / starVertices / complement-faithful forget / retargetEdge / retargetLeg / ambient
+legs).  Proved by structure-eta into the three `FeynmanGraph` fields. -/
+
+/-- The canonical outer forest's vertex carrier equals the flat forest's. -/
+private theorem aoutOfTransport_vertices_eq {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G') (hDisj : A.IsPairwiseDisjoint) :
+    (aoutOfTransport h A hDisj).vertices = A.vertices := by
+  subst h; rw [aoutOfTransport_rfl]; exact ofUniqueForgetForest_vertices A hDisj
+
+theorem canonicalOuterAout_vertices_eq (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    (canonicalOuterAoutOfFlatOuter g A).vertices = A.1.vertices :=
+  aoutOfTransport_vertices_eq _ A.1 _
+
+/-- **S-2e: the contracted-graph forget bridge.**  Forgetting the resolved star-contraction of
+the canonical outer forest recovers the flat actual quotient graph. -/
+theorem forget_canonicalOuterContractedGraph (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A)).forget
+      = h58BridgeOuterActualQuotientGraph g A := by
+  rw [h58BridgeOuterActualQuotientGraph_eq]
+  have hv : ((canonicalOuterAoutOfFlatOuter g A).contractWithStars
+        (canonicalOuterStarOf g A)).forget.vertices
+      = (A.1.contractWithStars (h58BridgeOuterCanonicalStar g A)).vertices := by
+    rw [ResolvedFeynmanGraph.forget_vertices,
+      ResolvedAdmissibleSubgraph.contractWithStars_vertices,
+      AdmissibleSubgraph.contractWithStars_vertices, canonicalOuterAout_vertices_eq,
+      canonicalOuter_starVertices_eq]
+    rfl
+  have he : ((canonicalOuterAoutOfFlatOuter g A).contractWithStars
+        (canonicalOuterStarOf g A)).forget.internalEdges
+      = (A.1.contractWithStars (h58BridgeOuterCanonicalStar g A)).internalEdges := by
+    rw [ResolvedFeynmanGraph.forget_internalEdges,
+      ResolvedAdmissibleSubgraph.contractWithStars_internalEdges,
+      AdmissibleSubgraph.contractWithStars_internalEdges, Multiset.map_map,
+      ← map_forget_complementEdges_canonicalOuterAout g A, Multiset.map_map]
+    apply Multiset.map_congr rfl
+    intro e' _
+    exact canonicalOuter_retargetEdge_forget g A e'
+  have hl : ((canonicalOuterAoutOfFlatOuter g A).contractWithStars
+        (canonicalOuterStarOf g A)).forget.externalLegs
+      = (A.1.contractWithStars (h58BridgeOuterCanonicalStar g A)).externalLegs := by
+    rw [ResolvedFeynmanGraph.forget_externalLegs,
+      ResolvedAdmissibleSubgraph.contractWithStars_externalLegs,
+      AdmissibleSubgraph.contractWithStars_externalLegs, Multiset.map_map,
+      ← canonicalPayload_externalLegs_forget g, Multiset.map_map]
+    apply Multiset.map_congr rfl
+    intro l _
+    exact canonicalOuter_retargetLeg_forget g A l
+  calc ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A)).forget
+      = FeynmanGraph.mk
+          ((canonicalOuterAoutOfFlatOuter g A).contractWithStars
+            (canonicalOuterStarOf g A)).forget.vertices
+          ((canonicalOuterAoutOfFlatOuter g A).contractWithStars
+            (canonicalOuterStarOf g A)).forget.internalEdges
+          ((canonicalOuterAoutOfFlatOuter g A).contractWithStars
+            (canonicalOuterStarOf g A)).forget.externalLegs := rfl
+    _ = FeynmanGraph.mk (A.1.contractWithStars (h58BridgeOuterCanonicalStar g A)).vertices
+          (A.1.contractWithStars (h58BridgeOuterCanonicalStar g A)).internalEdges
+          (A.1.contractWithStars (h58BridgeOuterCanonicalStar g A)).externalLegs := by
+        rw [hv, he, hl]
+    _ = A.1.contractWithStars (h58BridgeOuterCanonicalStar g A) := rfl
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
