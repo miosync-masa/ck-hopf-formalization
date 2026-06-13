@@ -415,6 +415,38 @@ wrappers for the canonical-star freshness / inner-parent carrier (alias-only, no
 change to `Coassoc`).  No facade, no new mathematics — `Aout`/`starOf`/`parents` are the
 resolved lifts of the (public or wrappable) flat outer-forest data. -/
 
+/-- (transport helper) Lift an admissible forest of *any* graph `G'` equal to the forgotten
+unique-id graph, via `subst` on the free index `G'` (avoids `▸` motive failure on the
+instance-dependent `AdmissibleSubgraph`). -/
+private noncomputable def aoutOfTransport {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G') (hDisj : A.IsPairwiseDisjoint) :
+    ResolvedAdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf) := by
+  subst h; exact ofUniqueForgetForest A hDisj
+
+/-- The transport helper's forget round-trip (heterogeneous — the forget lands in the
+forgotten-graph coordinate). -/
+private theorem forget_aoutOfTransport {Gf G' : FeynmanGraph}
+    (h : (ofFlatGraphWithUniqueIds Gf).forget = G')
+    (A : AdmissibleSubgraph G') (hDisj : A.IsPairwiseDisjoint) :
+    HEq (aoutOfTransport h A hDisj).forget A := by
+  subst h; exact heq_of_eq (forget_ofUniqueForgetForest A hDisj)
+
+/-- **InnerSupply-1a: `Aout` lift.**  The outer flat forest `A.1` (a proper-disjoint
+admissible forest of `repG g`) lifted to a resolved admissible forest of the canonical
+unique-id payload graph, via `ofUniqueForgetForest` along `forget_ofFlatGraphWithUniqueIds`. -/
+noncomputable def canonicalOuterAoutOfFlatOuter (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    ResolvedAdmissibleSubgraph (canonicalResolvedHopfPayloadFamilyWithUniqueIds.payload g).G :=
+  aoutOfTransport (forget_ofFlatGraphWithUniqueIds (repG g).toFeynmanGraph) A.1
+    (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _ A.2)
+
+/-- **InnerSupply-1a: forget round-trip** (heterogeneous — the round-trip lands in the
+forgotten-graph coordinate; this is the `forget`-transport made explicit, exactly as
+anticipated). -/
+theorem forget_canonicalOuterAoutOfFlatOuter (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    HEq (canonicalOuterAoutOfFlatOuter g A).forget A.1 :=
+  forget_aoutOfTransport _ A.1 _
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
