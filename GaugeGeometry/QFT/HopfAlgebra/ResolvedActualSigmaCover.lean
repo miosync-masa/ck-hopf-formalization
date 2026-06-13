@@ -1229,6 +1229,28 @@ noncomputable def canonicalOuterParentsDataOfQuotientCarrier (g : HopfGen)
       (canonicalOuterStarOf g A) δ (canonicalPayload_edges_supported g)
       (canonicalPayload_legs_supported g)
 
+/-- The de-contracted parent of a quotient carrier element lies in the canonical parents. -/
+theorem parentOfQuotient_mem_canonicalParents (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (quotientCarrier : Finset (ResolvedFeynmanSubgraph
+      ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A))))
+    {δ : ResolvedFeynmanSubgraph
+      ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A))}
+    (hδ : δ ∈ quotientCarrier) :
+    parentOfQuotient (canonicalOuterAoutOfFlatOuter g A) (canonicalOuterStarOf g A) δ
+        (canonicalPayload_edges_supported g) (canonicalPayload_legs_supported g)
+      ∈ (canonicalSigmaCoverDataOfParents
+          (canonicalOuterParentsDataOfQuotientCarrier g A quotientCarrier)).parents :=
+  Finset.mem_image_of_mem _ hδ
+
+/-- The canonical outer forest's components are vertex-nonempty (each has a positive-edge,
+hence an endpoint). -/
+theorem canonicalOuterAout_components_nonempty (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    ∀ η ∈ (canonicalOuterAoutOfFlatOuter g A).elements, η.vertices.Nonempty := by
+  intro η hη
+  obtain ⟨e, he⟩ := Multiset.exists_mem_of_ne_zero
+    (Multiset.card_pos.mp (canonicalOuterComponentPositiveEdges g A η hη))
+  exact ⟨e.source, (η.edges_supported e he).1⟩
+
 /-! **Report.**  `ResolvedActualSigmaCover g` consolidates the four σ-cover-data-supply
 obligations.  Dependency diagram:
 
