@@ -1324,6 +1324,55 @@ theorem canonicalOuterAout_components_nonempty (g : HopfGen) (A : h58BridgeOuter
     (Multiset.card_pos.mp (canonicalOuterComponentPositiveEdges g A η hη))
   exact ⟨e.source, (η.edges_supported e he).1⟩
 
+/-! ### S-2d — retargetVertex alignment (forget coordinate, componentAt-choose-free)
+
+The resolved star-contraction's `retargetVertex` agrees with the flat one — proved
+membership-based (no `componentAt` choose): a carrier vertex retargets to its component's star
+on both sides (`retargetVertex_eq_star_of_mem_element` resolved / `retargetVertex_of_mem_component`
+flat), and the lifted component's star is the flat component's (`forget_liftUnique…`). -/
+
+/-- The forgetful-lift forest has the same vertex carrier as the flat forest. -/
+theorem ofUniqueForgetForest_vertices {Gf : FeynmanGraph}
+    (A : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget) (hDisj : A.IsPairwiseDisjoint) :
+    (ofUniqueForgetForest A hDisj).vertices = A.vertices := by
+  apply Finset.ext
+  intro v
+  rw [ResolvedAdmissibleSubgraph.mem_vertices, AdmissibleSubgraph.mem_vertices,
+    ofUniqueForgetForest_elements]
+  constructor
+  · rintro ⟨γ, hγ, hv⟩
+    obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hγ
+    exact ⟨δf, hδf, hv⟩
+  · rintro ⟨δf, hδf, hv⟩
+    exact ⟨liftUniqueFromForgetSubgraph δf, Finset.mem_image_of_mem _ hδf, hv⟩
+
+/-- **S-2d: retargetVertex alignment (forget coordinate).**  The resolved star-contraction
+retarget through the lifted forest equals the flat retarget through `A` with the flat canonical
+star. -/
+theorem ofUniqueForgetForest_retargetVertex_eq {Gf : FeynmanGraph}
+    (A : AdmissibleSubgraph (ofFlatGraphWithUniqueIds Gf).forget)
+    (hA : A ∈ ((ofFlatGraphWithUniqueIds Gf).forget).properDisjointAdmissibleDivergentSubgraphs)
+    (v : VertexId) :
+    (ofUniqueForgetForest A
+        (FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint
+          _ hA)).retargetVertex
+        (fun η => FeynmanGraph.admissibleForestCanonicalStarOf
+          ((ofFlatGraphWithUniqueIds Gf).forget) A hA η.forget) v
+      = A.retargetVertex
+          (FeynmanGraph.admissibleForestCanonicalStarOf
+            ((ofFlatGraphWithUniqueIds Gf).forget) A hA) v := by
+  have hDisj := FeynmanGraph.properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint _ hA
+  by_cases hv : v ∈ A.vertices
+  · obtain ⟨δf, hδf, hvδ⟩ := AdmissibleSubgraph.mem_vertices.mp hv
+    have hlift : liftUniqueFromForgetSubgraph δf ∈ (ofUniqueForgetForest A hDisj).elements := by
+      rw [ofUniqueForgetForest_elements]; exact Finset.mem_image_of_mem _ hδf
+    rw [retargetVertex_eq_star_of_mem_element (ofUniqueForgetForest A hDisj) _ hlift hvδ,
+      forget_liftUniqueFromForgetSubgraph,
+      AdmissibleSubgraph.retargetVertex_of_mem_component hDisj _ hδf hvδ]
+  · rw [A.retargetVertex_of_not_mem _ hv,
+      (ofUniqueForgetForest A hDisj).retargetVertex_of_not_mem _
+        (by rw [ofUniqueForgetForest_vertices]; exact hv)]
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
