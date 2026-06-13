@@ -1613,6 +1613,72 @@ theorem forget_liftFlatQuotientSubgraphToCres (g : HopfGen) (A : h58BridgeOuterI
     HEq (liftFlatQuotientSubgraphToCres g A δf).forget δf :=
   forget_liftFlatSubgraphAlongForgetEq (forget_canonicalOuterContractedGraph g A) δf
 
+/-! ### S-3b — forest (admissible subgraph) lift
+
+Lift a flat admissible forest of `G.forget` to a resolved admissible forest of `G`
+(component-wise `resolvedSubgraphOfForget`; CD/disjointness transport homogeneously after the
+`subst`).  Mirrors `ofUniqueForgetForest`, now generic over any forget-equal graph. -/
+
+private theorem admissibleSubgraph_ext_local {Gf : FeynmanGraph} {A₁ A₂ : AdmissibleSubgraph Gf}
+    (h : A₁.elements = A₂.elements) : A₁ = A₂ := by
+  obtain ⟨⟨e₁, d₁, nd₁⟩, cd₁⟩ := A₁
+  obtain ⟨⟨e₂, d₂, nd₂⟩, cd₂⟩ := A₂
+  cases h; rfl
+
+/-- (free-index helper) Lift a flat admissible forest of `Gf = G.forget` to a resolved
+admissible forest of `G`. -/
+noncomputable def liftFlatAdmissibleAlongForgetEq {G : ResolvedFeynmanGraph} {Gf : FeynmanGraph}
+    (h : G.forget = Gf) (Af : AdmissibleSubgraph Gf) (hDisj : Af.IsPairwiseDisjoint) :
+    ResolvedAdmissibleSubgraph G := by
+  subst h
+  exact
+    { elements := Af.elements.image resolvedSubgraphOfForget
+      isConnectedDivergent := by
+        intro γ hγ
+        obtain ⟨δf, hδf, rfl⟩ := Finset.mem_image.mp hγ
+        rw [forget_resolvedSubgraphOfForget]
+        exact Af.isConnectedDivergent_of_mem hδf
+      pairwiseDisjoint := by
+        intro γ₁ h₁ γ₂ h₂ hne
+        obtain ⟨δf₁, hδf₁, rfl⟩ := Finset.mem_image.mp h₁
+        obtain ⟨δf₂, hδf₂, rfl⟩ := Finset.mem_image.mp h₂
+        exact hDisj hδf₁ hδf₂ (fun heq => hne (by rw [heq])) }
+
+@[simp] theorem liftFlatAdmissibleAlongForgetEq_elements {G : ResolvedFeynmanGraph}
+    {Gf : FeynmanGraph} (h : G.forget = Gf) (Af : AdmissibleSubgraph Gf)
+    (hDisj : Af.IsPairwiseDisjoint) :
+    HEq (liftFlatAdmissibleAlongForgetEq h Af hDisj).elements
+      (Af.elements.image (liftFlatSubgraphAlongForgetEq h)) := by
+  subst h; rfl
+
+/-- The free-index forest lift round-trips (heterogeneous). -/
+theorem forget_liftFlatAdmissibleAlongForgetEq {G : ResolvedFeynmanGraph} {Gf : FeynmanGraph}
+    (h : G.forget = Gf) (Af : AdmissibleSubgraph Gf) (hDisj : Af.IsPairwiseDisjoint) :
+    HEq (liftFlatAdmissibleAlongForgetEq h Af hDisj).forget Af := by
+  subst h
+  apply heq_of_eq
+  apply admissibleSubgraph_ext_local
+  show (Af.elements.image resolvedSubgraphOfForget).image ResolvedFeynmanSubgraph.forget
+    = Af.elements
+  rw [Finset.image_image,
+    show (ResolvedFeynmanSubgraph.forget ∘ resolvedSubgraphOfForget) = id from
+      funext forget_resolvedSubgraphOfForget, Finset.image_id]
+
+/-- **S-3b: lift a flat quotient forest into the resolved contracted graph.** -/
+noncomputable def liftFlatQuotientForestToCres (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (Af : AdmissibleSubgraph (h58BridgeOuterActualQuotientGraph g A))
+    (hDisj : Af.IsPairwiseDisjoint) :
+    ResolvedAdmissibleSubgraph
+      ((canonicalOuterAoutOfFlatOuter g A).contractWithStars (canonicalOuterStarOf g A)) :=
+  liftFlatAdmissibleAlongForgetEq (forget_canonicalOuterContractedGraph g A) Af hDisj
+
+/-- **S-3b: forget round-trip** (heterogeneous, via the contracted-graph bridge). -/
+theorem forget_liftFlatQuotientForestToCres (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (Af : AdmissibleSubgraph (h58BridgeOuterActualQuotientGraph g A))
+    (hDisj : Af.IsPairwiseDisjoint) :
+    HEq (liftFlatQuotientForestToCres g A Af hDisj).forget Af :=
+  forget_liftFlatAdmissibleAlongForgetEq (forget_canonicalOuterContractedGraph g A) Af hDisj
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
