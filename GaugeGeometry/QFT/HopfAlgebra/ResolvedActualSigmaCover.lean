@@ -2257,6 +2257,46 @@ def ResolvedFlatH58CarrierMixedAlignment.combine {g : HopfGen}
   mixed_comm := M.mixed_comm
   splitTerm_agreement := F.splitTerm_agreement
 
+/-! ### Gold Sprint G-2 — slice the forest boundary: index vs term
+
+The forest boundary itself splits into a **forest index boundary** (`forestSplitOf` +
+`forest_comm` — which resolved forest carrier item corresponds to which flat split-choice) and a
+**term boundary** (`splitTerm_agreement` — the flat split-term factorization, independent of the
+carrier).  This separates "is `forest_comm` mechanical?" from "is the term agreement the genuine
+final theorem?". -/
+
+/-- The forest **index** boundary: the resolved forest carrier → flat split-choice dictionary
+with its commutation (over a fixed `flatImageOf`). -/
+structure ResolvedFlatH58CarrierForestIndexBoundary (g : HopfGen)
+    (FL : ResolvedCarrierFiniteBranchMapLayer)
+    (flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g) where
+  /-- Resolved forest carrier index → flat split-choice index. -/
+  forestSplitOf : {q // q ∈ FL.forestCarrier} → h58BridgeSplitChoiceSigma g
+  /-- Forest split indices land in the flat split index. -/
+  forestSplit_mem : ∀ q, forestSplitOf q ∈ h58BridgeSplitChoiceIndex g
+  /-- Forest dictionary commutation. -/
+  forest_comm : ∀ q,
+    flatImageOf (FL.sep.forestImage q.1) = h58BridgeSplitPhi g (forestSplitOf q)
+
+/-- The **term** boundary: the flat split-choice term agreement (carrier-independent) — the flat
+H5.8 split-term factorization. -/
+structure ResolvedFlatH58CarrierForestTermBoundary (g : HopfGen) where
+  /-- The flat split-choice term agreement. -/
+  splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- **G-2: combine the index and term boundaries into the forest boundary.** -/
+def ResolvedFlatH58CarrierForestIndexBoundary.combine {g : HopfGen}
+    {FL : ResolvedCarrierFiniteBranchMapLayer}
+    {flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g}
+    (I : ResolvedFlatH58CarrierForestIndexBoundary g FL flatImageOf)
+    (T : ResolvedFlatH58CarrierForestTermBoundary g) :
+    ResolvedFlatH58CarrierForestBoundary g FL flatImageOf where
+  forestSplitOf := I.forestSplitOf
+  forestSplit_mem := I.forestSplit_mem
+  forest_comm := I.forest_comm
+  splitTerm_agreement := T.splitTerm_agreement
+
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
 The last wrapper: a per-outer-forest family of inner supply packages assembles into the
