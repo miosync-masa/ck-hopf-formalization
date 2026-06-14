@@ -39438,6 +39438,24 @@ noncomputable def h58BridgeForestChoiceRemnantCertificateCanonical
       (forestComponentForestChoiceComponentRemnantPositiveCertificateOfComplement g q hq
         (forestComponentForestChoiceComponentComplementPositiveCertificateCanonical g q hq)))
 
+/-- **G-5c-2: the canonical product factorization.**  The per-component coproduct-choice product
+factors as outer forest ⊗ inner quotient forest (`toHopfH`), facade-free: the outer side via the
+left/promoted geometric identity (`OuterProductFactorizationCanonical`) and the inner side via the
+remnant inner-product transport (`RemnantInnerProductTransportCanonical`), both canonical under the
+standard divergence-preservation assumption only.  No gated final reindex; no facade typeclass. -/
+theorem h58BridgeForestChoiceProductFactorizationCanonical
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    h58BridgeForestChoiceProductTerm g q =
+      (h58BridgeForestChoiceOuterIndex g q hq).1.toHopfH ⊗ₜ[ℚ]
+        (h58BridgeForestChoiceRepQuotient g q hq).toHopfH :=
+  forestComponentForestChoice_productTerm_eq_repQuotient_of_productFactors g
+    (forestComponentForestChoiceProductFactorizationOfOuterInner g
+      (forestComponentForestChoiceOuterProductFactorizationCanonical g)
+      (forestComponentForestChoiceInnerProduct_eq_repQuotient_of_remnantTransport g
+        (forestComponentForestChoiceRemnantInnerProductTransportCanonical g)))
+    q hq
+
 /-- Public bridge: the remnant-positivity certificate places the canonical representative
 quotient-side forest in the RHS proper carrier. -/
 theorem h58BridgeForestChoiceRepQuotientMem

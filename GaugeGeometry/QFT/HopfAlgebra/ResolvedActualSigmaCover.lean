@@ -2438,6 +2438,25 @@ noncomputable def ResolvedForestBranchFactorizationSupply.ofProductRight {g : Ho
   product := product
   right := right
 
+/-- **G-5c-2: both `certificate` and `product` are canonically discharged.**  The certificate is
+canonical (G-5c-1) and the product factorization is canonical
+(`h58BridgeForestChoiceProductFactorizationCanonical`: outer left/promoted identity ⊗ inner remnant
+transport, both facade-free).  The forest-branch factorization supply therefore reduces to the
+**single** remaining datum `right` — the de-contraction round-trip identification of the quotient
+right factor (the genuine remaining content of full native resolved H5.8). -/
+noncomputable def ResolvedForestBranchFactorizationSupply.ofRight {g : HopfGen}
+    (right : ∀ q, ∀ hq : q ∈ h58BridgeForestChoiceIndex g,
+      h58BridgeForestRightHopfH g q =
+        h58BridgeForestRightHopfHQuotient g
+          (h58BridgeForestChoiceOuterIndex g q hq)
+          (h58BridgeForestChoiceRepQuotient g q hq)
+          (h58BridgeForestChoiceRepQuotientMem g q hq
+            (h58BridgeForestChoiceRemnantCertificateCanonical g q hq))) :
+    ResolvedForestBranchFactorizationSupply g where
+  certificate := h58BridgeForestChoiceRemnantCertificateCanonical g
+  product := fun q hq => h58BridgeForestChoiceProductFactorizationCanonical g q hq
+  right := right
+
 /-! ### Gold Sprint G-4 Scout — `forest_term` is a coproduct factorization (anatomy)
 
 Unfolding the public aliases for a left branch `s = Sum.inl q` (`q ∈ forestChoiceIndex`):
