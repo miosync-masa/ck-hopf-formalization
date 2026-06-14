@@ -152,6 +152,18 @@ standalone modules, axiom-clean):
   build the concrete carriers with CD/star facts, the resolved→flat coordinate dictionary, and
   `splitTerm_agreement` (the genuine boundary, not imported from flat). Full native resolved H5.8
   is still **not** claimed complete.
+- **The boundary reduced to one predicate `forest_term`.** The remaining datum is now a single
+  named theorem. The boundary `ResolvedFlatH58Correspondence` (index dictionary + weight equality)
+  is whittled down: `flatImageOf` is *constructed* (forget through the contracted-graph bridge +
+  the actual↔rep transport); a carrier-based refactor removes an over-strong whole-type condition
+  (the P2 pattern); the mixed half is killed (an origin projection); the forest boundary splits
+  into a mechanical index round-trip (`forest_comm`) and a term factorization; and the term
+  factorization branch-splits (`forest ⊕ mixed`, by `Sum.isLeft`) into `forest_term` + `mixed_term`.
+  The single genuine remaining datum is **`forest_term`** — the forest-branch weight factorization
+  (`∀ s, s.isLeft → splitChoiceTerm s = quotientTerm (splitPhi s)`). **Full native resolved H5.8 is
+  reduced to proving `forest_term` resolved-natively**; `mixed_term` is expected mechanical; the
+  carrier / de-contraction / cover / reindex / dictionary-half are complete. Full native resolved
+  H5.8 is still **not** claimed complete (`forest_term` not yet proved).
 
 All R-4-superfull modules depend only on `propext`/`Classical.choice`/`Quot.sound`; `Main`
 is unaffected apart from the thin public aliases added to `Coassoc.lean`.

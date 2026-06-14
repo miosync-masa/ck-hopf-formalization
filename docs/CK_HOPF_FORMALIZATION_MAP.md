@@ -500,6 +500,25 @@ from the lifted images with the CD/star/saturation facts transported (S-3c); the
 (resolved-native-or-supplied — the genuine boundary, *not* imported from flat, S-5).  **Full
 native resolved H5.8 remains not claimed complete.**
 
+**The boundary reduced to one predicate `forest_term`.**  The honest finishing-line is now a
+single named theorem.  The boundary `ResolvedFlatH58Correspondence` (the index dictionary +
+weight equality, one datum) is whittled down: **`flatImageOf` is constructed** (G-1a — `forget`
+through the S-2e bridge + the actual↔rep transport `h58BridgeActualQuotientToSigma`); the **P3
+fix** makes the dictionary carrier-based (`ResolvedH58CarrierWeightData` /
+`ResolvedFlatH58CarrierWeightAlignment` — the whole-type commutation was over-strong, the P2
+pattern); the **mixed half is killed** (`ResolvedFlatH58CarrierMixedAlignment`, an origin
+projection) leaving the **forest boundary**; that splits into an **index** boundary
+(`forest_comm` — a mechanical origin round-trip) and a **term** boundary
+(`ResolvedFlatH58CarrierForestTermBoundary` — the flat split-term factorization); and the term
+boundary **branch-splits** (`forest ⊕ mixed`, by `Sum.isLeft`, no Coassoc wrappers) into
+`forest_term` + `mixed_term`.  The single genuine remaining datum is **`forest_term`**: `∀ s ∈
+splitChoiceIndex, s.isLeft → splitChoiceTerm s = quotientTerm (splitPhi s)` — the forest-branch
+weight factorization (Field-Filling-6's `hForestTerm`).  **`full native resolved H5.8` is reduced
+to proving `forest_term` resolved-natively** (the de-contraction parent weight factorization),
+not imported from flat's facade-discharged assembly.  Carrier / de-contraction / cover / reindex
+/ dictionary-half / mixed-half are all complete; `mixed_term` is expected mechanical.  **Full
+native resolved H5.8 still not claimed complete (`forest_term` not yet proved).**
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

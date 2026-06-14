@@ -422,6 +422,30 @@ images with the CD/star/saturation facts transported; **S-4** `ResolvedH58Concre
 (resolved-native-or-supplied — the genuine boundary, NOT imported from flat).  Full native
 resolved H5.8 still **not** claimed complete.
 
+**Gold path — the boundary reduced to ONE predicate `forest_term`.**  The honest finishing-line
+is now a single named theorem.  The reduction chain (all axiom-clean, in
+`ResolvedActualSigmaCover.lean`):
+```
+ResolvedFlatH58Correspondence            ◄── boundary named (index dictionary + weight equality, one datum)
+  ├─ flatImageOf  CONSTRUCTED (G-1a)     forget (S-2e bridge) + actual↔rep (h58BridgeActualQuotientToSigma)
+  └─ P3 fix: carrier-based dictionary    ResolvedH58CarrierWeightData / …CarrierWeightAlignment
+        (whole-type commutation was over-strong — sum_reindex only uses the carriers; P2 pattern)
+        │
+ResolvedFlatH58CarrierMixedAlignment .combine ResolvedFlatH58CarrierForestBoundary   ◄── mixed killed (G-1c)
+        │   (mixed half = flatImageOf + origin-projection mixedSplitOf — mechanical)
+ResolvedFlatH58CarrierForestIndexBoundary .combine ResolvedFlatH58CarrierForestTermBoundary  ◄── index vs term (G-2)
+        │   (index = origin round-trip — mechanical; term = the factorization)
+ResolvedFlatH58CarrierBranchTermBoundary .toForestTermBoundary    ◄── forest ⊕ mixed split (G-3, Sum.isLeft, no wrappers)
+        │
+forest_term : ∀ s ∈ splitChoiceIndex, s.isLeft → splitChoiceTerm s = quotientTerm (splitPhi s)   ◄── THE GOLD
+```
+**`full native resolved H5.8` is reduced to proving `forest_term` resolved-natively** — the
+forest-branch weight factorization (= flat `forestComponentSplitPhi_term_eq_of_split`'s forest
+half, Field-Filling-6's `hForestTerm`), *not* imported from flat's facade-discharged assembly.
+The carrier / de-contraction / cover / reindex / dictionary-half / mixed-half are all complete.
+`mixed_term` (right branch) is expected mechanical.  Full native resolved H5.8 still **not**
+claimed complete (`forest_term` not yet proved).
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
