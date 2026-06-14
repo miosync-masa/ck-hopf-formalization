@@ -2354,6 +2354,26 @@ def ResolvedFlatH58CarrierBranchTermBoundary.toForestTermBoundary {g : HopfGen}
     | inl q => exact B.forest_term (Sum.inl q) hs rfl
     | inr q => exact B.mixed_term (Sum.inr q) hs rfl
 
+/-- **THE single remaining gold theorem**, named: the forest-branch coproduct factorization.
+For a forest (left) split choice, the LHS split-choice tensor term (the product of per-component
+strict summands threaded by the quotient generator) equals the RHS quotient term (outer forest ⊗
+inner strict summand).  This is the multiplicativity of the CK coproduct restricted to the
+forest, packaged through the de-contraction parent — the one identity that, with the (mechanical)
+mixed branch, closes full native resolved H5.8. -/
+structure ResolvedForestBranchCoproductFactorization (g : HopfGen) where
+  /-- The forest-branch coproduct factorization (= `forest_term`). -/
+  forest_branch_factorization : ∀ s ∈ h58BridgeSplitChoiceIndex g, s.isLeft = true →
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- The gold + the (mechanical) mixed-branch term equality give the branch term boundary. -/
+def ResolvedForestBranchCoproductFactorization.toBranchTermBoundary {g : HopfGen}
+    (F : ResolvedForestBranchCoproductFactorization g)
+    (mixed_term : ∀ s ∈ h58BridgeSplitChoiceIndex g, s.isRight = true →
+      h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)) :
+    ResolvedFlatH58CarrierBranchTermBoundary g where
+  forest_term := F.forest_branch_factorization
+  mixed_term := mixed_term
+
 /-! ### Gold Sprint G-4 Scout — `forest_term` is a coproduct factorization (anatomy)
 
 Unfolding the public aliases for a left branch `s = Sum.inl q` (`q ∈ forestChoiceIndex`):
