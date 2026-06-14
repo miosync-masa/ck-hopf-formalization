@@ -39334,6 +39334,68 @@ noncomputable def h58BridgeActualQuotientToSigma
     h58BridgeQuotientSigma g :=
   ⟨A, mapPermAdmissibleSubgraph (forestOuterActualToRepPerm_spec g A) M⟩
 
+/-! ### G-5a — facade-free forest-branch factorization exposures (alias-only)
+
+These expose the *facade-free* building blocks of the forest-branch term equality so the
+standalone resolved track can supply its own factorization data.  The gated final reindex
+`forestComponentSplitPhi_term_eq_of_split` is **NOT** exposed. -/
+
+/-- Public alias: the forest split-choice summand type (LHS of `h58BridgeSplitChoiceSigma`). -/
+abbrev h58BridgeForestChoiceSigma [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : Type := forestComponentChoiceSigma g
+
+/-- Public alias: the forest-branch finite choice index. -/
+noncomputable def h58BridgeForestChoiceIndex [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : Finset (h58BridgeForestChoiceSigma g) :=
+  forestComponentForestChoiceSigmaIndex g
+
+/-- Public alias: the `repG`-representative quotient graph of an outer proper forest. -/
+noncomputable def h58BridgeOuterQuotientGraph [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (A : h58BridgeOuterIndex g) : FeynmanGraph :=
+  forestOuterQuotientGraph g A
+
+/-- Public alias: the quotient Hopf generator of an outer proper forest. -/
+noncomputable def h58BridgeOuterQuotientHopfGen [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (A : h58BridgeOuterIndex g) : HopfGen :=
+  forestOuterQuotientHopfGen g A
+
+/-- Public alias: the per-component coproduct-choice product term of a forest choice. -/
+noncomputable def h58BridgeForestChoiceProductTerm
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) : HopfH ⊗[ℚ] HopfH :=
+  forestComponentChoiceProductTerm q.1.1 q.2
+
+/-- Public alias: the right (quotient-generator) factor of a forest choice. -/
+noncomputable def h58BridgeForestRightHopfH [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) : HopfH :=
+  forestRightHopfH g q.1.1 q.1.2
+
+/-- Public alias: the right (quotient-generator) factor over the quotient graph (RHS of the
+right-factor identification `hRight`). -/
+noncomputable def h58BridgeForestRightHopfHQuotient
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (B : AdmissibleSubgraph (h58BridgeOuterQuotientGraph g A))
+    (hB : B ∈ (h58BridgeOuterQuotientGraph g A).properDisjointAdmissibleDivergentSubgraphs) :
+    HopfH :=
+  forestRightHopfH (forestOuterQuotientHopfGen g A) B hB
+
+/-- **G-5a: the facade-free forest-branch term equality.**  Given the product factorization
+(`hProduct`) and the right-factor identification (`hRight`) for a forest choice `q` against an
+outer/inner forest `(A, B)`, the LHS split-choice tensor term equals the RHS quotient term.  This
+is exactly `forestComponentChoiceSigmaTerm_eq_quotientForestSigmaTerm_of_factorization` (the pure
+tensor lemma — `assoc_tmul`), with the conclusion in public-alias terms.  **Facade-free** (no
+gated reindex). -/
+theorem h58BridgeForestSplitChoiceTermEqOfFactorization
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g)
+    (A : h58BridgeOuterIndex g) (B : AdmissibleSubgraph (h58BridgeOuterQuotientGraph g A))
+    (hB : B ∈ (h58BridgeOuterQuotientGraph g A).properDisjointAdmissibleDivergentSubgraphs)
+    (hProduct : h58BridgeForestChoiceProductTerm g q = A.1.toHopfH ⊗ₜ[ℚ] B.toHopfH)
+    (hRight : h58BridgeForestRightHopfH g q = h58BridgeForestRightHopfHQuotient g A B hB) :
+    h58BridgeSplitChoiceTerm g (Sum.inl q) = h58BridgeQuotientTerm g ⟨A, B⟩ :=
+  forestComponentChoiceSigmaTerm_eq_quotientForestSigmaTerm_of_factorization g q A B hB hProduct hRight
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
