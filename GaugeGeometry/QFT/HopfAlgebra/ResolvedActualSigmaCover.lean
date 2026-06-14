@@ -2453,7 +2453,32 @@ positive-edge remnants — `componentPositiveEdges` / the cover work).  We do **
 gated final reindex `forestComponentSplitPhi_term_eq_of_split`; we reuse its facade-free
 building blocks and supply the certificate ourselves.  The next sprint exposes these (thin
 Coassoc aliases for the facade-free `of_factorization` lemma + `forestComponentChoiceProductTerm_eq_outer_inner_products_of_core`),
-and constructs the certificate resolved-natively — a concrete, facade-free path to the gold. -/
+and constructs the certificate resolved-natively — a concrete, facade-free path to the gold.
+
+**G-5a alias inventory (the gold sprint's exact Coassoc exposures, all facade-free).**  To
+*state and call* the forest_term proof in the resolved track, expose (alias-only, proof-change
+free) these private objects, in dependency order — none is the gated final reindex:
+1. **types/index** : `forestComponentChoiceSigma g` (the summand of `h58BridgeSplitChoiceSigma`,
+   = `Σ A : forestOuterProperIndex, forestComponentChoiceFn A.1`), `forestComponentForestChoiceSigmaIndex g`
+   (the forest-branch finite index), `forestComponentForestChoiceOuterIndex g q hq`,
+   `forestComponentForestChoiceRepQuotientSubgraphCanonical g q hq`.
+2. **certificate** : the *type* `forestComponentForestChoiceRemnantPositiveComponentsCertificate
+   g q hq` (a positivity payload: `∀ δ ∈ remnantComponents, 0 < δ.internalEdges.card`) — σ-cover
+   data, to be *constructed* resolved-natively (G-5b).
+3. **term pieces** : `forestComponentChoiceProductTerm`, `forestRightHopfH`.
+4. **facade-free lemmas** : `forestComponentForestChoice_branch_term_eq_of_factorization`
+   (the assembler: `C` + `hProduct` + `hRight` ⟹ branch term equality),
+   `forestComponentChoiceProductTerm_eq_outer_inner_products_of_core` (the structural product
+   factorization), and `forestComponentChoiceSigmaTerm_eq_quotientForestSigmaTerm_of_factorization`
+   (the underlying tensor lemma).
+**Forbidden:** `forestComponentSplitPhi_term_eq_of_split` (the gated final reindex) — never
+exposed/imported.
+**G-5b/c/d:** construct the remnant-positive certificate `C` from the de-contraction parent
+(its remnants have positive internal edges — `canonicalOuterComponentPositiveEdges` /
+`quotientEdgePreimage_map`); supply `hProduct` (from the structural factorization + outer/inner
+factor = `toHopfH` lemmas) and `hRight` (generator/graph equality via the bridge); assemble
+`forest_term`.  This is a single focused sprint — the de-contraction section built across this
+track is exactly the machinery `C`/`hRight` need. -/
 
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
