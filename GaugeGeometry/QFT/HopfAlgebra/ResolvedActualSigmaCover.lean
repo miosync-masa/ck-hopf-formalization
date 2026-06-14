@@ -1807,6 +1807,27 @@ theorem remnant_contains_all_starVertices_of_containsAoutEdges
   rw [ResolvedAdmissibleSubgraph.quotientRemainderSubgraph_vertices]
   exact Finset.mem_image_of_mem _ hvγ
 
+/-- **G-6b-1: `remnantTouches` is structural** (not a per-parent datum).  For a nonempty outer
+forest with connected, positive-edge components, every parent `γ ⊇ Aout`'s remnant meets the outer
+stars: the all-star lemma puts every outer star inside the remnant
+(`remnant_contains_all_starVertices_of_containsAoutEdges`), and a nonempty outer forest has at least
+one star (`starVertices = elements.image starOf`).  So the `CanonicalOuterNativeParentSupply`
+forest-discriminator `remnantTouches` follows from `containsAoutEdges` + the outer-forest component
+facts — no extra supplied datum. -/
+theorem remnantTouches_of_containsAoutEdges
+    (Aout : ResolvedAdmissibleSubgraph G) (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {γ : ResolvedFeynmanSubgraph G} (hA : Aout.internalEdges ≤ γ.internalEdges)
+    (hCompConn : ∀ η ∈ Aout.elements, η.forget.IsConnected)
+    (hCompPos : ∀ η ∈ Aout.elements, 0 < η.internalEdges.card)
+    (hNE : Aout.elements.Nonempty) :
+    ¬ Disjoint (resolvedParentRemnant Aout starOf γ).vertices (Aout.starVertices starOf) := by
+  obtain ⟨η, hη⟩ := hNE
+  have hsMem : starOf η ∈ Aout.starVertices starOf :=
+    ResolvedAdmissibleSubgraph.mem_starVertices.mpr ⟨η, hη, rfl⟩
+  have hsub := remnant_contains_all_starVertices_of_containsAoutEdges Aout starOf hA hCompConn hCompPos
+  rw [Finset.not_disjoint_iff]
+  exact ⟨starOf η, hsub hsMem, hsMem⟩
+
 /-- **BranchCarriers (2): single-δ forest image.**  A forest-by-star quotient image `δ` (from
 the carrier `Q`) packaged as a single-parent `ResolvedForestImageData`, via the de-contracted
 parent (`parentOfQuotient`) whose remnant is exactly `δ` (`parent_remnant_eq`).  Inputs: `δ`'s
