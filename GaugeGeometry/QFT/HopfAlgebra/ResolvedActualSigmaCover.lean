@@ -2374,6 +2374,49 @@ def ResolvedForestBranchCoproductFactorization.toBranchTermBoundary {g : HopfGen
   forest_term := F.forest_branch_factorization
   mixed_term := mixed_term
 
+/-- **G-5b: the resolved-native forest-branch factorization supply.**  Per forest choice `q`
+(with `hq`), this supplies exactly the three inputs of the facade-free
+`h58BridgeForestBranchTermEqOfFactorization`:
+* `certificate` — the remnant-positivity σ-cover datum (built resolved-natively from the
+  de-contraction parent's positive-edge remnants);
+* `product` — the per-component coproduct-choice product factors as outer forest ⊗ inner quotient
+  forest (`toHopfH`);
+* `right` — the right (quotient generator) factor is identified through the contraction chain.
+
+These are the genuine remaining mathematical content of full native resolved H5.8; the surrounding
+reindexing/bijection/term-assembly is already discharged. -/
+structure ResolvedForestBranchFactorizationSupply (g : HopfGen) where
+  /-- Remnant-positivity certificate per forest choice (the σ-cover datum). -/
+  certificate : ∀ q, ∀ hq : q ∈ h58BridgeForestChoiceIndex g,
+    h58BridgeForestChoiceRemnantPositiveCertificate g q hq
+  /-- The coproduct-choice product factors as outer ⊗ inner `toHopfH`. -/
+  product : ∀ q, ∀ hq : q ∈ h58BridgeForestChoiceIndex g,
+    h58BridgeForestChoiceProductTerm g q =
+      (h58BridgeForestChoiceOuterIndex g q hq).1.toHopfH ⊗ₜ[ℚ]
+        (h58BridgeForestChoiceRepQuotient g q hq).toHopfH
+  /-- The right (quotient-generator) factor is identified through the contraction chain. -/
+  right : ∀ q, ∀ hq : q ∈ h58BridgeForestChoiceIndex g,
+    h58BridgeForestRightHopfH g q =
+      h58BridgeForestRightHopfHQuotient g
+        (h58BridgeForestChoiceOuterIndex g q hq)
+        (h58BridgeForestChoiceRepQuotient g q hq)
+        (h58BridgeForestChoiceRepQuotientMem g q hq (certificate q hq))
+
+/-- **G-5b: the factorization supply discharges the forest-branch coproduct factorization
+(`forest_term`)** — facade-free, via `h58BridgeForestBranchTermEqOfFactorization`. -/
+def ResolvedForestBranchFactorizationSupply.toFactorization {g : HopfGen}
+    (S : ResolvedForestBranchFactorizationSupply g) :
+    ResolvedForestBranchCoproductFactorization g where
+  forest_branch_factorization := by
+    intro s hs hleft
+    cases s with
+    | inl q =>
+        have hq : q ∈ h58BridgeForestChoiceIndex g :=
+          (h58BridgeSplitChoiceIndex_inl_mem_iff g q).mp hs
+        exact h58BridgeForestBranchTermEqOfFactorization g q hq
+          (S.certificate q hq) (S.product q hq) (S.right q hq)
+    | inr q => simp at hleft
+
 /-! ### Gold Sprint G-4 Scout — `forest_term` is a coproduct factorization (anatomy)
 
 Unfolding the public aliases for a left branch `s = Sum.inl q` (`q ∈ forestChoiceIndex`):

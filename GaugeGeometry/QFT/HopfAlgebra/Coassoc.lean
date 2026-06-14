@@ -39462,6 +39462,15 @@ theorem h58BridgeForestBranchTermEqOfFactorization
       forestComponentSplitPhi_inl_of_mem g q hq]
   exact forestComponentForestChoice_branch_term_eq_of_factorization g q hq C hProduct hRight
 
+/-- Public: a left split choice `Sum.inl q` is split-indexed iff `q` is forest-choice indexed.
+Lets the resolved track extract a forest membership from a split-branch (`isLeft`) summand. -/
+theorem h58BridgeSplitChoiceIndex_inl_mem_iff
+    [IsDivergencePreservedByAdmissibleForestContract] (g : HopfGen)
+    (q : h58BridgeForestChoiceSigma g) :
+    Sum.inl q ∈ h58BridgeSplitChoiceIndex g ↔ q ∈ h58BridgeForestChoiceIndex g := by
+  unfold h58BridgeSplitChoiceIndex h58BridgeForestChoiceIndex forestComponentSplitChoiceSigmaIndex
+  exact Finset.inl_mem_disjSum
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
