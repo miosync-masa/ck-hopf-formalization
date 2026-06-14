@@ -39396,6 +39396,72 @@ theorem h58BridgeForestSplitChoiceTermEqOfFactorization
     h58BridgeSplitChoiceTerm g (Sum.inl q) = h58BridgeQuotientTerm g ⟨A, B⟩ :=
   forestComponentChoiceSigmaTerm_eq_quotientForestSigmaTerm_of_factorization g q A B hB hProduct hRight
 
+/-! ### G-5a (cont.) — canonical forest-branch building blocks
+
+The canonical outer/inner indices determined by a forest choice, its remnant-positivity
+certificate, and the certificate→properness bridge — so the resolved track can supply the
+canonical factorization data and obtain `forest_term` *in `splitPhi` form* directly. -/
+
+/-- Public alias: the canonical outer proper-forest index of a forest choice. -/
+noncomputable def h58BridgeForestChoiceOuterIndex
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    h58BridgeOuterIndex g :=
+  forestComponentForestChoiceOuterIndex g q hq
+
+/-- Public alias: the canonical representative quotient-side forest of a forest choice. -/
+noncomputable def h58BridgeForestChoiceRepQuotient
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    AdmissibleSubgraph (h58BridgeOuterQuotientGraph g (h58BridgeForestChoiceOuterIndex g q hq)) :=
+  forestComponentForestChoiceRepQuotientSubgraphCanonical g q hq
+
+/-- Public alias: the forest-choice remnant-positivity certificate type (the σ-cover datum the
+resolved de-contraction parent supplies). -/
+abbrev h58BridgeForestChoiceRemnantPositiveCertificate
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    Type :=
+  forestComponentForestChoiceRemnantPositiveComponentsCertificate g q hq
+
+/-- Public bridge: the remnant-positivity certificate places the canonical representative
+quotient-side forest in the RHS proper carrier. -/
+theorem h58BridgeForestChoiceRepQuotientMem
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g)
+    (C : h58BridgeForestChoiceRemnantPositiveCertificate g q hq) :
+    h58BridgeForestChoiceRepQuotient g q hq ∈
+      (h58BridgeOuterQuotientGraph g (h58BridgeForestChoiceOuterIndex g q hq)
+      ).properDisjointAdmissibleDivergentSubgraphs :=
+  forestComponentForestChoiceRepQuotientSubgraphCanonical_mem_properDisjoint_of_remnantPositive
+    g q hq C
+
+/-- **G-5a: the facade-free forest-branch term equality, in `splitPhi` form.**  Given the
+remnant-positivity certificate `C`, the product factorization `hProduct`, and the right-factor
+identification `hRight` for a forest choice `q`, the LHS split-choice term at `Sum.inl q` equals the
+RHS quotient term at `h58BridgeSplitPhi g (Sum.inl q)`.  This bundles
+`forestComponentForestChoice_branch_term_eq_of_factorization` (facade-free) with the `dif_pos`
+`φ`-on-`inl` alignment, so the resolved track gets the `forest_term` field shape directly.
+**Facade-free** — the gated final reindex `forestComponentSplitPhi_term_eq_of_split` is not used. -/
+theorem h58BridgeForestBranchTermEqOfFactorization
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g)
+    (C : h58BridgeForestChoiceRemnantPositiveCertificate g q hq)
+    (hProduct : h58BridgeForestChoiceProductTerm g q =
+      (h58BridgeForestChoiceOuterIndex g q hq).1.toHopfH ⊗ₜ[ℚ]
+        (h58BridgeForestChoiceRepQuotient g q hq).toHopfH)
+    (hRight : h58BridgeForestRightHopfH g q =
+      h58BridgeForestRightHopfHQuotient g
+        (h58BridgeForestChoiceOuterIndex g q hq)
+        (h58BridgeForestChoiceRepQuotient g q hq)
+        (h58BridgeForestChoiceRepQuotientMem g q hq C)) :
+    h58BridgeSplitChoiceTerm g (Sum.inl q) =
+      h58BridgeQuotientTerm g (h58BridgeSplitPhi g (Sum.inl q)) := by
+  rw [show h58BridgeSplitPhi g (Sum.inl q) =
+      forestComponentForestChoiceToQuotientForestSigma g q hq from
+      forestComponentSplitPhi_inl_of_mem g q hq]
+  exact forestComponentForestChoice_branch_term_eq_of_factorization g q hq C hProduct hRight
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
