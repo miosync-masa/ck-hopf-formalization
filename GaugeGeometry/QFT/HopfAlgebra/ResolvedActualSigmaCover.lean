@@ -1176,6 +1176,20 @@ def QuotientVertexCovered (Aout : ResolvedAdmissibleSubgraph G)
       (∃ e ∈ δ.internalEdges, e.source = w ∨ e.target = w) ∨
       (∃ l ∈ δ.externalLegs, l.attachedTo = w)
 
+/-- **G-6b-2: `QuotientVertexCovered` is structural** (not a per-image datum).  If the
+contracted-graph subgraph `δ` is connected (after `forget`) with positive internal edges, then
+every vertex is incident to one of `δ`'s edges (`resolvedSubgraph_vertex_incident_edge_of_connected_pos`)
+— the middle disjunct — so `δ` has no isolated vertices and is vertex-covered.  Reduces the
+`hCovered` / `remnantCovered` σ-cover field to the connectivity+positivity already in the CD datum. -/
+theorem quotientVertexCovered_of_connected_pos
+    (Aout : ResolvedAdmissibleSubgraph G) (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)}
+    (hConn : δ.forget.IsConnected) (hPos : 0 < δ.internalEdges.card) :
+    QuotientVertexCovered Aout starOf δ := by
+  intro w hw
+  obtain ⟨e, he, hend⟩ := resolvedSubgraph_vertex_incident_edge_of_connected_pos hConn hPos hw
+  exact Or.inr (Or.inl ⟨e, he, hend⟩)
+
 open Classical in
 /-- **⊇ direction of the vertex half.**  Every vertex of `δ` is the retarget of a parent
 vertex — stars via a component vertex (`hCompNonempty`), edge/leg endpoints via their
