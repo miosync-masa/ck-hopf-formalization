@@ -2148,6 +2148,62 @@ noncomputable def CanonicalOuterInnerSupplyData.ofCorrespondence {g : HopfGen}
   concreteIndexMaps := corr.toConcreteIndexMaps
   splitTerm_agreement := corr.term_agreement
 
+/-! ### Gold Sprint G-1b — carrier-based weight alignment (P3 fix, concrete terms)
+
+The carrier-subtype dictionary carrying the **concrete** flat H5.8 tensor terms.  The split maps
+have carrier-subtype domains (no off-carrier junk), and the commutation/term-agreement give the
+concrete sum-reindex through `ResolvedH58CarrierWeightData.sum_reindex`. -/
+
+/-- The carrier-based resolved↔flat correspondence with concrete tensor terms: the split index
+maps over the **carrier subtypes**, the dictionary commutation, and the split-choice term
+agreement. -/
+structure ResolvedFlatH58CarrierWeightAlignment (g : HopfGen)
+    (FL : ResolvedCarrierFiniteBranchMapLayer) where
+  /-- Resolved quotient image → flat quotient index. -/
+  flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g
+  /-- Resolved forest carrier index → flat split-choice index. -/
+  forestSplitOf : {q // q ∈ FL.forestCarrier} → h58BridgeSplitChoiceSigma g
+  /-- Resolved mixed carrier index → flat split-choice index. -/
+  mixedSplitOf : {q // q ∈ FL.mixedCarrier} → h58BridgeSplitChoiceSigma g
+  /-- Forest split indices land in the flat split index. -/
+  forestSplit_mem : ∀ q, forestSplitOf q ∈ h58BridgeSplitChoiceIndex g
+  /-- Mixed split indices land in the flat split index. -/
+  mixedSplit_mem : ∀ q, mixedSplitOf q ∈ h58BridgeSplitChoiceIndex g
+  /-- Forest dictionary commutation (carrier-only). -/
+  forest_comm : ∀ q,
+    flatImageOf (FL.sep.forestImage q.1) = h58BridgeSplitPhi g (forestSplitOf q)
+  /-- Mixed dictionary commutation (carrier-only). -/
+  mixed_comm : ∀ q,
+    flatImageOf (FL.sep.mixedImage q.1) = h58BridgeSplitPhi g (mixedSplitOf q)
+  /-- The flat split-choice term agreement (the weight equality). -/
+  splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- Pull the concrete flat tensor terms through the carrier alignment to a
+`ResolvedH58CarrierWeightData`. -/
+noncomputable def ResolvedFlatH58CarrierWeightAlignment.toCarrierWeightData {g : HopfGen}
+    {FL : ResolvedCarrierFiniteBranchMapLayer} (A : ResolvedFlatH58CarrierWeightAlignment g FL) :
+    ResolvedH58CarrierWeightData FL (HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH)) where
+  imageWeight := fun z => h58BridgeQuotientTerm g (A.flatImageOf z)
+  forestWeight := fun q => h58BridgeSplitChoiceTerm g (A.forestSplitOf q)
+  mixedWeight := fun q => h58BridgeSplitChoiceTerm g (A.mixedSplitOf q)
+  forestWeight_eq := fun q => by
+    show h58BridgeSplitChoiceTerm g (A.forestSplitOf q)
+      = h58BridgeQuotientTerm g (A.flatImageOf (FL.sep.forestImage q.1))
+    rw [A.splitTerm_agreement _ (A.forestSplit_mem q), A.forest_comm q]
+  mixedWeight_eq := fun q => by
+    show h58BridgeSplitChoiceTerm g (A.mixedSplitOf q)
+      = h58BridgeQuotientTerm g (A.flatImageOf (FL.sep.mixedImage q.1))
+    rw [A.splitTerm_agreement _ (A.mixedSplit_mem q), A.mixed_comm q]
+
+/-- **G-1b: the concrete carrier-based H5.8 sum-reindex** — no whole-type split maps, no junk. -/
+theorem ResolvedFlatH58CarrierWeightAlignment.sum_reindex {g : HopfGen}
+    {FL : ResolvedCarrierFiniteBranchMapLayer} (A : ResolvedFlatH58CarrierWeightAlignment g FL) :
+    ∑ z ∈ FL.imageCarrier, h58BridgeQuotientTerm g (A.flatImageOf z) =
+      (∑ q ∈ FL.forestCarrier.attach, h58BridgeSplitChoiceTerm g (A.forestSplitOf q)) +
+      (∑ q ∈ FL.mixedCarrier.attach, h58BridgeSplitChoiceTerm g (A.mixedSplitOf q)) :=
+  A.toCarrierWeightData.sum_reindex
+
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
 The last wrapper: a per-outer-forest family of inner supply packages assembles into the
