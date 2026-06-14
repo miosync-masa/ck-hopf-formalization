@@ -2204,6 +2204,59 @@ theorem ResolvedFlatH58CarrierWeightAlignment.sum_reindex {g : HopfGen}
       (∑ q ∈ FL.mixedCarrier.attach, h58BridgeSplitChoiceTerm g (A.mixedSplitOf q)) :=
   A.toCarrierWeightData.sum_reindex
 
+/-! ### Gold Sprint G-1c — split the alignment: kill mixed, isolate the forest boundary
+
+The carrier alignment splits into a **mixed half** (`flatImageOf` + the mixed split dictionary —
+flat-mechanical, `flatImageOf` already constructed via `canonicalFlatImageOf`) and a **forest
+boundary** (`forestSplitOf` + `forest_comm` + `splitTerm_agreement`, depending on the mixed
+half's `flatImageOf`).  The combiner reassembles the full alignment.  After this, the *only*
+genuine remaining datum is `ResolvedFlatH58CarrierForestBoundary` — mixed is killed. -/
+
+/-- The mixed half of the carrier alignment: `flatImageOf` (constructible) + the mixed split
+dictionary (flat-mechanical, origin projection). -/
+structure ResolvedFlatH58CarrierMixedAlignment (g : HopfGen)
+    (FL : ResolvedCarrierFiniteBranchMapLayer) where
+  /-- Resolved quotient image → flat quotient index. -/
+  flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g
+  /-- Resolved mixed carrier index → flat split-choice index. -/
+  mixedSplitOf : {q // q ∈ FL.mixedCarrier} → h58BridgeSplitChoiceSigma g
+  /-- Mixed split indices land in the flat split index. -/
+  mixedSplit_mem : ∀ q, mixedSplitOf q ∈ h58BridgeSplitChoiceIndex g
+  /-- Mixed dictionary commutation. -/
+  mixed_comm : ∀ q,
+    flatImageOf (FL.sep.mixedImage q.1) = h58BridgeSplitPhi g (mixedSplitOf q)
+
+/-- **The genuine remaining boundary**: the forest split dictionary + the split-choice term
+agreement (over a fixed `flatImageOf`).  Constructing one of these is exactly what "full native
+resolved H5.8" requires beyond the (complete) resolved σ-cover + the mechanical mixed half. -/
+structure ResolvedFlatH58CarrierForestBoundary (g : HopfGen)
+    (FL : ResolvedCarrierFiniteBranchMapLayer)
+    (flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g) where
+  /-- Resolved forest carrier index → flat split-choice index. -/
+  forestSplitOf : {q // q ∈ FL.forestCarrier} → h58BridgeSplitChoiceSigma g
+  /-- Forest split indices land in the flat split index. -/
+  forestSplit_mem : ∀ q, forestSplitOf q ∈ h58BridgeSplitChoiceIndex g
+  /-- Forest dictionary commutation. -/
+  forest_comm : ∀ q,
+    flatImageOf (FL.sep.forestImage q.1) = h58BridgeSplitPhi g (forestSplitOf q)
+  /-- The flat split-choice term agreement (the weight equality). -/
+  splitTerm_agreement : ∀ s ∈ h58BridgeSplitChoiceIndex g,
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- **G-1c: combine the mixed half and the forest boundary into the full carrier alignment.** -/
+def ResolvedFlatH58CarrierMixedAlignment.combine {g : HopfGen}
+    {FL : ResolvedCarrierFiniteBranchMapLayer} (M : ResolvedFlatH58CarrierMixedAlignment g FL)
+    (F : ResolvedFlatH58CarrierForestBoundary g FL M.flatImageOf) :
+    ResolvedFlatH58CarrierWeightAlignment g FL where
+  flatImageOf := M.flatImageOf
+  forestSplitOf := F.forestSplitOf
+  mixedSplitOf := M.mixedSplitOf
+  forestSplit_mem := F.forestSplit_mem
+  mixedSplit_mem := M.mixedSplit_mem
+  forest_comm := F.forest_comm
+  mixed_comm := M.mixed_comm
+  splitTerm_agreement := F.splitTerm_agreement
+
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
 The last wrapper: a per-outer-forest family of inner supply packages assembles into the
