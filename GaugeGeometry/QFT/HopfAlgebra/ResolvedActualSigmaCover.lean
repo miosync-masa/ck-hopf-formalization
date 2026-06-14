@@ -2430,7 +2430,30 @@ summand) — the multiplicativity of the CK coproduct restricted to the forest, 
 the de-contraction parent (`parentOfQuotient_remnant_eq` supplies the graph backbone).  The gold
 is *one* theorem, deeper and more unified than a left/right split (the legs are entangled by
 `assoc`).  Next sprint: state this identity (thin aliases) and prove it via coproduct
-multiplicativity + the de-contraction graph relations — resolved-native, no flat import. -/
+multiplicativity + the de-contraction graph relations — resolved-native, no flat import.
+
+**G-4 final scout — the resolved-native proof path is concrete (facade-free).**  The flat
+`forestComponentForestChoice_branch_term_eq_of_factorization` produces `forest_term` from THREE
+inputs, and the underlying tensor lemma
+`forestComponentChoiceSigmaTerm_eq_quotientForestSigmaTerm_of_factorization` is **facade-free**:
+  1. **`hProduct`** : `forestComponentChoiceProductTerm A.1 q.2 = (outer).toHopfH ⊗ₜ (innerQuotient).toHopfH`
+     — *facade-free* (the structural factorization `forestComponentChoiceProductTerm_eq_outer_inner_products_of_core`
+     = `(∏ outer factor) ⊗ (∏ inner factor)` via `tensorProduct_prod_tmul`, plus the outer/inner
+     factor identifications);
+  2. **`hRight`** : `forestRightHopfH g A.1 = forestRightHopfH (quotient HopfGen) (innerQuotient)`
+     — a generator/graph equality (the quotient generator matches);
+  3. **`C`** : `forestComponentForestChoiceRemnantPositiveComponentsCertificate` — a
+     *positivity* fact (the inner quotient subgraph's components have positive complement),
+     **σ-cover data, NOT a facade**; used only **index-side** (to prove the inner forest is a
+     genuine proper-disjoint quotient subgraph).
+**So `forest_term` is achievable resolved-natively**: reuse the facade-free `_of_factorization`
+tensor lemma + the facade-free product factorization, supply `hRight` (graph) and the
+remnant-positive certificate `C` (σ-cover data, suppliable from the de-contraction parent's
+positive-edge remnants — `componentPositiveEdges` / the cover work).  We do **not** import the
+gated final reindex `forestComponentSplitPhi_term_eq_of_split`; we reuse its facade-free
+building blocks and supply the certificate ourselves.  The next sprint exposes these (thin
+Coassoc aliases for the facade-free `of_factorization` lemma + `forestComponentChoiceProductTerm_eq_outer_inner_products_of_core`),
+and constructs the certificate resolved-natively — a concrete, facade-free path to the gold. -/
 
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
