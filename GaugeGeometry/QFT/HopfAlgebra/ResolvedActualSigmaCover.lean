@@ -2326,6 +2326,34 @@ constructing `ResolvedFlatH58CarrierForestTermBoundary` (the per-branch term fac
 proved resolved-natively rather than imported from flat's facade-discharged assembly.  This is a
 single, precisely-named theorem — the gold medal. -/
 
+/-! ### Gold Sprint G-3 — branch-split the term boundary (forest vs mixed)
+
+The flat split-choice sigma is a **disjoint sum** `h58BridgeSplitChoiceSigma g = (forest) ⊕
+(mixed)`, the index is a `disjSum`, and `h58BridgeSplitChoiceTerm`/`h58BridgeSplitPhi` case on
+`Sum.inl`/`Sum.inr`.  So the term boundary splits cleanly by `Sum.isLeft`/`isRight` into a
+**forest** and a **mixed** branch term equality — no Coassoc wrappers needed (the discriminator
+is `Sum.isLeft`). -/
+
+/-- The term boundary, split by branch: a forest-branch and a mixed-branch term equality
+(discriminated by `Sum.isLeft`/`isRight`). -/
+structure ResolvedFlatH58CarrierBranchTermBoundary (g : HopfGen) where
+  /-- Forest-branch term equality (left summands). -/
+  forest_term : ∀ s ∈ h58BridgeSplitChoiceIndex g, s.isLeft = true →
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+  /-- Mixed-branch term equality (right summands). -/
+  mixed_term : ∀ s ∈ h58BridgeSplitChoiceIndex g, s.isRight = true →
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- **G-3: the branch-split term boundary recovers the term boundary** (every split choice is a
+left or right summand). -/
+def ResolvedFlatH58CarrierBranchTermBoundary.toForestTermBoundary {g : HopfGen}
+    (B : ResolvedFlatH58CarrierBranchTermBoundary g) :
+    ResolvedFlatH58CarrierForestTermBoundary g where
+  splitTerm_agreement := fun s hs => by
+    cases s with
+    | inl q => exact B.forest_term (Sum.inl q) hs rfl
+    | inr q => exact B.mixed_term (Sum.inr q) hs rfl
+
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
 The last wrapper: a per-outer-forest family of inner supply packages assembles into the
