@@ -2354,6 +2354,46 @@ def ResolvedFlatH58CarrierBranchTermBoundary.toForestTermBoundary {g : HopfGen}
     | inl q => exact B.forest_term (Sum.inl q) hs rfl
     | inr q => exact B.mixed_term (Sum.inr q) hs rfl
 
+/-! ### Gold Sprint G-4 Scout — `forest_term` is a coproduct factorization (anatomy)
+
+Unfolding the public aliases for a left branch `s = Sum.inl q` (`q ∈ forestChoiceIndex`):
+```
+LHS  h58BridgeSplitChoiceTerm g (inl q)
+   = assoc ( (∏_{γ ∈ A.1.elements} forestCoproductChoiceTerm γ (choice))   -- : HopfH ⊗ HopfH
+            ⊗ₜ  gen (admissibleForestRightWithCanonicalStars (repG g) A.1) )  -- : HopfH (the quotient gen)
+RHS  h58BridgeQuotientTerm g (splitPhi (inl q))
+   = A.1.toHopfH  ⊗ₜ  admissibleForestStrictSummandWithCanonicalStars (quotient graph) (inner forest)
+```
+(`A.1` = the outer proper forest of `q`; `quotient graph` = `forestOuterQuotientGraph g A`.)
+
+**So `forest_term` is NOT a graph equality — it is a HopfH coproduct/tensor factorization.**  After
+`assoc`, it splits into two legs:
+* **left leg:**  `(∏_γ forestCoproductChoiceTerm γ).₁ = A.1.toHopfH`  — the *left* legs of the
+  per-component coproduct choices multiply to the outer forest's generator (the primitive/counit
+  part: `Δ`-left of a forest = the forest, via `toHopfH` multiplicativity = `∏` of component
+  generators).
+* **right leg:**  `(∏_γ forestCoproductChoiceTerm γ).₂  ⊗  gen(quotient)
+  = admissibleForestStrictSummandWithCanonicalStars (quotient) (inner)`  — the *right* legs ⊗ the
+  quotient generator assemble the inner strict summand over the contracted graph.
+
+**Strategy (resolved-native, no flat import).**  This is exactly the de-contraction parent
+factorization at the *weight* level: the product `∏_γ Δ_choice(γ)` over the outer-forest
+components, threaded by the quotient generator, reorganizes into `(outer forest) ⊗ (inner strict
+summand)`.  The graph backbone is already ours — `parentOfQuotient_remnant_eq`
+(parent remnant = inner image), `containsAoutEdges`, `forget_canonicalOuterContractedGraph` — and
+the algebra is HopfH coproduct multiplicativity (`Δ` an algebra hom) + `toHopfH` of a forest =
+`∏` of component generators.  The flat `hForestTerm` (Field-Filling-6) is gated on the
+remnant-positive certificate, but that gating is **index-side** (the inner forest is a genuine
+quotient subgraph); the *tensor identity* itself is coproduct algebra.
+
+**Next (G-4 sprint).**  (a) thin Coassoc aliases for the term components
+(`forestComponentChoiceProductTerm`, `forestRightHopfH`, `admissibleForestStrictSummandWithCanonicalStars`,
+`AdmissibleSubgraph.toHopfH`) to *state* the two legs in the resolved track; (b) the left-leg
+lemma (forest `toHopfH` = `∏` component gens — likely a known flat multiplicativity lemma,
+facade-free); (c) the right-leg lemma (the strict-summand assembly — the genuine factorization,
+proved via the de-contraction parent).  This is the gold-medal core: a HopfH coproduct
+factorization, not imported from flat's facade-discharged `forestComponentSplitPhi_term_eq_of_split`. -/
+
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
 The last wrapper: a per-outer-forest family of inner supply packages assembles into the
