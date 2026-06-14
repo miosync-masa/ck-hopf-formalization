@@ -51,6 +51,39 @@ theorem ResolvedH58WeightData.sum_reindex {FL : ResolvedCarrierFiniteBranchMapLa
   simp only [W.forestWeight_eq, W.mixedWeight_eq]
   exact FL.sum_reindex W.imageWeight
 
+/-! ### Carrier-based weight data (P3 fix — parallel path)
+
+The whole-type `forestWeight_eq : ∀ q` above is over-strong: `sum_reindex` only needs it on the
+forest/mixed *carriers*.  This carrier-based variant restricts the branch weights and the
+agreement to the **carrier subtypes** (`{q // q ∈ forestCarrier}`), so downstream the branch
+index maps need no off-carrier (junk) values.  Runs in parallel with the whole-type version. -/
+
+/-- Carrier-based weight data: branch weights and agreement restricted to the carrier subtypes. -/
+structure ResolvedH58CarrierWeightData (FL : ResolvedCarrierFiniteBranchMapLayer)
+    (Target : Type*) [AddCommMonoid Target] where
+  /-- The weight on images. -/
+  imageWeight : FL.sep.Image → Target
+  /-- The weight on forest carrier indices. -/
+  forestWeight : {q // q ∈ FL.forestCarrier} → Target
+  /-- The weight on mixed carrier indices. -/
+  mixedWeight : {q // q ∈ FL.mixedCarrier} → Target
+  /-- Forest weight agrees with the image weight along the forest branch map (carrier-only). -/
+  forestWeight_eq : ∀ q, forestWeight q = imageWeight (FL.sep.forestImage q.1)
+  /-- Mixed weight agrees with the image weight along the mixed branch map (carrier-only). -/
+  mixedWeight_eq : ∀ q, mixedWeight q = imageWeight (FL.sep.mixedImage q.1)
+
+/-- **Carrier-based H5.8 sum-reindex.**  Same split as the whole-type version, with the branch
+sums taken over the carrier subtypes (`.attach`). -/
+theorem ResolvedH58CarrierWeightData.sum_reindex {FL : ResolvedCarrierFiniteBranchMapLayer}
+    {Target : Type*} [AddCommMonoid Target] (W : ResolvedH58CarrierWeightData FL Target) :
+    ∑ z ∈ FL.imageCarrier, W.imageWeight z =
+      (∑ q ∈ FL.forestCarrier.attach, W.forestWeight q) +
+      (∑ q ∈ FL.mixedCarrier.attach, W.mixedWeight q) := by
+  simp only [W.forestWeight_eq, W.mixedWeight_eq]
+  rw [Finset.sum_attach FL.forestCarrier (fun q => W.imageWeight (FL.sep.forestImage q)),
+    Finset.sum_attach FL.mixedCarrier (fun q => W.imageWeight (FL.sep.mixedImage q))]
+  exact FL.sum_reindex W.imageWeight
+
 /-! **Report (7H).**
 * `ResolvedH58WeightData` (generic `Target`) + `sum_reindex` — landed.  The abstract
   H5.8 reindex is now in coassociativity language: `∑ image imageWeight =
