@@ -2297,6 +2297,35 @@ def ResolvedFlatH58CarrierForestIndexBoundary.combine {g : HopfGen}
   forest_comm := I.forest_comm
   splitTerm_agreement := T.splitTerm_agreement
 
+/-! ### Gold Sprint G-2 Scout — the term boundary IS the factorization (the gold core)
+
+Scout verdict on the two sliced boundaries:
+
+* **Index boundary (`forest_comm`) is mechanical-ish.**  It says `flatImageOf (forestImage q.1) =
+  splitPhi (forestSplitOf q)` — a *coordinate* consistency between the resolved forest image
+  (`flatImageOf` = forget + actual↔rep, G-1a) and the flat split branch map at the chosen split.
+  With an **origin-tagged** forest carrier (each forest image remembering the split-choice it
+  came from), `forestSplitOf` is a projection and `forest_comm` is the index round-trip — no
+  weight content.
+
+* **Term boundary (`splitTerm_agreement`) IS the genuine final theorem.**  It equals the flat
+  `forestComponentSplitPhi_term_eq_of_split`, which is **not** unconditional: it is assembled
+  from two per-branch term factorizations —
+  - `hForestTerm` : `∀ q ∈ forestChoiceIndex, forestComponentChoiceSigmaTerm q =
+    forestQuotientForestSigmaTerm (forestChoiceToQuotient q)` (the **forest** branch weight
+    factorization), and
+  - `hMixedTerm` : the analogous **mixed** branch factorization —
+  which are the genuine σ-cover factorization data (Field-Filling-6: gated on the remnant-positive
+  certificate + branch term factorization, *not* a free identity).
+
+**Verdict.**  The gold reduces to the **term factorization** (`splitTerm_agreement`), and it
+decomposes into a forest-branch and a mixed-branch weight equality.  The index dictionary
+(`flatImageOf` ✓ + `forest_comm`/`mixedSplitOf` = origin projections) is mechanical; the weight
+factorization is the genuine remaining H5.8 mathematics.  So "full native resolved H5.8" =
+constructing `ResolvedFlatH58CarrierForestTermBoundary` (the per-branch term factorization),
+proved resolved-natively rather than imported from flat's facade-discharged assembly.  This is a
+single, precisely-named theorem — the gold medal. -/
+
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
 The last wrapper: a per-outer-forest family of inner supply packages assembles into the
