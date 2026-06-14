@@ -2417,6 +2417,27 @@ def ResolvedForestBranchFactorizationSupply.toFactorization {g : HopfGen}
           (S.certificate q hq) (S.product q hq) (S.right q hq)
     | inr q => simp at hleft
 
+/-- **G-5c-1: the `certificate` field is canonically discharged.**  For a genuine forest choice the
+remnant complement is always nonempty, so `certificate` needs no hypotheses
+(`h58BridgeForestChoiceRemnantCertificateCanonical`).  A factorization supply therefore reduces to
+the two pure coproduct-algebra facts `product` and `right`. -/
+noncomputable def ResolvedForestBranchFactorizationSupply.ofProductRight {g : HopfGen}
+    (product : ∀ q, ∀ hq : q ∈ h58BridgeForestChoiceIndex g,
+      h58BridgeForestChoiceProductTerm g q =
+        (h58BridgeForestChoiceOuterIndex g q hq).1.toHopfH ⊗ₜ[ℚ]
+          (h58BridgeForestChoiceRepQuotient g q hq).toHopfH)
+    (right : ∀ q, ∀ hq : q ∈ h58BridgeForestChoiceIndex g,
+      h58BridgeForestRightHopfH g q =
+        h58BridgeForestRightHopfHQuotient g
+          (h58BridgeForestChoiceOuterIndex g q hq)
+          (h58BridgeForestChoiceRepQuotient g q hq)
+          (h58BridgeForestChoiceRepQuotientMem g q hq
+            (h58BridgeForestChoiceRemnantCertificateCanonical g q hq))) :
+    ResolvedForestBranchFactorizationSupply g where
+  certificate := h58BridgeForestChoiceRemnantCertificateCanonical g
+  product := product
+  right := right
+
 /-! ### Gold Sprint G-4 Scout — `forest_term` is a coproduct factorization (anatomy)
 
 Unfolding the public aliases for a left branch `s = Sum.inl q` (`q ∈ forestChoiceIndex`):

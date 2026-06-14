@@ -39424,6 +39424,20 @@ abbrev h58BridgeForestChoiceRemnantPositiveCertificate
     Type :=
   forestComponentForestChoiceRemnantPositiveComponentsCertificate g q hq
 
+/-- **G-5c-1: the canonical remnant-positivity certificate.**  For a genuine forest choice the
+remnant complement is always nonempty, so the certificate is constructible with no hypotheses —
+this is the facade-free positivity chain `ComponentComplementCanonical → ComponentRemnant →
+SourcePositive → RemnantPositiveComponents` (exactly what the flat assembler feeds its `C`).  Only
+internal-edge positivity lemmas; the gated final reindex is not used. -/
+noncomputable def h58BridgeForestChoiceRemnantCertificateCanonical
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    h58BridgeForestChoiceRemnantPositiveCertificate g q hq :=
+  forestComponentForestChoiceRemnantPositiveComponentsCertificateOfSource g q hq
+    (forestComponentForestChoiceRemnantSourcePositiveCertificateOfComponentGraph g q hq
+      (forestComponentForestChoiceComponentRemnantPositiveCertificateOfComplement g q hq
+        (forestComponentForestChoiceComponentComplementPositiveCertificateCanonical g q hq)))
+
 /-- Public bridge: the remnant-positivity certificate places the canonical representative
 quotient-side forest in the RHS proper carrier. -/
 theorem h58BridgeForestChoiceRepQuotientMem
