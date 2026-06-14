@@ -2492,6 +2492,52 @@ noncomputable def ResolvedForestBranchFactorizationSupply.ofRight {g : HopfGen}
   product := fun q hq => h58BridgeForestChoiceProductFactorizationCanonical g q hq
   right := right
 
+/-! ### Gold Sprint G-7 — wire the forest factorization supply into `splitTerm_agreement`
+
+The forest-branch factorization supply (`right`, with certificate/product canonical) plus a
+mixed-branch term equality compose — through the already-built
+`toFactorization → toBranchTermBoundary → toForestTermBoundary` chain — into the
+carrier-independent `splitTerm_agreement` that `CanonicalResolvedActualSigmaCoverSupply` consumes.
+This confirms the G-5 Supply actually feeds the σ-cover's flat term boundary. -/
+
+/-- **G-7: forest factorization supply + mixed-branch term ⇒ the flat term boundary.** -/
+def ResolvedForestBranchFactorizationSupply.toForestTermBoundary {g : HopfGen}
+    (F : ResolvedForestBranchFactorizationSupply g)
+    (mixed_term : ∀ s ∈ h58BridgeSplitChoiceIndex g, s.isRight = true →
+      h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)) :
+    ResolvedFlatH58CarrierForestTermBoundary g :=
+  (F.toFactorization.toBranchTermBoundary mixed_term).toForestTermBoundary
+
+/-- **G-7: the wired `splitTerm_agreement`.**  The exact field
+`CanonicalResolvedActualSigmaCoverSupply.splitTerm_agreement` requires, produced from the forest
+factorization supply (`right` ← facade #1 kernel `resolvedParentRemnant_injOn`, already landed) and
+a mixed-branch term equality. -/
+def ResolvedForestBranchFactorizationSupply.toSplitTermAgreement {g : HopfGen}
+    (F : ResolvedForestBranchFactorizationSupply g)
+    (mixed_term : ∀ s ∈ h58BridgeSplitChoiceIndex g, s.isRight = true →
+      h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)) :
+    ∀ s ∈ h58BridgeSplitChoiceIndex g,
+      h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s) :=
+  (F.toForestTermBoundary mixed_term).splitTerm_agreement
+
+/-- **G-7: the split-term agreement supply.**  Bundles the forest factorization supply with the
+mixed-branch term equality — the complete resolved-native input to the σ-cover's
+`splitTerm_agreement`. -/
+structure ResolvedSplitTermAgreementSupply (g : HopfGen) where
+  /-- The forest-branch factorization supply (forest_term ← de-contraction `right`). -/
+  forestSupply : ResolvedForestBranchFactorizationSupply g
+  /-- The mixed-branch (right summand) term equality. -/
+  mixed_term : ∀ s ∈ h58BridgeSplitChoiceIndex g, s.isRight = true →
+    h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s)
+
+/-- The split-term agreement from the bundled supply (feeds
+`CanonicalResolvedActualSigmaCoverSupply.splitTerm_agreement`). -/
+def ResolvedSplitTermAgreementSupply.toSplitTermAgreement {g : HopfGen}
+    (S : ResolvedSplitTermAgreementSupply g) :
+    ∀ s ∈ h58BridgeSplitChoiceIndex g,
+      h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s) :=
+  S.forestSupply.toSplitTermAgreement S.mixed_term
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
