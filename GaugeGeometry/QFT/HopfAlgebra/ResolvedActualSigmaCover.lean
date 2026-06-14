@@ -2392,7 +2392,25 @@ quotient subgraph); the *tensor identity* itself is coproduct algebra.
 lemma (forest `toHopfH` = `∏` component gens — likely a known flat multiplicativity lemma,
 facade-free); (c) the right-leg lemma (the strict-summand assembly — the genuine factorization,
 proved via the de-contraction parent).  This is the gold-medal core: a HopfH coproduct
-factorization, not imported from flat's facade-discharged `forestComponentSplitPhi_term_eq_of_split`. -/
+factorization, not imported from flat's facade-discharged `forestComponentSplitPhi_term_eq_of_split`.
+
+**CORRECTION (G-4a reading).**  The "left leg = `toHopfH` multiplicativity (mechanical)" split
+above is **wrong**.  `forestCoproductChoiceTerm` is per-choice: `left ↦ X g ⊗ 1`,
+`right ↦ 1 ⊗ X g`, **`forest A ↦ admissibleForestStrictSummandWithCanonicalStars … A`** (a full
+coproduct piece, *not* `gen ⊗ 1`).  The **forest branch** (`q ∈ forestChoiceIndex`) is the
+*all-`forest`-choice* regime, so `forestComponentChoiceProductTerm A.1 q.2 =
+∏_{γ ∈ A.1.elements} (strictSummand of γ's chosen sub-forest)` — a **product of strict summands**,
+not a `gen`-product.  So there is **no clean mechanical left leg**; the factorization
+```
+assoc( (∏_γ strictSummand γ) ⊗ gen(quotient) ) = A.1.toHopfH ⊗ strictSummand(quotient)(inner)
+```
+is a **single unified de-contraction coproduct identity**: the product of per-component strict
+summands, threaded by the outer-quotient generator, equals (outer forest) ⊗ (inner strict
+summand) — the multiplicativity of the CK coproduct restricted to the forest, packaged through
+the de-contraction parent (`parentOfQuotient_remnant_eq` supplies the graph backbone).  The gold
+is *one* theorem, deeper and more unified than a left/right split (the legs are entangled by
+`assoc`).  Next sprint: state this identity (thin aliases) and prove it via coproduct
+multiplicativity + the de-contraction graph relations — resolved-native, no flat import. -/
 
 /-! ### BranchCarriers (8) — the full outer skeleton from genuine de-contraction data
 
