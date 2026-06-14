@@ -2457,6 +2457,47 @@ noncomputable def ResolvedForestBranchFactorizationSupply.ofRight {g : HopfGen}
   product := fun q hq => h58BridgeForestChoiceProductFactorizationCanonical g q hq
   right := right
 
+/-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
+
+The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
+`admissibleForestContractGraphWithStars G A starOf = A.contractWithStars starOf`) to a `.toClass`
+equality of two **flat** contraction graphs — the de-contraction *composition* law:
+```
+   Aact.contractWithStars(rightStar)   over  Q = Aout.contractWithStars(outerStar)   over repG g
+ = q.1.1.contractWithStars(SplitStarOf) over  repG g
+```
+i.e. (contract the outer forest `Aout`, then the inner quotient `Aact`) = (contract the whole forest
+`q.1.1` in one step, with the composed `SplitStarOf` assignment).  Per `contractWithStars`:
+
+| field | LHS source | RHS source | reduces to |
+|-------|-----------|-----------|-----------|
+| `vertices` | `(Q.vtx \ Aact.vtx) ∪ Aact.starVertices rightStar`, `Q.vtx = (repG.vtx \ Aout.vtx) ∪ Aout.starVertices outerStar` | `(repG.vtx \ q.1.1.vtx) ∪ q.1.1.starVertices SplitStarOf` | star **composition** (outer⊕inner = split); `canonicalOuter_starVertices_eq` |
+| `internalEdges` | `Aact.complementEdges.map (retargetEdge rightStar)`, over `Aout.complementEdges.map (retargetEdge outerStar)` | `q.1.1.complementEdges.map (retargetEdge SplitStarOf)` | `retargetEdge` **map-composition** / `map_sub`; `canonicalOuter_retargetEdge_forget`, `map_forget_complementEdges_canonicalOuterAout` |
+| `externalLegs` | `repG.legs.map (retargetLeg rightStar ∘ retargetLeg outerStar)` | `repG.legs.map (retargetLeg SplitStarOf)` | leg retarget composition; `canonicalOuter_retargetLeg_forget` |
+| `freshness` | — | `q.1.1.IsFreshStarAssignment SplitStarOf` | star injectivity (`SplitStarInjectivityPayload`) |
+
+**BOTTOM LINE (the decisive finding).**  This round-trip is *not* independently closeable: in flat it
+bottoms out (chain `coassoc_strict_forest_linear_of_split_phi_*`, 37656–38201) at permutation-data
++ a `.toClass` class equality, and the whole of H5.8 (`CoassocStrictForestH58Ready`) is — per the
+authoritative note at `Coassoc.lean` ≈39200 — **constructive modulo EXACTLY two boundary facades**,
+each "a theorem on the boundary-resolved carrier (Track R)":
+
+1. `ForestGraphInsertionUniquenessModel` — CK graph-insertion uniqueness:
+   `γ₁.vertices = γ₂.vertices → (remnant γ₁ = remnant γ₂) → γ₁ = γ₂`.  **This is exactly the
+   de-contraction parent uniqueness** the `parentOfQuotient` / `parentOfQuotient_remnant_eq` section
+   was built for (parent recovered from vertices + remnant).
+2. `ForestQuotientForestSigmaForestCoverPromotedExternalLegsLiftableModel` — the σ-cover promoted
+   external-legs liftability (**Track S** territory: `liftFlatQuotient…`, `resolvedSubgraphOfForget`).
+
+(The third interface, `CoassocStrictForestH58CoverData`, is already discharged canonically via
+`_ofReflection`.)  So `right` ⟺ facade #1 restricted to the forest-right round-trip.
+
+**Therefore full native resolved H5.8 = discharge the two boundary facades as Track-R instances.**
+The G-5 forest_term Supply is a parallel re-derivation that needs the same content; the most direct
+finish is to prove `ForestGraphInsertionUniquenessModel` (de-contraction parent, our Track) and
+`…PromotedExternalLegsLiftableModel` (Track S) as instances.  No gated final theorem is exposed; the
+`right` field of `ResolvedForestBranchFactorizationSupply` is the resolved-track hook for facade #1. -/
+
 /-! ### Gold Sprint G-4 Scout — `forest_term` is a coproduct factorization (anatomy)
 
 Unfolding the public aliases for a left branch `s = Sum.inl q` (`q ∈ forestChoiceIndex`):
