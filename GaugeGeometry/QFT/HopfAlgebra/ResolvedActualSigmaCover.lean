@@ -2394,6 +2394,34 @@ structure ResolvedForestOriginIndexSupply (g : HopfGen)
   comm : ∀ i ∈ carrier,
     flatImageOf (FL.sep.forestImage (data i)) = h58BridgeSplitPhi g (split i)
 
+/-! ### Gold Sprint G-12b-3 Scout — the all-star knife-edge in the cover (structural finding)
+
+The transport core for `comm` is landed (G-12b-1 `canonicalFlatImageOf_liftFlatQuotientForestToCres`
++ G-12b-2 `h58BridgeForestSplitPhiInl_eq`): `canonicalFlatImageOf` of the lift of an actual-quotient
+forest `Af` equals `splitPhi (Sum.inl i)` **when** that lift's forget is `Af = ActualQuotient i`.
+But instantiating `data i` hits the all-star knife-edge:
+
+* A forest carrier element `F : ResolvedForestImageData D` has pairwise-DISJOINT per-parent remnants
+  (`remnantDisjoint`).  Since every parent `γ ⊇ Aout` has remnant containing ALL outer stars
+  (`remnant_contains_all_starVertices_of_containsAoutEdges`), two distinct parents' remnants both
+  contain the stars and cannot be disjoint — so `F` is **single-parent**, hence `F.toImage` is a
+  **single-component** admissible subgraph (`singletonForestImageDataOfParent.toImage.elements =
+  {resolvedForestImage parent}`).
+* But the flat forest choice's `ActualQuotient i`
+  (`forestComponentForestChoiceActualQuotientSubgraphCanonical.elements =
+  forestComponentForestChoiceActualQuotientComponents`) is **multi-component** (right-selected
+  survivors + per-component selected remnants).
+
+So `forget(F.toImage)` (single component) ≠ `ActualQuotient i` (multi-component): the naive
+single-δ ↔ flat-forest-choice correspondence does NOT hold.  This is exactly the knife-edge
+"decision (i)" flagged — within a single outer forest `A`/`D`, forest carrier elements are
+single-component; the multi-component RHS quotient is recovered by the **outer-forest sum** (across
+different outer forests `A`), not inside one `D`.  **Design consequence:** the origin cover must
+index by (outer forest, single star-saturated quotient component), with the multi-component flat
+forest structure carried by the outer sum — NOT by a multi-parent forest image.  Constructing
+`data`/`data_surj`/`comm` correctly is the genuine remaining cover mathematics (facade #2); the
+transport plumbing (G-12a forestSplitOf-via-origin + G-12b-1/2 comm core) is ready to receive it. -/
+
 /-- **G-12a: origin cover ⇒ forest index boundary.**  `forestSplitOf` is the origin projection
 (unique preimage via `data_surj`/`data_inj`); `forest_comm` is the tagged `comm`. -/
 noncomputable def ResolvedForestOriginIndexSupply.toForestIndexBoundary {g : HopfGen}
