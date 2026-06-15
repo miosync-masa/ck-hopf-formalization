@@ -39503,6 +39503,97 @@ theorem h58BridgeSplitChoiceIndex_inl_mem_iff
   unfold h58BridgeSplitChoiceIndex h58BridgeForestChoiceIndex forestComponentSplitChoiceSigmaIndex
   exact Finset.inl_mem_disjSum
 
+/-! ### G-8 — the mixed-boundary branch term is facade-free canonical
+
+Unlike the forest branch (whose `right` factor needs facade #1), the mixed-boundary branch selects
+every component left or right — no genuine forest re-insertion — so the de-contraction round-trip is
+a literal split-star graph relabeling, canonical (`forestComponentMixedBoundarySplitStar*` field
+equalities) with no facade and no certificate.  Flat discharges the whole mixed branch at
+`coassoc_strict_forest_linear_of_split_phi_mixed_split_star_canonical`, leaving only the forest
+payload.  These exposures make that canonical mixed branch term available to the resolved track. -/
+
+/-- Public alias: the mixed-boundary split-choice finite index. -/
+noncomputable def h58BridgeMixedChoiceIndex [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) : Finset (h58BridgeForestChoiceSigma g) :=
+  forestComponentMixedBoundaryChoiceSigmaIndex g
+
+/-- Public: a right split choice `Sum.inr q` is split-indexed iff `q` is mixed-choice indexed. -/
+theorem h58BridgeSplitChoiceIndex_inr_mem_iff
+    [IsDivergencePreservedByAdmissibleForestContract] (g : HopfGen)
+    (q : h58BridgeForestChoiceSigma g) :
+    Sum.inr q ∈ h58BridgeSplitChoiceIndex g ↔ q ∈ h58BridgeMixedChoiceIndex g := by
+  unfold h58BridgeSplitChoiceIndex h58BridgeMixedChoiceIndex forestComponentSplitChoiceSigmaIndex
+  exact Finset.inr_mem_disjSum
+
+/-- **G-8: canonical mixed actual-right class equality.**  The original whole-forest right
+contraction and the mixed-boundary actual quotient right contraction have the same class — via the
+canonical split-star field model (`...SplitStarEdgeLegModelCanonical`) plus the fresh-star contract
+relabeling.  No facade, no certificate. -/
+private theorem forestComponentMixedBoundary_actualRightClass_canonical
+    [IsDivergencePreservedByAdmissibleForestContract] (g : HopfGen)
+    (q : forestComponentChoiceSigma g)
+    (hq : q ∈ forestComponentMixedBoundaryChoiceSigmaIndex g) :
+    (forestComponentChoiceOriginalRightContractGraph g q).toClass =
+      (forestComponentMixedBoundaryActualRightContractGraph g q hq).toClass := by
+  obtain ⟨τ, hV, hI, hE⟩ := admissibleForestContractFreshStarFieldRelabeling_of_wellFormed
+    (repG_wellFormed g) q.1.1 q.1.2 (forestComponentMixedBoundarySplitStarOf g q hq)
+    (forestComponentMixedBoundarySplitStarOf_isFresh g q hq)
+  have hGraphEq : forestComponentMixedBoundaryActualRightContractGraph g q hq =
+      FeynmanGraph.admissibleForestContractGraphWithStars (repG g).toFeynmanGraph q.1.1
+        (forestComponentMixedBoundarySplitStarOf g q hq) :=
+    forestComponentMixedBoundarySplitStarGraphEqOfFields
+      (forestComponentMixedBoundarySplitStarFieldModelOfEdgeLegModel
+        forestComponentMixedBoundarySplitStarEdgeLegModelCanonical) g q hq
+  have hOrig : forestComponentChoiceOriginalRightContractGraph g q =
+      (forestComponentMixedBoundaryActualRightContractGraph g q hq).mapPerm τ := by
+    rw [hGraphEq]
+    apply FeynmanGraph.mk.injEq _ _ _ _ _ _ |>.mpr
+    exact ⟨hV, hI, hE⟩
+  have hFlip : forestComponentMixedBoundaryActualRightContractGraph g q hq =
+      (forestComponentChoiceOriginalRightContractGraph g q).mapPerm τ⁻¹ :=
+    graph_eq_mapPerm_inv_of_eq_mapPerm _ _ τ hOrig
+  exact (FeynmanGraph.toClass_eq_iff _ _).mpr ⟨τ⁻¹, hFlip⟩
+
+/-- **G-8: canonical mixed right-factor identification.**  Through the contraction-class chain. -/
+private theorem forestComponentMixedBoundary_forestRightHopfH_eq_canonical
+    [IsDivergencePreservedByAdmissibleForestContract] (g : HopfGen)
+    (q : forestComponentChoiceSigma g)
+    (hq : q ∈ forestComponentMixedBoundaryChoiceSigmaIndex g) :
+    forestRightHopfH g q.1.1 q.1.2 =
+      forestRightHopfH
+        (forestOuterQuotientHopfGen g (forestComponentMixedBoundaryOuterIndex g q hq))
+        (forestComponentMixedBoundaryRepRightQuotientSubgraphCanonical g q hq)
+        (forestComponentMixedBoundaryRepRightQuotientSubgraphCanonical_mem_properDisjoint
+          g q hq) :=
+  forestRightHopfH_eq_of_contract_toClass_eq
+    (forestComponentMixedBoundary_rightContractClass_of_actual g q hq
+      (forestComponentMixedBoundary_actualRightClass_canonical g q hq))
+
+/-- **G-8: canonical mixed-boundary branch term** (facade-free, no certificate). -/
+private theorem forestComponentMixedBoundary_branch_term_eq_canonical
+    [IsDivergencePreservedByAdmissibleForestContract] (g : HopfGen)
+    (q : forestComponentChoiceSigma g)
+    (hq : q ∈ forestComponentMixedBoundaryChoiceSigmaIndex g) :
+    forestComponentChoiceSigmaTerm g q =
+      forestQuotientForestSigmaTerm g
+        (forestComponentMixedBoundaryToQuotientForestSigma g q hq) :=
+  forestComponentMixedBoundary_branch_term_eq_of_factorization g q hq
+    (forestComponentMixedBoundary_productTerm_eq_repRightQuotientSubgraph g q hq)
+    (forestComponentMixedBoundary_forestRightHopfH_eq_canonical g q hq)
+
+/-- **G-8: the facade-free mixed-boundary branch term equality, in `splitPhi` form.**  For a
+mixed-boundary choice `q`, the LHS split-choice term at `Sum.inr q` equals the RHS quotient term at
+`h58BridgeSplitPhi g (Sum.inr q)` — canonically, with no certificate and no facade.  The resolved
+track's `mixed_term` is discharged by this. -/
+theorem h58BridgeMixedBranchTermEq [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g) :
+    h58BridgeSplitChoiceTerm g (Sum.inr q) =
+      h58BridgeQuotientTerm g (h58BridgeSplitPhi g (Sum.inr q)) := by
+  rw [show h58BridgeSplitPhi g (Sum.inr q) =
+      forestComponentMixedBoundaryToQuotientForestSigma g q hq from
+      forestComponentSplitPhi_inr_of_mem g q hq]
+  exact forestComponentMixedBoundary_branch_term_eq_canonical g q hq
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
