@@ -2636,6 +2636,38 @@ resolved carrier, and `forest_comm` is its section equation.
 So the last genuine mathematics is the forest-cover correspondence (`forestSplitOf` + `forest_comm`
 + `cover_on`).  No gated theorem is exposed. -/
 
+/-- **G-11: the canonical forest term boundary.**  `splitTerm_agreement` is canonical
+(`splitTermAgreementCanonical`), so the `ResolvedFlatH58CarrierForestTermBoundary` is supplied
+unconditionally. -/
+def resolvedForestTermBoundaryCanonical (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] :
+    ResolvedFlatH58CarrierForestTermBoundary g where
+  splitTerm_agreement := splitTermAgreementCanonical g
+
+/-- **G-11: the forest boundary reduces to the forest INDEX boundary alone.**  With the term side
+canonical, a `ResolvedFlatH58CarrierForestIndexBoundary` (the forest split correspondence
+`forestSplitOf` + `forest_comm` — facade #2) is the *sole* remaining datum of the full forest
+boundary. -/
+def ResolvedFlatH58CarrierForestIndexBoundary.toForestBoundaryCanonical {g : HopfGen}
+    [IsDivergencePreservedByAdmissibleForestContract]
+    {FL : ResolvedCarrierFiniteBranchMapLayer}
+    {flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g}
+    (I : ResolvedFlatH58CarrierForestIndexBoundary g FL flatImageOf) :
+    ResolvedFlatH58CarrierForestBoundary g FL flatImageOf :=
+  I.combine (resolvedForestTermBoundaryCanonical g)
+
+/-- **G-11: the full carrier weight alignment from the mixed half + the forest INDEX boundary**
+(term canonical).  Combining the mechanical mixed alignment with the forest split correspondence
+gives the carrier alignment whose `.sum_reindex` is the resolved-native H5.8 inner reindex — so the
+inner reindex reduces to exactly the mixed half (mechanical) + the forest index boundary (facade
+#2). -/
+def ResolvedFlatH58CarrierMixedAlignment.combineForestIndex {g : HopfGen}
+    [IsDivergencePreservedByAdmissibleForestContract]
+    {FL : ResolvedCarrierFiniteBranchMapLayer} (M : ResolvedFlatH58CarrierMixedAlignment g FL)
+    (I : ResolvedFlatH58CarrierForestIndexBoundary g FL M.flatImageOf) :
+    ResolvedFlatH58CarrierWeightAlignment g FL :=
+  M.combine I.toForestBoundaryCanonical
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
