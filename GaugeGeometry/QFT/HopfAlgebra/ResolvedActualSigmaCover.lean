@@ -2575,6 +2575,18 @@ def splitTermAgreementOfRight {g : HopfGen}
   (ResolvedSplitTermAgreementSupply.ofForest
     (ResolvedForestBranchFactorizationSupply.ofRight right)).toSplitTermAgreement
 
+/-- **G-9b: the σ-cover `splitTerm_agreement` is canonical — facade-free, ZERO input.**  The forest
+right factor `right` is canonical (`h58BridgeForestRightHopfHCanonical`: the de-contraction
+composition law via the per-edge count proof + canonical vertices/legs), so — together with the
+canonical certificate/product (G-5c) and canonical mixed term (G-8) — the entire flat split-term
+agreement holds unconditionally.  This is the term-weight side of H5.8, fully discharged; the two
+boundary facades live only in the index/bijection/cover layer. -/
+def splitTermAgreementCanonical (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] :
+    ∀ s ∈ h58BridgeSplitChoiceIndex g,
+      h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s) :=
+  splitTermAgreementOfRight (fun q hq => h58BridgeForestRightHopfHCanonical g q hq)
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
