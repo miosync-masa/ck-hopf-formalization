@@ -2332,6 +2332,56 @@ def ResolvedFlatH58CarrierForestIndexBoundary.combine {g : HopfGen}
   forest_comm := I.forest_comm
   splitTerm_agreement := T.splitTerm_agreement
 
+/-! ### Gold Sprint G-12a — origin-tagged forest index supply (kills the section search)
+
+Rather than *search* a flat split-choice for each resolved forest carrier item (the section of the
+flat forest-cover map `ToQuotientForestSigma`), index the carrier by an origin set `I` (intended:
+the flat forest split choices) that surjects onto the carrier — each origin carrying its flat split
+choice + the commutation square.  Then `forestSplitOf` is an **origin projection** (unique-preimage,
+well-defined by `data_inj`), reducing facade #2 (the forest index boundary) to supplying this origin
+cover (`data_surj` = the cover, `comm` = the dictionary square — to be discharged by the Track-S lift
+round-trip + `canonicalFlatImageOf`). -/
+
+/-- An origin-tagged forest index cover: origins `I` surject (injectively) onto the forest carrier,
+each tagged with a flat split-choice and the dictionary commutation. -/
+structure ResolvedForestOriginIndexSupply (g : HopfGen)
+    (FL : ResolvedCarrierFiniteBranchMapLayer)
+    (flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g) where
+  /-- The origin index type (intended: flat forest split choices). -/
+  I : Type
+  /-- The finite origin carrier. -/
+  carrier : Finset I
+  /-- Origin → resolved forest carrier index. -/
+  data : I → FL.sep.ForestIdx
+  /-- Each origin's data lands in the forest carrier. -/
+  data_mem : ∀ i ∈ carrier, data i ∈ FL.forestCarrier
+  /-- Origin → flat split-choice (the tagged origin). -/
+  split : I → h58BridgeSplitChoiceSigma g
+  /-- Each split origin lands in the flat split index. -/
+  split_mem : ∀ i, split i ∈ h58BridgeSplitChoiceIndex g
+  /-- The origins cover the forest carrier. -/
+  data_surj : ∀ q ∈ FL.forestCarrier, ∃ i ∈ carrier, data i = q
+  /-- Distinct-image origins are distinct (well-definedness of the projection). -/
+  data_inj : ∀ i ∈ carrier, ∀ j ∈ carrier, data i = data j → i = j
+  /-- The dictionary commutation square at each origin. -/
+  comm : ∀ i ∈ carrier,
+    flatImageOf (FL.sep.forestImage (data i)) = h58BridgeSplitPhi g (split i)
+
+/-- **G-12a: origin cover ⇒ forest index boundary.**  `forestSplitOf` is the origin projection
+(unique preimage via `data_surj`/`data_inj`); `forest_comm` is the tagged `comm`. -/
+noncomputable def ResolvedForestOriginIndexSupply.toForestIndexBoundary {g : HopfGen}
+    {FL : ResolvedCarrierFiniteBranchMapLayer}
+    {flatImageOf : FL.sep.Image → h58BridgeQuotientSigma g}
+    (S : ResolvedForestOriginIndexSupply g FL flatImageOf) :
+    ResolvedFlatH58CarrierForestIndexBoundary g FL flatImageOf where
+  forestSplitOf := fun q => S.split (Classical.choose (S.data_surj q.1 q.2))
+  forestSplit_mem := fun q => S.split_mem _
+  forest_comm := fun q => by
+    obtain ⟨hmem, hdata⟩ := Classical.choose_spec (S.data_surj q.1 q.2)
+    have hcomm := S.comm _ hmem
+    rw [hdata] at hcomm
+    exact hcomm
+
 /-! ### Gold Sprint G-2 Scout — the term boundary IS the factorization (the gold core)
 
 Scout verdict on the two sliced boundaries:
