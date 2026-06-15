@@ -2607,6 +2607,35 @@ noncomputable def CanonicalOuterInnerSupplyData.ofDictionary {g : HopfGen}
   concreteIndexMaps := concreteIndexMaps
   splitTerm_agreement := splitTermAgreementCanonical g
 
+/-! ### Gold Sprint G-10b Scout — the forest index correspondence is the cover (facade #2)
+
+With the term side canonical (`splitTermAgreementCanonical`) and `flatImageOf` landed
+(`canonicalFlatImageOf`), the residual `concreteIndexMaps` content is the forest split
+correspondence `forestSplitOf`/`forest_comm` (mixed is a flat-mechanical origin projection).
+
+A forest carrier element `F : ResolvedForestImageData D` is a finite **set of de-contraction
+parents** `F.choiceParents ⊆ D.parents` (each `γ ⊇ Aout`), with
+`F.toImage.elements = F.choiceParents.image (resolvedParentRemnant Aout starOf)` — the forest of
+their remnants.  `forest_comm` reads (`flatImageOf = forget ∘ actual↔rep`,
+`splitPhi (forestSplitOf F) = forestComponentForestChoiceToQuotientForestSigma …`):
+```
+forget (F.toImage)  =  ToQuotientForestSigma (forestSplitOf F)
+```
+so **`forestSplitOf` is a section of the flat forest-cover map `ToQuotientForestSigma`** over the
+resolved carrier, and `forest_comm` is its section equation.
+
+**Verdict — the two facades are now precisely located:**
+* **Facade #1 (insertion uniqueness)** = the carrier injectivity `forest_inj_on` /
+  `toImage_choiceParents_inj` = `resolvedParentRemnant_injOn` — **kernel LANDED**.
+* **Facade #2 (cover)** = `forestSplitOf`/`forest_comm` (the `ToQuotientForestSigma` section) + the
+  carrier `cover_on` (which flat forest choices are hit).  The de-contraction section
+  `parentOfQuotient_remnant_eq` supplies the parent↔remnant half; the remaining genuine content is
+  the **forest-cover enumeration/correspondence** (which parent-sets ↔ which flat forest choices) —
+  the `…PromotedExternalLegsLiftableModel` content, resolved-native.
+
+So the last genuine mathematics is the forest-cover correspondence (`forestSplitOf` + `forest_comm`
++ `cover_on`).  No gated theorem is exposed. -/
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
