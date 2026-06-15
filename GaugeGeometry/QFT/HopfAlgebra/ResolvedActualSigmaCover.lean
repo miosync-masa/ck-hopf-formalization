@@ -2538,6 +2538,43 @@ def ResolvedSplitTermAgreementSupply.toSplitTermAgreement {g : HopfGen}
       h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s) :=
   S.forestSupply.toSplitTermAgreement S.mixed_term
 
+/-- **G-8: the mixed-branch term equality is canonically discharged** (facade-free, no certificate),
+via `h58BridgeMixedBranchTermEq` — the mixed-boundary round-trip is a literal split-star relabeling. -/
+def resolvedMixedBranchTermCanonical (g : HopfGen) :
+    ∀ s ∈ h58BridgeSplitChoiceIndex g, s.isRight = true →
+      h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s) := by
+  intro s hs hright
+  cases s with
+  | inl q => simp at hright
+  | inr q =>
+      exact h58BridgeMixedBranchTermEq g q ((h58BridgeSplitChoiceIndex_inr_mem_iff g q).mp hs)
+
+/-- **G-8: split-term agreement from the forest supply alone.**  The mixed branch is canonical
+(`resolvedMixedBranchTermCanonical`), so the σ-cover's `splitTerm_agreement` needs only the forest
+factorization supply. -/
+def ResolvedSplitTermAgreementSupply.ofForest {g : HopfGen}
+    (forestSupply : ResolvedForestBranchFactorizationSupply g) :
+    ResolvedSplitTermAgreementSupply g where
+  forestSupply := forestSupply
+  mixed_term := resolvedMixedBranchTermCanonical g
+
+/-- **G-8: `splitTerm_agreement` reduced to the single datum `right`.**  Composing G-5c
+(certificate + product canonical) with G-8 (mixed canonical): the entire σ-cover term boundary is
+produced from the forest-branch quotient right-factor identification `right` alone — the resolved
+hook for facade #1 (`resolvedParentRemnant_injOn`, the kernel already landed). -/
+def splitTermAgreementOfRight {g : HopfGen}
+    (right : ∀ q, ∀ hq : q ∈ h58BridgeForestChoiceIndex g,
+      h58BridgeForestRightHopfH g q =
+        h58BridgeForestRightHopfHQuotient g
+          (h58BridgeForestChoiceOuterIndex g q hq)
+          (h58BridgeForestChoiceRepQuotient g q hq)
+          (h58BridgeForestChoiceRepQuotientMem g q hq
+            (h58BridgeForestChoiceRemnantCertificateCanonical g q hq))) :
+    ∀ s ∈ h58BridgeSplitChoiceIndex g,
+      h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s) :=
+  (ResolvedSplitTermAgreementSupply.ofForest
+    (ResolvedForestBranchFactorizationSupply.ofRight right)).toSplitTermAgreement
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
