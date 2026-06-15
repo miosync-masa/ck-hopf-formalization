@@ -2123,6 +2123,33 @@ noncomputable def canonicalFlatImageOf (g : HopfGen) (A : h58BridgeOuterIndex g)
   h58BridgeActualQuotientToSigma g A
     (admissibleAlongForgetEq (forget_canonicalOuterContractedGraph g A) z)
 
+/-- **G-12b-1: the forget-along-eq round-trip.**  Forgetting (`admissibleAlongForgetEq`) the lift
+(`liftFlatAdmissibleAlongForgetEq`) of a flat admissible forest returns it — the homogeneous
+round-trip after the shared `subst`. -/
+theorem admissibleAlongForgetEq_liftFlatAdmissibleAlongForgetEq {G : ResolvedFeynmanGraph}
+    {Gf : FeynmanGraph} (h : G.forget = Gf) (Af : AdmissibleSubgraph Gf)
+    (hDisj : Af.IsPairwiseDisjoint) :
+    admissibleAlongForgetEq h (liftFlatAdmissibleAlongForgetEq h Af hDisj) = Af := by
+  subst h
+  apply admissibleSubgraph_ext_local
+  show (Af.elements.image resolvedSubgraphOfForget).image ResolvedFeynmanSubgraph.forget
+    = Af.elements
+  rw [Finset.image_image,
+    show (ResolvedFeynmanSubgraph.forget ∘ resolvedSubgraphOfForget) = id from
+      funext forget_resolvedSubgraphOfForget, Finset.image_id]
+
+/-- **G-12b-1: `canonicalFlatImageOf` of a lifted flat quotient forest.**  The resolved→flat
+quotient index of the lift of a flat actual-quotient forest `Af` is exactly its actual→rep
+transport `h58BridgeActualQuotientToSigma g A Af` — the dictionary-square core (`forget` round-trip
+through the S-2/S-3 bridge). -/
+theorem canonicalFlatImageOf_liftFlatQuotientForestToCres (g : HopfGen) (A : h58BridgeOuterIndex g)
+    (Af : AdmissibleSubgraph (h58BridgeOuterActualQuotientGraph g A))
+    (hDisj : Af.IsPairwiseDisjoint) :
+    canonicalFlatImageOf g A (liftFlatQuotientForestToCres g A Af hDisj) =
+      h58BridgeActualQuotientToSigma g A Af := by
+  unfold canonicalFlatImageOf liftFlatQuotientForestToCres
+  rw [admissibleAlongForgetEq_liftFlatAdmissibleAlongForgetEq]
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
