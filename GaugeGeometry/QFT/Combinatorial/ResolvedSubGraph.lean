@@ -665,6 +665,73 @@ theorem isPairwiseDisjoint_of_isProperForest {A : ResolvedAdmissibleSubgraph G}
 
 end ResolvedAdmissibleSubgraph
 
+/-! ### G-13d — single-component admissible forest (the LOCAL `Aout` for per-component de-contraction)
+
+The whole-`Aout` de-contraction (`parentOfQuotient`/`parent_remnant_eq`) requires `δ` to contain
+ALL of `Aout`'s stars, so it cannot be applied to a per-component (one-star) remnant piece.
+Wrapping a single component `η` as a one-element admissible forest gives a LOCAL `Aout` whose
+`starVertices` is the single `{starOf η}` — re-running the existing machinery at this granularity is
+the G-13d winning path. -/
+
+/-- A single connected-divergent component `η` as a one-element resolved admissible forest. -/
+noncomputable def singletonResolvedAdmissibleSubgraph {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent) :
+    ResolvedAdmissibleSubgraph G where
+  elements := {η}
+  isConnectedDivergent := by
+    intro γ hγ; rw [Finset.mem_singleton] at hγ; subst hγ; exact hCD
+  pairwiseDisjoint := by
+    intro γ₁ h₁ γ₂ h₂ hne
+    rw [Finset.mem_singleton] at h₁ h₂; subst h₁; subst h₂; exact (hne rfl).elim
+
+@[simp] theorem singletonResolvedAdmissibleSubgraph_elements {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent) :
+    (singletonResolvedAdmissibleSubgraph η hCD).elements = {η} := rfl
+
+@[simp] theorem singletonResolvedAdmissibleSubgraph_vertices {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent) :
+    (singletonResolvedAdmissibleSubgraph η hCD).vertices = η.vertices := by
+  simp [ResolvedAdmissibleSubgraph.vertices]
+
+@[simp] theorem singletonResolvedAdmissibleSubgraph_internalEdges {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent) :
+    (singletonResolvedAdmissibleSubgraph η hCD).internalEdges = η.internalEdges := by
+  simp [ResolvedAdmissibleSubgraph.internalEdges]
+
+@[simp] theorem singletonResolvedAdmissibleSubgraph_externalLegs {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent) :
+    (singletonResolvedAdmissibleSubgraph η hCD).externalLegs = η.externalLegs := by
+  simp [ResolvedAdmissibleSubgraph.externalLegs]
+
+@[simp] theorem singletonResolvedAdmissibleSubgraph_starVertices {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) :
+    (singletonResolvedAdmissibleSubgraph η hCD).starVertices starOf = {starOf η} := by
+  simp [ResolvedAdmissibleSubgraph.starVertices]
+
+/-- Components of the singleton are vertex-nonempty (from `η`'s nonemptiness). -/
+theorem singletonResolvedAdmissibleSubgraph_components_nonempty {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent)
+    (hη : η.vertices.Nonempty) :
+    ∀ γ ∈ (singletonResolvedAdmissibleSubgraph η hCD).elements, γ.vertices.Nonempty := by
+  intro γ hγ; rw [singletonResolvedAdmissibleSubgraph_elements, Finset.mem_singleton] at hγ
+  subst hγ; exact hη
+
+/-- Components of the singleton have positive internal edges (from `η`'s). -/
+theorem singletonResolvedAdmissibleSubgraph_componentPositiveEdges {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent)
+    (hpos : 0 < η.internalEdges.card) :
+    ∀ γ ∈ (singletonResolvedAdmissibleSubgraph η hCD).elements, 0 < γ.internalEdges.card := by
+  intro γ hγ; rw [singletonResolvedAdmissibleSubgraph_elements, Finset.mem_singleton] at hγ
+  subst hγ; exact hpos
+
+/-- The single local star lies in the singleton's `starVertices`. -/
+theorem singletonResolvedAdmissibleSubgraph_star_mem {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) :
+    starOf η ∈ (singletonResolvedAdmissibleSubgraph η hCD).starVertices starOf := by
+  rw [singletonResolvedAdmissibleSubgraph_starVertices]; exact Finset.mem_singleton_self _
+
 /-- A resolved admissible subgraph that is a proper forest of `G` (predicate-level
 `forestCoproductProperForestIndex`).  Finite enumeration is deferred to Phase 2b. -/
 def ResolvedFeynmanGraph.ResolvedProperForest (G : ResolvedFeynmanGraph)
