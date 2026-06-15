@@ -39639,6 +39639,69 @@ theorem h58BridgeForestRightHopfHEqOfActualRightClass
     (forestComponentForestChoice_rightContractClass_of_actual g q hq
       (h58BridgeForestChoiceRemnantCertificateCanonical g q hq) hActual)
 
+/-! ### G-9b — the forest right round-trip is facade-free CANONICAL
+
+Correcting the G-5c-3 scout: the forest split-star graph field model is **canonical**, not a facade.
+Its `vertices`/`externalLegs` fields are canonical theorems
+(`forestComponentForestChoice_splitStar_{vertices,externalLegs}_eq`), and its `internalEdges` field
+reduces (via `...SplitStarGraphFieldModelOfActualInternalEdges`) to the actual-quotient internal-edge
+identity, which is discharged canonically by the per-edge count proof
+(`forestComponentForestChoiceSourceInternalEdgesCountSplitCanonical`).  The
+`RepQuotientComplementPositiveModel` it uses has a canonical instance
+(`...RepQuotientComplementPositiveModelCanonical`).  So the de-contraction composition law for the
+forest right factor holds with **no facade and no certificate-beyond-canonical**. -/
+
+/-- **G-9b: the forest actual right-contraction graph-class equality, CANONICAL.**  Parallel to the
+mixed branch but using the canonical forest split-star field model (internal-edge count proof +
+canonical vertices/legs) — the de-contraction composition iso, facade-free. -/
+theorem h58BridgeForestRightActualClassCanonical
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    (h58BridgeForestRightOriginalGraph g q).toClass =
+      (h58BridgeForestRightActualGraph g q hq).toClass := by
+  letI : ForestComponentForestChoiceRepQuotientComplementPositiveModel :=
+    forestComponentForestChoiceRepQuotientComplementPositiveModelCanonical
+  have fieldModel : forestComponentForestChoiceSplitStarFieldModel :=
+    forestComponentForestChoiceSplitStarFieldModelOfReduced
+      (forestComponentForestChoiceSplitStarReducedFieldModelOfBranches
+        (forestComponentForestChoiceSplitStarBranchFieldModelOfGraphFields
+          (forestComponentForestChoiceSplitStarGraphFieldModelOfActualInternalEdges
+            (forestComponentForestChoiceActualQuotientInternalEdgesModelOfSourceSplit
+              (forestComponentForestChoiceSourceInternalEdgesSplitModelOfCount
+                forestComponentForestChoiceSourceInternalEdgesCountSplitCanonical)))))
+  have hFresh := fieldModel.fresh g q hq (h58BridgeForestChoiceRemnantCertificateCanonical g q hq)
+  have hGraphEq := forestComponentForestChoiceSplitStarGraphEqOfFields fieldModel g q hq
+    (h58BridgeForestChoiceRemnantCertificateCanonical g q hq)
+  obtain ⟨τ, hV, hI, hE⟩ := admissibleForestContractFreshStarFieldRelabeling_of_wellFormed
+    (repG_wellFormed g) q.1.1 q.1.2
+    (forestComponentForestChoiceSplitStarOf g q hq
+      (h58BridgeForestChoiceRemnantCertificateCanonical g q hq)) hFresh
+  have hOrig : forestComponentChoiceOriginalRightContractGraph g q =
+      (h58BridgeForestRightActualGraph g q hq).mapPerm τ := by
+    show forestComponentChoiceOriginalRightContractGraph g q =
+      (forestComponentForestChoiceActualRightContractGraph g q hq
+        (h58BridgeForestChoiceRemnantCertificateCanonical g q hq)).mapPerm τ
+    rw [hGraphEq]
+    apply FeynmanGraph.mk.injEq _ _ _ _ _ _ |>.mpr
+    exact ⟨hV, hI, hE⟩
+  have hFlip := graph_eq_mapPerm_inv_of_eq_mapPerm _ _ τ hOrig
+  exact (FeynmanGraph.toClass_eq_iff _ _).mpr ⟨τ⁻¹, hFlip⟩
+
+/-- **G-9b: the forest-branch right factor, CANONICAL** (facade-free).  Composing the canonical
+graph-class equality (`h58BridgeForestRightActualClassCanonical`) with the gen→graph reduction
+(G-9a).  This discharges the resolved `right` datum with no facade. -/
+theorem h58BridgeForestRightHopfHCanonical
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    h58BridgeForestRightHopfH g q =
+      h58BridgeForestRightHopfHQuotient g
+        (h58BridgeForestChoiceOuterIndex g q hq)
+        (h58BridgeForestChoiceRepQuotient g q hq)
+        (h58BridgeForestChoiceRepQuotientMem g q hq
+          (h58BridgeForestChoiceRemnantCertificateCanonical g q hq)) :=
+  h58BridgeForestRightHopfHEqOfActualRightClass g q hq
+    (h58BridgeForestRightActualClassCanonical g q hq)
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
