@@ -540,6 +540,21 @@ ToQuotientForestSigma (forestSplitOf F)`).  The parent↔remnant half is `parent
 (landed); the remaining content is the cover enumeration.  **Full native resolved H5.8 still not
 claimed complete (the forest-cover correspondence / facade #2 not yet constructed).**
 
+**Update (facade #2's real shape — an outer-sum cover).**  Constructing the cover, `forestSplitOf`
+was reduced to an origin projection (`ResolvedForestOriginIndexSupply`, no section search) and the
+commutation-square *transport core* was landed (`canonicalFlatImageOf` of a lift = the actual→rep
+transport; `splitPhi (inl q)` = that transport of the actual quotient).  Instantiating the cover
+then exposed the genuine knife-edge: a resolved forest carrier element is **single-parent**
+(multi-parent remnants each contain all outer stars, so cannot be disjoint) hence
+**single-component**, while the flat forest choice's actual quotient is **multi-component**.  So the
+naive single-component ↔ flat-forest-choice correspondence fails *within one outer forest*; the
+multi-component flat RHS quotient is recovered only as the **outer sum** (over outer forests) of
+single star-saturated resolved components.  Thus facade #2 is an **outer-sum cover** indexed by
+`(outer forest, single star-saturated quotient component)` — the genuine remaining mathematics is
+`multi-component flat quotient forest ↔ outer-sum of single star-saturated resolved components`
+(a P2/P3-style "do not close per-`D`, the outer sum is the right level").  **Full native resolved
+H5.8 still not claimed complete.**
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
