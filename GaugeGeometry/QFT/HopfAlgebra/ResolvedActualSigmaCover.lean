@@ -2587,6 +2587,26 @@ def splitTermAgreementCanonical (g : HopfGen)
       h58BridgeSplitChoiceTerm g s = h58BridgeQuotientTerm g (h58BridgeSplitPhi g s) :=
   splitTermAgreementOfRight (fun q hq => h58BridgeForestRightHopfHCanonical g q hq)
 
+/-- **G-10a: the inner supply from carriers + the pure index dictionary** (term canonical).  Since
+`splitTerm_agreement` is now canonical (`splitTermAgreementCanonical`), the inner σ-cover supply
+needs only the de-contraction forest carrier, the mixed carrier, and the resolved→flat index
+dictionary (`ResolvedH58ConcreteIndexMaps`) — no term datum.  The remaining genuine content is the
+dictionary's forest split correspondence + the carrier enumeration (the cover/bijection layer). -/
+noncomputable def CanonicalOuterInnerSupplyData.ofDictionary {g : HopfGen}
+    {A : h58BridgeOuterIndex g}
+    (forestSupply : CanonicalOuterForestQuotientSupply g A)
+    (mixedSupply : ResolvedMixedCarrierSupply
+      (canonicalSigmaCoverDataOfParents forestSupply.parentsData))
+    (concreteIndexMaps : ResolvedH58ConcreteIndexMaps g
+      ((forestSupply.toBranchCarriers mixedSupply).toLayer
+        (canonicalResolvedHopfPayloadFamilyWithUniqueIds.edgeIdsUnique g)
+        (canonicalResolvedHopfPayloadFamilyWithUniqueIds.legIdsUnique g))) :
+    CanonicalOuterInnerSupplyData g A where
+  forestSupply := forestSupply
+  mixedSupply := mixedSupply
+  concreteIndexMaps := concreteIndexMaps
+  splitTerm_agreement := splitTermAgreementCanonical g
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
