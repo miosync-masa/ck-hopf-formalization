@@ -39594,6 +39594,51 @@ theorem h58BridgeMixedBranchTermEq [IsDivergencePreservedByAdmissibleForestContr
       forestComponentSplitPhi_inr_of_mem g q hq]
   exact forestComponentMixedBoundary_branch_term_eq_canonical g q hq
 
+/-! ### G-9a — reduce the forest `right` factor to a graph-class equality
+
+Unlike the mixed branch, the forest branch re-inserts genuine forest components, so its right
+round-trip is the de-contraction *composition* law (two-stage = one-stage forest contraction), which
+needs the resolved insertion-uniqueness (`resolvedParentRemnant_injOn`, kernel landed) — this is the
+genuine remaining content (facade #1).  These exposures reduce `right` to exactly the actual
+quotient-side right-contraction graph-class equality, so the resolved track proves only a graph iso. -/
+
+/-- Public alias: the original whole-forest right contraction graph (`repG g` contracted by the
+whole forest `q.1.1`, canonical stars). -/
+noncomputable def h58BridgeForestRightOriginalGraph
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) : FeynmanGraph :=
+  forestComponentChoiceOriginalRightContractGraph g q
+
+/-- Public alias: the actual quotient-side right contraction graph (the actual quotient graph
+contracted by the actual quotient subgraph, canonical stars) at the canonical certificate. -/
+noncomputable def h58BridgeForestRightActualGraph
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    FeynmanGraph :=
+  forestComponentForestChoiceActualRightContractGraph g q hq
+    (h58BridgeForestChoiceRemnantCertificateCanonical g q hq)
+
+/-- **G-9a: the forest right factor from the actual right-contraction graph-class equality.**
+Given the de-contraction composition iso (`OriginalGraph.toClass = ActualGraph.toClass` — the
+genuine facade #1 content, to be discharged resolved-natively via the insertion-uniqueness kernel),
+the forest-branch right factor `right` holds.  This is the gen→graph reduction (via
+`forestComponentForestChoice_rightContractClass_of_actual` + `forestRightHopfH_eq_of_contract_toClass_eq`);
+no facade is consumed here — the facade is exactly the `hActual` hypothesis. -/
+theorem h58BridgeForestRightHopfHEqOfActualRightClass
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g)
+    (hActual : (h58BridgeForestRightOriginalGraph g q).toClass =
+      (h58BridgeForestRightActualGraph g q hq).toClass) :
+    h58BridgeForestRightHopfH g q =
+      h58BridgeForestRightHopfHQuotient g
+        (h58BridgeForestChoiceOuterIndex g q hq)
+        (h58BridgeForestChoiceRepQuotient g q hq)
+        (h58BridgeForestChoiceRepQuotientMem g q hq
+          (h58BridgeForestChoiceRemnantCertificateCanonical g q hq)) :=
+  forestRightHopfH_eq_of_contract_toClass_eq
+    (forestComponentForestChoice_rightContractClass_of_actual g q hq
+      (h58BridgeForestChoiceRemnantCertificateCanonical g q hq) hActual)
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
