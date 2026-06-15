@@ -519,6 +519,27 @@ not imported from flat's facade-discharged assembly.  Carrier / de-contraction /
 / dictionary-half / mixed-half are all complete; `mixed_term` is expected mechanical.  **Full
 native resolved H5.8 still not claimed complete (`forest_term` not yet proved).**
 
+**Update (gold sprints G-5…G-11): the term-weight side is canonical; only facade #2 (cover)
+remains.**  Pushing `forest_term` through, the entire **term-weight side** turned out to be
+facade-free *canonical*, not a genuine boundary: `splitTermAgreementCanonical g` produces the whole
+`splitTerm_agreement` with no input.  Its four pieces are all canonical — certificate (remnant
+complement nonempty), product (outer left/promoted ⊗ inner remnant transport), `mixed_term` (the
+mixed branch is a literal split-star relabel), and — correcting the earlier scout — the **forest
+right factor**: its de-contraction *composition law* is discharged by the per-edge count proof
+(`forestComponentForestChoiceSourceInternalEdgesCountSplitCanonical`) plus canonical
+vertices/external-legs, with the `RepQuotientComplementPositiveModel` supplied by a canonical
+instance.  **Facade #1 (insertion uniqueness)** is the carrier forest-injectivity, already the
+resolved kernel `resolvedParentRemnant_injOn` (= `parent_eq_of_remainder_eq`).  The resolved-native
+H5.8 inner reindex is assembled carrier-based (`ResolvedFlatH58CarrierWeightAlignment.sum_reindex`,
+carrier-subtype split maps — no whole-type junk) from the mechanical mixed half + the **forest
+index boundary**.  So the **single remaining genuine datum** is
+`ResolvedFlatH58CarrierForestIndexBoundary` = **facade #2 (cover)**: a section `forestSplitOf` of
+the flat forest-cover map `ToQuotientForestSigma` over the resolved carrier (each forest carrier
+element is a de-contraction parent set; `forest_comm` reads `forget(F.toImage) =
+ToQuotientForestSigma (forestSplitOf F)`).  The parent↔remnant half is `parentOfQuotient_remnant_eq`
+(landed); the remaining content is the cover enumeration.  **Full native resolved H5.8 still not
+claimed complete (the forest-cover correspondence / facade #2 not yet constructed).**
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
