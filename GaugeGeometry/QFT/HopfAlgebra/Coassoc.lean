@@ -39702,6 +39702,37 @@ theorem h58BridgeForestRightHopfHCanonical
   h58BridgeForestRightHopfHEqOfActualRightClass g q hq
     (h58BridgeForestRightActualClassCanonical g q hq)
 
+/-! ### G-12b-2 — `splitPhi` at a forest left choice = the actual→rep transport of its actual quotient
+
+The cover dictionary square needs `h58BridgeSplitPhi g (Sum.inl i)` expressed as the actual→rep
+transport (`h58BridgeActualQuotientToSigma`) of the forest choice's *actual* quotient subgraph — so
+it matches `canonicalFlatImageOf` of the lift of that actual quotient.  Both sides reduce to
+`⟨OuterIndex, forestOuterActualToRep (ActualQuotientCanonical)⟩` definitionally (the rep quotient IS
+that transport). -/
+
+/-- Public alias: the actual quotient-side forest of a forest choice (over the ACTUAL quotient
+graph), whose actual→rep transport is the representative quotient `h58BridgeForestChoiceRepQuotient`. -/
+noncomputable def h58BridgeForestSplitActualQuotient
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    AdmissibleSubgraph (h58BridgeOuterActualQuotientGraph g (h58BridgeForestChoiceOuterIndex g q hq)) :=
+  forestComponentForestChoiceActualQuotientSubgraphCanonical g q hq
+
+/-- **G-12b-2: `splitPhi (Sum.inl q)` = actual→rep transport of the actual quotient.**  The forest
+left-branch image of `φ` equals `h58BridgeActualQuotientToSigma` applied to the forest choice's
+actual quotient subgraph — definitionally (the representative quotient is exactly that transport),
+modulo the `dif_pos` `φ`-on-`inl` alignment. -/
+theorem h58BridgeForestSplitPhiInl_eq
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    h58BridgeSplitPhi g (Sum.inl q) =
+      h58BridgeActualQuotientToSigma g (h58BridgeForestChoiceOuterIndex g q hq)
+        (h58BridgeForestSplitActualQuotient g q hq) := by
+  rw [show h58BridgeSplitPhi g (Sum.inl q) =
+      forestComponentForestChoiceToQuotientForestSigma g q hq from
+      forestComponentSplitPhi_inl_of_mem g q hq]
+  rfl
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
