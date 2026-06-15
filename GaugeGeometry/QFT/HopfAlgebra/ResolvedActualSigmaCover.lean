@@ -1251,6 +1251,57 @@ theorem parentOfQuotient_remnant_eq
   · exact parentOfQuotient_remnant_internalEdges Aout starOf δ hE hL
   · exact parentOfQuotient_remnant_externalLegs Aout starOf δ hE hL
 
+/-! ### G-13d — per-component de-contraction at a single-component (local) `Aout`
+
+Re-run the existing de-contraction (`parentOfQuotient` / `parent_remnant_eq`) with
+`Aout := singletonResolvedAdmissibleSubgraph η hCD`.  The local `Aout` has a single star
+`{starOf η}`, so the all-star hypothesis `hStars` localises to `starOf η ∈ δ.vertices` — the
+per-component (one-star) remnant pieces are now in range. -/
+
+/-- **G-13d: local de-contraction parent** at the single-component `Aout = {η}`. -/
+noncomputable def parentOfQuotientLocalComponent {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph
+      ((singletonResolvedAdmissibleSubgraph η hCD).contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices) :
+    ResolvedFeynmanSubgraph G :=
+  parentOfQuotient (singletonResolvedAdmissibleSubgraph η hCD) starOf δ hE hL
+
+/-- The local parent contains the single component `η`'s edges. -/
+theorem parentOfQuotientLocalComponent_contains {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph
+      ((singletonResolvedAdmissibleSubgraph η hCD).contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices) :
+    (singletonResolvedAdmissibleSubgraph η hCD).internalEdges ≤
+      (parentOfQuotientLocalComponent η hCD starOf δ hE hL).internalEdges :=
+  parentOfQuotient_containsAoutEdges (singletonResolvedAdmissibleSubgraph η hCD) starOf δ hE hL
+
+/-- **G-13d: local remnant equality** — the local de-contraction is a section of the local
+parent-remnant map.  `hStars` reduces to `starOf η ∈ δ.vertices` (the single local star), so the
+per-component (one-star) hypothesis suffices. -/
+theorem parentOfQuotientLocalComponent_remnant_eq {G : ResolvedFeynmanGraph}
+    (η : ResolvedFeynmanSubgraph G) (hCD : η.forget.IsConnectedDivergent)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph
+      ((singletonResolvedAdmissibleSubgraph η hCD).contractWithStars starOf))
+    (hE : ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
+    (hL : ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices)
+    (hη : η.vertices.Nonempty)
+    (hStar : starOf η ∈ δ.vertices)
+    (hCovered : QuotientVertexCovered (singletonResolvedAdmissibleSubgraph η hCD) starOf δ) :
+    resolvedParentRemnant (singletonResolvedAdmissibleSubgraph η hCD) starOf
+        (parentOfQuotientLocalComponent η hCD starOf δ hE hL) = δ :=
+  parentOfQuotient_remnant_eq (singletonResolvedAdmissibleSubgraph η hCD) starOf δ hE hL
+    (singletonResolvedAdmissibleSubgraph_components_nonempty η hCD hη)
+    (by rw [singletonResolvedAdmissibleSubgraph_starVertices]
+        exact Finset.singleton_subset_iff.mpr hStar)
+    hCovered
+
 /-! ### DeContraction-4 — payload well-formedness + parents-from-quotient-carrier
 
 The de-contraction needs the ambient graph edge/leg-supported (`hE`/`hL`).  For the canonical
