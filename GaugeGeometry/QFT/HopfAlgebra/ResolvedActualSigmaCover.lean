@@ -2538,6 +2538,22 @@ theorem finset_image_union_liftFlatSubgraphAlongForgetEq_forget {G : ResolvedFey
     eq_of_heq (finset_image_liftFlatSubgraphAlongForgetEq_forget rfl S),
     eq_of_heq (finset_image_liftFlatSubgraphAlongForgetEq_forget rfl T)]
 
+/-- **G-13h-3b-3 (comm core, clean path): comm from `toImage = lift of the actual quotient`.**
+If the full image's `toImage` is the resolved lift of the flat actual quotient `Af` of `i`, the
+cover dictionary square holds directly — `canonicalFlatImageOf` of a lift is the actual→rep
+transport (G-12b-1), which is `splitPhi (Sum.inl i)` (G-12b-2).  No per-component round-trip needed. -/
+theorem fullImage_comm_of_toImage_eq_lift {g : HopfGen}
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeForestChoiceOuterIndex g i hi))
+    (hDisj : (h58BridgeForestSplitActualQuotient g i hi).IsPairwiseDisjoint)
+    (F : ResolvedFullQuotientForestImageData (canonicalSigmaCoverDataOfParents P))
+    (hF : F.toImage = liftFlatQuotientForestToCres g (h58BridgeForestChoiceOuterIndex g i hi)
+            (h58BridgeForestSplitActualQuotient g i hi) hDisj) :
+    canonicalFlatImageOf g (h58BridgeForestChoiceOuterIndex g i hi) F.toImage =
+      h58BridgeSplitPhi g (Sum.inl i) := by
+  rw [hF, canonicalFlatImageOf_liftFlatQuotientForestToCres]
+  exact (h58BridgeForestSplitPhiInl_eq g i hi).symm
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
