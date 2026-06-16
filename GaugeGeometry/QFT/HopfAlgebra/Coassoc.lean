@@ -39733,6 +39733,33 @@ theorem h58BridgeForestSplitPhiInl_eq
       forestComponentSplitPhi_inl_of_mem g q hq]
   rfl
 
+/-- **G-13h-3b-3: the forest split actual quotient is pairwise disjoint** (it lies in the actual
+RHS proper-disjoint carrier, via the canonical remnant-positive certificate) — the `hDisj` the
+resolved lift `liftFlatQuotientForestToCres` needs. -/
+theorem h58BridgeForestSplitActualQuotientPairwise
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    (h58BridgeForestSplitActualQuotient g q hq).IsPairwiseDisjoint :=
+  (forestOuterActualQuotientGraph g (forestComponentForestChoiceOuterIndex g q hq)
+    ).properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint
+    (forestComponentForestChoiceActualQuotientSubgraphCanonical_mem_properDisjoint g q hq
+      (forestComponentForestChoiceActualQuotientProperCertificateOfRemnantPositive g q hq
+        (h58BridgeForestChoiceRemnantCertificateCanonical g q hq)))
+
+/-- **G-13h-3b-3: the forest split actual quotient touches an outer star** (the genuine-forest
+discriminator witness) — a component of the actual quotient meets the outer forest's star vertices.
+This is the flat source for the resolved `hTouch` (`remnantNonempty`). -/
+theorem h58BridgeForestSplitActualQuotientTouchesStar
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeForestChoiceIndex g) :
+    ∃ δ ∈ (h58BridgeForestSplitActualQuotient g q hq).elements,
+      ¬ Disjoint δ.vertices
+        ((h58BridgeForestChoiceOuterIndex g q hq).1.starVertices
+          (FeynmanGraph.admissibleForestCanonicalStarOf (repG g).toFeynmanGraph
+            (h58BridgeForestChoiceOuterIndex g q hq).1
+            (h58BridgeForestChoiceOuterIndex g q hq).2)) :=
+  forestComponentForestChoiceActualQuotientSubgraph_exists_starVertex g q hq
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
