@@ -3417,6 +3417,43 @@ def ResolvedFlatH58CarrierMixedAlignment.combineForestIndex {g : HopfGen}
     ResolvedFlatH58CarrierWeightAlignment g FL :=
   M.combine I.toForestBoundaryCanonical
 
+/-! ### Gold Sprint G-13h-5 — full-grain inner reindex (parallel to the old remnant-only path)
+
+Packages a full-grain layer `FL` (forest index = full quotient images) with its mixed alignment and
+forest index boundary; `.sum_reindex` is the resolved-native H5.8 inner reindex for that `FL`.  The
+old remnant-only `CanonicalOuterInnerSupplyData` path is left intact; this is the full-grain
+parallel that the cover (`fullQuotientForestImageDataOfFlatSplit` + its `comm`/injectivity) feeds. -/
+
+/-- Full-grain inner supply: a layer `FL` + mixed alignment + forest index boundary (the cover
+dictionary).  The term side is canonical (`splitTermAgreementCanonical`, inside `combineForestIndex`). -/
+structure CanonicalOuterFullGrainInnerSupplyData (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] where
+  /-- The full-grain carrier layer. -/
+  FL : ResolvedCarrierFiniteBranchMapLayer
+  /-- The mechanical mixed alignment over `FL`. -/
+  mixedAlignment : ResolvedFlatH58CarrierMixedAlignment g FL
+  /-- The forest index boundary (cover dictionary) over `FL`. -/
+  forestBoundary : ResolvedFlatH58CarrierForestIndexBoundary g FL mixedAlignment.flatImageOf
+
+/-- The carrier weight alignment of a full-grain inner supply. -/
+noncomputable def CanonicalOuterFullGrainInnerSupplyData.weightAlignment {g : HopfGen}
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (S : CanonicalOuterFullGrainInnerSupplyData g) :
+    ResolvedFlatH58CarrierWeightAlignment g S.FL :=
+  S.mixedAlignment.combineForestIndex S.forestBoundary
+
+/-- **G-13h-5: the full-grain inner H5.8 reindex** — the image-weight sum over `FL` equals the
+forest + mixed branch-weight sums. -/
+theorem CanonicalOuterFullGrainInnerSupplyData.sum_reindex {g : HopfGen}
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (S : CanonicalOuterFullGrainInnerSupplyData g) :
+    ∑ z ∈ S.FL.imageCarrier, h58BridgeQuotientTerm g (S.weightAlignment.flatImageOf z) =
+      (∑ q ∈ S.FL.forestCarrier.attach,
+          h58BridgeSplitChoiceTerm g (S.weightAlignment.forestSplitOf q)) +
+      (∑ q ∈ S.FL.mixedCarrier.attach,
+          h58BridgeSplitChoiceTerm g (S.weightAlignment.mixedSplitOf q)) :=
+  S.weightAlignment.sum_reindex
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
