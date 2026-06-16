@@ -1337,6 +1337,36 @@ theorem whole_local_retargetVertex_eq {G : ResolvedFeynmanGraph}
         (singletonResolvedAdmissibleSubgraph η hCD) starOf
         (by rw [singletonResolvedAdmissibleSubgraph_vertices]; exact hvη)]
 
+/-- **G-13f-1: whole/local retarget agreement on an edge** whose endpoints are each in `η` or
+outside `Aout`. -/
+theorem whole_local_retargetEdge_eq {G : ResolvedFeynmanGraph}
+    (Aout : ResolvedAdmissibleSubgraph G) (η : ResolvedFeynmanSubgraph G)
+    (hη : η ∈ Aout.elements) (hCD : η.forget.IsConnectedDivergent)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (e : ResolvedFeynmanEdge)
+    (hsrc : e.source ∈ η.vertices ∨ e.source ∉ Aout.vertices)
+    (htgt : e.target ∈ η.vertices ∨ e.target ∉ Aout.vertices) :
+    Aout.retargetEdge starOf e =
+      (singletonResolvedAdmissibleSubgraph η hCD).retargetEdge starOf e := by
+  have h1 := whole_local_retargetVertex_eq Aout η hη hCD starOf hsrc
+  have h2 := whole_local_retargetVertex_eq Aout η hη hCD starOf htgt
+  unfold ResolvedAdmissibleSubgraph.retargetEdge ResolvedFeynmanEdge.retarget
+  rw [h1, h2]
+
+/-- **G-13f-1: whole/local retarget agreement on an external leg** whose attachment is in `η` or
+outside `Aout`. -/
+theorem whole_local_retargetLeg_eq {G : ResolvedFeynmanGraph}
+    (Aout : ResolvedAdmissibleSubgraph G) (η : ResolvedFeynmanSubgraph G)
+    (hη : η ∈ Aout.elements) (hCD : η.forget.IsConnectedDivergent)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (ℓ : ResolvedExternalLeg)
+    (hatt : ℓ.attachedTo ∈ η.vertices ∨ ℓ.attachedTo ∉ Aout.vertices) :
+    Aout.retargetExternalLeg starOf ℓ =
+      (singletonResolvedAdmissibleSubgraph η hCD).retargetExternalLeg starOf ℓ := by
+  have h1 := whole_local_retargetVertex_eq Aout η hη hCD starOf hatt
+  unfold ResolvedAdmissibleSubgraph.retargetExternalLeg ResolvedExternalLeg.retarget
+  rw [h1]
+
 /-! ### DeContraction-4 — payload well-formedness + parents-from-quotient-carrier
 
 The de-contraction needs the ambient graph edge/leg-supported (`hE`/`hL`).  For the canonical
