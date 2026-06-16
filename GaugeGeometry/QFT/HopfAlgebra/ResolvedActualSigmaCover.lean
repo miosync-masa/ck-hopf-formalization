@@ -1542,6 +1542,42 @@ theorem ResolvedFullQuotientForestImageData.forest_sat {D : ResolvedSigmaCoverDa
   obtain ⟨δ, hδ⟩ := F.remnantNonempty
   exact ⟨δ, Finset.mem_union_left _ hδ, F.remnantTouches δ hδ⟩
 
+open Classical in
+/-- The remnant components are recovered as the star-touching part of `toImage` (remnant pieces
+touch, right survivors avoid). -/
+theorem ResolvedFullQuotientForestImageData.remnant_eq_filter {D : ResolvedSigmaCoverData G}
+    (F : ResolvedFullQuotientForestImageData D) :
+    F.remnantComponents =
+      F.toImage.elements.filter (fun δ => ¬ Disjoint δ.vertices (D.Aout.starVertices D.starOf)) := by
+  rw [ResolvedFullQuotientForestImageData.toImage_elements, Finset.filter_union,
+    Finset.filter_true_of_mem (fun δ hδ => F.remnantTouches δ hδ),
+    Finset.filter_false_of_mem (fun δ hδ => not_not.mpr (F.rightAvoidsStars δ hδ)),
+    Finset.union_empty]
+
+open Classical in
+/-- The right survivors are recovered as the star-avoiding part of `toImage`. -/
+theorem ResolvedFullQuotientForestImageData.right_eq_filter {D : ResolvedSigmaCoverData G}
+    (F : ResolvedFullQuotientForestImageData D) :
+    F.rightComponents =
+      F.toImage.elements.filter (fun δ => Disjoint δ.vertices (D.Aout.starVertices D.starOf)) := by
+  rw [ResolvedFullQuotientForestImageData.toImage_elements, Finset.filter_union,
+    Finset.filter_false_of_mem (fun δ hδ => F.remnantTouches δ hδ),
+    Finset.filter_true_of_mem (fun δ hδ => F.rightAvoidsStars δ hδ),
+    Finset.empty_union]
+
+/-- **G-13h-4: a full quotient forest image is determined by its `toImage`** (remnant = star-touching
+part, right = star-avoiding part).  This is the structural `forest_inj_on` for the full grain — no
+flat insertion-uniqueness needed. -/
+theorem ResolvedFullQuotientForestImageData.toImage_injective {D : ResolvedSigmaCoverData G}
+    {F₁ F₂ : ResolvedFullQuotientForestImageData D} (h : F₁.toImage = F₂.toImage) : F₁ = F₂ := by
+  have hr : F₁.remnantComponents = F₂.remnantComponents := by
+    rw [F₁.remnant_eq_filter, F₂.remnant_eq_filter, h]
+  have hl : F₁.rightComponents = F₂.rightComponents := by
+    rw [F₁.right_eq_filter, F₂.right_eq_filter, h]
+  obtain ⟨rc₁, lc₁, _, _, _, _, _, _⟩ := F₁
+  obtain ⟨rc₂, lc₂, _, _, _, _, _, _⟩ := F₂
+  cases hr; cases hl; rfl
+
 /-- **G-13h-0: full-grain separation data.**  Parallel to `resolvedActualSep`, but with the forest
 index the **full** quotient image data (`ResolvedFullQuotientForestImageData`, Remnant ⊔ Right)
 instead of the Remnant-only `ResolvedForestImageData`.  The mixed/image/discriminator halves are
