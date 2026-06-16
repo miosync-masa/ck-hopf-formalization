@@ -2554,6 +2554,87 @@ theorem fullImage_comm_of_toImage_eq_lift {g : HopfGen}
   rw [hF, canonicalFlatImageOf_liftFlatQuotientForestToCres]
   exact (h58BridgeForestSplitPhiInl_eq g i hi).symm
 
+/-- Resolved admissible subgraphs are determined by their `elements` (the other fields are
+proof-irrelevant `Prop`s). -/
+theorem resolvedAdmissibleSubgraph_ext_local {G : ResolvedFeynmanGraph}
+    {A₁ A₂ : ResolvedAdmissibleSubgraph G} (h : A₁.elements = A₂.elements) : A₁ = A₂ := by
+  obtain ⟨e₁, _, _⟩ := A₁
+  obtain ⟨e₂, _, _⟩ := A₂
+  cases h; rfl
+
+open Classical in
+/-- **G-13h-3b-3: the full quotient forest image from the lifted actual quotient.**  Lift the flat
+actual quotient (admissible) of `i` into the resolved contracted graph, then split its components by
+whether they touch the resolved outer stars: touching → `remnantComponents`, avoiding →
+`rightComponents`.  CD/disjointness come from the lift being admissible; `remnantNonempty` from the
+genuine-forest discriminator `hTouch`. -/
+noncomputable def fullQuotientForestImageDataOfLift {g : HopfGen}
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeForestChoiceOuterIndex g i hi))
+    (hDisj : (h58BridgeForestSplitActualQuotient g i hi).IsPairwiseDisjoint)
+    (hTouch : ∃ δ ∈ (liftFlatQuotientForestToCres g (h58BridgeForestChoiceOuterIndex g i hi)
+                (h58BridgeForestSplitActualQuotient g i hi) hDisj).elements,
+              ¬ Disjoint δ.vertices
+                ((canonicalSigmaCoverDataOfParents P).Aout.starVertices
+                  (canonicalSigmaCoverDataOfParents P).starOf)) :
+    ResolvedFullQuotientForestImageData (canonicalSigmaCoverDataOfParents P) :=
+  let Q := liftFlatQuotientForestToCres g (h58BridgeForestChoiceOuterIndex g i hi)
+    (h58BridgeForestSplitActualQuotient g i hi) hDisj
+  let V := (canonicalSigmaCoverDataOfParents P).Aout.starVertices
+    (canonicalSigmaCoverDataOfParents P).starOf
+  { remnantComponents := Q.elements.filter (fun δ => ¬ Disjoint δ.vertices V)
+    rightComponents := Q.elements.filter (fun δ => Disjoint δ.vertices V)
+    remnantCD := fun δ hδ => Q.isConnectedDivergent δ (Finset.mem_filter.mp hδ).1
+    rightCD := fun δ hδ => Q.isConnectedDivergent δ (Finset.mem_filter.mp hδ).1
+    pairwiseDisjoint := by
+      intro δ₁ h₁ δ₂ h₂ hne
+      refine Q.pairwiseDisjoint ?_ ?_ hne
+      · rcases Finset.mem_union.mp h₁ with h | h <;> exact (Finset.mem_filter.mp h).1
+      · rcases Finset.mem_union.mp h₂ with h | h <;> exact (Finset.mem_filter.mp h).1
+    remnantNonempty := by
+      obtain ⟨δ, hδQ, hδtouch⟩ := hTouch
+      exact ⟨δ, Finset.mem_filter.mpr ⟨hδQ, hδtouch⟩⟩
+    remnantTouches := fun δ hδ => (Finset.mem_filter.mp hδ).2
+    rightAvoidsStars := fun δ hδ => (Finset.mem_filter.mp hδ).2 }
+
+open Classical in
+/-- **G-13h-3b-3: the constructed full image's `toImage` is the lift** (the filter split partitions
+the lifted components). -/
+theorem fullQuotientForestImageDataOfLift_toImage_eq {g : HopfGen}
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeForestChoiceOuterIndex g i hi))
+    (hDisj : (h58BridgeForestSplitActualQuotient g i hi).IsPairwiseDisjoint)
+    (hTouch : ∃ δ ∈ (liftFlatQuotientForestToCres g (h58BridgeForestChoiceOuterIndex g i hi)
+                (h58BridgeForestSplitActualQuotient g i hi) hDisj).elements,
+              ¬ Disjoint δ.vertices
+                ((canonicalSigmaCoverDataOfParents P).Aout.starVertices
+                  (canonicalSigmaCoverDataOfParents P).starOf)) :
+    (fullQuotientForestImageDataOfLift i hi P hDisj hTouch).toImage =
+      liftFlatQuotientForestToCres g (h58BridgeForestChoiceOuterIndex g i hi)
+        (h58BridgeForestSplitActualQuotient g i hi) hDisj := by
+  apply resolvedAdmissibleSubgraph_ext_local
+  rw [ResolvedFullQuotientForestImageData.toImage_elements]
+  rw [Finset.union_comm]
+  exact Finset.filter_union_filter_neg_eq _ _
+
+/-- **G-13h-3b-3: the cover `comm` for the constructed full image** — facade #2's dictionary square
+discharged for the lifted actual quotient. -/
+theorem fullQuotientForestImageDataOfLift_comm {g : HopfGen}
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeForestChoiceOuterIndex g i hi))
+    (hDisj : (h58BridgeForestSplitActualQuotient g i hi).IsPairwiseDisjoint)
+    (hTouch : ∃ δ ∈ (liftFlatQuotientForestToCres g (h58BridgeForestChoiceOuterIndex g i hi)
+                (h58BridgeForestSplitActualQuotient g i hi) hDisj).elements,
+              ¬ Disjoint δ.vertices
+                ((canonicalSigmaCoverDataOfParents P).Aout.starVertices
+                  (canonicalSigmaCoverDataOfParents P).starOf)) :
+    canonicalFlatImageOf g (h58BridgeForestChoiceOuterIndex g i hi)
+        (fullQuotientForestImageDataOfLift i hi P hDisj hTouch).toImage =
+      h58BridgeSplitPhi g (Sum.inl i) :=
+  fullImage_comm_of_toImage_eq_lift i hi P hDisj
+    (fullQuotientForestImageDataOfLift i hi P hDisj hTouch)
+    (fullQuotientForestImageDataOfLift_toImage_eq i hi P hDisj hTouch)
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
