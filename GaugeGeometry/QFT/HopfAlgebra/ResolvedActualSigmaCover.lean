@@ -1542,6 +1542,21 @@ theorem ResolvedFullQuotientForestImageData.forest_sat {D : ResolvedSigmaCoverDa
   obtain ⟨δ, hδ⟩ := F.remnantNonempty
   exact ⟨δ, Finset.mem_union_left _ hδ, F.remnantTouches δ hδ⟩
 
+/-- **G-13h-0: full-grain separation data.**  Parallel to `resolvedActualSep`, but with the forest
+index the **full** quotient image data (`ResolvedFullQuotientForestImageData`, Remnant ⊔ Right)
+instead of the Remnant-only `ResolvedForestImageData`.  The mixed/image/discriminator halves are
+unchanged.  (The old `resolvedActualSep` path is left intact.) -/
+noncomputable def resolvedFullActualSep (D : ResolvedSigmaCoverData G) :
+    ResolvedBranchSeparationData where
+  ForestIdx := ResolvedFullQuotientForestImageData D
+  MixedIdx := ResolvedMixedImageData D
+  Image := ResolvedActualQuotientImage D
+  discriminator := resolvedIsForestByStar D
+  forestImage := fun F => F.toImage
+  mixedImage := fun M => M.toImage
+  forest_sat := fun F => F.forest_sat
+  mixed_unsat := fun M => M.mixed_unsat
+
 /-! ### DeContraction-4 — payload well-formedness + parents-from-quotient-carrier
 
 The de-contraction needs the ambient graph edge/leg-supported (`hE`/`hL`).  For the canonical
