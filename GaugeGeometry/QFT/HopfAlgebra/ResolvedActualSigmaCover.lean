@@ -1367,6 +1367,60 @@ theorem whole_local_retargetLeg_eq {G : ResolvedFeynmanGraph}
   unfold ResolvedAdmissibleSubgraph.retargetExternalLeg ResolvedExternalLeg.retarget
   rw [h1]
 
+/-- **G-13f-2: a `δ`-vertex preimage lies in `η` or outside `Aout`.**  If `v`'s whole-`Aout`
+retarget lands in `δ.vertices`, then (`δ` using only the single star `starOf η`, stars distinct)
+`v ∈ η` or `v ∉ Aout`. -/
+theorem usesOnlyStar_vertex_ok {G : ResolvedFeynmanGraph}
+    (Aout : ResolvedAdmissibleSubgraph G) (η : ResolvedFeynmanSubgraph G) (hη : η ∈ Aout.elements)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hUse : UsesOnlyStar Aout starOf η δ)
+    (hStarInj : ∀ η₁ ∈ Aout.elements, ∀ η₂ ∈ Aout.elements, starOf η₁ = starOf η₂ → η₁ = η₂)
+    {v : VertexId} (hv : Aout.retargetVertex starOf v ∈ δ.vertices) :
+    v ∈ η.vertices ∨ v ∉ Aout.vertices := by
+  by_cases hvA : v ∈ Aout.vertices
+  · left
+    have hη₀ : Aout.componentAt hvA ∈ Aout.elements := Aout.componentAt_mem hvA
+    have hvη₀ : v ∈ (Aout.componentAt hvA).vertices := Aout.componentAt_vertex_mem hvA
+    have hretarget : Aout.retargetVertex starOf v = starOf (Aout.componentAt hvA) :=
+      retargetVertex_eq_star_of_mem_element Aout starOf hη₀ hvη₀
+    have hInδ : starOf (Aout.componentAt hvA) ∈ δ.vertices := by rw [← hretarget]; exact hv
+    have hstarMem : starOf (Aout.componentAt hvA) ∈ Aout.starVertices starOf :=
+      ResolvedAdmissibleSubgraph.mem_starVertices.mpr ⟨Aout.componentAt hvA, hη₀, rfl⟩
+    have hstarEq : starOf (Aout.componentAt hvA) = starOf η :=
+      Finset.mem_singleton.mp (hUse (Finset.mem_inter.mpr ⟨hInδ, hstarMem⟩))
+    have hη₀η : Aout.componentAt hvA = η := hStarInj _ hη₀ η hη hstarEq
+    rw [← hη₀η]; exact hvη₀
+  · right; exact hvA
+
+/-- **G-13f-2: source endpoint of a `δ`-preimage edge is in `η` or outside `Aout`.** -/
+theorem usesOnlyStar_edge_source_ok {G : ResolvedFeynmanGraph}
+    (Aout : ResolvedAdmissibleSubgraph G) (η : ResolvedFeynmanSubgraph G) (hη : η ∈ Aout.elements)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hUse : UsesOnlyStar Aout starOf η δ)
+    (hStarInj : ∀ η₁ ∈ Aout.elements, ∀ η₂ ∈ Aout.elements, starOf η₁ = starOf η₂ → η₁ = η₂)
+    {e : ResolvedFeynmanEdge} (he : e ∈ quotientEdgePreimage Aout starOf δ) :
+    e.source ∈ η.vertices ∨ e.source ∉ Aout.vertices := by
+  apply usesOnlyStar_vertex_ok Aout η hη starOf δ hUse hStarInj
+  have hmem : Aout.retargetEdge starOf e ∈ δ.internalEdges := by
+    rw [← quotientEdgePreimage_map Aout starOf δ]; exact Multiset.mem_map_of_mem _ he
+  simpa [ResolvedAdmissibleSubgraph.retargetEdge] using (δ.edges_supported _ hmem).1
+
+/-- **G-13f-2: target endpoint of a `δ`-preimage edge is in `η` or outside `Aout`.** -/
+theorem usesOnlyStar_edge_target_ok {G : ResolvedFeynmanGraph}
+    (Aout : ResolvedAdmissibleSubgraph G) (η : ResolvedFeynmanSubgraph G) (hη : η ∈ Aout.elements)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hUse : UsesOnlyStar Aout starOf η δ)
+    (hStarInj : ∀ η₁ ∈ Aout.elements, ∀ η₂ ∈ Aout.elements, starOf η₁ = starOf η₂ → η₁ = η₂)
+    {e : ResolvedFeynmanEdge} (he : e ∈ quotientEdgePreimage Aout starOf δ) :
+    e.target ∈ η.vertices ∨ e.target ∉ Aout.vertices := by
+  apply usesOnlyStar_vertex_ok Aout η hη starOf δ hUse hStarInj
+  have hmem : Aout.retargetEdge starOf e ∈ δ.internalEdges := by
+    rw [← quotientEdgePreimage_map Aout starOf δ]; exact Multiset.mem_map_of_mem _ he
+  simpa [ResolvedAdmissibleSubgraph.retargetEdge] using (δ.edges_supported _ hmem).2
+
 /-! ### DeContraction-4 — payload well-formedness + parents-from-quotient-carrier
 
 The de-contraction needs the ambient graph edge/leg-supported (`hE`/`hL`).  For the canonical
