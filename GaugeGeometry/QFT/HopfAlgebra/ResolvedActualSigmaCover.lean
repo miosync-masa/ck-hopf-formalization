@@ -1302,6 +1302,41 @@ theorem parentOfQuotientLocalComponent_remnant_eq {G : ResolvedFeynmanGraph}
         exact Finset.singleton_subset_iff.mpr hStar)
     hCovered
 
+/-! ### G-13e — whole↔local contracted-graph bridge (coordinate change, not a facade)
+
+A per-component remnant `δ` lives in the WHOLE-`Aout`-contracted graph but touches only `starOf η`.
+The whole and local (single-component `Aout = {η}`) contractions agree on `δ`'s vertices: a vertex
+in `η` maps to `starOf η` either way, and a vertex outside `Aout` (hence outside `η`) is fixed by
+both.  `UsesOnlyStar` records that `δ` meets only the single star `starOf η`. -/
+
+/-- `δ` (in the whole-`Aout`-contracted graph) meets only the single outer star `starOf η`. -/
+def UsesOnlyStar {G : ResolvedFeynmanGraph} (Aout : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId) (η : ResolvedFeynmanSubgraph G)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf)) : Prop :=
+  δ.vertices ∩ Aout.starVertices starOf ⊆ {starOf η}
+
+/-- **G-13e: whole/local retarget agreement.**  On a vertex inside `η` or outside `Aout`, the
+whole-`Aout` and local (`{η}`) vertex retargets coincide (`η`-vertices → `starOf η` both ways;
+outside-`Aout` ⊆ outside-`η` is fixed by both). -/
+theorem whole_local_retargetVertex_eq {G : ResolvedFeynmanGraph}
+    (Aout : ResolvedAdmissibleSubgraph G) (η : ResolvedFeynmanSubgraph G)
+    (hη : η ∈ Aout.elements) (hCD : η.forget.IsConnectedDivergent)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    {v : VertexId} (hv : v ∈ η.vertices ∨ v ∉ Aout.vertices) :
+    Aout.retargetVertex starOf v =
+      (singletonResolvedAdmissibleSubgraph η hCD).retargetVertex starOf v := by
+  rcases hv with hvη | hvA
+  · rw [retargetVertex_eq_star_of_mem_element Aout starOf hη hvη,
+      retargetVertex_eq_star_of_mem_element (singletonResolvedAdmissibleSubgraph η hCD) starOf
+        (by rw [singletonResolvedAdmissibleSubgraph_elements]; exact Finset.mem_singleton_self η)
+        hvη]
+  · have hvη : v ∉ η.vertices := fun h =>
+      hvA (ResolvedAdmissibleSubgraph.mem_vertices.mpr ⟨η, hη, h⟩)
+    rw [ResolvedAdmissibleSubgraph.retargetVertex_of_not_mem Aout starOf hvA,
+      ResolvedAdmissibleSubgraph.retargetVertex_of_not_mem
+        (singletonResolvedAdmissibleSubgraph η hCD) starOf
+        (by rw [singletonResolvedAdmissibleSubgraph_vertices]; exact hvη)]
+
 /-! ### DeContraction-4 — payload well-formedness + parents-from-quotient-carrier
 
 The de-contraction needs the ambient graph edge/leg-supported (`hE`/`hL`).  For the canonical
