@@ -1646,6 +1646,18 @@ noncomputable def ResolvedFullActualFiniteCarriers.toCarrierLayer {D : ResolvedS
     · obtain ⟨F, hF, rfl⟩ := Finset.mem_image.mp hz; exact Or.inl ⟨F, hF, rfl⟩
     · obtain ⟨M, hM, rfl⟩ := Finset.mem_image.mp hz; exact Or.inr ⟨M, hM, rfl⟩
 
+/-- **G-13h-4: full finite carriers with `forest_inj_on` FREE** — the full forest image injectivity
+is structural (`toImage_injective`), so only the mixed injectivity is supplied. -/
+noncomputable def ResolvedFullActualFiniteCarriers.ofCarriers {D : ResolvedSigmaCoverData G}
+    (forestCarrier : Finset (ResolvedFullQuotientForestImageData D))
+    (mixedCarrier : Finset (ResolvedMixedImageData D))
+    (mixed_inj_on : ∀ M₁ ∈ mixedCarrier, ∀ M₂ ∈ mixedCarrier, M₁.toImage = M₂.toImage → M₁ = M₂) :
+    ResolvedFullActualFiniteCarriers D where
+  forestCarrier := forestCarrier
+  mixedCarrier := mixedCarrier
+  forest_inj_on := fun _ _ _ _ h => ResolvedFullQuotientForestImageData.toImage_injective h
+  mixed_inj_on := mixed_inj_on
+
 /-- **G-13h-1: a full-grain forest origin.**  Bundles a full quotient forest image with the flat
 forest split-choice it covers and the dictionary square `comm` (the round-trip
 `flatImageOf (F.toImage) = splitPhi split`).  This is the origin datum that drives `forestSplitOf`
