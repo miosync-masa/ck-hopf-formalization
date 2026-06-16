@@ -2525,6 +2525,19 @@ theorem finset_image_liftFlatSubgraphAlongForgetEq_forget {G : ResolvedFeynmanGr
     show (ResolvedFeynmanSubgraph.forget ∘ liftFlatSubgraphAlongForgetEq rfl) = id from
       funext (fun δf => eq_of_heq (forget_liftFlatSubgraphAlongForgetEq rfl δf)), Finset.image_id]
 
+/-- **G-13h-3b-2: union lift-forget round-trip.**  Lifting two flat subgraph families `S`, `T` and
+forgetting their union returns `S ∪ T` (heterogeneously) — the Remnant ⊔ Right elements round-trip
+for the cover. -/
+theorem finset_image_union_liftFlatSubgraphAlongForgetEq_forget {G : ResolvedFeynmanGraph}
+    {Gf : FeynmanGraph} (h : G.forget = Gf) (S T : Finset (FeynmanSubgraph Gf)) :
+    HEq ((S.image (liftFlatSubgraphAlongForgetEq h) ∪
+          T.image (liftFlatSubgraphAlongForgetEq h)).image ResolvedFeynmanSubgraph.forget) (S ∪ T) := by
+  subst h
+  apply heq_of_eq
+  rw [Finset.image_union,
+    eq_of_heq (finset_image_liftFlatSubgraphAlongForgetEq_forget rfl S),
+    eq_of_heq (finset_image_liftFlatSubgraphAlongForgetEq_forget rfl T)]
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
