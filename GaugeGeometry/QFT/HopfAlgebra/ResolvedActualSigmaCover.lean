@@ -2499,6 +2499,20 @@ theorem canonicalFlatImageOf_eq_splitPhi_inl_of_forgetEq
   rw [hEq]
   exact (h58BridgeForestSplitPhiInl_eq g i hi).symm
 
+/-- **G-13h-3a: forget round-trip reduced to an elements equation.**  `admissibleAlongForgetEq h z`
+equals a flat admissible subgraph `B` once their `elements` agree — `z`'s component forgets
+(`z.elements.image forget`) match `B.elements` (heterogeneously, across the `forget`-equality `h`). -/
+theorem admissibleAlongForgetEq_eq_of_elements_heq
+    {G : ResolvedFeynmanGraph} {Gf : FeynmanGraph} (h : G.forget = Gf)
+    (z : ResolvedAdmissibleSubgraph G) (B : AdmissibleSubgraph Gf)
+    (hElems : HEq (z.elements.image ResolvedFeynmanSubgraph.forget) B.elements) :
+    admissibleAlongForgetEq h z = B := by
+  subst h
+  show z.forget = B
+  apply admissibleSubgraph_ext_local
+  rw [ResolvedAdmissibleSubgraph.forget_elements]
+  exact eq_of_heq hElems
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
