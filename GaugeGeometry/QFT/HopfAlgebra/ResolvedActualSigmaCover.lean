@@ -1557,6 +1557,59 @@ noncomputable def resolvedFullActualSep (D : ResolvedSigmaCoverData G) :
   forest_sat := fun F => F.forest_sat
   mixed_unsat := fun M => M.mixed_unsat
 
+/-- **G-13h-4: the full-grain carrier-based finite layer** (parallel to `resolvedActualCarrierLayer`,
+forest index = full quotient image data, `sep := resolvedFullActualSep`). -/
+noncomputable def resolvedFullActualCarrierLayer (D : ResolvedSigmaCoverData G)
+    (forestCarrier : Finset (ResolvedFullQuotientForestImageData D))
+    (mixedCarrier : Finset (ResolvedMixedImageData D))
+    (imageCarrier : Finset (ResolvedActualQuotientImage D))
+    (forestImage_mem : ∀ F ∈ forestCarrier, F.toImage ∈ imageCarrier)
+    (mixedImage_mem : ∀ M ∈ mixedCarrier, M.toImage ∈ imageCarrier)
+    (cover_on : ∀ z ∈ imageCarrier,
+      (∃ F ∈ forestCarrier, F.toImage = z) ∨ (∃ M ∈ mixedCarrier, M.toImage = z))
+    (forest_inj_on : ∀ F₁ ∈ forestCarrier, ∀ F₂ ∈ forestCarrier,
+      F₁.toImage = F₂.toImage → F₁ = F₂)
+    (mixed_inj_on : ∀ M₁ ∈ mixedCarrier, ∀ M₂ ∈ mixedCarrier,
+      M₁.toImage = M₂.toImage → M₁ = M₂) :
+    ResolvedCarrierFiniteBranchMapLayer where
+  sep := resolvedFullActualSep D
+  forestCarrier := forestCarrier
+  mixedCarrier := mixedCarrier
+  imageCarrier := imageCarrier
+  forestImage_mem := forestImage_mem
+  mixedImage_mem := mixedImage_mem
+  cover_on := cover_on
+  forest_inj_on := forest_inj_on
+  mixed_inj_on := mixed_inj_on
+
+/-- **G-13h-4: full-grain finite branch carriers** (option C: image carrier = union of branch
+images, so cover/membership are by construction; only `forest_inj_on`/`mixed_inj_on` remain). -/
+structure ResolvedFullActualFiniteCarriers (D : ResolvedSigmaCoverData G) where
+  /-- Finite full quotient forest image carrier. -/
+  forestCarrier : Finset (ResolvedFullQuotientForestImageData D)
+  /-- Finite mixed image carrier. -/
+  mixedCarrier : Finset (ResolvedMixedImageData D)
+  /-- Carrier forest-injectivity (on `toImage`). -/
+  forest_inj_on : ∀ F₁ ∈ forestCarrier, ∀ F₂ ∈ forestCarrier, F₁.toImage = F₂.toImage → F₁ = F₂
+  /-- Carrier mixed-injectivity (on `toImage`). -/
+  mixed_inj_on : ∀ M₁ ∈ mixedCarrier, ∀ M₂ ∈ mixedCarrier, M₁.toImage = M₂.toImage → M₁ = M₂
+
+/-- The full-grain carrier layer from the finite branch carriers (option C). -/
+noncomputable def ResolvedFullActualFiniteCarriers.toCarrierLayer {D : ResolvedSigmaCoverData G}
+    (C : ResolvedFullActualFiniteCarriers D) : ResolvedCarrierFiniteBranchMapLayer := by
+  classical
+  refine resolvedFullActualCarrierLayer D C.forestCarrier C.mixedCarrier
+    (C.forestCarrier.image (fun F => F.toImage) ∪ C.mixedCarrier.image (fun M => M.toImage))
+    ?_ ?_ ?_ C.forest_inj_on C.mixed_inj_on
+  · intro F hF
+    exact Finset.mem_union_left _ (Finset.mem_image_of_mem _ hF)
+  · intro M hM
+    exact Finset.mem_union_right _ (Finset.mem_image_of_mem _ hM)
+  · intro z hz
+    rcases Finset.mem_union.mp hz with hz | hz
+    · obtain ⟨F, hF, rfl⟩ := Finset.mem_image.mp hz; exact Or.inl ⟨F, hF, rfl⟩
+    · obtain ⟨M, hM, rfl⟩ := Finset.mem_image.mp hz; exact Or.inr ⟨M, hM, rfl⟩
+
 /-- **G-13h-1: a full-grain forest origin.**  Bundles a full quotient forest image with the flat
 forest split-choice it covers and the dictionary square `comm` (the round-trip
 `flatImageOf (F.toImage) = splitPhi split`).  This is the origin datum that drives `forestSplitOf`
