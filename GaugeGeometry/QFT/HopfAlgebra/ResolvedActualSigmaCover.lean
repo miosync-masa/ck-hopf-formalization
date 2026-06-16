@@ -1488,6 +1488,60 @@ noncomputable def localizeRemnantComponent {G : ResolvedFeynmanGraph}
   edges_supported := δ.edges_supported
   legs_supported := δ.legs_supported
 
+/-! ### G-13g — full quotient forest image data (Remnant ⊔ Right grain)
+
+The forest carrier element at the corrected granularity: a full quotient forest =
+**star-touching Remnant pieces** (the de-contraction components) ⊔ **star-avoiding Right
+survivors**.  Its `toImage` is the whole quotient (matching `splitPhi (inl i) = (A, Right ∪
+Remnant)`), unlike `ResolvedForestImageData` (Remnant-only).  CD/disjointness are cover-data
+fields. -/
+
+/-- A full quotient forest image: star-touching remnant pieces ⊔ star-avoiding right survivors. -/
+structure ResolvedFullQuotientForestImageData (D : ResolvedSigmaCoverData G) where
+  /-- The star-touching remnant pieces (genuine de-contraction components). -/
+  remnantComponents : Finset (ResolvedFeynmanSubgraph (D.Aout.contractWithStars D.starOf))
+  /-- The star-avoiding right survivors. -/
+  rightComponents : Finset (ResolvedFeynmanSubgraph (D.Aout.contractWithStars D.starOf))
+  /-- Remnant pieces are connected divergent after forget. -/
+  remnantCD : ∀ δ ∈ remnantComponents, δ.forget.IsConnectedDivergent
+  /-- Right survivors are connected divergent after forget. -/
+  rightCD : ∀ δ ∈ rightComponents, δ.forget.IsConnectedDivergent
+  /-- All pieces (remnant + right) are pairwise disjoint. -/
+  pairwiseDisjoint : ∀ δ₁ ∈ remnantComponents ∪ rightComponents,
+    ∀ δ₂ ∈ remnantComponents ∪ rightComponents, δ₁ ≠ δ₂ → δ₁.Disjoint δ₂
+  /-- There is at least one remnant piece (the forest discriminator). -/
+  remnantNonempty : remnantComponents.Nonempty
+  /-- Each remnant piece touches an outer star. -/
+  remnantTouches : ∀ δ ∈ remnantComponents,
+    ¬ Disjoint δ.vertices (D.Aout.starVertices D.starOf)
+  /-- Each right survivor avoids the outer stars. -/
+  rightAvoidsStars : ∀ δ ∈ rightComponents,
+    Disjoint δ.vertices (D.Aout.starVertices D.starOf)
+
+/-- The full quotient image: remnant pieces ⊔ right survivors as one admissible subgraph. -/
+noncomputable def ResolvedFullQuotientForestImageData.toImage {D : ResolvedSigmaCoverData G}
+    (F : ResolvedFullQuotientForestImageData D) :
+    ResolvedAdmissibleSubgraph (D.Aout.contractWithStars D.starOf) where
+  elements := F.remnantComponents ∪ F.rightComponents
+  isConnectedDivergent := by
+    intro δ hδ
+    rcases Finset.mem_union.mp hδ with h | h
+    · exact F.remnantCD δ h
+    · exact F.rightCD δ h
+  pairwiseDisjoint := by intro δ₁ h₁ δ₂ h₂ hne; exact F.pairwiseDisjoint δ₁ h₁ δ₂ h₂ hne
+
+@[simp] theorem ResolvedFullQuotientForestImageData.toImage_elements {D : ResolvedSigmaCoverData G}
+    (F : ResolvedFullQuotientForestImageData D) :
+    F.toImage.elements = F.remnantComponents ∪ F.rightComponents := rfl
+
+/-- **G-13g: the full quotient image satisfies the forest discriminator** (a remnant piece touches
+an outer star). -/
+theorem ResolvedFullQuotientForestImageData.forest_sat {D : ResolvedSigmaCoverData G}
+    (F : ResolvedFullQuotientForestImageData D) :
+    resolvedIsForestByStar D F.toImage := by
+  obtain ⟨δ, hδ⟩ := F.remnantNonempty
+  exact ⟨δ, Finset.mem_union_left _ hδ, F.remnantTouches δ hδ⟩
+
 /-! ### DeContraction-4 — payload well-formedness + parents-from-quotient-carrier
 
 The de-contraction needs the ambient graph edge/leg-supported (`hE`/`hL`).  For the canonical
