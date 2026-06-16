@@ -2479,6 +2479,26 @@ theorem canonicalFlatImageOf_liftFlatQuotientForestToCres (g : HopfGen) (A : h58
   unfold canonicalFlatImageOf liftFlatQuotientForestToCres
   rw [admissibleAlongForgetEq_liftFlatAdmissibleAlongForgetEq]
 
+/-- **G-13h-2: full-image `comm` from the forget round-trip.**  The dictionary square
+`canonicalFlatImageOf g (OuterIndex i) z = splitPhi (Sum.inl i)` reduces to the elements round-trip
+`admissibleAlongForgetEq bridge z = ActualQuotient i` (the forget of `z` along the contracted-graph
+bridge equals the flat actual quotient subgraph of `i`) — via `h58BridgeForestSplitPhiInl_eq`
+(G-12b-2).  This isolates the cover `comm` to the Remnant ⊔ Right elements equality. -/
+theorem canonicalFlatImageOf_eq_splitPhi_inl_of_forgetEq
+    [IsDivergencePreservedByAdmissibleForestContract] (g : HopfGen)
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (z : ResolvedAdmissibleSubgraph
+      ((canonicalOuterAoutOfFlatOuter g (h58BridgeForestChoiceOuterIndex g i hi)).contractWithStars
+        (canonicalOuterStarOf g (h58BridgeForestChoiceOuterIndex g i hi))))
+    (hEq : admissibleAlongForgetEq
+        (forget_canonicalOuterContractedGraph g (h58BridgeForestChoiceOuterIndex g i hi)) z
+      = h58BridgeForestSplitActualQuotient g i hi) :
+    canonicalFlatImageOf g (h58BridgeForestChoiceOuterIndex g i hi) z =
+      h58BridgeSplitPhi g (Sum.inl i) := by
+  unfold canonicalFlatImageOf
+  rw [hEq]
+  exact (h58BridgeForestSplitPhiInl_eq g i hi).symm
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
