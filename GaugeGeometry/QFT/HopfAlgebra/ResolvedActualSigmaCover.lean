@@ -1421,6 +1421,73 @@ theorem usesOnlyStar_edge_target_ok {G : ResolvedFeynmanGraph}
     rw [← quotientEdgePreimage_map Aout starOf δ]; exact Multiset.mem_map_of_mem _ he
   simpa [ResolvedAdmissibleSubgraph.retargetEdge] using (δ.edges_supported _ hmem).2
 
+/-- **G-13f-2: attachment of a `δ`-preimage leg is in `η` or outside `Aout`.** -/
+theorem usesOnlyStar_leg_att_ok {G : ResolvedFeynmanGraph}
+    (Aout : ResolvedAdmissibleSubgraph G) (η : ResolvedFeynmanSubgraph G) (hη : η ∈ Aout.elements)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hUse : UsesOnlyStar Aout starOf η δ)
+    (hStarInj : ∀ η₁ ∈ Aout.elements, ∀ η₂ ∈ Aout.elements, starOf η₁ = starOf η₂ → η₁ = η₂)
+    {ℓ : ResolvedExternalLeg} (hℓ : ℓ ∈ quotientLegPreimage Aout starOf δ) :
+    ℓ.attachedTo ∈ η.vertices ∨ ℓ.attachedTo ∉ Aout.vertices := by
+  apply usesOnlyStar_vertex_ok Aout η hη starOf δ hUse hStarInj
+  have hmem : Aout.retargetExternalLeg starOf ℓ ∈ δ.externalLegs := by
+    rw [← quotientLegPreimage_map Aout starOf δ]; exact Multiset.mem_map_of_mem _ hℓ
+  simpa [ResolvedAdmissibleSubgraph.retargetExternalLeg] using (δ.legs_supported _ hmem)
+
+/-- **G-13f-3: localize a star-saturated remnant component.**  A per-component remnant `δ` (in the
+WHOLE-`Aout`-contracted graph, meeting only the single star `starOf η`) is re-interpreted as a
+subgraph of the LOCAL (`{η}`)-contracted graph — SAME `(vertices, internalEdges, externalLegs)`
+data, new support proofs (`internalEdges_le` via `quotientEdgePreimage_map` + the G-13f-1 retarget
+agreement on good-endpoint preimages + `Aout.complementEdges ≤ {η}.complementEdges`). -/
+noncomputable def localizeRemnantComponent {G : ResolvedFeynmanGraph}
+    (Aout : ResolvedAdmissibleSubgraph G) (η : ResolvedFeynmanSubgraph G) (hη : η ∈ Aout.elements)
+    (hCD : η.forget.IsConnectedDivergent)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (δ : ResolvedFeynmanSubgraph (Aout.contractWithStars starOf))
+    (hUse : UsesOnlyStar Aout starOf η δ)
+    (hStarInj : ∀ η₁ ∈ Aout.elements, ∀ η₂ ∈ Aout.elements, starOf η₁ = starOf η₂ → η₁ = η₂) :
+    ResolvedFeynmanSubgraph
+      ((singletonResolvedAdmissibleSubgraph η hCD).contractWithStars starOf) where
+  vertices := δ.vertices
+  internalEdges := δ.internalEdges
+  externalLegs := δ.externalLegs
+  vertices_subset := by
+    intro v hv
+    rw [ResolvedAdmissibleSubgraph.contractWithStars_vertices,
+      singletonResolvedAdmissibleSubgraph_vertices,
+      singletonResolvedAdmissibleSubgraph_starVertices, Finset.mem_union]
+    have hvWhole : v ∈ (Aout.contractWithStars starOf).vertices := δ.vertices_subset hv
+    rw [ResolvedAdmissibleSubgraph.contractWithStars_vertices, Finset.mem_union] at hvWhole
+    rcases hvWhole with hOut | hStar
+    · left
+      rw [Finset.mem_sdiff] at hOut ⊢
+      exact ⟨hOut.1, fun hvη => hOut.2 (ResolvedAdmissibleSubgraph.mem_vertices.mpr ⟨η, hη, hvη⟩)⟩
+    · exact Or.inr (hUse (Finset.mem_inter.mpr ⟨hv, hStar⟩))
+  internalEdges_le := by
+    rw [ResolvedAdmissibleSubgraph.contractWithStars_internalEdges,
+      ← quotientEdgePreimage_map Aout starOf δ,
+      Multiset.map_congr rfl (fun e he =>
+        whole_local_retargetEdge_eq Aout η hη hCD starOf e
+          (usesOnlyStar_edge_source_ok Aout η hη starOf δ hUse hStarInj he)
+          (usesOnlyStar_edge_target_ok Aout η hη starOf δ hUse hStarInj he))]
+    apply Multiset.map_le_map
+    have hηle : η.internalEdges ≤ Aout.internalEdges :=
+      Finset.single_le_sum (fun i _ => Multiset.zero_le _) hη
+    refine le_trans (quotientEdgePreimage_le Aout starOf δ) ?_
+    unfold ResolvedAdmissibleSubgraph.complementEdges
+    rw [singletonResolvedAdmissibleSubgraph_internalEdges]
+    exact tsub_le_tsub_left hηle _
+  externalLegs_le := by
+    rw [ResolvedAdmissibleSubgraph.contractWithStars_externalLegs,
+      ← quotientLegPreimage_map Aout starOf δ,
+      Multiset.map_congr rfl (fun ℓ hℓ =>
+        whole_local_retargetLeg_eq Aout η hη hCD starOf ℓ
+          (usesOnlyStar_leg_att_ok Aout η hη starOf δ hUse hStarInj hℓ))]
+    exact Multiset.map_le_map (quotientLegPreimage_le Aout starOf δ)
+  edges_supported := δ.edges_supported
+  legs_supported := δ.legs_supported
+
 /-! ### DeContraction-4 — payload well-formedness + parents-from-quotient-carrier
 
 The de-contraction needs the ambient graph edge/leg-supported (`hE`/`hL`).  For the canonical
