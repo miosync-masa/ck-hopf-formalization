@@ -2513,6 +2513,18 @@ theorem admissibleAlongForgetEq_eq_of_elements_heq
   rw [ResolvedAdmissibleSubgraph.forget_elements]
   exact eq_of_heq hElems
 
+/-- **G-13h-3b-1: a finite family of flat subgraphs lifts and forgets back to itself**
+(the component-level S-3a' round-trip): lifting each member of `S` to the resolved graph and
+forgetting returns `S` (heterogeneously, across the `forget`-equality `h`). -/
+theorem finset_image_liftFlatSubgraphAlongForgetEq_forget {G : ResolvedFeynmanGraph}
+    {Gf : FeynmanGraph} (h : G.forget = Gf) (S : Finset (FeynmanSubgraph Gf)) :
+    HEq ((S.image (liftFlatSubgraphAlongForgetEq h)).image ResolvedFeynmanSubgraph.forget) S := by
+  subst h
+  apply heq_of_eq
+  rw [Finset.image_image,
+    show (ResolvedFeynmanSubgraph.forget ∘ liftFlatSubgraphAlongForgetEq rfl) = id from
+      funext (fun δf => eq_of_heq (forget_liftFlatSubgraphAlongForgetEq rfl δf)), Finset.image_id]
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
