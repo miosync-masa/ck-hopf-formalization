@@ -2538,6 +2538,15 @@ theorem finset_image_union_liftFlatSubgraphAlongForgetEq_forget {G : ResolvedFey
     eq_of_heq (finset_image_liftFlatSubgraphAlongForgetEq_forget rfl S),
     eq_of_heq (finset_image_liftFlatSubgraphAlongForgetEq_forget rfl T)]
 
+/-- **G-13h-3b-3: a lifted member lands in the lifted forest, preserving vertices.** -/
+theorem mem_and_vertices_liftFlatSubgraphAlongForgetEq {G : ResolvedFeynmanGraph}
+    {Gf : FeynmanGraph} (h : G.forget = Gf) (Af : AdmissibleSubgraph Gf)
+    (hDisj : Af.IsPairwiseDisjoint) {δf : FeynmanSubgraph Gf} (hδf : δf ∈ Af.elements) :
+    liftFlatSubgraphAlongForgetEq h δf ∈ (liftFlatAdmissibleAlongForgetEq h Af hDisj).elements ∧
+      (liftFlatSubgraphAlongForgetEq h δf).vertices = δf.vertices := by
+  subst h
+  exact ⟨Finset.mem_image_of_mem _ hδf, rfl⟩
+
 /-- **G-13h-3b-3 (comm core, clean path): comm from `toImage = lift of the actual quotient`.**
 If the full image's `toImage` is the resolved lift of the flat actual quotient `Af` of `i`, the
 cover dictionary square holds directly — `canonicalFlatImageOf` of a lift is the actual→rep
@@ -2634,6 +2643,55 @@ theorem fullQuotientForestImageDataOfLift_comm {g : HopfGen}
   fullImage_comm_of_toImage_eq_lift i hi P hDisj
     (fullQuotientForestImageDataOfLift i hi P hDisj hTouch)
     (fullQuotientForestImageDataOfLift_toImage_eq i hi P hDisj hTouch)
+
+/-- **G-13h-3b-3: the resolved discriminator witness `hTouch`** — transported from the flat
+genuine-forest discriminator (`h58BridgeForestSplitActualQuotientTouchesStar`): the flat
+star-touching component lifts to a `Q`-component (vertices preserved), and the resolved outer stars
+equal the flat outer stars (`canonicalOuter_starVertices_eq`). -/
+theorem fullSplit_hTouch {g : HopfGen}
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeForestChoiceOuterIndex g i hi)) :
+    ∃ δ ∈ (liftFlatQuotientForestToCres g (h58BridgeForestChoiceOuterIndex g i hi)
+            (h58BridgeForestSplitActualQuotient g i hi)
+            (h58BridgeForestSplitActualQuotientPairwise g i hi)).elements,
+      ¬ Disjoint δ.vertices
+        ((canonicalSigmaCoverDataOfParents P).Aout.starVertices
+          (canonicalSigmaCoverDataOfParents P).starOf) := by
+  obtain ⟨δf, hδf_mem, hδf_touch⟩ := h58BridgeForestSplitActualQuotientTouchesStar g i hi
+  obtain ⟨hmem, hvert⟩ := mem_and_vertices_liftFlatSubgraphAlongForgetEq
+    (forget_canonicalOuterContractedGraph g (h58BridgeForestChoiceOuterIndex g i hi))
+    (h58BridgeForestSplitActualQuotient g i hi)
+    (h58BridgeForestSplitActualQuotientPairwise g i hi) hδf_mem
+  refine ⟨liftFlatSubgraphAlongForgetEq
+      (forget_canonicalOuterContractedGraph g (h58BridgeForestChoiceOuterIndex g i hi)) δf,
+    hmem, ?_⟩
+  rw [hvert]
+  show ¬ Disjoint δf.vertices
+    ((canonicalOuterAoutOfFlatOuter g (h58BridgeForestChoiceOuterIndex g i hi)).starVertices
+      (canonicalOuterStarOf g (h58BridgeForestChoiceOuterIndex g i hi)))
+  rw [canonicalOuter_starVertices_eq]
+  exact hδf_touch
+
+/-- **G-13h-3b-3: the full quotient forest image from a flat forest split choice** (no hypotheses
+— `hDisj`/`hTouch` supplied canonically). -/
+noncomputable def fullQuotientForestImageDataOfFlatSplit {g : HopfGen}
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeForestChoiceOuterIndex g i hi)) :
+    ResolvedFullQuotientForestImageData (canonicalSigmaCoverDataOfParents P) :=
+  fullQuotientForestImageDataOfLift i hi P
+    (h58BridgeForestSplitActualQuotientPairwise g i hi) (fullSplit_hTouch i hi P)
+
+/-- **G-13h-3b-3: facade #2's cover dictionary square, FULLY DISCHARGED** for the full quotient
+forest image of a flat forest split choice — `canonicalFlatImageOf (F.toImage) = splitPhi (Sum.inl i)`,
+no hypotheses. -/
+theorem fullQuotientForestImageDataOfFlatSplit_comm {g : HopfGen}
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeForestChoiceOuterIndex g i hi)) :
+    canonicalFlatImageOf g (h58BridgeForestChoiceOuterIndex g i hi)
+        (fullQuotientForestImageDataOfFlatSplit i hi P).toImage =
+      h58BridgeSplitPhi g (Sum.inl i) :=
+  fullQuotientForestImageDataOfLift_comm i hi P
+    (h58BridgeForestSplitActualQuotientPairwise g i hi) (fullSplit_hTouch i hi P)
 
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
