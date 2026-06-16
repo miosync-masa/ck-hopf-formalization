@@ -1557,6 +1557,29 @@ noncomputable def resolvedFullActualSep (D : ResolvedSigmaCoverData G) :
   forest_sat := fun F => F.forest_sat
   mixed_unsat := fun M => M.mixed_unsat
 
+/-- **G-13h-1: a full-grain forest origin.**  Bundles a full quotient forest image with the flat
+forest split-choice it covers and the dictionary square `comm` (the round-trip
+`flatImageOf (F.toImage) = splitPhi split`).  This is the origin datum that drives `forestSplitOf`
+as a projection (G-12a) on the full-grain layer; `comm` is kept as a field for now (proved in
+G-13h-2 from the Remnant ⊔ Right elements equality). -/
+structure ResolvedFullQuotientForestImageOrigin (g : HopfGen) (D : ResolvedSigmaCoverData G)
+    (flatImageOf : ResolvedActualQuotientImage D → h58BridgeQuotientSigma g) where
+  /-- The full quotient forest image (Remnant ⊔ Right). -/
+  data : ResolvedFullQuotientForestImageData D
+  /-- The flat forest split-choice this image covers. -/
+  split : h58BridgeSplitChoiceSigma g
+  /-- The split choice is indexed. -/
+  split_mem : split ∈ h58BridgeSplitChoiceIndex g
+  /-- The dictionary square: the image's flat quotient index is `split`'s `φ`-image. -/
+  comm : flatImageOf data.toImage = h58BridgeSplitPhi g split
+
+/-- The full quotient forest image underlying an origin. -/
+noncomputable def ResolvedFullQuotientForestImageOrigin.toForestData {g : HopfGen}
+    {D : ResolvedSigmaCoverData G}
+    {flatImageOf : ResolvedActualQuotientImage D → h58BridgeQuotientSigma g}
+    (o : ResolvedFullQuotientForestImageOrigin g D flatImageOf) :
+    ResolvedFullQuotientForestImageData D := o.data
+
 /-! ### DeContraction-4 — payload well-formedness + parents-from-quotient-carrier
 
 The de-contraction needs the ambient graph edge/leg-supported (`hE`/`hL`).  For the canonical
