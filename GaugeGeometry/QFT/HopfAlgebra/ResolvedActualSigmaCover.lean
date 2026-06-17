@@ -2831,6 +2831,77 @@ structure ResolvedFullForestCoverData {g : HopfGen} (A : h58BridgeOuterIndex g)
   origin_data : ∀ q,
     fullImageOfForestChoiceOuter A (origin q) (origin_mem q) (origin_outer q) P = q.1
 
+/-! ### Gold Sprint G-13h-7a — origin-indexed cover supply (avoids the subst-typed `Finset.image`)
+
+Building the per-A forest carrier directly as a `filter`/`image` of the subst-typed
+`fullImageOfForestChoiceOuter` blows up `whnf` (the decidability instance forces reduction of the
+subst term).  Instead index the carrier by an **abstract** origin set, each origin carrying its
+forest choice (outer index `A`); the carrier is then a plain `Finset.image` of a *named* `data` def,
+so no decidability computation ever unfolds the subst term.  The origin function (cover data's
+`origin`) is the unique preimage (`Classical.choose`). -/
+
+/-- **G-13h-7a: an origin-indexed supply for the per-A full forest cover.**  Each origin carries a
+forest split choice with outer index `A`; the carrier is the image of the derived `data`. -/
+structure ResolvedFullForestCoverOriginData {g : HopfGen} (A : h58BridgeOuterIndex g)
+    (P : CanonicalOuterParentsData g A) where
+  /-- The origin index type (intended: the flat forest split choices over `A`). -/
+  Origin : Type
+  /-- The finite origin carrier. -/
+  originCarrier : Finset Origin
+  /-- Each origin's forest split choice. -/
+  choiceOf : Origin → h58BridgeForestChoiceSigma g
+  /-- Each origin choice is a forest choice. -/
+  choice_mem : ∀ o, choiceOf o ∈ h58BridgeForestChoiceIndex g
+  /-- Each origin choice has outer index `A`. -/
+  choice_outer : ∀ o, h58BridgeForestChoiceOuterIndex g (choiceOf o) (choice_mem o) = A
+
+/-- Classical decidable equality so the origin cover's `Finset.image` is well-formed (the type has
+no structural `DecidableEq`; this never computes, so it does not reduce the subst-typed `data`). -/
+noncomputable instance instDecidableEqResolvedFullQuotientForestImageData
+    {D : ResolvedSigmaCoverData G} : DecidableEq (ResolvedFullQuotientForestImageData D) :=
+  Classical.decEq _
+
+/-- The full quotient forest image attached to an origin — a *named* def, so `Finset.image` never
+unfolds the subst-typed `fullImageOfForestChoiceOuter`. -/
+noncomputable def ResolvedFullForestCoverOriginData.data {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullForestCoverOriginData A P) (o : OD.Origin) :
+    ResolvedFullQuotientForestImageData (canonicalSigmaCoverDataOfParents P) :=
+  fullImageOfForestChoiceOuter A (OD.choiceOf o) (OD.choice_mem o) (OD.choice_outer o) P
+
+/-- The forest carrier covered by the origins (a plain image of the named `data`). -/
+noncomputable def ResolvedFullForestCoverOriginData.forestCarrier {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullForestCoverOriginData A P) :
+    Finset (ResolvedFullQuotientForestImageData (canonicalSigmaCoverDataOfParents P)) :=
+  OD.originCarrier.image OD.data
+
+/-- The chosen origin of a carrier element (unique preimage via `Classical.choose`). -/
+noncomputable def ResolvedFullForestCoverOriginData.originOf {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullForestCoverOriginData A P)
+    (q : {q // q ∈ OD.forestCarrier}) : OD.Origin :=
+  Classical.choose (Finset.mem_image.mp q.2)
+
+theorem ResolvedFullForestCoverOriginData.originOf_spec {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullForestCoverOriginData A P)
+    (q : {q // q ∈ OD.forestCarrier}) :
+    OD.originOf q ∈ OD.originCarrier ∧ OD.data (OD.originOf q) = q.1 :=
+  Classical.choose_spec (Finset.mem_image.mp q.2)
+
+/-- **G-13h-7c: the origin supply ⇒ the per-A full forest cover data.**  `origin` is the chosen
+preimage's forest choice; `origin_data` is the `Classical.choose_spec` image identity. -/
+noncomputable def ResolvedFullForestCoverOriginData.toCoverData {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullForestCoverOriginData A P) :
+    ResolvedFullForestCoverData A P where
+  forestCarrier := OD.forestCarrier
+  origin := fun q => OD.choiceOf (OD.originOf q)
+  origin_mem := fun q => OD.choice_mem (OD.originOf q)
+  origin_outer := fun q => OD.choice_outer (OD.originOf q)
+  origin_data := fun q => (OD.originOf_spec q).2
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
