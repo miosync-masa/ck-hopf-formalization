@@ -2794,6 +2794,26 @@ theorem fullQuotientForestImageDataOfFlatSplit_comm {g : HopfGen}
   fullQuotientForestImageDataOfLift_comm i hi P
     (h58BridgeForestSplitActualQuotientPairwise g i hi) (fullSplit_hTouch i hi P)
 
+/-- **G-13h-6: the full image of a forest choice over a fixed outer forest `A`** — transported
+along `OuterIndex i = A` by `subst` (no cast). -/
+noncomputable def fullImageOfForestChoiceOuter {g : HopfGen} (A : h58BridgeOuterIndex g)
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (hA : h58BridgeForestChoiceOuterIndex g i hi = A)
+    (P : CanonicalOuterParentsData g A) :
+    ResolvedFullQuotientForestImageData (canonicalSigmaCoverDataOfParents P) := by
+  subst hA
+  exact fullQuotientForestImageDataOfFlatSplit i hi P
+
+/-- **G-13h-6: the cover `comm` for the outer-fixed full image** (transported along `OuterIndex i = A`). -/
+theorem fullImageOfForestChoiceOuter_comm {g : HopfGen} (A : h58BridgeOuterIndex g)
+    (i : h58BridgeForestChoiceSigma g) (hi : i ∈ h58BridgeForestChoiceIndex g)
+    (hA : h58BridgeForestChoiceOuterIndex g i hi = A)
+    (P : CanonicalOuterParentsData g A) :
+    canonicalFlatImageOf g A (fullImageOfForestChoiceOuter A i hi hA P).toImage =
+      h58BridgeSplitPhi g (Sum.inl i) := by
+  subst hA
+  exact fullQuotientForestImageDataOfFlatSplit_comm i hi P
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
