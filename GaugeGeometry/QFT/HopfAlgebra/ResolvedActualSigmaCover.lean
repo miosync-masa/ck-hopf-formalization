@@ -3581,6 +3581,28 @@ noncomputable def ResolvedFullForestCoverData.toForestIndexBoundary {g : HopfGen
     rw [← C.origin_data q]
     exact fullImageOfForestChoiceOuter_comm A (C.origin q) (C.origin_mem q) (C.origin_outer q) P
 
+/-- **G-13h-7d: assemble the per-A full-grain inner supply from the forest cover data + the
+(mechanical) mixed alignment.**  The forest boundary is the cover dictionary (`toForestIndexBoundary`,
+over `canonicalFlatImageOf g A`); requiring the mixed alignment's `flatImageOf` to be
+`canonicalFlatImageOf g A` (`hflat`) lets the boundary land over `mixedAlignment.flatImageOf`.  Its
+`.sum_reindex` is then the resolved-native H5.8 inner reindex for this `A`. -/
+noncomputable def CanonicalOuterFullGrainInnerSupplyData.ofCoverData {g : HopfGen}
+    [IsDivergencePreservedByAdmissibleForestContract]
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (C : ResolvedFullForestCoverData A P)
+    (mixedCarrier : Finset (ResolvedMixedImageData (canonicalSigmaCoverDataOfParents P)))
+    (mixed_inj_on : ∀ M₁ ∈ mixedCarrier, ∀ M₂ ∈ mixedCarrier, M₁.toImage = M₂.toImage → M₁ = M₂)
+    (mixedAlignment : ResolvedFlatH58CarrierMixedAlignment g
+      ((ResolvedFullActualFiniteCarriers.ofCarriers C.forestCarrier mixedCarrier
+        mixed_inj_on).toCarrierLayer))
+    (hflat : mixedAlignment.flatImageOf = canonicalFlatImageOf g A) :
+    CanonicalOuterFullGrainInnerSupplyData g where
+  FL := (ResolvedFullActualFiniteCarriers.ofCarriers C.forestCarrier mixedCarrier
+    mixed_inj_on).toCarrierLayer
+  mixedAlignment := mixedAlignment
+  forestBoundary := by
+    rw [hflat]; exact C.toForestIndexBoundary mixedCarrier mixed_inj_on
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
