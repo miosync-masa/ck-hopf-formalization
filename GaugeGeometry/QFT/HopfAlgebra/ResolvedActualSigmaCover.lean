@@ -2814,6 +2814,23 @@ theorem fullImageOfForestChoiceOuter_comm {g : HopfGen} (A : h58BridgeOuterIndex
   subst hA
   exact fullQuotientForestImageDataOfFlatSplit_comm i hi P
 
+/-- **G-13h-6: per-A full forest cover data.**  The full forest carrier with, per carrier element,
+its **origin** forest choice (outer index `A`) and the image identity — packaged as a function
+(no `data_inj` needed; `forestSplitOf` is `Sum.inl ∘ origin`). -/
+structure ResolvedFullForestCoverData {g : HopfGen} (A : h58BridgeOuterIndex g)
+    (P : CanonicalOuterParentsData g A) where
+  /-- The full forest image carrier. -/
+  forestCarrier : Finset (ResolvedFullQuotientForestImageData (canonicalSigmaCoverDataOfParents P))
+  /-- Each carrier element's origin forest choice. -/
+  origin : {q // q ∈ forestCarrier} → h58BridgeForestChoiceSigma g
+  /-- The origin is a forest choice. -/
+  origin_mem : ∀ q, origin q ∈ h58BridgeForestChoiceIndex g
+  /-- The origin has outer index `A`. -/
+  origin_outer : ∀ q, h58BridgeForestChoiceOuterIndex g (origin q) (origin_mem q) = A
+  /-- The carrier element is the origin's full image. -/
+  origin_data : ∀ q,
+    fullImageOfForestChoiceOuter A (origin q) (origin_mem q) (origin_outer q) P = q.1
+
 /-! ### Gold Sprint G-1b Scout — P3: the index dictionary is over-strong (whole-type)
 
 To make `mixedSplitOf` a carrier-origin projection (remember each lifted mixed image's flat
@@ -3473,6 +3490,25 @@ theorem CanonicalOuterFullGrainInnerSupplyData.sum_reindex {g : HopfGen}
       (∑ q ∈ S.FL.mixedCarrier.attach,
           h58BridgeSplitChoiceTerm g (S.weightAlignment.mixedSplitOf q)) :=
   S.weightAlignment.sum_reindex
+
+/-- **G-13h-6: the forest index boundary from the per-A cover data** (`forestSplitOf := Sum.inl ∘
+origin`, `forest_comm` from the landed `fullImageOfForestChoiceOuter_comm`).  Builds the full-grain
+layer from the forest carrier + a supplied mixed carrier. -/
+noncomputable def ResolvedFullForestCoverData.toForestIndexBoundary {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (C : ResolvedFullForestCoverData A P)
+    (mixedCarrier : Finset (ResolvedMixedImageData (canonicalSigmaCoverDataOfParents P)))
+    (mixed_inj_on : ∀ M₁ ∈ mixedCarrier, ∀ M₂ ∈ mixedCarrier, M₁.toImage = M₂.toImage → M₁ = M₂) :
+    ResolvedFlatH58CarrierForestIndexBoundary g
+      ((ResolvedFullActualFiniteCarriers.ofCarriers C.forestCarrier mixedCarrier
+        mixed_inj_on).toCarrierLayer)
+      (canonicalFlatImageOf g A) where
+  forestSplitOf := fun q => Sum.inl (C.origin q)
+  forestSplit_mem := fun q =>
+    (h58BridgeSplitChoiceIndex_inl_mem_iff g (C.origin q)).mpr (C.origin_mem q)
+  forest_comm := fun q => by
+    rw [← C.origin_data q]
+    exact fullImageOfForestChoiceOuter_comm A (C.origin q) (C.origin_mem q) (C.origin_outer q) P
 
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
