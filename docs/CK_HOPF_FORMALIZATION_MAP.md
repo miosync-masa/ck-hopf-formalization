@@ -306,6 +306,55 @@ theorem" but "discover and build the space in which a facade-free H5.8 reindex c
 the relocation: the flat statement provably forgets the information the theorem
 needs, so the facade-free result cannot reside there.
 
+### Facade dependency audit — what (if anything) still gates `HopfAlgebra ℚ HopfH`
+
+A full audit of every use of the two boundary facades down to the final instance
+(`hopfAlgebraHopfH_ofBoundaryFacadesAndReflection_convolution`,
+`QFT/HopfAlgebra/HopfAlgebra.lean`) settles "what remains":
+
+```
+HopfAlgebra ℚ HopfH
+  ├ [ForestGraphInsertionUniquenessModel]                         (facade #1)
+  ├ [ForestQuotientForestSigmaForestCoverPromotedExternalLegsLiftableModel]  (facade #2)
+  └ [IsDivergenceReflectedByAdmissibleForestContract]   (NOT a facade — ambient power-counting)
+       │
+       ▼  both facades enter through ONE channel only
+  CoassocStrictForestH58Ready_ofBoundaryFacades   (Coassoc.lean)
+       │
+       ▼
+  Bialgebra coassoc field  := coassoc_strict_forest_linearMap     (antipode = convolution route, facade-free)
+```
+
+Every facade *consumption* site — facade #1's 14 forest-branch injectivity /
+parent-remnant / split-`φ` sites, facade #2's `forestQuotientForestSigmaForestCover_*`
+cover cluster, and the `resolvedCoproduct_coassoc_ofReflection` transfer — lies in
+the **H5.8 coassociativity reindex** chain.  Classified:
+
+- **A — H5.8-reindex content:** all facade consumption.  Has a facade-free
+  resolved-carrier realization: `h58_resolved_carrier_double_sum_reindex`
+  (axioms `[propext, Classical.choice, Quot.sound]`).
+- **B — flat-only shadow:** the flat `coassoc_strict_forest_linearMap`,
+  `forestComponentSplitPhiBranchReindexing`, and the flat `CoassocStrictForestH58Ready`
+  typeclass — **cannot** be made facade-free (flat insertion uniqueness is *false*
+  via `flatEdgeRetarget_not_injective`); the resolved theorems are their native
+  replacements.
+- **C — non-H5.8 genuine facade dependency: EMPTY.**  The antipode (convolution
+  route) and counit/coalgebra structure use **no** facade; `CoassocStrictForestH58CoverData`
+  is auto-derived from the power-counting reflection (non-facade); the gated
+  `forestComponentSplitPhi_term_eq_of_split` is never called outside `Coassoc.lean`
+  and never exposed.
+
+**Conclusion.**  There is **no remaining unsolved mathematics** gating a facade-free
+Hopf statement: the *only* facade consumer is the H5.8 reindex, whose facade-free
+content already lives on the resolved carrier.  The old flat `HopfAlgebra ℚ HopfH`
+instance stays facade-conditional **by the shape of its own statement** (its coassoc
+field genuinely needs the flat-false facade), not by missing work.  So a facade-free
+public Hopf/coassoc statement is **not** obtained by discharging the old flat
+instance — it is obtained by **stating coassociativity on the resolved carrier**, with
+`h58_resolved_carrier_double_sum_reindex` as its core.  That is a *new* statement in
+the correct coordinates (tracked as **R-5: resolved-native Hopf / coassoc statement**),
+not a repair of the old one.
+
 ---
 
 ## 7. JAR Claim Boundary

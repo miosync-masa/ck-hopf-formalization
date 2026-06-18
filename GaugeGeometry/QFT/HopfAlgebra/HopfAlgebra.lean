@@ -132,7 +132,22 @@ ambient power-counting environment (including the reverse forest-contraction
 reflection).  The right antipode axiom is no longer a separate cancellation
 kernel: it follows from the left antipode identity, coassociativity, and local
 nilpotency of the reduced convolution operator.  This compiles, certifying the
-final dependency boundary. -/
+final dependency boundary.
+
+**Facade dependency audit (R-4-full).**  Both facades enter this instance through a
+*single* channel — `CoassocStrictForestH58Ready` (the H5.8 coassociativity reindex);
+the antipode (convolution route) and counit/coalgebra layers consume **no** facade.
+Every facade-consuming site lies in the H5.8 reindex chain, whose facade-free
+realization already lives on the boundary-resolved carrier as
+`h58_resolved_carrier_double_sum_reindex` (`ResolvedActualSigmaCover.lean`; axioms
+`[propext, Classical.choice, Quot.sound]`).  There is therefore **no non-H5.8 facade
+dependency** to discharge.  This flat instance nonetheless stays facade-conditional
+**by the shape of its own statement**: its coassoc field
+(`coassoc_strict_forest_linearMap`) needs the flat insertion uniqueness, which is
+*false* on the flat carrier (`flatEdgeRetarget_not_injective`).  A facade-free public
+Hopf/coassoc statement is obtained not by repairing this instance but by stating
+coassociativity on the resolved carrier with the reindex above as its core (track
+**R-5**).  See `docs/CK_HOPF_FORMALIZATION_MAP.md` §6. -/
 theorem hopfAlgebraHopfH_ofBoundaryFacadesAndReflection_convolution
     [ForestGraphInsertionUniquenessModel]
     [ForestQuotientForestSigmaForestCoverPromotedExternalLegsLiftableModel]
