@@ -3785,6 +3785,75 @@ noncomputable def CanonicalOuterFullGrainInnerSupplyData.ofCoverOrigins {g : Hop
     (OM.toMixedAlignment OF.toCoverData.forestCarrier)
     rfl
 
+/-! ### Gold Sprint G-13h-9 — the full-grain outer sum (the H5.8 double sum, facade-free)
+
+The full-grain mirror of `ResolvedH58OuterSumSupply`: a finite family of per-outer-forest
+**full-grain** inner supplies (each a `CanonicalOuterFullGrainInnerSupplyData`, e.g. from
+`ofCoverOrigins`), whose `.sum_reindex` identities sum over the outer carrier by `Finset.sum_congr`.
+This threads the per-A facade-free inner reindex over the outer proper-forest carrier — the full
+H5.8 double sum, with no facade consumed. -/
+
+/-- A finite family of per-outer-forest **full-grain** inner supplies (one per outer proper
+forest). -/
+structure ResolvedH58FullGrainOuterSumSupply (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] where
+  /-- The outer proper-forest index. -/
+  OuterIdx : Type*
+  /-- The finite outer carrier. -/
+  outerCarrier : Finset OuterIdx
+  /-- The per-outer full-grain inner supply. -/
+  innerSupply : OuterIdx → CanonicalOuterFullGrainInnerSupplyData g
+
+namespace ResolvedH58FullGrainOuterSumSupply
+
+variable {g : HopfGen} [IsDivergencePreservedByAdmissibleForestContract]
+  (S : ResolvedH58FullGrainOuterSumSupply g)
+
+/-- The inner image-weight sum for one outer forest. -/
+noncomputable def innerImageSum (A : S.OuterIdx) : HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH) :=
+  ∑ z ∈ (S.innerSupply A).FL.imageCarrier,
+    h58BridgeQuotientTerm g ((S.innerSupply A).weightAlignment.flatImageOf z)
+
+/-- The inner forest+mixed branch-weight sum for one outer forest. -/
+noncomputable def innerBranchSum (A : S.OuterIdx) : HopfH ⊗[ℚ] (HopfH ⊗[ℚ] HopfH) :=
+  (∑ q ∈ (S.innerSupply A).FL.forestCarrier.attach,
+      h58BridgeSplitChoiceTerm g ((S.innerSupply A).weightAlignment.forestSplitOf q)) +
+  (∑ q ∈ (S.innerSupply A).FL.mixedCarrier.attach,
+      h58BridgeSplitChoiceTerm g ((S.innerSupply A).weightAlignment.mixedSplitOf q))
+
+/-- **G-13h-9: the full-grain H5.8 double sum** — the outer sum of inner image-weight sums equals
+the outer sum of inner branch-weight sums, assembled from the per-outer-forest full-grain
+`sum_reindex` identities by `Finset.sum_congr`.  Facade-free. -/
+theorem outer_sum_reindex :
+    ∑ A ∈ S.outerCarrier, S.innerImageSum A = ∑ A ∈ S.outerCarrier, S.innerBranchSum A :=
+  Finset.sum_congr rfl (fun A _ => (S.innerSupply A).sum_reindex)
+
+end ResolvedH58FullGrainOuterSumSupply
+
+/-- The full-grain outer-sum skeleton: a per-outer-forest full-grain inner supply for each flat
+outer proper forest, with the outer carrier fixed to `h58BridgeOuterCarrier g`. -/
+structure ResolvedH58FullGrainOuterSkeleton (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] where
+  /-- The per-outer-forest full-grain inner supply, indexed by the flat outer proper forest. -/
+  innerSupply : h58BridgeOuterIndex g → CanonicalOuterFullGrainInnerSupplyData g
+
+/-- Assemble the full-grain outer-sum supply with the flat outer proper-forest carrier. -/
+noncomputable def ResolvedH58FullGrainOuterSkeleton.toOuterSumSupply {g : HopfGen}
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (Sk : ResolvedH58FullGrainOuterSkeleton g) : ResolvedH58FullGrainOuterSumSupply g where
+  OuterIdx := h58BridgeOuterIndex g
+  outerCarrier := h58BridgeOuterCarrier g
+  innerSupply := Sk.innerSupply
+
+/-- **G-13h-9: the full-grain H5.8 double sum over the actual flat outer proper-forest carrier**,
+from the skeleton.  This is the resolved-native, facade-free H5.8 reindex double sum. -/
+theorem ResolvedH58FullGrainOuterSkeleton.outer_sum_reindex {g : HopfGen}
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (Sk : ResolvedH58FullGrainOuterSkeleton g) :
+    ∑ A ∈ h58BridgeOuterCarrier g, Sk.toOuterSumSupply.innerImageSum A =
+      ∑ A ∈ h58BridgeOuterCarrier g, Sk.toOuterSumSupply.innerBranchSum A :=
+  Sk.toOuterSumSupply.outer_sum_reindex
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
