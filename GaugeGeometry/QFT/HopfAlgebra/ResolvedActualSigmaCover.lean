@@ -3854,6 +3854,76 @@ theorem ResolvedH58FullGrainOuterSkeleton.outer_sum_reindex {g : HopfGen}
       ∑ A ∈ h58BridgeOuterCarrier g, Sk.toOuterSumSupply.innerBranchSum A :=
   Sk.toOuterSumSupply.outer_sum_reindex
 
+/-! ### Gold Sprint G-13h-10 — concrete per-A origin covers ⇒ the facade-free H5.8 double sum
+
+Enumeration + dependent-type plumbing only (both facades already discharged).  For each outer forest
+`A`: the parents datum is parents-independent for the cover (empty parents suffice — the images live
+over `Aout.contractWithStars starOf`, not `parents`), and the forest/mixed origins are the flat split
+choices whose outer index is `A` (bundled with the membership + `outer = A` proofs).  Feeding these
+through `ofCoverOrigins` + the outer skeleton gives the concrete facade-free double sum. -/
+
+/-- Empty σ-cover parents for an outer forest (valid for any `A`; the cover images are
+parents-independent, so this yields the same per-A sums as the genuine de-contraction parents). -/
+noncomputable def canonicalEmptyParents (g : HopfGen) (A : h58BridgeOuterIndex g) :
+    CanonicalOuterParentsData g A where
+  parents := ∅
+  containsAoutEdges := by simp
+
+/-- The per-A forest origin cover: all forest split choices with outer index `A`.  The origin is the
+subtype of the flat forest choice index carrying its `outer = A` witness, and the carrier is the
+`Finset.subtype` of the flat index (no `Finset.image` into a fresh type — avoids the `whnf` blowup). -/
+noncomputable def canonicalForestOriginCover (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] (A : h58BridgeOuterIndex g) :
+    ResolvedFullForestCoverOriginData A (canonicalEmptyParents g A) where
+  Origin := { q : h58BridgeForestChoiceSigma g //
+    ∃ h : q ∈ h58BridgeForestChoiceIndex g, h58BridgeForestChoiceOuterIndex g q h = A }
+  originCarrier := by
+    classical
+    exact (h58BridgeForestChoiceIndex g).subtype
+      (fun q => ∃ h : q ∈ h58BridgeForestChoiceIndex g, h58BridgeForestChoiceOuterIndex g q h = A)
+  choiceOf := Subtype.val
+  choice_mem := fun o => o.2.choose
+  choice_outer := fun o => o.2.choose_spec
+
+/-- The per-A mixed origin cover: all mixed split choices with outer index `A`. -/
+noncomputable def canonicalMixedOriginCover (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] (A : h58BridgeOuterIndex g) :
+    ResolvedFullMixedCoverOriginData A (canonicalEmptyParents g A) where
+  Origin := { q : h58BridgeForestChoiceSigma g //
+    ∃ h : q ∈ h58BridgeMixedChoiceIndex g, h58BridgeMixedChoiceOuterIndex g q h = A }
+  originCarrier := by
+    classical
+    exact (h58BridgeMixedChoiceIndex g).subtype
+      (fun q => ∃ h : q ∈ h58BridgeMixedChoiceIndex g, h58BridgeMixedChoiceOuterIndex g q h = A)
+  choiceOf := Subtype.val
+  choice_mem := fun o => o.2.choose
+  choice_outer := fun o => o.2.choose_spec
+
+/-- The per-A full-grain inner supply from the concrete forest + mixed origin covers. -/
+noncomputable def canonicalFullGrainInnerSupply (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] (A : h58BridgeOuterIndex g) :
+    CanonicalOuterFullGrainInnerSupplyData g :=
+  CanonicalOuterFullGrainInnerSupplyData.ofCoverOrigins
+    (canonicalForestOriginCover g A) (canonicalMixedOriginCover g A)
+
+/-- The concrete full-grain outer skeleton (per-A inner supply for every outer forest). -/
+noncomputable def canonicalFullGrainOuterSkeleton (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] :
+    ResolvedH58FullGrainOuterSkeleton g where
+  innerSupply := canonicalFullGrainInnerSupply g
+
+/-- **G-13h-10: the concrete, resolved-native, facade-free H5.8 reindex double sum.**  The outer
+sum of inner image-weight sums equals the outer sum of inner forest+mixed branch-weight sums, with
+every datum concretely constructed (origin covers = the flat split choices per outer forest; both
+facades discharged; term side canonical). -/
+theorem canonical_h58_double_sum_reindex (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] :
+    ∑ A ∈ h58BridgeOuterCarrier g,
+        (canonicalFullGrainOuterSkeleton g).toOuterSumSupply.innerImageSum A =
+      ∑ A ∈ h58BridgeOuterCarrier g,
+        (canonicalFullGrainOuterSkeleton g).toOuterSumSupply.innerBranchSum A :=
+  (canonicalFullGrainOuterSkeleton g).outer_sum_reindex
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
