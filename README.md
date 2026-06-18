@@ -106,7 +106,17 @@ thing deliberately *not* done is installing a duplicate typeclass instance on th
 flat carrier.
 
 R-4-superfull (identity-unique payload + native H5.8 reindexing architecture;
-standalone modules, axiom-clean):
+standalone modules, axiom-clean) — **✅ COMPLETE**:
+
+> **The native H5.8 reindex is landed and axiom-clean.** The public theorem
+> `h58_resolved_carrier_double_sum_reindex`
+> (`GaugeGeometry/QFT/HopfAlgebra/ResolvedActualSigmaCover.lean`) proves the outer-forest
+> double sum `∑_A innerImageSum A = ∑_A innerBranchSum A` — the H5.8 coassociativity
+> reindex — entirely on the boundary-resolved carrier, with `#print axioms` =
+> `[propext, Classical.choice, Quot.sound]`. **Both** boundary facades are discharged
+> resolved-natively (no facade typeclass is instantiated), and the gated flat assembly
+> `forestComponentSplitPhi_term_eq_of_split` is never exposed. The bullets below narrate
+> the build-up; the **completion** paragraph at the end records what actually closed.
 
 - The payload is upgraded to an *identity-unique* lift
   (`ResolvedHopfPayloadFamilyWithUniqueIds`, `ResolvedUniquePayloadModel.lean`), so the
@@ -119,11 +129,12 @@ standalone modules, axiom-clean):
   bridge to the **concrete flat H5.8 tensor terms** (`ResolvedH58Bridge`, via thin
   public aliases of the flat σ-objects in `Coassoc.lean`).
 - The architecture **reaches the concrete flat H5.8 tensor reindexing identity**
-  (`ResolvedActualSigmaCover.concrete_sum_reindex`). The full native resolved H5.8
-  proof is **not** claimed complete: the entire remaining task is isolated as the
-  construction of a *single explicit finite data package*, `ResolvedActualSigmaCover g`
-  — **not yet constructed**. Its fields (the finite branch-map layer, the resolved→flat
-  index maps, the flat split-term agreement) are all σ-cover data, not boundary facades.
+  (`ResolvedActualSigmaCover.concrete_sum_reindex`), and the remaining finite data package
+  is now **constructed**: the per-outer-forest full-grain inner supply
+  (`CanonicalOuterFullGrainInnerSupplyData.ofCoverOrigins`) plus the outer-forest sum
+  (`ResolvedH58FullGrainOuterSkeleton.outer_sum_reindex`) assemble into the public
+  `h58_resolved_carrier_double_sum_reindex`. Its fields (the finite branch-map layer, the
+  resolved→flat index maps, the split-term agreement) are all σ-cover data, not boundary facades.
 - The layer's `cover` (every quotient image is a forest or mixed branch image) is reduced
   *facade-free* to a single datum: the **mixed** case is structural
   (`exists_mixed_preimage_of_not_forest`), the **forest** case is built from a
@@ -141,7 +152,7 @@ standalone modules, axiom-clean):
   `CanonicalOuterInnerSupplyData.toCanonicalSupply` into a
   `CanonicalResolvedActualSigmaCoverSupply g`. The remaining inputs are the concrete finite
   quotient/mixed carriers, the resolved→flat index maps, and the split-term factorization — all
-  σ-cover data. Full native resolved H5.8 is still **not** claimed complete.
+  σ-cover data. *(Build-up step; closed by the completion paragraph below.)*
 - **Carrier import (Track S, in progress).** The machinery to import the flat σ-cover's finite
   carriers into the resolved coordinate is built: the contracted-graph forget bridge
   `forget_canonicalOuterContractedGraph` (whose keystone is the id-uniqueness payoff — `forget`
@@ -150,8 +161,8 @@ standalone modules, axiom-clean):
   `liftFlatQuotientSubgraphToCres` / `liftFlatQuotientForestToCres` (flat quotient
   subgraphs/forests lift into the resolved contracted graph, with forget round-trips). Remaining:
   build the concrete carriers with CD/star facts, the resolved→flat coordinate dictionary, and
-  `splitTerm_agreement` (the genuine boundary, not imported from flat). Full native resolved H5.8
-  is still **not** claimed complete.
+  `splitTerm_agreement` (the genuine boundary, not imported from flat). *(Build-up step; closed by
+  the completion paragraph below.)*
 - **The boundary reduced to one predicate `forest_term`.** The remaining datum is now a single
   named theorem. The boundary `ResolvedFlatH58Correspondence` (index dictionary + weight equality)
   is whittled down: `flatImageOf` is *constructed* (forget through the contracted-graph bridge +
@@ -159,11 +170,23 @@ standalone modules, axiom-clean):
   (the P2 pattern); the mixed half is killed (an origin projection); the forest boundary splits
   into a mechanical index round-trip (`forest_comm`) and a term factorization; and the term
   factorization branch-splits (`forest ⊕ mixed`, by `Sum.isLeft`) into `forest_term` + `mixed_term`.
-  The single genuine remaining datum is **`forest_term`** — the forest-branch weight factorization
-  (`∀ s, s.isLeft → splitChoiceTerm s = quotientTerm (splitPhi s)`). **Full native resolved H5.8 is
-  reduced to proving `forest_term` resolved-natively**; `mixed_term` is expected mechanical; the
-  carrier / de-contraction / cover / reindex / dictionary-half are complete. Full native resolved
-  H5.8 is still **not** claimed complete (`forest_term` not yet proved).
+  The reduction reached a single named datum **`forest_term`** — the forest-branch weight
+  factorization (`∀ s, s.isLeft → splitChoiceTerm s = quotientTerm (splitPhi s)`).
+- **Completion (R-4-full ∎).** `forest_term` turned out **canonical**, not a remaining gap: the
+  whole term side is facade-free (`splitTermAgreementCanonical`). Both boundary facades are then
+  discharged resolved-natively — facade #1 (forest insertion uniqueness) via
+  `resolvedParentRemnant_injOn` / `ResolvedFullQuotientForestImageData.toImage_injective`, facade #2
+  (σ-cover liftability) via `resolved_promotedComponent_externalLegs_le_plus` with the full-grain
+  forest+mixed cover (`fullQuotientForestImageDataOfFlatSplit_comm`, `fullMixedImageDataOfFlatSplit_comm`,
+  the origin-indexed covers). These assemble into the public, axiom-clean
+  `h58_resolved_carrier_double_sum_reindex`.
+  The **old flat `forestComponentSplitPhi` reindex stays facade-conditional by necessity, not by
+  missing work**: its forest-branch injectivity consumes
+  `ForestGraphInsertionUniquenessModel.parent_eq_of_remnant_eq` on the flat graph, which is *false*
+  on the flat carrier (`flatEdgeRetarget_not_injective`) — the flat retarget forgets the boundary
+  edge/leg id data the theorem needs, so no facade-free transport of the flat bijection exists. The
+  boundary-resolved carrier restores exactly that id data, which is why the facade-free H5.8 reindex
+  lives **there**, not in the flat statement.
 
 All R-4-superfull modules depend only on `propext`/`Classical.choice`/`Quot.sound`; `Main`
 is unaffected apart from the thin public aliases added to `Coassoc.lean`.
