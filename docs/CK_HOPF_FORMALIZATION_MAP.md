@@ -32,6 +32,12 @@ Status convention: ✅ = unconditional Lean theorem (no `sorry`/`admit`/axiom);
 - A **boundary-resolved carrier** (`ResolvedFeynmanGraph`, persistent
   half-edge/leg identities) **repairs the collapse mechanism**: both gaps become
   theorems, and the flat carrier is recovered as its forgetful image.
+- **Track R-4-full ∎ (§6):** the H5.8 coassociativity reindex itself is assembled
+  **facade-free on the resolved carrier** — `h58_resolved_carrier_double_sum_reindex`,
+  axioms `[propext, Classical.choice, Quot.sound]`, discharging *both* boundary
+  facades resolved-natively.  The flat reindex stays facade-conditional **by
+  necessity** (the flat retarget forgets the id data the theorem needs), so the
+  facade-free result's native home is the resolved carrier, not the flat statement.
 
 The headline is **not** "CK Hopf has a hole."  It is: *the flat graph notation
 is coarser than CK's actual graph notion — it suppresses half-edge / insertion-slot
@@ -249,6 +255,56 @@ instance of the flat facade classes (they are flat-false; `forget` runs resolved
 are intentionally uninhabited because they are false — that is the diagnosis; the
 inhabited positive object, projecting exactly onto the flat collapse map, lives on
 the boundary-resolved carrier.*
+
+### R-4-full ∎ — the facade-free H5.8 reindex lives on the resolved carrier
+
+The completed theorem of Track R-4-full is
+
+```
+h58_resolved_carrier_double_sum_reindex
+    (g : HopfGen) [IsDivergencePreservedByAdmissibleForestContract] :
+  ∑ A ∈ h58BridgeOuterCarrier g, innerImageSum A
+    = ∑ A ∈ h58BridgeOuterCarrier g, innerBranchSum A
+```
+
+(`QFT/HopfAlgebra/ResolvedActualSigmaCover.lean`) — the H5.8 coassociativity
+reindex double sum (outer-forest sum of inner image-weight sums = sum of inner
+forest+mixed branch-weight sums), proven **entirely on the boundary-resolved
+carrier**.  Key facts:
+
+- **The facade-free H5.8 reindex theorem lives on the resolved carrier**, not the
+  flat one.  Both former boundary facades are **discharged resolved-natively**:
+  facade #1 (forest-branch insertion uniqueness) via `parent_eq_of_remainder_eq` /
+  `resolvedParentRemnant_injOn` / `ResolvedFullQuotientForestImageData.toImage_injective`
+  (persistent edge/leg ids); facade #2 (σ-cover promoted-leg liftability) via
+  `resolved_promotedComponent_externalLegs_le_plus` together with the full-grain
+  forest+mixed cover (`fullQuotientForestImageDataOfFlatSplit_comm`,
+  `fullMixedImageDataOfFlatSplit_comm`, the origin-indexed covers, and the
+  full-grain outer sum).
+- **The old flat `forestComponentSplitPhi` reindex stays facade-conditional — by
+  necessity, not by missing work.**  Its `forest_inj` consumes
+  `ForestGraphInsertionUniquenessModel.parent_eq_of_remnant_eq` on `repG g`, which
+  is **false on the flat carrier** (`flatEdgeRetarget_not_injective`): the flat
+  retarget forgets the boundary edge/leg id data, so the flat quotient-image
+  equality cannot recover the parent.  No facade-free transport of the flat
+  bijection is possible (the reconnaissance localized the sole flat-facade use to a
+  single `parent_eq_of_remnant_eq` call and confirmed its hypotheses are genuinely
+  too weak).  The resolved carrier restores exactly the discarded ids, so the
+  reindex is facade-free **there** — the native home of the result, not a bridge to
+  the flat statement.
+- **Axioms.** `#print axioms h58_resolved_carrier_double_sum_reindex`
+  = `[propext, Classical.choice, Quot.sound]` (the standard Lean/Mathlib three) —
+  no `sorry`, no project axiom, no facade class.
+- **Gated theorem not exposed.** The construction never references or re-exposes
+  the gated flat assembly `forestComponentSplitPhi_term_eq_of_split`, and never
+  instantiates either facade typeclass; only facade-free building blocks and the
+  final public theorem are surfaced.
+
+The arc of R-4-full is therefore not "strip the facade off the flat coassoc
+theorem" but "discover and build the space in which a facade-free H5.8 reindex can
+*live*" — and that space is the boundary-resolved carrier.  Lean itself certifies
+the relocation: the flat statement provably forgets the information the theorem
+needs, so the facade-free result cannot reside there.
 
 ---
 
