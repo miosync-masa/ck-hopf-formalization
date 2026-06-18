@@ -32,6 +32,38 @@ convolution operator `id − η∘ε` is locally nilpotent on generators), not a
 
 The constructive body contains **no** `sorry`, `admit`, or project-level axiom.
 
+### The H5.8 coassociativity reindex is now facade-free on the resolved carrier ∎
+
+Beyond stating the two facades' *content* as resolved-carrier theorems, the **central
+facade-consuming step** — the H5.8 coassociativity reindex (the outer-forest double sum that the
+flat coproduct's coassociativity ultimately rests on) — is now assembled **facade-free** as a
+single axiom-clean public theorem:
+
+```lean
+theorem h58_resolved_carrier_double_sum_reindex (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] :
+    ∑ A ∈ h58BridgeOuterCarrier g, innerImageSum A
+      = ∑ A ∈ h58BridgeOuterCarrier g, innerBranchSum A
+```
+
+(`GaugeGeometry/QFT/HopfAlgebra/ResolvedActualSigmaCover.lean`; `#print axioms` =
+`[propext, Classical.choice, Quot.sound]`). It instantiates **neither** facade typeclass and never
+exposes the gated flat assembly `forestComponentSplitPhi_term_eq_of_split`: both former boundary
+facades are discharged resolved-natively (insertion uniqueness via `resolvedParentRemnant_injOn` /
+`ResolvedFullQuotientForestImageData.toImage_injective`; σ-cover liftability via
+`resolved_promotedComponent_externalLegs_le_plus` with the full-grain forest+mixed cover).
+
+Lean further certifies **why this lives on the resolved carrier and not the flat one**: the flat
+reindex's forest-branch injectivity consumes
+`ForestGraphInsertionUniquenessModel.parent_eq_of_remnant_eq`, which is *false* on the flat carrier
+(`flatEdgeRetarget_not_injective`) — the flat retarget **forgets** the boundary edge/leg id data the
+statement needs, so the flat hypotheses cannot recover it and **no facade-free transport of the flat
+reindex exists**. The boundary-resolved carrier restores exactly that id data; hence the facade-free
+H5.8 reindex's native home *is* the resolved carrier, by structural necessity rather than by missing
+work. (The flat `HopfAlgebra ℚ HopfH` bundle as a whole remains conditional on the two facades —
+this result makes its hardest reindex step facade-free on the resolved carrier and explains why the
+flat statement cannot be.)
+
 ## Non-vacuity (not a unicorn)
 
 The conditional flat-carrier theorem is a **proof-skeleton factorization**, not an
