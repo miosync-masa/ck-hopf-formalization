@@ -50,4 +50,13 @@ def ResolvedFeynmanSubgraph.mapPerm (σ : Equiv.Perm VertexId)
     (γ : ResolvedFeynmanSubgraph G) :
     (γ.mapPerm σ).externalLegs = γ.externalLegs.map (ResolvedExternalLeg.map σ) := rfl
 
+/-- `mapPerm` preserves disjointness (a resolved subgraph disjointness is vertex disjointness,
+and `σ` is injective). -/
+theorem ResolvedFeynmanSubgraph.mapPerm_disjoint (σ : Equiv.Perm VertexId)
+    {γ δ : ResolvedFeynmanSubgraph G} (h : γ.Disjoint δ) :
+    (γ.mapPerm σ).Disjoint (δ.mapPerm σ) := by
+  unfold ResolvedFeynmanSubgraph.Disjoint at h ⊢
+  simp only [ResolvedFeynmanSubgraph.mapPerm_vertices]
+  exact (Finset.disjoint_image σ.injective).mpr h
+
 end GaugeGeometry.QFT.Combinatorial
