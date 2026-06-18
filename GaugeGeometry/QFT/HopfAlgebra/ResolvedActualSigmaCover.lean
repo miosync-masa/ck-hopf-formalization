@@ -3924,6 +3924,43 @@ theorem canonical_h58_double_sum_reindex (g : HopfGen)
         (canonicalFullGrainOuterSkeleton g).toOuterSumSupply.innerBranchSum A :=
   (canonicalFullGrainOuterSkeleton g).outer_sum_reindex
 
+/-! ### Final public API — the facade-free H5.8 reindex on the boundary-resolved carrier
+
+`h58_resolved_carrier_double_sum_reindex` is the public, facade-free home of the H5.8 coassociativity
+reindex.  It is proven entirely on the **boundary-resolved carrier** (resolved images + persistent
+ids), discharging both former boundary facades as resolved-native theorems:
+
+* the forest-branch insertion uniqueness — via `resolvedParentRemnant_injOn` /
+  `ResolvedFullQuotientForestImageData.toImage_injective` (NOT
+  `ForestGraphInsertionUniquenessModel`);
+* the σ-cover promoted-leg liftability — via `resolved_promotedComponent_externalLegs_le_plus` (NOT
+  `ForestQuotientForestSigmaForestCoverPromotedExternalLegsLiftableModel`).
+
+**It deliberately does NOT route through the flat `forestComponentSplitPhiBranchReindexing`.**  That
+flat bijection's `forest_inj` consumes `ForestGraphInsertionUniquenessModel.parent_eq_of_remnant_eq`
+on `repG g`, which is **genuinely false on the flat carrier** (`flatEdgeRetarget_not_injective`): the
+flat quotient-image equality drops the edge/leg id information needed to recover the parent, so the
+flat hypotheses cannot determine the forest choice.  The boundary-resolved carrier restores exactly
+that information (persistent `edgeId`/`legId`), which is why the reindex is facade-free *here* and
+the flat `coassoc_strict_forest_linear` necessarily stays facade-conditional.  No transport of the
+flat bijection is possible (and none is attempted): the resolved-carrier statement is the native
+home, not a bridge to the flat one. -/
+
+/-- **Public, facade-free H5.8 reindex on the boundary-resolved carrier.**  The outer-forest double
+sum of inner image-weight sums equals the double sum of inner forest+mixed branch-weight sums —
+proven resolved-natively, discharging both former boundary facades.  Does NOT use
+`ForestGraphInsertionUniquenessModel` or
+`ForestQuotientForestSigmaForestCoverPromotedExternalLegsLiftableModel`, and does NOT route through
+the flat `forestComponentSplitPhiBranchReindexing` (whose flat insertion uniqueness is false without
+the boundary-resolved ids).  `#print axioms` = `[propext, Classical.choice, Quot.sound]`. -/
+theorem h58_resolved_carrier_double_sum_reindex (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract] :
+    ∑ A ∈ h58BridgeOuterCarrier g,
+        (canonicalFullGrainOuterSkeleton g).toOuterSumSupply.innerImageSum A =
+      ∑ A ∈ h58BridgeOuterCarrier g,
+        (canonicalFullGrainOuterSkeleton g).toOuterSumSupply.innerBranchSum A :=
+  canonical_h58_double_sum_reindex g
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
