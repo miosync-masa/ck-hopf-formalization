@@ -91,6 +91,25 @@ noncomputable def ResolvedCoproductForestSummandSupply.sum {G : ResolvedFeynmanG
   ∑ A ∈ S.forestCarrier,
     MvPolynomial.X (S.leftGen A) ⊗ₜ[ℚ] MvPolynomial.X (S.rightGen A)
 
+/-- **R-6b-2 abstraction (graph-free).**  If two summand supplies have a carrier bijection that
+preserves both the left and the right resolved generators, their forest sums are equal.  This
+isolates the `mapPerm`-invariance of the forest sum into a pure `Finset.sum_bij` fact, so the
+later geometric work (R-6b-2) only has to *supply the bijection + generator-class equalities*,
+not re-run the sum algebra. -/
+theorem ResolvedCoproductForestSummandSupply.sum_eq_of_bij {G G' : ResolvedFeynmanGraph}
+    (S : ResolvedCoproductForestSummandSupply G) (T : ResolvedCoproductForestSummandSupply G')
+    (i : (a : S.ForestIdx) → a ∈ S.forestCarrier → T.ForestIdx)
+    (hmaps : ∀ a (ha : a ∈ S.forestCarrier), i a ha ∈ T.forestCarrier)
+    (i_inj : ∀ a₁ (ha₁ : a₁ ∈ S.forestCarrier) a₂ (ha₂ : a₂ ∈ S.forestCarrier),
+      i a₁ ha₁ = i a₂ ha₂ → a₁ = a₂)
+    (i_surj : ∀ b ∈ T.forestCarrier, ∃ a, ∃ (ha : a ∈ S.forestCarrier), i a ha = b)
+    (hleft : ∀ a (ha : a ∈ S.forestCarrier), S.leftGen a = T.leftGen (i a ha))
+    (hright : ∀ a (ha : a ∈ S.forestCarrier), S.rightGen a = T.rightGen (i a ha)) :
+    S.sum = T.sum := by
+  unfold ResolvedCoproductForestSummandSupply.sum
+  exact Finset.sum_bij i hmaps i_inj i_surj
+    (fun a ha => by rw [hleft a ha, hright a ha])
+
 /-! ## The representative-level generator formula -/
 
 /-- **R-6b-1 — the representative-level resolved coproduct on a generator**: primitive part
