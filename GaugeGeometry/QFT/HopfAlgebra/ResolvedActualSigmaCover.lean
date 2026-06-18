@@ -2814,6 +2814,90 @@ theorem fullImageOfForestChoiceOuter_comm {g : HopfGen} (A : h58BridgeOuterIndex
   subst hA
   exact fullQuotientForestImageDataOfFlatSplit_comm i hi P
 
+/-! ### Gold Sprint G-13h-8 — the mixed-branch cover (the mixed mirror of the forest cover)
+
+The mixed boundary branch is canonical (no facade #1, no certificate): `splitPhi (Sum.inr q)` is the
+actual→rep transport of the mixed actual quotient (`h58BridgeSplitPhiInr_eq`), so `canonicalFlatImageOf`
+of the lift of that actual quotient is `splitPhi (Sum.inr q)` — exactly the forest cover comm, but
+with every component **avoiding** the outer stars (`liftFlatAdmissibleAlongForgetEq_avoidsStars`),
+giving a `ResolvedMixedImageData`. -/
+
+/-- **G-13h-8: the resolved mixed `avoidsStars` witness** — every lifted component of the mixed
+actual quotient avoids the resolved outer stars (vertices preserved by the lift; resolved stars =
+flat stars `canonicalOuter_starVertices_eq`; flat avoidance from
+`h58BridgeMixedSplitActualQuotientAvoidsStars`). -/
+theorem fullMixedSplit_avoidsStars {g : HopfGen}
+    (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeMixedChoiceOuterIndex g q hq)) :
+    ∀ δ ∈ (liftFlatQuotientForestToCres g (h58BridgeMixedChoiceOuterIndex g q hq)
+            (h58BridgeMixedSplitActualQuotient g q hq)
+            (h58BridgeMixedSplitActualQuotientPairwise g q hq)).elements,
+      Disjoint δ.vertices
+        ((canonicalSigmaCoverDataOfParents P).Aout.starVertices
+          (canonicalSigmaCoverDataOfParents P).starOf) := by
+  unfold liftFlatQuotientForestToCres
+  apply liftFlatAdmissibleAlongForgetEq_avoidsStars
+  intro δf hδf
+  show Disjoint δf.vertices
+    ((canonicalOuterAoutOfFlatOuter g (h58BridgeMixedChoiceOuterIndex g q hq)).starVertices
+      (canonicalOuterStarOf g (h58BridgeMixedChoiceOuterIndex g q hq)))
+  rw [canonicalOuter_starVertices_eq]
+  exact h58BridgeMixedSplitActualQuotientAvoidsStars g q hq δf hδf
+
+/-- **G-13h-8: the full mixed image from a flat mixed split choice** — lift the mixed actual
+quotient (all components avoid stars). -/
+noncomputable def fullMixedImageDataOfFlatSplit {g : HopfGen}
+    (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeMixedChoiceOuterIndex g q hq)) :
+    ResolvedMixedImageData (canonicalSigmaCoverDataOfParents P) :=
+  ResolvedMixedImageData.ofAdmissibleSubgraph
+    (liftFlatQuotientForestToCres g (h58BridgeMixedChoiceOuterIndex g q hq)
+      (h58BridgeMixedSplitActualQuotient g q hq)
+      (h58BridgeMixedSplitActualQuotientPairwise g q hq))
+    (fullMixedSplit_avoidsStars q hq P)
+
+/-- **G-13h-8: the constructed mixed image's `toImage` is the lift.** -/
+theorem fullMixedImageDataOfFlatSplit_toImage_eq {g : HopfGen}
+    (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeMixedChoiceOuterIndex g q hq)) :
+    (fullMixedImageDataOfFlatSplit q hq P).toImage =
+      liftFlatQuotientForestToCres g (h58BridgeMixedChoiceOuterIndex g q hq)
+        (h58BridgeMixedSplitActualQuotient g q hq)
+        (h58BridgeMixedSplitActualQuotientPairwise g q hq) := by
+  apply resolvedAdmissibleSubgraph_ext_local
+  rfl
+
+/-- **G-13h-8: the mixed cover `comm`** — facade-free dictionary square for the lifted mixed actual
+quotient: `canonicalFlatImageOf (M.toImage) = splitPhi (Sum.inr q)`. -/
+theorem fullMixedImageDataOfFlatSplit_comm {g : HopfGen}
+    (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g)
+    (P : CanonicalOuterParentsData g (h58BridgeMixedChoiceOuterIndex g q hq)) :
+    canonicalFlatImageOf g (h58BridgeMixedChoiceOuterIndex g q hq)
+        (fullMixedImageDataOfFlatSplit q hq P).toImage =
+      h58BridgeSplitPhi g (Sum.inr q) := by
+  rw [fullMixedImageDataOfFlatSplit_toImage_eq, canonicalFlatImageOf_liftFlatQuotientForestToCres]
+  exact (h58BridgeSplitPhiInr_eq g q hq).symm
+
+/-- **G-13h-8: the mixed full image over a fixed outer forest `A`** — transported along
+`MixedChoiceOuterIndex q = A` by `subst` (no cast). -/
+noncomputable def fullImageOfMixedChoiceOuter {g : HopfGen} (A : h58BridgeOuterIndex g)
+    (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g)
+    (hA : h58BridgeMixedChoiceOuterIndex g q hq = A)
+    (P : CanonicalOuterParentsData g A) :
+    ResolvedMixedImageData (canonicalSigmaCoverDataOfParents P) := by
+  subst hA
+  exact fullMixedImageDataOfFlatSplit q hq P
+
+/-- **G-13h-8: the mixed cover `comm` for the outer-fixed full image.** -/
+theorem fullImageOfMixedChoiceOuter_comm {g : HopfGen} (A : h58BridgeOuterIndex g)
+    (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g)
+    (hA : h58BridgeMixedChoiceOuterIndex g q hq = A)
+    (P : CanonicalOuterParentsData g A) :
+    canonicalFlatImageOf g A (fullImageOfMixedChoiceOuter A q hq hA P).toImage =
+      h58BridgeSplitPhi g (Sum.inr q) := by
+  subst hA
+  exact fullMixedImageDataOfFlatSplit_comm q hq P
+
 /-- **G-13h-6: per-A full forest cover data.**  The full forest carrier with, per carrier element,
 its **origin** forest choice (outer index `A`) and the image identity — packaged as a function
 (no `data_inj` needed; `forestSplitOf` is `Sum.inl ∘ origin`). -/
@@ -3602,6 +3686,104 @@ noncomputable def CanonicalOuterFullGrainInnerSupplyData.ofCoverData {g : HopfGe
   mixedAlignment := mixedAlignment
   forestBoundary := by
     rw [hflat]; exact C.toForestIndexBoundary mixedCarrier mixed_inj_on
+
+/-! ### Gold Sprint G-13h-8 — the mixed alignment from an origin-indexed mixed cover supply
+
+Mirror of `ResolvedFullForestCoverOriginData`: index the mixed carrier by an abstract origin set
+(each origin a mixed split choice with outer index `A`), build the carrier as a plain image of a
+named `data` def (no subst-typed `Finset.image` blowup), and read off the mixed alignment with
+`mixedSplitOf := Sum.inr ∘ origin` and `mixed_comm` the landed `fullImageOfMixedChoiceOuter_comm`. -/
+
+/-- Classical decidable equality for the mixed image carrier `Finset.image` (never computes). -/
+noncomputable instance instDecidableEqResolvedMixedImageData
+    {D : ResolvedSigmaCoverData G} : DecidableEq (ResolvedMixedImageData D) :=
+  Classical.decEq _
+
+/-- **G-13h-8: an origin-indexed supply for the per-A mixed cover.** -/
+structure ResolvedFullMixedCoverOriginData {g : HopfGen} (A : h58BridgeOuterIndex g)
+    (P : CanonicalOuterParentsData g A) where
+  /-- The origin index type (intended: the flat mixed split choices over `A`). -/
+  Origin : Type
+  /-- The finite origin carrier. -/
+  originCarrier : Finset Origin
+  /-- Each origin's mixed split choice. -/
+  choiceOf : Origin → h58BridgeForestChoiceSigma g
+  /-- Each origin choice is a mixed choice. -/
+  choice_mem : ∀ o, choiceOf o ∈ h58BridgeMixedChoiceIndex g
+  /-- Each origin choice has outer index `A`. -/
+  choice_outer : ∀ o, h58BridgeMixedChoiceOuterIndex g (choiceOf o) (choice_mem o) = A
+
+/-- The mixed image attached to an origin (a named def, so `Finset.image` never unfolds the
+subst-typed `fullImageOfMixedChoiceOuter`). -/
+noncomputable def ResolvedFullMixedCoverOriginData.data {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullMixedCoverOriginData A P) (o : OD.Origin) :
+    ResolvedMixedImageData (canonicalSigmaCoverDataOfParents P) :=
+  fullImageOfMixedChoiceOuter A (OD.choiceOf o) (OD.choice_mem o) (OD.choice_outer o) P
+
+/-- The mixed carrier covered by the origins (a plain image of the named `data`). -/
+noncomputable def ResolvedFullMixedCoverOriginData.mixedCarrier {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullMixedCoverOriginData A P) :
+    Finset (ResolvedMixedImageData (canonicalSigmaCoverDataOfParents P)) :=
+  OD.originCarrier.image OD.data
+
+/-- Mixed carrier injectivity (structural — `ext_components ∘ components_eq_of_toImage_eq`). -/
+theorem ResolvedFullMixedCoverOriginData.mixed_inj_on {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullMixedCoverOriginData A P) :
+    ∀ M₁ ∈ OD.mixedCarrier, ∀ M₂ ∈ OD.mixedCarrier, M₁.toImage = M₂.toImage → M₁ = M₂ :=
+  fun _ _ _ _ h => ResolvedMixedImageData.ext_components
+    (ResolvedMixedImageData.components_eq_of_toImage_eq h)
+
+/-- The chosen origin of a mixed carrier element (unique preimage via `Classical.choose`). -/
+noncomputable def ResolvedFullMixedCoverOriginData.originOf {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullMixedCoverOriginData A P)
+    (q : {q // q ∈ OD.mixedCarrier}) : OD.Origin :=
+  Classical.choose (Finset.mem_image.mp q.2)
+
+theorem ResolvedFullMixedCoverOriginData.originOf_spec {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullMixedCoverOriginData A P)
+    (q : {q // q ∈ OD.mixedCarrier}) :
+    OD.originOf q ∈ OD.originCarrier ∧ OD.data (OD.originOf q) = q.1 :=
+  Classical.choose_spec (Finset.mem_image.mp q.2)
+
+/-- **G-13h-8: the mixed origin supply ⇒ the mechanical mixed alignment** over the full-grain layer
+`ofCarriers forestCarrier OD.mixedCarrier`.  `mixedSplitOf := Sum.inr ∘ origin`, `mixed_comm` the
+landed `fullImageOfMixedChoiceOuter_comm`. -/
+noncomputable def ResolvedFullMixedCoverOriginData.toMixedAlignment {g : HopfGen}
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OD : ResolvedFullMixedCoverOriginData A P)
+    (forestCarrier :
+      Finset (ResolvedFullQuotientForestImageData (canonicalSigmaCoverDataOfParents P))) :
+    ResolvedFlatH58CarrierMixedAlignment g
+      ((ResolvedFullActualFiniteCarriers.ofCarriers forestCarrier OD.mixedCarrier
+        OD.mixed_inj_on).toCarrierLayer) where
+  flatImageOf := canonicalFlatImageOf g A
+  mixedSplitOf := fun q => Sum.inr (OD.choiceOf (OD.originOf q))
+  mixedSplit_mem := fun q =>
+    (h58BridgeSplitChoiceIndex_inr_mem_iff g (OD.choiceOf (OD.originOf q))).mpr
+      (OD.choice_mem (OD.originOf q))
+  mixed_comm := fun q => by
+    rw [← (OD.originOf_spec q).2]
+    exact fullImageOfMixedChoiceOuter_comm A (OD.choiceOf (OD.originOf q))
+      (OD.choice_mem (OD.originOf q)) (OD.choice_outer (OD.originOf q)) P
+
+/-- **G-13h-8: the per-A full-grain inner supply from a forest + mixed origin cover.**  Both halves
+are now origin-indexed (no subst-typed `Finset.image` blowup); this is the resolved-native per-A
+H5.8 inner reindex datum (`.sum_reindex`), facade-free. -/
+noncomputable def CanonicalOuterFullGrainInnerSupplyData.ofCoverOrigins {g : HopfGen}
+    [IsDivergencePreservedByAdmissibleForestContract]
+    {A : h58BridgeOuterIndex g} {P : CanonicalOuterParentsData g A}
+    (OF : ResolvedFullForestCoverOriginData A P)
+    (OM : ResolvedFullMixedCoverOriginData A P) :
+    CanonicalOuterFullGrainInnerSupplyData g :=
+  CanonicalOuterFullGrainInnerSupplyData.ofCoverData
+    OF.toCoverData OM.mixedCarrier OM.mixed_inj_on
+    (OM.toMixedAlignment OF.toCoverData.forestCarrier)
+    rfl
 
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 

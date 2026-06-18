@@ -39760,6 +39760,69 @@ theorem h58BridgeForestSplitActualQuotientTouchesStar
             (h58BridgeForestChoiceOuterIndex g q hq).2)) :=
   forestComponentForestChoiceActualQuotientSubgraph_exists_starVertex g q hq
 
+/-! ### G-13h-8 — mixed-branch cover dictionary exposures (the mixed mirror of G-12b)
+
+The mixed boundary branch is canonical (no facade #1, no certificate): a mixed split choice's RHS
+quotient image is `⟨MixedBoundaryOuterIndex, RepRightQuotient⟩`, and the rep right quotient is the
+actual→rep transport of the mixed **actual** right quotient — so `splitPhi (Sum.inr q)` matches
+`canonicalFlatImageOf` of the lift of that actual quotient, exactly as the forest branch.  Unlike the
+forest split, every component **avoids** the outer stars (the mixed discriminator).  Alias-only; the
+gated final reindex is not exposed. -/
+
+/-- Public alias: the mixed-boundary outer forest index of a mixed split choice. -/
+noncomputable def h58BridgeMixedChoiceOuterIndex
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g) :
+    h58BridgeOuterIndex g :=
+  forestComponentMixedBoundaryOuterIndex g q hq
+
+/-- Public alias: the actual quotient-side mixed right forest of a mixed split choice (over the
+ACTUAL quotient graph), whose actual→rep transport is the mixed-boundary rep right quotient. -/
+noncomputable def h58BridgeMixedSplitActualQuotient
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g) :
+    AdmissibleSubgraph
+      (h58BridgeOuterActualQuotientGraph g (h58BridgeMixedChoiceOuterIndex g q hq)) :=
+  forestComponentMixedBoundaryActualRightQuotientSubgraphCanonical g q hq
+
+/-- **G-13h-8: `splitPhi (Sum.inr q)` = actual→rep transport of the mixed actual quotient** — the
+mixed mirror of `h58BridgeForestSplitPhiInl_eq` (definitional, modulo the `dif_pos` `φ`-on-`inr`
+alignment). -/
+theorem h58BridgeSplitPhiInr_eq
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g) :
+    h58BridgeSplitPhi g (Sum.inr q) =
+      h58BridgeActualQuotientToSigma g (h58BridgeMixedChoiceOuterIndex g q hq)
+        (h58BridgeMixedSplitActualQuotient g q hq) := by
+  rw [show h58BridgeSplitPhi g (Sum.inr q) =
+      forestComponentMixedBoundaryToQuotientForestSigma g q hq from
+      forestComponentSplitPhi_inr_of_mem g q hq]
+  rfl
+
+/-- **G-13h-8: the mixed split actual quotient is pairwise disjoint** (it lies in the actual RHS
+proper-disjoint carrier) — the `hDisj` the resolved lift needs. -/
+theorem h58BridgeMixedSplitActualQuotientPairwise
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g) :
+    (h58BridgeMixedSplitActualQuotient g q hq).IsPairwiseDisjoint :=
+  (forestOuterActualQuotientGraph g (forestComponentMixedBoundaryOuterIndex g q hq)
+    ).properDisjointAdmissibleDivergentSubgraphs_isPairwiseDisjoint
+    (forestComponentMixedBoundaryActualRightQuotientSubgraphCanonical_mem_properDisjoint g q hq)
+
+/-- **G-13h-8: every component of the mixed split actual quotient avoids the outer stars** (the
+mixed discriminator — opposite of the forest `TouchesStar`).  The flat source for the resolved
+`avoidsStars`. -/
+theorem h58BridgeMixedSplitActualQuotientAvoidsStars
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (g : HopfGen) (q : h58BridgeForestChoiceSigma g) (hq : q ∈ h58BridgeMixedChoiceIndex g) :
+    ∀ δ ∈ (h58BridgeMixedSplitActualQuotient g q hq).elements,
+      Disjoint δ.vertices
+        ((h58BridgeMixedChoiceOuterIndex g q hq).1.starVertices
+          (FeynmanGraph.admissibleForestCanonicalStarOf (repG g).toFeynmanGraph
+            (h58BridgeMixedChoiceOuterIndex g q hq).1
+            (h58BridgeMixedChoiceOuterIndex g q hq).2)) :=
+  forestComponentMixedBoundaryActualRightQuotientSubgraph_no_starVertices g q hq
+
 end PathW
 
 end GaugeGeometry.QFT.Combinatorial
