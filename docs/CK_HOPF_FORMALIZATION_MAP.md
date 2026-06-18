@@ -300,12 +300,6 @@ carrier**.  Key facts:
   instantiates either facade typeclass; only facade-free building blocks and the
   final public theorem are surfaced.
 
-The arc of R-4-full is therefore not "strip the facade off the flat coassoc
-theorem" but "discover and build the space in which a facade-free H5.8 reindex can
-*live*" — and that space is the boundary-resolved carrier.  Lean itself certifies
-the relocation: the flat statement provably forgets the information the theorem
-needs, so the facade-free result cannot reside there.
-
 ### Facade dependency audit — what (if anything) still gates `HopfAlgebra ℚ HopfH`
 
 A full audit of every use of the two boundary facades down to the final instance
@@ -348,12 +342,46 @@ the **H5.8 coassociativity reindex** chain.  Classified:
 Hopf statement: the *only* facade consumer is the H5.8 reindex, whose facade-free
 content already lives on the resolved carrier.  The old flat `HopfAlgebra ℚ HopfH`
 instance stays facade-conditional **by the shape of its own statement** (its coassoc
-field genuinely needs the flat-false facade), not by missing work.  So a facade-free
-public Hopf/coassoc statement is **not** obtained by discharging the old flat
-instance — it is obtained by **stating coassociativity on the resolved carrier**, with
-`h58_resolved_carrier_double_sum_reindex` as its core.  That is a *new* statement in
-the correct coordinates (tracked as **R-5: resolved-native Hopf / coassoc statement**),
-not a repair of the old one.
+field genuinely needs the flat-false facade), not by missing work.
+
+### R-5 frontier — why a facade-free coassoc needs a different *carrier*, not a better proof
+
+The natural next move — "state coassociativity on the resolved coproduct" — does **not**
+escape the facade, and the reason is sharp.  `resolvedCoproduct.toLinearMap =
+coproduct_strict_forest.toLinearMap` (facade-free, Phase 4c), so the resolved coassoc
+linear-map equality on `HopfH` *is literally* the flat coassoc.  The flat coassoc
+reduces, facade-free, to the term-sum equality `∑ split-choice term = ∑ quotient term`
+over the flat indices (both side-partitions are facade-free `Finset.sigma`/`disjSum`
+over `h58BridgeOuterCarrier`, and the carriers align exactly).  The single irreducible
+step is the **quotient side**: identifying the per-`A` resolved cover image carrier with
+the flat per-`A` quotient index via `flatImageOf` — which is exactly the flat
+`forestComponentSplitPhi` bijection, i.e. the two facades.  The facade-free resolved
+reindex sums over the *resolved* image carriers; the moment the statement is read on the
+flat `HopfH` quotient index, the bijection (hence the facade) is re-demanded.
+
+This boundary is pinned as a theorem,
+`h58_resolved_carrier_coassoc_termSum_frontier`
+(`ResolvedActualSigmaCover.lean`; axioms `[propext, Classical.choice, Quot.sound]`): it
+closes the flat term sum from the facade-free reindex **plus one explicit hypothesis**
+`hQuotBij` — the flat-index bijection — making the facade content the sole remaining
+input.  So:
+
+> **Facade-free H5.8 reindex exists.  A facade-free `HopfH` coassociativity does *not*
+> follow without changing the algebra carrier.**
+
+`HopfH` is the flat carrier, so its coproduct's quotient index is flat, and the facade is
+precisely what compensates the lost half-edge/leg ids in that coordinate.  A genuinely
+facade-free Hopf/coassoc statement therefore requires moving the algebra carrier itself to
+the resolved generators (a `ResolvedHopfGen`-style carrier where the quotient index is
+resolved) — a separate, larger track (**R-6**) that the project has so far deliberately
+de-scoped (`algebra carrier stays flat HopfH`).  R-5 fixes the boundary; R-6 would cross
+it.
+
+The arc of R-4-full is therefore not "strip the facade off the flat coassoc
+theorem" but "discover and build the space in which a facade-free H5.8 reindex can
+*live*" — and that space is the boundary-resolved carrier.  Lean itself certifies
+the relocation: the flat statement provably forgets the information the theorem
+needs, so the facade-free result cannot reside there.
 
 ---
 
