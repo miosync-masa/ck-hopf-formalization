@@ -149,6 +149,13 @@ namespace ResolvedFeynmanGraph
 def toResolvedClass (G : ResolvedFeynmanGraph) : ResolvedFeynmanGraphClass :=
   Quotient.mk ResolvedFeynmanGraph.idIsoSetoid G
 
+/-- **R-6b-2d — resolved generator classes are `mapPerm`-invariant.**  Since `mapPerm σ` is an
+id-preserving isomorphism, a graph and its relabeling have the same resolved class.  This is the
+generator-level invariance that drives the `Δᵣ` well-definedness. -/
+@[simp] theorem toResolvedClass_mapPerm (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId) :
+    (G.mapPerm σ).toResolvedClass = G.toResolvedClass :=
+  Quotient.sound (ResolvedFeynmanGraph.IsIso.symm ⟨σ, rfl⟩)
+
 end ResolvedFeynmanGraph
 
 namespace ResolvedFeynmanGraphClass

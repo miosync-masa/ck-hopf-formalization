@@ -57,6 +57,16 @@ noncomputable def ResolvedFeynmanGraph.toResolvedHopfGen
     (G : ResolvedFeynmanGraph) (hCD : G.forget.toClass.IsConnectedDivergent) :
     (G.toResolvedHopfGen hCD).forget = ⟨G.forget.toClass, hCD⟩ := rfl
 
+/-- **R-6b-2d — the resolved generator is `mapPerm`-invariant.**  A relabeled graph yields the same
+resolved generator (the class is `mapPerm`-invariant, `toResolvedClass_mapPerm`; the differing CD
+proofs are irrelevant by `Subtype.ext`). -/
+theorem ResolvedFeynmanGraph.toResolvedHopfGen_mapPerm (G : ResolvedFeynmanGraph)
+    (σ : Equiv.Perm VertexId)
+    (hCD : G.forget.toClass.IsConnectedDivergent)
+    (hCD' : (G.mapPerm σ).forget.toClass.IsConnectedDivergent) :
+    (G.mapPerm σ).toResolvedHopfGen hCD' = G.toResolvedHopfGen hCD :=
+  Subtype.ext (ResolvedFeynmanGraph.toResolvedClass_mapPerm G σ)
+
 /-! ## The primitive part (well defined on the generator directly) -/
 
 /-- The primitive part of the resolved coproduct on a generator: `X x ⊗ 1 + 1 ⊗ X x`.
@@ -146,3 +156,4 @@ structure ResolvedCoproductGenWellDef where
     genOfGraph G h = genOfGraph (G.mapPerm σ) h'
 
 end GaugeGeometry.QFT.Combinatorial
+#print axioms GaugeGeometry.QFT.Combinatorial.ResolvedFeynmanGraph.toResolvedHopfGen_mapPerm
