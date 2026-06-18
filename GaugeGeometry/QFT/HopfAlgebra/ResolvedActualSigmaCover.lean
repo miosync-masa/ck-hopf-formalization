@@ -3961,6 +3961,47 @@ theorem h58_resolved_carrier_double_sum_reindex (g : HopfGen)
         (canonicalFullGrainOuterSkeleton g).toOuterSumSupply.innerBranchSum A :=
   canonical_h58_double_sum_reindex g
 
+/-- **R-5 frontier — the facade-free boundary of the H5.8 coassociativity term sum.**
+
+The flat coassociativity of `coproduct_strict_forest` reduces (its conversion to the linear-map
+equality is itself facade-free) to the term-sum equality `∑ split-choice term = ∑ quotient term` over
+the **flat** indices.  This theorem exhibits exactly how far the facade-free resolved-carrier reindex
+(`h58_resolved_carrier_double_sum_reindex`) carries that equality, and isolates the single remaining
+step as one hypothesis:
+
+* `hSplit` — `∑ over the flat split-choice index = ∑_A innerBranchSum A`.  **Facade-free in nature:**
+  the flat split-choice index is a `Finset.sigma`/`disjSum` over the outer proper forests
+  (`h58BridgeOuterCarrier`), and the per-`A` branch summands are exactly the cover origins
+  (`canonicalForestOriginCover`/`canonicalMixedOriginCover`); a structural reindexing consuming no
+  facade.  (Left as a hypothesis here only to avoid threading the `private` flat term objects.)
+
+* `hQuotBij` — `∑_A innerImageSum A = ∑ over the flat quotient index`.  **This is the facade
+  boundary.**  `innerImageSum A` sums `quotientTerm (flatImageOf z)` over the per-`A` resolved cover
+  *image* carrier; equating it with the flat per-`A` quotient sub-index requires `flatImageOf` to
+  biject the cover image carrier onto the flat quotient index — i.e. the flat
+  `forestComponentSplitPhi` bijection, which is *false* on the flat carrier without the boundary ids
+  (the two former facades).
+
+Given both, the resolved reindex closes the flat term sum.  So the **only** obstruction between the
+facade-free resolved reindex and the flat coassoc term sum is `hQuotBij` — the flat-index bijection —
+which **cannot be supplied facade-free while the algebra carrier stays flat `HopfH`** (its
+coproduct's quotient index is flat).  A facade-free coassociativity therefore requires moving the
+algebra carrier itself to the resolved generators (a separate track), not a better proof on `HopfH`.
+This theorem itself uses **only** `h58_resolved_carrier_double_sum_reindex` plus its two hypotheses:
+`#print axioms` = `[propext, Classical.choice, Quot.sound]`. -/
+theorem h58_resolved_carrier_coassoc_termSum_frontier (g : HopfGen)
+    [IsDivergencePreservedByAdmissibleForestContract]
+    (hSplit : ∑ s ∈ h58BridgeSplitChoiceIndex g, h58BridgeSplitChoiceTerm g s
+              = ∑ A ∈ h58BridgeOuterCarrier g,
+                  (canonicalFullGrainOuterSkeleton g).toOuterSumSupply.innerBranchSum A)
+    (hQuotBij : ∑ A ∈ h58BridgeOuterCarrier g,
+                  (canonicalFullGrainOuterSkeleton g).toOuterSumSupply.innerImageSum A
+              = ∑ r ∈ h58BridgeQuotientIndex g, h58BridgeQuotientTerm g r) :
+    ∑ s ∈ h58BridgeSplitChoiceIndex g, h58BridgeSplitChoiceTerm g s
+      = ∑ r ∈ h58BridgeQuotientIndex g, h58BridgeQuotientTerm g r := by
+  rw [hSplit, ← h58_resolved_carrier_double_sum_reindex g]
+  exact hQuotBij
+
 /-! ### Gold Sprint G-5c-3 Scout — `right` is the de-contraction round-trip → the two facades
 
 The single remaining `right` datum unfolds (`forestRightHopfH = gen ∘ admissibleForestRightWithCanonicalStars`,
