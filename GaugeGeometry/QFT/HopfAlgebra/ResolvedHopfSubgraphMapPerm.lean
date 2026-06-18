@@ -1,5 +1,6 @@
 import GaugeGeometry.QFT.HopfAlgebra.ResolvedHopfCarrier
 import GaugeGeometry.QFT.Combinatorial.ResolvedSubGraph
+import GaugeGeometry.QFT.HopfAlgebra.Coproduct
 
 /-!
 # R-6b-2a — identity-preserving relabeling of resolved subgraphs
@@ -9,11 +10,16 @@ along a vertex permutation `σ`, **reusing the same `edgeId`/`legId`-preserving 
 (`ResolvedFeynmanEdge.map`/`ResolvedExternalLeg.map`) as `ResolvedFeynmanGraph.mapPerm`.  A resolved
 subgraph of `G` becomes a resolved subgraph of `G.mapPerm σ`.
 
-Landed here: `ResolvedFeynmanSubgraph.mapPerm` + its field-projection simp lemmas.  The
-`contractWithStars` equivariance and the admissible-forest CD/disjoint transport are later steps.
+Landed here: `ResolvedFeynmanSubgraph.mapPerm` (+ field simps, `mapPerm_disjoint`), the
+forget–mapPerm compatibility bridge `ResolvedFeynmanSubgraph.forget_mapPerm` (HEq — the CD transport
+key), and `ResolvedAdmissibleSubgraph.mapPerm` (elements image; disjoint via `mapPerm_disjoint`; CD
+via the bridge + flat `FeynmanSubgraph.mapPerm_isConnectedDivergent`).  The `contractWithStars`
+equivariance is the next step.
 -/
 
 namespace GaugeGeometry.QFT.Combinatorial
+
+open scoped Classical
 
 variable {G : ResolvedFeynmanGraph}
 
@@ -58,5 +64,78 @@ theorem ResolvedFeynmanSubgraph.mapPerm_disjoint (σ : Equiv.Perm VertexId)
   unfold ResolvedFeynmanSubgraph.Disjoint at h ⊢
   simp only [ResolvedFeynmanSubgraph.mapPerm_vertices]
   exact (Finset.disjoint_image σ.injective).mpr h
+
+/-! ## The forget–mapPerm compatibility bridge (the CD transport key) -/
+
+variable [∀ G : FeynmanGraph, DivergenceMeasure G]
+  [∀ G : FeynmanGraph, IsPermInvariantDivergence G]
+  [∀ G : FeynmanGraph, IsIsoInvariantDivergence G]
+  [∀ G : FeynmanGraph, Fintype (FeynmanSubgraph G)]
+
+/-- A `HEq` of flat subgraphs from a graph equality plus the three data-field equalities
+(the support fields are proof-irrelevant). -/
+theorem feynmanSubgraph_heq_of_data {G₁ G₂ : FeynmanGraph} (hg : G₁ = G₂)
+    {a : FeynmanSubgraph G₁} {b : FeynmanSubgraph G₂}
+    (hv : a.vertices = b.vertices) (hi : a.internalEdges = b.internalEdges)
+    (he : a.externalLegs = b.externalLegs) : HEq a b := by
+  subst hg
+  apply heq_of_eq
+  obtain ⟨av, ai, ae, _, _, _, _, _⟩ := a
+  obtain ⟨bv, bi, be, _, _, _, _, _⟩ := b
+  dsimp only at hv hi he
+  subst hv; subst hi; subst he
+  rfl
+
+/-- Transport `IsConnectedDivergent` across a `HEq` of subgraphs over equal graphs. -/
+theorem feynmanSubgraph_isConnectedDivergent_of_heq {G₁ G₂ : FeynmanGraph} (hg : G₁ = G₂)
+    {a : FeynmanSubgraph G₁} {b : FeynmanSubgraph G₂} (hab : HEq a b)
+    (hb : b.IsConnectedDivergent) : a.IsConnectedDivergent := by
+  subst hg
+  obtain rfl := eq_of_heq hab
+  exact hb
+
+/-- **R-6b-2c — the forget–mapPerm compatibility bridge.**  Relabeling a resolved subgraph then
+forgetting equals forgetting then relabeling (heterogeneously: the index graphs
+`(G.mapPerm σ).forget` and `G.forget.mapPerm σ` agree by `ResolvedFeynmanGraph.forget_mapPerm`).
+This is the key that lets connected-divergence ride through `mapPerm`. -/
+theorem ResolvedFeynmanSubgraph.forget_mapPerm (σ : Equiv.Perm VertexId)
+    (γ : ResolvedFeynmanSubgraph G) :
+    HEq ((γ.mapPerm σ).forget) (γ.forget.mapPerm σ) := by
+  refine feynmanSubgraph_heq_of_data (ResolvedFeynmanGraph.forget_mapPerm σ G) ?_ ?_ ?_
+  · simp only [ResolvedFeynmanSubgraph.forget_vertices, ResolvedFeynmanSubgraph.mapPerm_vertices,
+      FeynmanSubgraph.mapPerm_vertices]
+  · simp only [ResolvedFeynmanSubgraph.forget_internalEdges,
+      ResolvedFeynmanSubgraph.mapPerm_internalEdges, FeynmanSubgraph.mapPerm_internalEdges,
+      Multiset.map_map]
+    exact Multiset.map_congr rfl (fun e _ => by simp)
+  · simp only [ResolvedFeynmanSubgraph.forget_externalLegs,
+      ResolvedFeynmanSubgraph.mapPerm_externalLegs, FeynmanSubgraph.mapPerm_externalLegs,
+      Multiset.map_map]
+    exact Multiset.map_congr rfl (fun ℓ _ => by simp)
+
+/-! ## Identity-preserving relabeling of resolved admissible subgraphs -/
+
+/-- Transport a resolved admissible subgraph of `G` along `σ` to one of `G.mapPerm σ`.  Elements
+are the relabeled subgraphs; disjointness rides through `mapPerm_disjoint`; connected divergence
+rides through the forget–mapPerm bridge + flat `mapPerm_isConnectedDivergent`. -/
+noncomputable def ResolvedAdmissibleSubgraph.mapPerm (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G) : ResolvedAdmissibleSubgraph (G.mapPerm σ) where
+  elements := A.elements.image (fun γ => γ.mapPerm σ)
+  isConnectedDivergent := by
+    intro γ' hγ'
+    obtain ⟨γ, hγ, rfl⟩ := Finset.mem_image.mp hγ'
+    exact feynmanSubgraph_isConnectedDivergent_of_heq (ResolvedFeynmanGraph.forget_mapPerm σ G)
+      (ResolvedFeynmanSubgraph.forget_mapPerm σ γ)
+      (FeynmanSubgraph.mapPerm_isConnectedDivergent σ (A.isConnectedDivergent γ hγ))
+  pairwiseDisjoint := by
+    intro γ' hγ' δ' hδ' hne
+    obtain ⟨γ, hγ, rfl⟩ := Finset.mem_image.mp hγ'
+    obtain ⟨δ, hδ, rfl⟩ := Finset.mem_image.mp hδ'
+    exact ResolvedFeynmanSubgraph.mapPerm_disjoint σ
+      (A.pairwiseDisjoint hγ hδ (fun h => hne (by rw [h])))
+
+@[simp] theorem ResolvedAdmissibleSubgraph.mapPerm_elements (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G) :
+    (A.mapPerm σ).elements = A.elements.image (fun γ => γ.mapPerm σ) := rfl
 
 end GaugeGeometry.QFT.Combinatorial
