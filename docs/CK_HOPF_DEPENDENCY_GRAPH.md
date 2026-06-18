@@ -333,6 +333,16 @@ local-nilpotency route (§4) — the right antipode axiom is a theorem, not a ke
 
 ## R-4-superfull — native H5.8 reindexing architecture (standalone, axiom-clean)
 
+> **STATUS ✅ COMPLETE (R-4-full, 2026-06-18).**  The native H5.8 reindex is landed and
+> axiom-clean: the public theorem `h58_resolved_carrier_double_sum_reindex`
+> (`ResolvedActualSigmaCover.lean`) proves the outer-forest double sum
+> `∑_A innerImageSum = ∑_A innerBranchSum` with axioms `[propext, Classical.choice,
+> Quot.sound]` — **both** boundary facades discharged resolved-natively.  The "still not
+> claimed complete" / "FINAL OBSTRUCTION" / "forest_term not yet proved" notes further down
+> are the **historical build-up** (kept for the architecture trail); each has since been
+> resolved — see the **R-4-full completion** block at the end of this section for what
+> actually closed and how.
+
 ```
 ResolvedBoundaryRepairCertificate         (resolved repairs on id-unique payload)
         │     (ResolvedUniquePayloadModel: ResolvedHopfPayloadFamilyWithUniqueIds)
@@ -443,8 +453,52 @@ forest_term : ∀ s ∈ splitChoiceIndex, s.isLeft → splitChoiceTerm s = quoti
 forest-branch weight factorization (= flat `forestComponentSplitPhi_term_eq_of_split`'s forest
 half, Field-Filling-6's `hForestTerm`), *not* imported from flat's facade-discharged assembly.
 The carrier / de-contraction / cover / reindex / dictionary-half / mixed-half are all complete.
-`mixed_term` (right branch) is expected mechanical.  Full native resolved H5.8 still **not**
-claimed complete (`forest_term` not yet proved).
+`mixed_term` (right branch) is expected mechanical.  *(Historical: at this point `forest_term`
+was the open finishing line; the **R-4-full completion** below records that it turned out
+**canonical**, not a remaining gap.)*
+
+### R-4-full completion ∎ — what actually closed (Gold sprints G-5…G-13h-10)
+
+```
+splitTermAgreementCanonical                ◄── G-9b: TERM side is fully CANONICAL (facade-free)
+  (the "forest_term" finishing line above was NOT a gap — forest right + product + mixed_term
+   all reduce to canonical certificates; corrects the earlier "right = facade" scout)
+        │
+canonicalFlatImageOf_liftFlatQuotientForestToCres   ◄── generic cover comm core (any Af + disjoint)
+  = h58BridgeActualQuotientToSigma g A Af            (G-12b-1/2; used by BOTH forest and mixed)
+        │
+forest cover (facade #2 forest)  ──►  fullQuotientForestImageDataOfFlatSplit_comm   (G-13h-3b)
+mixed  cover (facade #2 mixed)    ──►  fullMixedImageDataOfFlatSplit_comm           (G-13h-8)
+  (mixed = the forest mirror: star-AVOIDING instead of touching; same comm core)
+        │
+ResolvedFullForestCoverOriginData / ResolvedFullMixedCoverOriginData   ◄── origin-indexed covers
+  .toCoverData / .toMixedAlignment   (G-13h-7/8; named-def carrier avoids subst-typed whnf blowup)
+        │
+CanonicalOuterFullGrainInnerSupplyData.ofCoverOrigins .sum_reindex     ◄── per-A inner reindex (G-13h-8)
+        │
+ResolvedH58FullGrainOuterSkeleton.outer_sum_reindex                    ◄── outer sum over A (G-13h-9)
+        │   (canonicalEmptyParents + Finset.subtype origin enumeration — G-13h-10)
+        ▼
+h58_resolved_carrier_double_sum_reindex   ◄── PUBLIC, facade-free, axiom-clean   ∎
+        #print axioms = [propext, Classical.choice, Quot.sound]
+```
+
+- **Both facades discharged on the resolved carrier**: facade #1 (forest insertion uniqueness)
+  via `resolvedParentRemnant_injOn` / `ResolvedFullQuotientForestImageData.toImage_injective`;
+  facade #2 (cover liftability) via `resolved_promotedComponent_externalLegs_le_plus` + the
+  full-grain forest+mixed cover above.  **Neither facade typeclass is instantiated.**
+- **The gated `forestComponentSplitPhi_term_eq_of_split` is never exposed**; only facade-free
+  building blocks and the final public theorem are surfaced.
+- **The old flat `forestComponentSplitPhi` reindex stays facade-conditional BY NECESSITY.**
+  Reconnaissance localized the sole flat-facade use to a single `parent_eq_of_remnant_eq` call
+  (Coassoc ~12962) and proved no facade-free transport exists: flat insertion uniqueness is
+  **false** on the flat carrier (`flatEdgeRetarget_not_injective`) — the flat retarget forgets
+  the boundary edge/leg id data the theorem needs.  So the facade-free H5.8 reindex's native
+  home is the **resolved carrier**, not the flat statement.  See
+  `CK_HOPF_FORMALIZATION_MAP.md` §6 (R-4-full ∎) for the reader-facing account.
+
+`Main` builds green (2938 jobs); the only `Main` touch is the thin public `h58Bridge*` aliases
+in `Coassoc.lean` (alias-only, gated theorem not exposed).
 
 ---
 
