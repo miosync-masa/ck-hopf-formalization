@@ -191,6 +191,42 @@ theorem ResolvedAdmissibleSubgraph.mapPerm_internalEdges (σ : Equiv.Perm Vertex
   exact (map_sum (Multiset.mapAddMonoidHom (ResolvedFeynmanEdge.map σ))
     (fun γ => γ.internalEdges) A.elements).symm
 
+/-- For an injective `f`, `Multiset.map f` distributes over multiset subtraction. -/
+private theorem multiset_map_sub_of_injective {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {f : α → β} (hf : Function.Injective f) (s t : Multiset α) :
+    (s - t).map f = s.map f - t.map f := by
+  ext b
+  rw [Multiset.count_sub]
+  by_cases hb : ∃ a, f a = b
+  · obtain ⟨a, rfl⟩ := hb
+    rw [Multiset.count_map_eq_count' f _ hf, Multiset.count_map_eq_count' f _ hf,
+        Multiset.count_map_eq_count' f _ hf, Multiset.count_sub]
+  · have h0 : ∀ m : Multiset α, (m.map f).count b = 0 := fun m => by
+      rw [Multiset.count_eq_zero, Multiset.mem_map]; rintro ⟨a, _, rfl⟩; exact hb ⟨a, rfl⟩
+    rw [h0, h0, h0]
+
+/-- `ResolvedFeynmanEdge.map σ` is injective (it relabels endpoints by the injective `σ`, keeping
+the `edgeId`). -/
+theorem ResolvedFeynmanEdge.map_injective (σ : Equiv.Perm VertexId) :
+    Function.Injective (ResolvedFeynmanEdge.map σ) := by
+  intro a b hab; cases a; cases b
+  simp only [ResolvedFeynmanEdge.map, ResolvedFeynmanEdge.mk.injEq] at hab
+  obtain ⟨hid, hs, ht, hsec⟩ := hab
+  exact ResolvedFeynmanEdge.mk.injEq .. |>.mpr ⟨hid, σ.injective hs, σ.injective ht, hsec⟩
+
+/-- The complement edges transport by relabeling (`map σ` injective, so `map` distributes over the
+multiset subtraction). -/
+theorem ResolvedAdmissibleSubgraph.mapPerm_complementEdges (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G) :
+    (A.mapPerm σ).complementEdges = A.complementEdges.map (ResolvedFeynmanEdge.map σ) := by
+  unfold ResolvedAdmissibleSubgraph.complementEdges
+  rw [ResolvedAdmissibleSubgraph.mapPerm_internalEdges]
+  show G.internalEdges.map (ResolvedFeynmanEdge.map σ)
+        - A.internalEdges.map (ResolvedFeynmanEdge.map σ)
+      = (G.internalEdges - A.internalEdges).map (ResolvedFeynmanEdge.map σ)
+  exact (multiset_map_sub_of_injective (ResolvedFeynmanEdge.map_injective σ)
+    G.internalEdges A.internalEdges).symm
+
 /-- The star vertices transport by relabeling, when the transported star assignment `starOf'`
 agrees with `σ ∘ starOf` on the relabeled components. -/
 theorem ResolvedAdmissibleSubgraph.mapPerm_starVertices (σ : Equiv.Perm VertexId)
