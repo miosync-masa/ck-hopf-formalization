@@ -181,4 +181,26 @@ theorem ResolvedFeynmanSubgraph.mapPerm_injective (σ : Equiv.Perm VertexId) :
   rw [ResolvedAdmissibleSubgraph.mapPerm_elements, Finset.biUnion_image, Finset.image_biUnion]
   exact Finset.biUnion_congr rfl (fun γ _ => by simp)
 
+/-- The admissible carrier's aggregated internal edges transport by relabeling. -/
+theorem ResolvedAdmissibleSubgraph.mapPerm_internalEdges (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G) :
+    (A.mapPerm σ).internalEdges = A.internalEdges.map (ResolvedFeynmanEdge.map σ) := by
+  simp only [ResolvedAdmissibleSubgraph.internalEdges, ResolvedAdmissibleSubgraph.mapPerm_elements]
+  rw [Finset.sum_image (fun a _ b _ h => ResolvedFeynmanSubgraph.mapPerm_injective σ h)]
+  simp only [ResolvedFeynmanSubgraph.mapPerm_internalEdges]
+  exact (map_sum (Multiset.mapAddMonoidHom (ResolvedFeynmanEdge.map σ))
+    (fun γ => γ.internalEdges) A.elements).symm
+
+/-- The star vertices transport by relabeling, when the transported star assignment `starOf'`
+agrees with `σ ∘ starOf` on the relabeled components. -/
+theorem ResolvedAdmissibleSubgraph.mapPerm_starVertices (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G)
+    {starOf : ResolvedFeynmanSubgraph G → VertexId}
+    {starOf' : ResolvedFeynmanSubgraph (G.mapPerm σ) → VertexId}
+    (hstar : ∀ γ ∈ A.elements, starOf' (γ.mapPerm σ) = σ (starOf γ)) :
+    (A.mapPerm σ).starVertices starOf' = (A.starVertices starOf).image σ := by
+  unfold ResolvedAdmissibleSubgraph.starVertices
+  rw [ResolvedAdmissibleSubgraph.mapPerm_elements, Finset.image_image, Finset.image_image]
+  exact Finset.image_congr (fun γ hγ => by simp only [Function.comp_apply]; exact hstar γ hγ)
+
 end GaugeGeometry.QFT.Combinatorial
