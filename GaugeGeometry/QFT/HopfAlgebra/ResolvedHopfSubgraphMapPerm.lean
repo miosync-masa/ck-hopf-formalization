@@ -10,11 +10,16 @@ along a vertex permutation `σ`, **reusing the same `edgeId`/`legId`-preserving 
 (`ResolvedFeynmanEdge.map`/`ResolvedExternalLeg.map`) as `ResolvedFeynmanGraph.mapPerm`.  A resolved
 subgraph of `G` becomes a resolved subgraph of `G.mapPerm σ`.
 
-Landed here: `ResolvedFeynmanSubgraph.mapPerm` (+ field simps, `mapPerm_disjoint`), the
-forget–mapPerm compatibility bridge `ResolvedFeynmanSubgraph.forget_mapPerm` (HEq — the CD transport
-key), and `ResolvedAdmissibleSubgraph.mapPerm` (elements image; disjoint via `mapPerm_disjoint`; CD
-via the bridge + flat `FeynmanSubgraph.mapPerm_isConnectedDivergent`).  The `contractWithStars`
-equivariance is the next step.
+Landed here (R-6b-2a..e): `ResolvedFeynmanSubgraph.mapPerm` (+ field simps, `mapPerm_disjoint`,
+injectivity); the forget–mapPerm bridge `ResolvedFeynmanSubgraph.forget_mapPerm` (HEq — the CD
+transport key); `ResolvedAdmissibleSubgraph.mapPerm`; the structural carrier transports
+(`mapPerm_vertices`/`_internalEdges`/`_complementEdges`/`_starVertices`); `componentAt_eq_of_mem`
+(disjointness uniqueness) and the retarget equivariances (`mapPerm_retargetVertex`/`_retargetEdge`/
+`_retargetExternalLeg`); and the geometric heart **`mapPerm_contractWithStars`** (the resolved star
+contraction is `mapPerm`-equivariant) with its corollary **`mapPerm_contractWithStars_toResolvedClass`**
+— the quotient (right-factor) generator class is `mapPerm`-invariant.  With the forest (left-factor)
+invariance `toResolvedHopfGen_mapPerm` and the graph-free `sum_eq_of_bij`, all inputs to the `Δᵣ`
+well-definedness are now in hand.
 -/
 
 namespace GaugeGeometry.QFT.Combinatorial
@@ -303,4 +308,50 @@ theorem ResolvedAdmissibleSubgraph.mapPerm_retargetExternalLeg (σ : Equiv.Perm 
   simp only [ResolvedAdmissibleSubgraph.retargetExternalLeg, ResolvedExternalLeg.map,
     ResolvedExternalLeg.retarget, ResolvedAdmissibleSubgraph.mapPerm_retargetVertex σ A hstar]
 
+/-- **R-6b-2e ∎ — the resolved star-contraction is `mapPerm`-equivariant.**  Relabeling the ambient
+graph and the outer forest (with the transported star assignment `starOf'`) and then contracting
+equals contracting and then relabeling.  This is the geometric heart of the right-factor (quotient
+generator) invariance for `Δᵣ`. -/
+theorem ResolvedAdmissibleSubgraph.mapPerm_contractWithStars (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G)
+    {starOf : ResolvedFeynmanSubgraph G → VertexId}
+    {starOf' : ResolvedFeynmanSubgraph (G.mapPerm σ) → VertexId}
+    (hstar : ∀ γ ∈ A.elements, starOf' (γ.mapPerm σ) = σ (starOf γ)) :
+    (A.mapPerm σ).contractWithStars starOf'
+      = (A.contractWithStars starOf).mapPerm σ := by
+  have hv : ((G.mapPerm σ).vertices \ (A.mapPerm σ).vertices) ∪ (A.mapPerm σ).starVertices starOf'
+      = ((G.vertices \ A.vertices) ∪ A.starVertices starOf).image σ := by
+    rw [ResolvedAdmissibleSubgraph.mapPerm_vertices,
+        ResolvedAdmissibleSubgraph.mapPerm_starVertices σ A hstar, Finset.image_union,
+        Finset.image_sdiff G.vertices A.vertices σ.injective]
+    rfl
+  have hi : (A.mapPerm σ).complementEdges.map ((A.mapPerm σ).retargetEdge starOf')
+      = (A.complementEdges.map (A.retargetEdge starOf)).map (ResolvedFeynmanEdge.map σ) := by
+    rw [ResolvedAdmissibleSubgraph.mapPerm_complementEdges, Multiset.map_map, Multiset.map_map]
+    exact Multiset.map_congr rfl
+      (fun e _ => ResolvedAdmissibleSubgraph.mapPerm_retargetEdge σ A hstar e)
+  have he : (G.mapPerm σ).externalLegs.map ((A.mapPerm σ).retargetExternalLeg starOf')
+      = (G.externalLegs.map (A.retargetExternalLeg starOf)).map (ResolvedExternalLeg.map σ) := by
+    show (G.externalLegs.map (ResolvedExternalLeg.map σ)).map ((A.mapPerm σ).retargetExternalLeg starOf')
+       = (G.externalLegs.map (A.retargetExternalLeg starOf)).map (ResolvedExternalLeg.map σ)
+    rw [Multiset.map_map, Multiset.map_map]
+    exact Multiset.map_congr rfl
+      (fun ℓ _ => ResolvedAdmissibleSubgraph.mapPerm_retargetExternalLeg σ A hstar ℓ)
+  exact congr (congr (congrArg ResolvedFeynmanGraph.mk hv) hi) he
+
+/-- **R-6b-2e ∎ — the quotient (right-factor) generator class is `mapPerm`-invariant.**  The star
+contraction of the relabeled forest has the same resolved class as the original — exactly the
+right-factor invariance that, with the forest (left-factor) invariance `toResolvedHopfGen_mapPerm`
+and the graph-free `sum_eq_of_bij`, discharges the `Δᵣ` well-definedness. -/
+theorem ResolvedAdmissibleSubgraph.mapPerm_contractWithStars_toResolvedClass
+    (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G)
+    {starOf : ResolvedFeynmanSubgraph G → VertexId}
+    {starOf' : ResolvedFeynmanSubgraph (G.mapPerm σ) → VertexId}
+    (hstar : ∀ γ ∈ A.elements, starOf' (γ.mapPerm σ) = σ (starOf γ)) :
+    ((A.mapPerm σ).contractWithStars starOf').toResolvedClass
+      = (A.contractWithStars starOf).toResolvedClass := by
+  rw [ResolvedAdmissibleSubgraph.mapPerm_contractWithStars σ A hstar,
+      ResolvedFeynmanGraph.toResolvedClass_mapPerm]
+
 end GaugeGeometry.QFT.Combinatorial
+#print axioms GaugeGeometry.QFT.Combinatorial.ResolvedAdmissibleSubgraph.mapPerm_contractWithStars_toResolvedClass
