@@ -239,4 +239,44 @@ theorem ResolvedAdmissibleSubgraph.mapPerm_starVertices (σ : Equiv.Perm VertexI
   rw [ResolvedAdmissibleSubgraph.mapPerm_elements, Finset.image_image, Finset.image_image]
   exact Finset.image_congr (fun γ hγ => by simp only [Function.comp_apply]; exact hstar γ hγ)
 
+/-- The chosen component containing `v` is the unique element containing `v` (by pairwise
+disjointness). -/
+theorem ResolvedAdmissibleSubgraph.componentAt_eq_of_mem (A : ResolvedAdmissibleSubgraph G)
+    {v : VertexId} (hv : v ∈ A.vertices) {γ : ResolvedFeynmanSubgraph G}
+    (hγ : γ ∈ A.elements) (hvγ : v ∈ γ.vertices) :
+    A.componentAt hv = γ := by
+  by_contra hne
+  exact Finset.disjoint_left.mp (A.pairwiseDisjoint (A.componentAt_mem hv) hγ hne)
+    (A.componentAt_vertex_mem hv) hvγ
+
+/-- **R-6b-2e — vertex retarget equivariance.**  Relabeling commutes with the through-`A` vertex
+retarget, given the star-transport compatibility `hstar`.  The `componentAt` (`Classical.choose`) is
+pinned by disjointness uniqueness, so it transports cleanly. -/
+theorem ResolvedAdmissibleSubgraph.mapPerm_retargetVertex (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G)
+    {starOf : ResolvedFeynmanSubgraph G → VertexId}
+    {starOf' : ResolvedFeynmanSubgraph (G.mapPerm σ) → VertexId}
+    (hstar : ∀ γ ∈ A.elements, starOf' (γ.mapPerm σ) = σ (starOf γ)) (v : VertexId) :
+    (A.mapPerm σ).retargetVertex starOf' (σ v) = σ (A.retargetVertex starOf v) := by
+  by_cases hv : v ∈ A.vertices
+  · have hσv : σ v ∈ (A.mapPerm σ).vertices := by
+      rw [ResolvedAdmissibleSubgraph.mapPerm_vertices]; exact Finset.mem_image_of_mem σ hv
+    have hcomp : (A.mapPerm σ).componentAt hσv = (A.componentAt hv).mapPerm σ := by
+      refine ResolvedAdmissibleSubgraph.componentAt_eq_of_mem _ hσv ?_ ?_
+      · rw [ResolvedAdmissibleSubgraph.mapPerm_elements]
+        exact Finset.mem_image_of_mem _ (A.componentAt_mem hv)
+      · rw [ResolvedFeynmanSubgraph.mapPerm_vertices]
+        exact Finset.mem_image_of_mem σ (A.componentAt_vertex_mem hv)
+    rw [ResolvedAdmissibleSubgraph.retargetVertex, ResolvedAdmissibleSubgraph.componentAt?_of_mem _ hσv,
+        ResolvedAdmissibleSubgraph.retargetVertex, ResolvedAdmissibleSubgraph.componentAt?_of_mem _ hv]
+    show starOf' ((A.mapPerm σ).componentAt hσv) = σ (starOf (A.componentAt hv))
+    rw [hcomp, hstar _ (A.componentAt_mem hv)]
+  · have hσv : σ v ∉ (A.mapPerm σ).vertices := by
+      rw [ResolvedAdmissibleSubgraph.mapPerm_vertices]
+      intro hc
+      obtain ⟨w, hw, hwv⟩ := Finset.mem_image.mp hc
+      exact hv (σ.injective hwv ▸ hw)
+    rw [ResolvedAdmissibleSubgraph.retargetVertex_of_not_mem _ _ hσv,
+        ResolvedAdmissibleSubgraph.retargetVertex_of_not_mem _ _ hv]
+
 end GaugeGeometry.QFT.Combinatorial
