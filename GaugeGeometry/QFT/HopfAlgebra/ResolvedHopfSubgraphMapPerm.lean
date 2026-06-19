@@ -279,4 +279,28 @@ theorem ResolvedAdmissibleSubgraph.mapPerm_retargetVertex (σ : Equiv.Perm Verte
     rw [ResolvedAdmissibleSubgraph.retargetVertex_of_not_mem _ _ hσv,
         ResolvedAdmissibleSubgraph.retargetVertex_of_not_mem _ _ hv]
 
+/-- **R-6b-2e — internal-edge retarget equivariance.** -/
+theorem ResolvedAdmissibleSubgraph.mapPerm_retargetEdge (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G)
+    {starOf : ResolvedFeynmanSubgraph G → VertexId}
+    {starOf' : ResolvedFeynmanSubgraph (G.mapPerm σ) → VertexId}
+    (hstar : ∀ γ ∈ A.elements, starOf' (γ.mapPerm σ) = σ (starOf γ)) (e : ResolvedFeynmanEdge) :
+    (A.mapPerm σ).retargetEdge starOf' (ResolvedFeynmanEdge.map σ e)
+      = ResolvedFeynmanEdge.map σ (A.retargetEdge starOf e) := by
+  cases e with | mk eid es et esec =>
+  simp only [ResolvedAdmissibleSubgraph.retargetEdge, ResolvedFeynmanEdge.map,
+    ResolvedFeynmanEdge.retarget, ResolvedAdmissibleSubgraph.mapPerm_retargetVertex σ A hstar]
+
+/-- **R-6b-2e — external-leg retarget equivariance.** -/
+theorem ResolvedAdmissibleSubgraph.mapPerm_retargetExternalLeg (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G)
+    {starOf : ResolvedFeynmanSubgraph G → VertexId}
+    {starOf' : ResolvedFeynmanSubgraph (G.mapPerm σ) → VertexId}
+    (hstar : ∀ γ ∈ A.elements, starOf' (γ.mapPerm σ) = σ (starOf γ)) (ℓ : ResolvedExternalLeg) :
+    (A.mapPerm σ).retargetExternalLeg starOf' (ResolvedExternalLeg.map σ ℓ)
+      = ResolvedExternalLeg.map σ (A.retargetExternalLeg starOf ℓ) := by
+  cases ℓ with | mk lid la lsec =>
+  simp only [ResolvedAdmissibleSubgraph.retargetExternalLeg, ResolvedExternalLeg.map,
+    ResolvedExternalLeg.retarget, ResolvedAdmissibleSubgraph.mapPerm_retargetVertex σ A hstar]
+
 end GaugeGeometry.QFT.Combinatorial
