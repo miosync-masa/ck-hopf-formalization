@@ -25,11 +25,16 @@ Landed here:
 * `resolvedCoproductGenOfGraph` — the representative-level generator formula
   (primitive + forest sum);
 * `ResolvedCoproductGenWellDef` — the **isolated well-definedness obligation**
-  (`mapPerm_invariant`) that R-6b-2 must discharge before `Quotient.lift`ing to a map out of
-  `ResolvedHopfGen`.
+  (`mapPerm_invariant`).
 
-No `Quotient.lift` of the generator formula, no coassociativity, no flat `HopfGen` in the
-codomain, no gated theorem, no `sorry`.
+R-6b-3 then discharges the lift: given a `mapPerm`-equivariant forest-summand supply family
+(`ResolvedCoproductGenSupply`, one field `sum_mapPerm` — the R-6b-2e geometry through
+`sum_eq_of_bij`), the forest sum descends through `ResolvedFeynmanGraphClass` by `Quotient.liftOn`,
+and `Δᵣ` on generators (`ResolvedCoproductGenSupply.gen`) and the algebra hom
+(`ResolvedCoproductGenSupply.coproduct : ResolvedHopfH →ₐ[ℚ] ResolvedHopfH ⊗ ResolvedHopfH`) are
+defined — every tensor factor a `ResolvedHopfGen`.  No coassociativity, no flat `HopfGen` in the
+codomain, no gated theorem, no `sorry`.  The only remaining input is a *concrete* equivariant supply
+(R-6b-4); the geometric `sum_mapPerm` ingredients are all landed.
 -/
 
 namespace GaugeGeometry.QFT.Combinatorial
@@ -155,5 +160,67 @@ structure ResolvedCoproductGenWellDef where
     (h' : (G.mapPerm σ).forget.toClass.IsConnectedDivergent),
     genOfGraph G h = genOfGraph (G.mapPerm σ) h'
 
+/-! ## R-6b-3 — `Δᵣ` on generators by `Quotient.lift`
+
+The primitive part `X x ⊗ 1 + 1 ⊗ X x` is already defined on the generator `x` directly
+(`resolvedCoproductGenPrimitive`, no representative).  So only the **forest sum** needs to descend
+through the quotient `ResolvedFeynmanGraphClass`.  That descent needs exactly one datum: a
+`mapPerm`-equivariant forest-summand supply family — `(supply (G.mapPerm σ)).sum = (supply G).sum`
+(the invariance the R-6b-2e ingredients `toResolvedHopfGen_mapPerm` / `mapPerm_contractWithStars_
+toResolvedClass` / `sum_eq_of_bij` discharge for a concrete supply, R-6b-4).  Given it, `Δᵣ` on
+generators is `Quotient.lift`. -/
+
+/-- A `mapPerm`-equivariant family of resolved coproduct forest-summand supplies: one supply per
+representative graph, with the forest sum invariant under id-preserving relabeling.  The single
+field `sum_mapPerm` is what `Quotient.lift` needs (its proof, for the canonical supply, is the
+R-6b-2e geometry fed through `sum_eq_of_bij`). -/
+structure ResolvedCoproductGenSupply where
+  /-- A forest-summand supply for every representative graph. -/
+  supply : (G : ResolvedFeynmanGraph) → ResolvedCoproductForestSummandSupply G
+  /-- **Equivariance**: the forest sum is invariant under id-preserving relabeling. -/
+  sum_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId),
+    (supply (G.mapPerm σ)).sum = (supply G).sum
+
+/-- The forest sum descended through the resolved graph class (well defined by `sum_mapPerm`). -/
+noncomputable def ResolvedCoproductGenSupply.forestSum (S : ResolvedCoproductGenSupply)
+    (c : ResolvedFeynmanGraphClass) : ResolvedHopfH ⊗[ℚ] ResolvedHopfH :=
+  Quotient.liftOn c (fun G => (S.supply G).sum) (by
+    intro G₁ G₂ h
+    obtain ⟨σ, rfl⟩ := h
+    exact (S.sum_mapPerm G₁ σ).symm)
+
+@[simp] theorem ResolvedCoproductGenSupply.forestSum_mk (S : ResolvedCoproductGenSupply)
+    (G : ResolvedFeynmanGraph) :
+    S.forestSum G.toResolvedClass = (S.supply G).sum := rfl
+
+/-- **R-6b-3 — `Δᵣ` on generators.**  The primitive part (on `x` directly) plus the forest sum
+descended from the class.  Defined out of the quotient `ResolvedHopfGen` with no facade, no flat
+`HopfGen`, no coassociativity. -/
+noncomputable def ResolvedCoproductGenSupply.gen (S : ResolvedCoproductGenSupply)
+    (x : ResolvedHopfGen) : ResolvedHopfH ⊗[ℚ] ResolvedHopfH :=
+  resolvedCoproductGenPrimitive x + S.forestSum x.1
+
+/-- **R-6b-3 — the resolved-target coproduct as an algebra hom** `ResolvedHopfH →ₐ ResolvedHopfH ⊗
+ResolvedHopfH`, the `MvPolynomial.aeval` extension of `Δᵣ` on generators.  Codomain is the
+resolved-generator algebra throughout (every factor a `ResolvedHopfGen`). -/
+noncomputable def ResolvedCoproductGenSupply.coproduct (S : ResolvedCoproductGenSupply) :
+    ResolvedHopfH →ₐ[ℚ] ResolvedHopfH ⊗[ℚ] ResolvedHopfH :=
+  MvPolynomial.aeval S.gen
+
+@[simp] theorem ResolvedCoproductGenSupply.coproduct_X (S : ResolvedCoproductGenSupply)
+    (x : ResolvedHopfGen) : S.coproduct (MvPolynomial.X x) = S.gen x := by
+  simp [ResolvedCoproductGenSupply.coproduct]
+
+/-- The representative-level generator formula is `mapPerm`-invariant (primitive via
+`toResolvedHopfGen_mapPerm`, forest sum via `sum_mapPerm`) — the `ResolvedCoproductGenWellDef`
+obligation, discharged for an equivariant supply. -/
+theorem resolvedCoproductGenOfGraph_mapPerm_invariant (S : ResolvedCoproductGenSupply)
+    (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId)
+    (hCD : G.forget.toClass.IsConnectedDivergent)
+    (hCD' : (G.mapPerm σ).forget.toClass.IsConnectedDivergent) :
+    resolvedCoproductGenOfGraph (G.mapPerm σ) hCD' (S.supply (G.mapPerm σ))
+      = resolvedCoproductGenOfGraph G hCD (S.supply G) := by
+  unfold resolvedCoproductGenOfGraph
+  rw [S.sum_mapPerm G σ, ResolvedFeynmanGraph.toResolvedHopfGen_mapPerm G σ hCD hCD']
+
 end GaugeGeometry.QFT.Combinatorial
-#print axioms GaugeGeometry.QFT.Combinatorial.ResolvedFeynmanGraph.toResolvedHopfGen_mapPerm
