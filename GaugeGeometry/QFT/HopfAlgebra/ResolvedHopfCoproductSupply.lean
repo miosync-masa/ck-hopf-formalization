@@ -10,8 +10,16 @@ Instantiating `ResolvedCoproductForestSummandSupply` with the actual proper-fore
 A.contractWithStars starOf)`.  This file builds the component/forest/quotient generators and proves
 their `mapPerm` invariance (feeding `sum_eq_of_bij` for `sum_mapPerm`).
 
-R-6b-4a (here): the component subgraph → resolved generator bridge `resolvedComponentGen` and its
-`mapPerm` invariance.
+Contents (R-6b-4a..d):
+* `resolvedComponentGen` (+ `_mapPerm`) — component subgraph → resolved generator;
+* `resolvedForestLeftTerm` (+ `_mapPerm`) — the forest's component-generator product (left factor);
+* `resolvedForestRightTerm` (+ `_mapPerm`) — the quotient generator (right factor);
+* `ResolvedCoproductProperForestData` — an equivariant proper-forest data family (carrier + star +
+  contraction-CD, with the `mapPerm` equivariance), and `.toGenSupply : ResolvedCoproductGenSupply`
+  (`sum_mapPerm` discharged via `sum_eq_of_bij` + the term invariances).  So from a proper-forest data
+  family, `Δᵣ` (`.toGenSupply.gen`) and the algebra hom (`.toGenSupply.coproduct`) are fully
+  constructed — facade-free, every factor a `ResolvedHopfGen`.  The actual enumeration filling the
+  data is R-6b-5.
 -/
 
 namespace GaugeGeometry.QFT.Combinatorial
@@ -97,5 +105,78 @@ theorem resolvedForestRightTerm_mapPerm (A : ResolvedAdmissibleSubgraph G)
   show (A.contractWithStars starOf).toResolvedClass
      = ((A.mapPerm σ).contractWithStars starOf').toResolvedClass
   exact (ResolvedAdmissibleSubgraph.mapPerm_contractWithStars_toResolvedClass σ A hstar).symm
+
+/-! ## R-6b-4d — bundle into a concrete equivariant `ResolvedCoproductGenSupply` -/
+
+/-- A resolved admissible subgraph is determined by its element set. -/
+theorem ResolvedAdmissibleSubgraph.ext_elements {A₁ A₂ : ResolvedAdmissibleSubgraph G}
+    (h : A₁.elements = A₂.elements) : A₁ = A₂ := by
+  cases A₁; cases A₂; cases h; rfl
+
+/-- `ResolvedAdmissibleSubgraph.mapPerm σ` is injective. -/
+theorem ResolvedAdmissibleSubgraph.mapPerm_injective (σ : Equiv.Perm VertexId) :
+    Function.Injective (ResolvedAdmissibleSubgraph.mapPerm σ (G := G)) := by
+  intro A₁ A₂ h
+  apply ResolvedAdmissibleSubgraph.ext_elements
+  refine Finset.image_injective (ResolvedFeynmanSubgraph.mapPerm_injective σ) ?_
+  rw [← ResolvedAdmissibleSubgraph.mapPerm_elements, ← ResolvedAdmissibleSubgraph.mapPerm_elements, h]
+
+/-- An equivariant family of proper-forest coproduct data: per graph a finite forest carrier with a
+star assignment and the contraction CD, plus the `mapPerm` equivariance (carrier transports by
+relabeling; the star assignment is `mapPerm`-natural).  This is the only remaining input to a
+concrete `Δᵣ` — the actual proper-forest enumeration can fill it later (R-6b-5). -/
+structure ResolvedCoproductProperForestData where
+  /-- The finite forest carrier per graph. -/
+  carrier : (G : ResolvedFeynmanGraph) → Finset (ResolvedAdmissibleSubgraph G)
+  /-- The star assignment per forest. -/
+  starOf : (G : ResolvedFeynmanGraph) → ResolvedAdmissibleSubgraph G →
+    (ResolvedFeynmanSubgraph G → VertexId)
+  /-- The contraction is connected divergent (the right factor is a generator). -/
+  hCD : ∀ (G : ResolvedFeynmanGraph) (A : ResolvedAdmissibleSubgraph G), A ∈ carrier G →
+    ((A.contractWithStars (starOf G A)).forget.toClass.IsConnectedDivergent)
+  /-- The carrier transports by relabeling. -/
+  carrier_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId),
+    carrier (G.mapPerm σ) = (carrier G).image (fun A => A.mapPerm σ)
+  /-- The star assignment is `mapPerm`-natural. -/
+  star_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G) (γ : ResolvedFeynmanSubgraph G), γ ∈ A.elements →
+    starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ) = σ (starOf G A γ)
+
+variable (D : ResolvedCoproductProperForestData)
+
+/-- The summand supply from the forest data (`ForestIdx` = the carrier subtype, so the right term
+gets its CD via membership). -/
+noncomputable def ResolvedCoproductProperForestData.supply (G : ResolvedFeynmanGraph) :
+    ResolvedCoproductForestSummandSupply G where
+  ForestIdx := {A : ResolvedAdmissibleSubgraph G // A ∈ D.carrier G}
+  forestCarrier := (D.carrier G).attach
+  leftTerm := fun A => resolvedForestLeftTerm A.1
+  rightTerm := fun A => resolvedForestRightTerm A.1 (D.starOf G A.1) (D.hCD G A.1 A.2)
+
+/-- The forest sum is `mapPerm`-invariant (the `sum_mapPerm` obligation), via `sum_eq_of_bij` with the
+landed left/right term invariances. -/
+theorem ResolvedCoproductProperForestData.sum_mapPerm (G : ResolvedFeynmanGraph)
+    (σ : Equiv.Perm VertexId) :
+    (D.supply (G.mapPerm σ)).sum = (D.supply G).sum := by
+  symm
+  refine ResolvedCoproductForestSummandSupply.sum_eq_of_bij (D.supply G) (D.supply (G.mapPerm σ))
+    (fun A _ => ⟨A.1.mapPerm σ, by
+      rw [D.carrier_mapPerm]; exact Finset.mem_image_of_mem _ A.2⟩)
+    (fun _ _ => Finset.mem_attach _ _) (fun A₁ _ A₂ _ h => ?_) (fun B _ => ?_)
+    (fun A _ => ?_) (fun A _ => ?_)
+  · exact Subtype.ext (ResolvedAdmissibleSubgraph.mapPerm_injective σ (Subtype.ext_iff.mp h))
+  · obtain ⟨A, hA, hAeq⟩ := Finset.mem_image.mp
+      (by simpa only [D.carrier_mapPerm] using B.2)
+    exact ⟨⟨A, hA⟩, Finset.mem_attach _ _, Subtype.ext hAeq⟩
+  · exact resolvedForestLeftTerm_mapPerm A.1 σ
+  · exact resolvedForestRightTerm_mapPerm A.1 σ
+      (fun γ hγ => D.star_mapPerm G σ A.1 γ hγ) _ _
+
+/-- **R-6b-4d — a concrete equivariant `ResolvedCoproductGenSupply`** from proper-forest data, hence a
+concrete `Δᵣ` (`.toGenSupply.coproduct`).  Given the proper-forest data family, the resolved-target
+coproduct on `ResolvedHopfH` is fully constructed — facade-free, every factor a `ResolvedHopfGen`. -/
+noncomputable def ResolvedCoproductProperForestData.toGenSupply : ResolvedCoproductGenSupply where
+  supply := D.supply
+  sum_mapPerm := D.sum_mapPerm
 
 end GaugeGeometry.QFT.Combinatorial
