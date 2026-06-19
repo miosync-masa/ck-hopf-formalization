@@ -20,8 +20,8 @@ Landed here:
 * `resolvedCoproductGenPrimitive` — the primitive part `X x ⊗ 1 + 1 ⊗ X x`, well defined
   on the generator `x` directly (no representative needed);
 * `ResolvedCoproductForestSummandSupply` — the forest-sum **as a supplied finite family of
-  resolved (left, right) generator pairs** (abstraction avoiding the full enumeration), with
-  its sum `∑ X (leftGen A) ⊗ X (rightGen A)`;
+  resolved (left, right) algebra-term pairs** (left = the forest's component-generator product,
+  NOT a single generator), with its sum `∑ leftTerm A ⊗ rightTerm A`;
 * `resolvedCoproductGenOfGraph` — the representative-level generator formula
   (primitive + forest sum);
 * `ResolvedCoproductGenWellDef` — the **isolated well-definedness obligation**
@@ -83,34 +83,37 @@ noncomputable def resolvedCoproductGenPrimitive (x : ResolvedHopfGen) :
 
 /-! ## The forest-sum part as a supplied finite family
 
-To fix the codomain shape without committing to the full resolved proper-forest enumeration
-yet, the forest sum is supplied as a finite family of resolved `(left, right)` generator
-pairs.  Every factor is a `ResolvedHopfGen`, pinning the id-preserving target. -/
+The forest sum is supplied as a finite family of resolved `(left, right)` **terms** in
+`ResolvedHopfH ⊗ ResolvedHopfH`.  Crucially the factors are *terms* (`ResolvedHopfH`), **not** single
+generators: the left factor of a CK forest summand is the **product of its connected-divergent
+component generators** (`A.toHopfH = ∏ γ ∈ A.elements, gen γ`), which collapses to one generator only
+for a single-component forest.  Keeping `leftTerm`/`rightTerm` at the algebra level avoids that
+collapse (the algebra analogue of the "don't discard granularity" lesson).  Every factor still lives
+in the resolved-generator algebra `ResolvedHopfH`, pinning the id-preserving target. -/
 
-/-- A finite family of resolved coproduct forest summands for a representative graph `G`:
-each index contributes `X (leftGen A) ⊗ X (rightGen A)` with **both factors resolved
-generators**. -/
+/-- A finite family of resolved coproduct forest summands for a representative graph `G`: each index
+contributes `leftTerm A ⊗ rightTerm A`, with **both factors resolved-algebra terms** (the left is the
+forest's component-generator product, not a single generator). -/
 structure ResolvedCoproductForestSummandSupply (G : ResolvedFeynmanGraph) where
   /-- The forest index type. -/
   ForestIdx : Type
   /-- The finite forest carrier. -/
   forestCarrier : Finset ForestIdx
-  /-- The left (outer forest) resolved generator of each summand. -/
-  leftGen : ForestIdx → ResolvedHopfGen
-  /-- The right (quotient/remnant) resolved generator of each summand. -/
-  rightGen : ForestIdx → ResolvedHopfGen
+  /-- The left (outer forest) resolved-algebra term of each summand (the component-generator
+  product). -/
+  leftTerm : ForestIdx → ResolvedHopfH
+  /-- The right (quotient/remnant) resolved-algebra term of each summand. -/
+  rightTerm : ForestIdx → ResolvedHopfH
 
 /-- The forest-sum tensor term of a summand supply. -/
 noncomputable def ResolvedCoproductForestSummandSupply.sum {G : ResolvedFeynmanGraph}
     (S : ResolvedCoproductForestSummandSupply G) : ResolvedHopfH ⊗[ℚ] ResolvedHopfH :=
-  ∑ A ∈ S.forestCarrier,
-    MvPolynomial.X (S.leftGen A) ⊗ₜ[ℚ] MvPolynomial.X (S.rightGen A)
+  ∑ A ∈ S.forestCarrier, S.leftTerm A ⊗ₜ[ℚ] S.rightTerm A
 
 /-- **R-6b-2 abstraction (graph-free).**  If two summand supplies have a carrier bijection that
-preserves both the left and the right resolved generators, their forest sums are equal.  This
-isolates the `mapPerm`-invariance of the forest sum into a pure `Finset.sum_bij` fact, so the
-later geometric work (R-6b-2) only has to *supply the bijection + generator-class equalities*,
-not re-run the sum algebra. -/
+preserves both the left and the right resolved-algebra terms, their forest sums are equal.  This
+isolates the `mapPerm`-invariance of the forest sum into a pure `Finset.sum_bij` fact, so the later
+geometric work only has to *supply the bijection + term equalities*, not re-run the sum algebra. -/
 theorem ResolvedCoproductForestSummandSupply.sum_eq_of_bij {G G' : ResolvedFeynmanGraph}
     (S : ResolvedCoproductForestSummandSupply G) (T : ResolvedCoproductForestSummandSupply G')
     (i : (a : S.ForestIdx) → a ∈ S.forestCarrier → T.ForestIdx)
@@ -118,8 +121,8 @@ theorem ResolvedCoproductForestSummandSupply.sum_eq_of_bij {G G' : ResolvedFeynm
     (i_inj : ∀ a₁ (ha₁ : a₁ ∈ S.forestCarrier) a₂ (ha₂ : a₂ ∈ S.forestCarrier),
       i a₁ ha₁ = i a₂ ha₂ → a₁ = a₂)
     (i_surj : ∀ b ∈ T.forestCarrier, ∃ a, ∃ (ha : a ∈ S.forestCarrier), i a ha = b)
-    (hleft : ∀ a (ha : a ∈ S.forestCarrier), S.leftGen a = T.leftGen (i a ha))
-    (hright : ∀ a (ha : a ∈ S.forestCarrier), S.rightGen a = T.rightGen (i a ha)) :
+    (hleft : ∀ a (ha : a ∈ S.forestCarrier), S.leftTerm a = T.leftTerm (i a ha))
+    (hright : ∀ a (ha : a ∈ S.forestCarrier), S.rightTerm a = T.rightTerm (i a ha)) :
     S.sum = T.sum := by
   unfold ResolvedCoproductForestSummandSupply.sum
   exact Finset.sum_bij i hmaps i_inj i_surj
