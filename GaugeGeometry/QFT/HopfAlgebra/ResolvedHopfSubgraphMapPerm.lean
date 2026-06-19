@@ -138,4 +138,47 @@ noncomputable def ResolvedAdmissibleSubgraph.mapPerm (σ : Equiv.Perm VertexId)
     (A : ResolvedAdmissibleSubgraph G) :
     (A.mapPerm σ).elements = A.elements.image (fun γ => γ.mapPerm σ) := rfl
 
+/-! ## Structural transports of the admissible carrier under `mapPerm`
+
+The pieces `contractWithStars` is built from (`vertices`, `starVertices`, `complementEdges`,
+`internalEdges`) all transport along `mapPerm σ` by relabeling — the structural input to the
+`contractWithStars` equivariance.  None of these needs `componentAt` (no `Classical.choose`). -/
+
+/-- `ResolvedFeynmanSubgraph.mapPerm σ` is injective (it relabels by the injective `σ`). -/
+theorem ResolvedFeynmanSubgraph.mapPerm_injective (σ : Equiv.Perm VertexId) :
+    Function.Injective (ResolvedFeynmanSubgraph.mapPerm σ (G := G)) := by
+  intro γ δ h
+  have hv : γ.vertices.image σ = δ.vertices.image σ := congrArg ResolvedFeynmanSubgraph.vertices h
+  have hi : γ.internalEdges.map (ResolvedFeynmanEdge.map σ)
+      = δ.internalEdges.map (ResolvedFeynmanEdge.map σ) :=
+    congrArg ResolvedFeynmanSubgraph.internalEdges h
+  have he : γ.externalLegs.map (ResolvedExternalLeg.map σ)
+      = δ.externalLegs.map (ResolvedExternalLeg.map σ) :=
+    congrArg ResolvedFeynmanSubgraph.externalLegs h
+  have hEi : Function.Injective (ResolvedFeynmanEdge.map σ) := by
+    intro a b hab; cases a; cases b
+    simp only [ResolvedFeynmanEdge.map, ResolvedFeynmanEdge.mk.injEq] at hab
+    obtain ⟨hid, hs, ht, hsec⟩ := hab
+    exact ResolvedFeynmanEdge.mk.injEq .. |>.mpr ⟨hid, σ.injective hs, σ.injective ht, hsec⟩
+  have hEℓ : Function.Injective (ResolvedExternalLeg.map σ) := by
+    intro a b hab; cases a; cases b
+    simp only [ResolvedExternalLeg.map, ResolvedExternalLeg.mk.injEq] at hab
+    obtain ⟨hid, ha, hsec⟩ := hab
+    exact ResolvedExternalLeg.mk.injEq .. |>.mpr ⟨hid, σ.injective ha, hsec⟩
+  obtain ⟨γv, γi, γe, _, _, _, _, _⟩ := γ
+  obtain ⟨δv, δi, δe, _, _, _, _, _⟩ := δ
+  dsimp only at hv hi he
+  have hv' : γv = δv := Finset.image_injective σ.injective hv
+  have hi' : γi = δi := Multiset.map_injective hEi hi
+  have he' : γe = δe := Multiset.map_injective hEℓ he
+  subst hv'; subst hi'; subst he'; rfl
+
+/-- The admissible carrier's vertex set transports by relabeling. -/
+@[simp] theorem ResolvedAdmissibleSubgraph.mapPerm_vertices (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G) :
+    (A.mapPerm σ).vertices = A.vertices.image σ := by
+  unfold ResolvedAdmissibleSubgraph.vertices
+  rw [ResolvedAdmissibleSubgraph.mapPerm_elements, Finset.biUnion_image, Finset.image_biUnion]
+  exact Finset.biUnion_congr rfl (fun γ _ => by simp)
+
 end GaugeGeometry.QFT.Combinatorial
