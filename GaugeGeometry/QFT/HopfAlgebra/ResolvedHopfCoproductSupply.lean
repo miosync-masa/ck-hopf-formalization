@@ -72,4 +72,30 @@ theorem resolvedForestLeftTerm_mapPerm (A : ResolvedAdmissibleSubgraph G) (σ : 
   · exact congrArg MvPolynomial.X
       (resolvedComponentGen_mapPerm γ.1 σ (A.isConnectedDivergent γ.1 γ.2) _).symm
 
+/-! ## R-6b-4c — the forest right term (quotient generator) -/
+
+/-- The right tensor factor of a forest summand: the generator of the star-contraction quotient
+`A.contractWithStars starOf` (a single connected-divergent resolved graph). -/
+noncomputable def resolvedForestRightTerm (A : ResolvedAdmissibleSubgraph G)
+    (starOf : ResolvedFeynmanSubgraph G → VertexId)
+    (hCD : (A.contractWithStars starOf).forget.toClass.IsConnectedDivergent) : ResolvedHopfH :=
+  MvPolynomial.X ((A.contractWithStars starOf).toResolvedHopfGen hCD)
+
+/-- The forest right term is `mapPerm`-invariant: the contraction of the relabeled forest has the
+same resolved class (`mapPerm_contractWithStars_toResolvedClass`). -/
+theorem resolvedForestRightTerm_mapPerm (A : ResolvedAdmissibleSubgraph G)
+    (σ : Equiv.Perm VertexId)
+    {starOf : ResolvedFeynmanSubgraph G → VertexId}
+    {starOf' : ResolvedFeynmanSubgraph (G.mapPerm σ) → VertexId}
+    (hstar : ∀ γ ∈ A.elements, starOf' (γ.mapPerm σ) = σ (starOf γ))
+    (hCD : (A.contractWithStars starOf).forget.toClass.IsConnectedDivergent)
+    (hCD' : ((A.mapPerm σ).contractWithStars starOf').forget.toClass.IsConnectedDivergent) :
+    resolvedForestRightTerm A starOf hCD
+      = resolvedForestRightTerm (A.mapPerm σ) starOf' hCD' := by
+  unfold resolvedForestRightTerm
+  refine congrArg MvPolynomial.X (Subtype.ext ?_)
+  show (A.contractWithStars starOf).toResolvedClass
+     = ((A.mapPerm σ).contractWithStars starOf').toResolvedClass
+  exact (ResolvedAdmissibleSubgraph.mapPerm_contractWithStars_toResolvedClass σ A hstar).symm
+
 end GaugeGeometry.QFT.Combinatorial
