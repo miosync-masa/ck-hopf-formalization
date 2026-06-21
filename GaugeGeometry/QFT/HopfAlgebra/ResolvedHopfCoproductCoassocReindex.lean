@@ -2,10 +2,10 @@ import GaugeGeometry.QFT.HopfAlgebra.ResolvedHopfCoproductCoassoc
 import GaugeGeometry.QFT.HopfAlgebra.ResolvedH58Weight
 
 /-!
-# R-6c-2a — the resolved-term H5.8 reindex spine (per-outer `resolvedTermAgreement`)
+# R-6c-2a — the resolved-term H5.8 reindex spine (global `reindex`)
 
-The first of the three frontier obligations (`ResolvedCoproductH58Compatibility`): the **per-outer
-reindex** `innerImageSum A = innerBranchSum A`, entirely in resolved terms (`ResolvedHopfH3`).
+The first of the three frontier obligations (`ResolvedCoproductH58Compatibility`): the **global cover
+reindex** `imageSum x = branchSum x`, entirely in resolved terms (`ResolvedHopfH3`).
 
 The decisive observation: the abstract H5.8 reindex spine built in R-4-superfull
 (`ResolvedCarrierFiniteBranchMapLayer.sum_reindex` and `ResolvedH58WeightData.sum_reindex`) is
@@ -13,7 +13,7 @@ The decisive observation: the abstract H5.8 reindex spine built in R-4-superfull
 into disjoint forest/mixed branch images + `Finset.sum_image` with carrier injectivity), using only
 `FL.sep.cross`.  No flat `HopfH` term, no facade, no gated theorem enters.  So the resolved replay of
 the reindex spine is *immediate* at `Target := ResolvedHopfH3`: this file specialises the generic
-spine to the resolved triple-tensor and packages it as the per-outer reindex datum.
+spine to the resolved triple-tensor and packages it as the cover reindex datum.
 
 This is the **native replay**, not a flat plug-in: the terms live in `ResolvedHopfH3`, the value type
 is the resolved-generator algebra throughout.  The genuinely new id-bearing content — *constructing*
@@ -21,17 +21,21 @@ the cover layer `FL` and the resolved weights from resolved generators — is th
 (the iterated-coproduct expansions) and the concrete σ-cover; the reindex *spine* itself is shared
 and facade-free, which is exactly why building it generic in R-4-superfull paid off.
 
+The reindex is a **global cover sum_bij** (image carrier = forest ⊔ mixed), *not* a per-outer-forest
+`Finset.sum_congr` (R-6c-2d-3 showed per-`A` image/branch terms differ), which is exactly why the
+top compatibility's `reindex` field is a single `imageSum x = branchSum x`.
+
 Landed:
 
-* `ResolvedH58TermReindex` — a per-outer reindex datum: a finite cover layer
+* `ResolvedH58TermReindex` — a cover reindex datum: a finite cover layer
   `FL : ResolvedCarrierFiniteBranchMapLayer` together with resolved-term weights
   `W : ResolvedH58WeightData FL ResolvedHopfH3`;
 * `ResolvedH58TermReindex.imageSum` / `.branchSum` — the image-side and (forest + mixed)
   branch-side resolved sums in `ResolvedHopfH3`;
-* `ResolvedH58TermReindex.reindex` — the **per-outer reindex** `imageSum = branchSum`, the resolved
+* `ResolvedH58TermReindex.reindex` — the **cover reindex** `imageSum = branchSum`, the resolved
   analogue of the flat `concrete_sum_reindex`, facade-free (just `W.sum_reindex`);
-* `resolvedTermAgreement_ofTermReindex` — the bridge: a family of per-outer reindex data discharges
-  the `resolvedTermAgreement` field of `ResolvedCoproductH58Compatibility`.
+* `reindex_ofTermReindex` — the bridge: a per-generator cover reindex datum discharges the global
+  `reindex` field of `ResolvedCoproductH58Compatibility`.
 
 No `coassocLeft`/`coassocRight` expansion yet (R-6c-2b/c), no flat term theorem, no `forgetHopf`, no
 flat `splitPhiBranchReindexing`, no facade.
@@ -71,7 +75,7 @@ noncomputable def branchSum : ResolvedHopfH3 :=
   (∑ q ∈ R.FL.forestCarrier, R.W.forestWeight q) +
     (∑ q ∈ R.FL.mixedCarrier, R.W.mixedWeight q)
 
-/-- **R-6c-2a — the per-outer resolved-term H5.8 reindex.**  The image-side sum equals the
+/-- **R-6c-2a — the resolved-term H5.8 cover reindex.**  The image-side sum equals the
 branch-side sum, in `ResolvedHopfH3`.  This is the resolved analogue of the flat
 `concrete_sum_reindex`; its proof is the value-generic `ResolvedH58WeightData.sum_reindex`, i.e. the
 pure `Finset` cover bijection — facade-free, no flat term, no gated theorem. -/
@@ -80,16 +84,15 @@ theorem reindex : R.imageSum = R.branchSum :=
 
 end ResolvedH58TermReindex
 
-/-- **R-6c-2a — the reindex datum discharges `resolvedTermAgreement`.**  Given a family of per-outer
-resolved-term reindex data, whose `imageSum`/`branchSum` are the compatibility's inner sums, the
-per-outer agreement `innerImageSum A = innerBranchSum A` holds by the reindex spine.  This is the
-field `ResolvedCoproductH58Compatibility.resolvedTermAgreement`, ready to be slotted in when the
-concrete compatibility is assembled (R-6c-2d). -/
-theorem resolvedTermAgreement_ofTermReindex
-    {OuterIdx : ResolvedHopfGen → Type}
-    (data : (x : ResolvedHopfGen) → OuterIdx x → ResolvedH58TermReindex)
-    (x : ResolvedHopfGen) (A : OuterIdx x) :
-    (data x A).imageSum = (data x A).branchSum :=
-  (data x A).reindex
+/-- **R-6c-2a — the reindex datum discharges the global `reindex` field.**  Given a per-generator
+resolved-term reindex datum whose `imageSum`/`branchSum` are the compatibility's total sums, the
+global agreement `imageSum x = branchSum x` holds by the cover spine.  This is the field
+`ResolvedCoproductH58Compatibility.reindex` (the global cover sum_bij, *not* a per-outer-forest
+equality — R-6c-2d-3 showed per-`A` image/branch differ), ready to be slotted in when the concrete
+compatibility is assembled (R-6c-2d). -/
+theorem reindex_ofTermReindex
+    (data : ResolvedHopfGen → ResolvedH58TermReindex) (x : ResolvedHopfGen) :
+    (data x).imageSum = (data x).branchSum :=
+  (data x).reindex
 
 end GaugeGeometry.QFT.Combinatorial
