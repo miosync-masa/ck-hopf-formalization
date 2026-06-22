@@ -70,6 +70,19 @@ noncomputable def union (A B : ResolvedAdmissibleSubgraph G)
     (hCross : ∀ γ ∈ A.elements, ∀ δ ∈ B.elements, γ ≠ δ → γ.Disjoint δ) :
     (A.union B hCross).elements = A.elements ∪ B.elements := rfl
 
+/-- **R-6c-support-3 — the sub-forest of `A` cut out by a predicate.**  The components of `A`
+satisfying `P`; CD and pairwise-disjointness are inherited from `A`. -/
+def filterElements (A : ResolvedAdmissibleSubgraph G) (P : ResolvedFeynmanSubgraph G → Prop)
+    [DecidablePred P] : ResolvedAdmissibleSubgraph G :=
+  ofElements (A.elements.filter P)
+    (fun γ hγ => A.isConnectedDivergent γ (Finset.mem_of_mem_filter γ hγ))
+    (fun _ hγ _ hδ hne =>
+      A.pairwiseDisjoint (Finset.mem_of_mem_filter _ hγ) (Finset.mem_of_mem_filter _ hδ) hne)
+
+@[simp] theorem filterElements_elements (A : ResolvedAdmissibleSubgraph G)
+    (P : ResolvedFeynmanSubgraph G → Prop) [DecidablePred P] :
+    (A.filterElements P).elements = A.elements.filter P := rfl
+
 end ResolvedAdmissibleSubgraph
 
 end GaugeGeometry.QFT.Combinatorial
