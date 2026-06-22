@@ -85,4 +85,26 @@ noncomputable def ResolvedCoassocSplitPhiFiniteData.toWeightData
     F.forestCarrier F.mixedCarrier F.imageCarrier
     F.forestImage_mem F.mixedImage_mem F.cover_on F.forest_inj_on F.mixed_inj_on
 
+/-- **R-6c-4f part 2c — the global cover bundle from the finite splitPhi data.**  Given the two
+regroup agreements (image side = the cover's image sum; (forest+mixed) split-term sum = branch side),
+the finite splitPhi data yields a `ResolvedCoassocGlobalCoverData D x` — and hence (via
+`ofGlobalCoverData`) the compatibility and `coassoc_gen`.  All weights/term-agreements come from the
+splitPhi skeleton; only the two regroup agreements are supplied here. -/
+noncomputable def ResolvedCoassocSplitPhiFiniteData.toGlobalCoverData
+    (F : ResolvedCoassocSplitPhiFiniteData D G) (x : ResolvedHopfGen)
+    (image_agreement : D.regroupImageSum x = ∑ z ∈ F.imageCarrier, F.imageWeight z)
+    (branch_agreement :
+      (∑ q ∈ F.forestCarrier, D.resolvedSplitChoiceTerm q.1)
+        + (∑ q ∈ F.mixedCarrier, D.resolvedSplitChoiceTerm q.1)
+        = D.regroupBranchSum x) :
+    ResolvedCoassocGlobalCoverData D x where
+  FL := F.toLayer
+  imageWeight := F.imageWeight
+  forestWeight := fun q => D.resolvedSplitChoiceTerm q.1
+  mixedWeight := fun q => D.resolvedSplitChoiceTerm q.1
+  resolvedSplitPhi_forest_term_eq := fun q => F.term_eq q.1
+  resolvedSplitPhi_mixed_term_eq := fun q => F.term_eq q.1
+  image_agreement := image_agreement
+  branch_agreement := branch_agreement
+
 end GaugeGeometry.QFT.Combinatorial
