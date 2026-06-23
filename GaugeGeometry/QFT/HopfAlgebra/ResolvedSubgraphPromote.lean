@@ -78,6 +78,12 @@ theorem promote_disjoint (γ : ResolvedFeynmanSubgraph G)
     {δ₁ δ₂ : ResolvedFeynmanSubgraph γ.toResolvedFeynmanGraph} (h : δ₁.Disjoint δ₂) :
     (γ.promote δ₁).Disjoint (γ.promote δ₂) := h
 
+/-- **R-6c-heart-4 P4a — promote keeps vertices inside the parent.**  `(γ.promote δ).vertices =
+δ.vertices ⊆ γ.toResolvedFeynmanGraph.vertices = γ.vertices` — definitional. -/
+theorem promote_vertices_subset_parent (γ : ResolvedFeynmanSubgraph G)
+    (δ : ResolvedFeynmanSubgraph γ.toResolvedFeynmanGraph) :
+    (γ.promote δ).vertices ⊆ γ.vertices := δ.vertices_subset
+
 /-- **R-6c-heart-4 P1 — promote transports connected-divergence.**  The promoted component has the same
 intrinsic flat graph as `δ` (so `IsConnected`/`IsOnePI` are defeq), and its `IsDivergent` transports via
 `IsAmbientInvariantDivergence.degree_self_eq` (same self-degree). -/
@@ -124,6 +130,16 @@ noncomputable def promote (γ : ResolvedFeynmanSubgraph G)
     (B : ResolvedAdmissibleSubgraph γ.toResolvedFeynmanGraph) :
     (ResolvedAdmissibleSubgraph.promote γ B).elements
       = B.elements.image (fun δ => γ.promote δ) := rfl
+
+/-- **R-6c-heart-4 P4a — every promoted component sits in the parent.**  A component of the admissible
+promote is `γ.promote δ₀`, whose vertices are `⊆ γ.vertices` (the `mem_image` shares this file's
+`Classical` instance with the `promote` def, avoiding the cross-file `DecidableEq` diamond). -/
+theorem promote_element_vertices_subset_parent (γ : ResolvedFeynmanSubgraph G)
+    (B : ResolvedAdmissibleSubgraph γ.toResolvedFeynmanGraph) {δ : ResolvedFeynmanSubgraph G}
+    (hδ : δ ∈ (ResolvedAdmissibleSubgraph.promote γ B).elements) : δ.vertices ⊆ γ.vertices := by
+  rw [promote_elements] at hδ
+  obtain ⟨δ₀, _, rfl⟩ := Finset.mem_image.mp hδ
+  exact γ.promote_vertices_subset_parent δ₀
 
 end ResolvedAdmissibleSubgraph
 
