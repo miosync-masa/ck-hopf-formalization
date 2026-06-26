@@ -688,6 +688,81 @@ single star-saturated resolved components.  Thus facade #2 is an **outer-sum cov
 (a P2/P3-style "do not close per-`D`, the outer sum is the right level").  **Full native resolved
 H5.8 still not claimed complete.**
 
+### R-6c heart — native resolved coassociativity, the term boundary fully decomposed
+
+The decisive turn since the gold sprints: rather than importing the flat σ-cover term agreement, the
+resolved coassociativity of `Δᵣ` is reconstructed **natively** on `ResolvedHopfH`.  The entire
+coassociativity wiring is now closed to a single capstone `coassoc_gen` — produced from one bundled
+`ResolvedCoassocFullCompatibilitySupply` — whose unfilled fields are *exactly* the genuine geometric
+data.  The headline result of this stretch: **the whole "heart" (the term agreement `term_eq` and its
+right factor `right_eq`) is reduced to a finite, named list of parametric supply obligations — with no
+open-ended structural or algebraic gap remaining.**  All files axiom-clean
+(`propext`/`Classical.choice`/`Quot.sound`); no facade, no flat term, no `forgetHopf`, no rep/perm.
+
+**The heart equation.**  `term_eq : resolvedSplitChoiceTerm s = imageWeight (imageOf s)` is the
+facade-free replacement of the *gated* flat `forestComponentSplitPhi_term_eq_of_split`.  A pure-tensor
+anatomy (`term_eq_of_factorization`, **proved**) splits it into two genuine facts plus an `assoc_tmul`
+assembly:
+
+- **`product_eq`** — the branch product `∏ γ localChoiceTerm(choiceAt γ)` factors as
+  `resolvedSelectedOuterTerm ⊗ resolvedForestLeftTerm(quotientForest)`;
+- **`right_eq`** — `(D.supply G).rightTerm s.1 = innerRightTerm (imageOf s)` (the outer forest's quotient
+  generator equals the inner quotient-of-quotient generator).
+
+**De-contraction objects, made concrete (the R-6 payoff).**  The selected-outer and quotient forests are
+no longer abstract supplies but `Right ⊔ Remnant`-style constructions from the per-component local
+choices (`isLeftPrimitive`/`isRightPrimitive`/`isForestChoice` partition of the input outer components):
+`selectedOuterRaw = leftOf ∪ promotedOf`, `fullQuotientOf = remnantForest ⊔ rightSurvivorForest`
+(`ResolvedConcreteFullQuotientSupply.toFullQuotientSupply`).  The flat rep/perm transport layer
+**vanishes**: because ids are kept, a forest choice already lives in component coordinates, so promote is
+pure inclusion and `resolvedComponentGen (γ.promote δ) = resolvedComponentGen δ` holds **by `rfl`**.
+
+**`product_eq` — conditionally complete.**  Pure algebra (`splitChoiceProduct_eq_factor_tmul` via
+`resolvedTensorProduct_prod_tmul`) reduces it to two factor equalities, each proved by a component-
+partition split:
+
+- *left factor* `leftFactorProduct = resolvedForestLeftTerm(selectedOuterRaw)` — the engine is
+  `resolvedForestLeftTerm_union` (the forest-generator product splits over a disjoint union) plus the
+  promote-generator equality; the right region drops out (`= 1`), left = `leftOf` term, forest =
+  `promotedOf` term (`leftFactorProduct_eq_selectedOuterRawTerm`);
+- *right factor* `rightFactorProduct = resolvedForestLeftTerm(remnant ⊔ rightSurvivor)` — the symmetric
+  split, with the right-survivor / remnant regions identified with the quotient forest via the embedding
+  generator equalities (`rightSurvivor_region_eq`, `remnant_region_eq`).
+
+Assembled in `product_eq_of_region_data`, conditional only on parametric supply hypotheses
+(forest/union disjointness, the survivor/remnant generator equalities + injectivities, and two
+abstract-image connectors).
+
+**`right_eq` — reduced to one class equality, then three graph fields.**  Both sides are
+`X (graph.toResolvedHopfGen _)`, so (`right_eq_of_contract_class_eq`, term-mode `congrArg X ∘ Subtype.ext`)
+`right_eq` reduces to the **contract-twice = contract-once** class equality
+`(A.contractWithStars).toResolvedClass = ((A'.contractWithStars).contractWithStars).toResolvedClass`.
+A resolved class equality is an id-preserving iso, so this reduces in turn to a **star permutation `σ`**
+matching the one-step and two-step contractions, plus three graph-field equalities
+(`ResolvedContractTwiceOnceGeometrySupply`).  The field equalities are driven by the **retarget
+composition** `A.retargetVertex = σ ∘ (B'.retarget ∘ A'.retarget)` (a supply at the vertex level; the
+edge/leg lifts are *free*, since resolved edges/legs are endpoint retargets preserving id/sector):
+`externalLegs_eq` is **fully proved** (legs are never removed, so both contractions retarget all of
+`G.externalLegs`); `internalEdges_eq` follows from a single complement-edge domain correspondence; only
+`vertices_eq` (the star-vertex sets) and the vertex retarget composition stay as the final
+star-geometry fields.
+
+**Survivor embedding — concrete.**  A right-survivor component (`choiceAt = inl false`) is disjoint from
+the selected outer, so it survives the contraction untouched: `ResolvedFeynmanSubgraph.reembed`
+re-interprets its data in the quotient graph with the **same intrinsic graph and the same generator**
+(`resolvedComponentGen_reembed := rfl`), and `survivorReembed` discharges the three support facts from
+disjointness + an edge-domain bound.  (The remnant embedding — a genuine `localizeRemnantComponent`
+de-contraction — stays a supply for now.)
+
+**Net position.**  `term_eq = product_eq + right_eq` is now a finite list of named **parametric supply**
+obligations: the survivor/remnant embeddings (and their generator equalities/injectivities), the
+star-geometry triple (`retargetVertex_eq` / `internalEdges_domain` / `vertices_eq`), and the
+nonemptiness/carrier-properness data (forest/union disjointness).  These are concrete-construction and
+discharge tasks — heavy, but **no longer open-ended**.  The downstream wiring (`term_eq` field →
+heart-6 finite cover/inj + the two regroup agreements + the `∀ x` lift → `coassoc_gen` →
+`HopfAlgebra ℚ HopfH`) is already in place.  **Full unconditional resolved coassociativity still not
+claimed complete (the parametric supply obligations not yet all discharged).**
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
