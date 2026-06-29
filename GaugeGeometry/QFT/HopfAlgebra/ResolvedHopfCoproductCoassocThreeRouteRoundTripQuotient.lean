@@ -61,37 +61,37 @@ theorem threeRouteCorrInvFun_star_val (S : ResolvedThreeRouteInvFunSupply D G im
 
 /-- **fix-3c-1a — the route-3 left-inverse round trip.**  A one-stage right/forest star round-trips to
 itself. -/
-theorem threeRoute_leftInv_quotientStar (S : ResolvedThreeRouteInverseLawSupply D G imageOf)
+theorem threeRoute_leftInv_quotientStar (S : ResolvedThreeRouteFullSupply D G imageOf)
     (s : ResolvedCoassocSplitChoice D G) (w : {v : VertexId // v ∈ (oneStageContractGraph s).vertices})
     (hstar : isContractStarVertex s.1.1 (D.starOf G s.1.1) w.1)
-    (hL : ¬ (S.route.oneStarRecover s ⟨w.1, hstar⟩).isLeft)
+    (hL : ¬ (S.oneStarRecover s ⟨w.1, hstar⟩).isLeft)
     (htwoInv : ∀ j : TwoStageStarIndex D G imageOf s,
-      S.route.twoStarRecover s j.toStarVertex = j) :
-    threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s
-        (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w) = w := by
+      S.twoStarRecover s j.toStarVertex = j) :
+    threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s
+        (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w) = w := by
   -- abbreviations
-  set i := S.route.oneStarRecover s ⟨w.1, hstar⟩ with hi
-  set j := S.route.quotientStarEquiv s ⟨i, i.isLeft_or_hasQuotientStar.resolve_left hL⟩ with hj
+  set i := S.oneStarRecover s ⟨w.1, hstar⟩ with hi
+  set j := S.quotientStarEquiv s ⟨i, i.isLeft_or_hasQuotientStar.resolve_left hL⟩ with hj
   -- the forward output's vertex is j.toStarVertex.1, and it is a two-stage star
-  have hfwd : (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w).1
+  have hfwd : (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w).1
       = j.toStarVertex.1 :=
-    threeRouteCorrToFun_quotientStar_val S.route.toResolvedThreeRouteToFunSupply s w hstar hL
+    threeRouteCorrToFun_quotientStar_val S.toResolvedThreeRouteToFunSupply s w hstar hL
   have hfwdstar : isContractStarVertex (imageOf s).quotientForest
       (D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest)
-      (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w).1 := by
+      (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w).1 := by
     rw [hfwd]; exact j.toStarVertex.2
   -- evaluate the inverse on the forward output
   apply Subtype.ext
-  rw [threeRouteCorrInvFun_star_val S.route.toResolvedThreeRouteInvFunSupply s _ hfwdstar]
+  rw [threeRouteCorrInvFun_star_val S.toResolvedThreeRouteInvFunSupply s _ hfwdstar]
   -- twoStarRecover recovers j, quotientStarEquiv.symm inverts
-  have hrec : S.route.twoStarRecover s
-      ⟨(threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w).1, hfwdstar⟩ = j := by
-    have : (⟨(threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w).1, hfwdstar⟩ :
+  have hrec : S.twoStarRecover s
+      ⟨(threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w).1, hfwdstar⟩ = j := by
+    have : (⟨(threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w).1, hfwdstar⟩ :
         {v // isContractStarVertex (imageOf s).quotientForest _ v}) = j.toStarVertex :=
       Subtype.ext hfwd
     rw [this, htwoInv]
   rw [hrec, Equiv.symm_apply_apply]
   -- now goal: i.toStarVertex.1 = w.1, i.e. i.vertex = w.1
-  exact S.route.oneStarRecover_vertex s ⟨w.1, hstar⟩
+  exact S.oneStarRecover_vertex s ⟨w.1, hstar⟩
 
 end GaugeGeometry.QFT.Combinatorial

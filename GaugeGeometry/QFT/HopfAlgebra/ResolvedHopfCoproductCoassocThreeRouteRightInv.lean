@@ -47,18 +47,18 @@ the two-stage star vertex agreement, and the two star freshnesses. -/
 structure ResolvedThreeRouteRightInvSupply (D : ResolvedCoproductProperForestData)
     (G : ResolvedFeynmanGraph)
     (imageOf : ResolvedCoassocSplitChoice D G → ResolvedCoassocQuotientImage D G)
-    extends ResolvedThreeRouteInverseLawSupply D G imageOf where
+    extends ResolvedThreeRouteFullSupply D G imageOf where
   /-- `oneStarRecover` inverts the canonical index → star-vertex map. -/
   honeInv : ∀ (s : ResolvedCoassocSplitChoice D G) (i : OneStageStarIndex D G s),
-    route.toResolvedThreeRouteToFunSupply.oneStarRecover s i.toStarVertex = i
+    oneStarRecover s i.toStarVertex = i
   /-- `twoStarRecover` inverts the canonical index → star-vertex map. -/
   htwoInv : ∀ (s : ResolvedCoassocSplitChoice D G) (j : TwoStageStarIndex D G imageOf s),
-    route.toResolvedThreeRouteInvFunSupply.twoStarRecover s j.toStarVertex = j
+    twoStarRecover s j.toStarVertex = j
   /-- The recovered two-stage index's star vertex is the original. -/
   twoStarVertex : ∀ (s : ResolvedCoassocSplitChoice D G)
     (w : {v : VertexId // isContractStarVertex (imageOf s).quotientForest
       (D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest) v}),
-    (route.toResolvedThreeRouteInvFunSupply.twoStarRecover s w).vertex = w.1
+    (twoStarRecover s w).vertex = w.1
   /-- The input outer forest's stars are fresh. -/
   freshA : ∀ (s : ResolvedCoassocSplitChoice D G), ∀ η ∈ s.1.1.elements,
     D.starOf G s.1.1 η ∉ G.vertices
@@ -71,22 +71,23 @@ structure ResolvedThreeRouteRightInvSupply (D : ResolvedCoproductProperForestDat
 `twoStageSurvivor_cases`. -/
 theorem threeRoute_corrRightInv {imageOf : ResolvedCoassocSplitChoice D G → ResolvedCoassocQuotientImage D G}
     (S : ResolvedThreeRouteRightInvSupply D G imageOf) (s : ResolvedCoassocSplitChoice D G) :
-    Function.RightInverse (threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s)
-      (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s) := by
+    Function.RightInverse
+      (threeRouteCorrInvFun S.toResolvedThreeRouteFullSupply.toResolvedThreeRouteInvFunSupply s)
+      (threeRouteCorrToFun S.toResolvedThreeRouteFullSupply.toResolvedThreeRouteToFunSupply s) := by
   intro w
   rcases contractWithStars_vertex_cases (imageOf s).quotientForest
     (D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest) w.2 with hSurv | hstar
-  · rcases S.route.twoStageSurvivor_cases s hSurv with hOrig | ⟨i, hL, hvw⟩
-    · exact threeRoute_rightInv_originalSurvivor S.toResolvedThreeRouteInverseLawSupply s w hSurv hOrig
+  · rcases S.twoStageSurvivor_cases s hSurv with hOrig | ⟨i, hL, hvw⟩
+    · exact threeRoute_rightInv_originalSurvivor S.toResolvedThreeRouteFullSupply s w hSurv hOrig
         (S.freshA s) (S.freshB s)
-    · exact threeRoute_rightInv_leftStarSurvivor S.toResolvedThreeRouteInverseLawSupply s w i hL hvw
+    · exact threeRoute_rightInv_leftStarSurvivor S.toResolvedThreeRouteFullSupply s w i hL hvw
         (S.honeInv s) (S.freshB s) hSurv
-  · set j := S.route.toResolvedThreeRouteInvFunSupply.twoStarRecover s ⟨w.1, hstar⟩ with hj
+  · set j := S.twoStarRecover s ⟨w.1, hstar⟩ with hj
     have hweq : w = ⟨j.vertex, star_mem_contractWithStars (imageOf s).quotientForest
         (D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest)
         j.toStarVertex.2⟩ := Subtype.ext (S.twoStarVertex s ⟨w.1, hstar⟩).symm
     rw [hweq]
-    exact threeRoute_rightInv_quotientStar S.toResolvedThreeRouteInverseLawSupply s j
+    exact threeRoute_rightInv_quotientStar S.toResolvedThreeRouteFullSupply s j
       (S.htwoInv s j) (S.honeInv s)
 
 end GaugeGeometry.QFT.Combinatorial

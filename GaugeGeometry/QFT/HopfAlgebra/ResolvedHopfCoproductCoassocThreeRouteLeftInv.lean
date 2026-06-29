@@ -46,10 +46,10 @@ the two star freshnesses the round-trip cases need. -/
 structure ResolvedThreeRouteLeftInvSupply (D : ResolvedCoproductProperForestData)
     (G : ResolvedFeynmanGraph)
     (imageOf : ResolvedCoassocSplitChoice D G → ResolvedCoassocQuotientImage D G)
-    extends ResolvedThreeRouteInverseLawSupply D G imageOf where
+    extends ResolvedThreeRouteFullSupply D G imageOf where
   /-- `twoStarRecover` inverts the canonical index → star-vertex map. -/
   htwoInv : ∀ (s : ResolvedCoassocSplitChoice D G) (j : TwoStageStarIndex D G imageOf s),
-    route.toResolvedThreeRouteInvFunSupply.twoStarRecover s j.toStarVertex = j
+    twoStarRecover s j.toStarVertex = j
   /-- The input outer forest's stars are fresh. -/
   freshA : ∀ (s : ResolvedCoassocSplitChoice D G), ∀ η ∈ s.1.1.elements,
     D.starOf G s.1.1 η ∉ G.vertices
@@ -62,15 +62,16 @@ structure ResolvedThreeRouteLeftInvSupply (D : ResolvedCoproductProperForestData
 recovered index's `isLeft`. -/
 theorem threeRoute_corrLeftInv {imageOf : ResolvedCoassocSplitChoice D G → ResolvedCoassocQuotientImage D G}
     (S : ResolvedThreeRouteLeftInvSupply D G imageOf) (s : ResolvedCoassocSplitChoice D G) :
-    Function.LeftInverse (threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s)
-      (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s) := by
+    Function.LeftInverse
+      (threeRouteCorrInvFun S.toResolvedThreeRouteFullSupply.toResolvedThreeRouteInvFunSupply s)
+      (threeRouteCorrToFun S.toResolvedThreeRouteFullSupply.toResolvedThreeRouteToFunSupply s) := by
   intro w
   rcases contractWithStars_vertex_cases s.1.1 (D.starOf G s.1.1) w.2 with hSurv | hstar
-  · exact threeRoute_leftInv_originalSurvivor S.toResolvedThreeRouteInverseLawSupply s w hSurv
+  · exact threeRoute_leftInv_originalSurvivor S.toResolvedThreeRouteFullSupply s w hSurv
       (S.freshA s) (S.freshB s)
-  · by_cases hL : (S.route.oneStarRecover s ⟨w.1, hstar⟩).isLeft
-    · exact threeRoute_leftInv_leftStar S.toResolvedThreeRouteInverseLawSupply s w hstar hL (S.freshB s)
-    · exact threeRoute_leftInv_quotientStar S.toResolvedThreeRouteInverseLawSupply s w hstar hL
+  · by_cases hL : (S.oneStarRecover s ⟨w.1, hstar⟩).isLeft
+    · exact threeRoute_leftInv_leftStar S.toResolvedThreeRouteFullSupply s w hstar hL (S.freshB s)
+    · exact threeRoute_leftInv_quotientStar S.toResolvedThreeRouteFullSupply s w hstar hL
         (S.htwoInv s)
 
 end GaugeGeometry.QFT.Combinatorial

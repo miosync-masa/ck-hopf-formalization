@@ -36,12 +36,12 @@ variable {D : ResolvedCoproductProperForestData} {G : ResolvedFeynmanGraph}
   {imageOf : ResolvedCoassocSplitChoice D G → ResolvedCoassocQuotientImage D G}
 
 /-- **fix-3c-3a — the route-3 right-inverse round trip.**  A two-stage quotient star round-trips to itself. -/
-theorem threeRoute_rightInv_quotientStar (S : ResolvedThreeRouteInverseLawSupply D G imageOf)
+theorem threeRoute_rightInv_quotientStar (S : ResolvedThreeRouteFullSupply D G imageOf)
     (s : ResolvedCoassocSplitChoice D G) (j : TwoStageStarIndex D G imageOf s)
-    (htwoInv : S.route.twoStarRecover s j.toStarVertex = j)
-    (honeInv : ∀ i : OneStageStarIndex D G s, S.route.oneStarRecover s i.toStarVertex = i) :
-    threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s
-        (threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s
+    (htwoInv : S.twoStarRecover s j.toStarVertex = j)
+    (honeInv : ∀ i : OneStageStarIndex D G s, S.oneStarRecover s i.toStarVertex = i) :
+    threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s
+        (threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s
           ⟨j.vertex, star_mem_contractWithStars (imageOf s).quotientForest
             (D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest)
             j.toStarVertex.2⟩)
@@ -59,30 +59,30 @@ theorem threeRoute_rightInv_quotientStar (S : ResolvedThreeRouteInverseLawSupply
   have hwj : (⟨w.1, hstar⟩ : {v : VertexId // isContractStarVertex (imageOf s).quotientForest
       (D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest) v})
       = j.toStarVertex := Subtype.ext rfl
-  have hinv : (threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s w).1
-      = ((S.route.quotientStarEquiv s).symm j).1.toStarVertex.1 := by
-    rw [threeRouteCorrInvFun_star_val S.route.toResolvedThreeRouteInvFunSupply s w hstar, hwj, htwoInv]
-  set k := (S.route.quotientStarEquiv s).symm j with hk
+  have hinv : (threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s w).1
+      = ((S.quotientStarEquiv s).symm j).1.toStarVertex.1 := by
+    rw [threeRouteCorrInvFun_star_val S.toResolvedThreeRouteInvFunSupply s w hstar, hwj, htwoInv]
+  set k := (S.quotientStarEquiv s).symm j with hk
   have hinvstar : isContractStarVertex s.1.1 (D.starOf G s.1.1)
-      (threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s w).1 := by
+      (threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s w).1 := by
     rw [hinv]; exact k.1.toStarVertex.2
-  have hrec : S.route.oneStarRecover s
-      ⟨(threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩ = k.1 := by
-    have he : (⟨(threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩ :
+  have hrec : S.oneStarRecover s
+      ⟨(threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩ = k.1 := by
+    have he : (⟨(threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩ :
         {v : VertexId // isContractStarVertex s.1.1 (D.starOf G s.1.1) v}) = k.1.toStarVertex :=
       Subtype.ext hinv
     rw [he, honeInv]
-  have hnotleft : ¬ (S.route.oneStarRecover s
-      ⟨(threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩).isLeft := by
+  have hnotleft : ¬ (S.oneStarRecover s
+      ⟨(threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩).isLeft := by
     rw [hrec]
     exact fun hLeft => k.2.elim (fun hR => s.not_isRightPrimitive_of_isLeftPrimitive hLeft hR)
       (fun hF => s.not_isForestChoice_of_isLeftPrimitive hLeft hF)
   apply Subtype.ext
-  rw [threeRouteCorrToFun_quotientStar_val S.route.toResolvedThreeRouteToFunSupply s _ hinvstar hnotleft]
-  have hidx : (⟨S.route.oneStarRecover s
-      ⟨(threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩,
-      (S.route.oneStarRecover s
-        ⟨(threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩).isLeft_or_hasQuotientStar.resolve_left hnotleft⟩
+  rw [threeRouteCorrToFun_quotientStar_val S.toResolvedThreeRouteToFunSupply s _ hinvstar hnotleft]
+  have hidx : (⟨S.oneStarRecover s
+      ⟨(threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩,
+      (S.oneStarRecover s
+        ⟨(threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s w).1, hinvstar⟩).isLeft_or_hasQuotientStar.resolve_left hnotleft⟩
       : {i : OneStageStarIndex D G s // i.hasQuotientStar}) = k := Subtype.ext hrec
   rw [hidx, hk, Equiv.apply_symm_apply]
   rfl

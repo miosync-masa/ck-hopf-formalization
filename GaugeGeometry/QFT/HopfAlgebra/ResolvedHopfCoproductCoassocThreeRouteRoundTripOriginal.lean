@@ -61,29 +61,29 @@ theorem threeRouteCorrInvFun_survivorOriginal_val (S : ResolvedThreeRouteInvFunS
 
 /-- **fix-3c-1c — the route-1 left-inverse round trip.**  A one-stage original survivor round-trips to
 itself. -/
-theorem threeRoute_leftInv_originalSurvivor (S : ResolvedThreeRouteInverseLawSupply D G imageOf)
+theorem threeRoute_leftInv_originalSurvivor (S : ResolvedThreeRouteFullSupply D G imageOf)
     (s : ResolvedCoassocSplitChoice D G) (w : {v : VertexId // v ∈ (oneStageContractGraph s).vertices})
     (hSurv : isContractSurvivingVertex s.1.1 w.1)
     (hfreshA : ∀ η ∈ s.1.1.elements, D.starOf G s.1.1 η ∉ G.vertices)
     (hfreshB : ∀ η ∈ (imageOf s).quotientForest.elements,
       D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest η
         ∉ (resolvedCoassocQuotientGraph (imageOf s)).vertices) :
-    threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s
-        (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w) = w := by
+    threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s
+        (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w) = w := by
   -- forward stays surviving
   have hnotstarA : ¬ isContractStarVertex s.1.1 (D.starOf G s.1.1) w.1 :=
     fun hst => contract_surviving_not_star s.1.1 (D.starOf G s.1.1) hfreshA hSurv hst
-  have hfwd : (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w).1 = w.1 :=
-    threeRouteCorrToFun_survivor_val S.route.toResolvedThreeRouteToFunSupply s w hnotstarA
+  have hfwd : (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w).1 = w.1 :=
+    threeRouteCorrToFun_survivor_val S.toResolvedThreeRouteToFunSupply s w hnotstarA
   -- forward output is a two-stage survivor, hence not a two-stage star
   have hsurvfwd : isContractSurvivingVertex (imageOf s).quotientForest w.1 :=
-    S.route.survivingOriginal_to s hSurv
+    S.survivingOriginal_to s hSurv
   have hnotstarB : ¬ isContractStarVertex (imageOf s).quotientForest
       (D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest) w.1 :=
     fun hst => contract_surviving_not_star (imageOf s).quotientForest _ hfreshB hsurvfwd hst
   -- inverse takes the surviving + original branch, returning the same vertex
   apply Subtype.ext
-  rw [threeRouteCorrInvFun_survivorOriginal_val S.route.toResolvedThreeRouteInvFunSupply s _
+  rw [threeRouteCorrInvFun_survivorOriginal_val S.toResolvedThreeRouteInvFunSupply s _
     (hfwd.symm ▸ hnotstarB) (hfwd.symm ▸ hSurv), hfwd]
 
 end GaugeGeometry.QFT.Combinatorial

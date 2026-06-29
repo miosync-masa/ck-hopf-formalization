@@ -66,24 +66,24 @@ theorem threeRouteCorrInvFun_survivorLeft_val (S : ResolvedThreeRouteInvFunSuppl
   simp only [threeRouteCorrInvFun, dif_neg hstar, dif_neg hO]
 
 /-- **fix-3c-1b — the route-2 left-inverse round trip.**  A one-stage left star round-trips to itself. -/
-theorem threeRoute_leftInv_leftStar (S : ResolvedThreeRouteInverseLawSupply D G imageOf)
+theorem threeRoute_leftInv_leftStar (S : ResolvedThreeRouteFullSupply D G imageOf)
     (s : ResolvedCoassocSplitChoice D G) (w : {v : VertexId // v ∈ (oneStageContractGraph s).vertices})
     (hstar : isContractStarVertex s.1.1 (D.starOf G s.1.1) w.1)
-    (hL : (S.route.oneStarRecover s ⟨w.1, hstar⟩).isLeft)
+    (hL : (S.oneStarRecover s ⟨w.1, hstar⟩).isLeft)
     (hfreshB : ∀ η ∈ (imageOf s).quotientForest.elements,
       D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest η
         ∉ (resolvedCoassocQuotientGraph (imageOf s)).vertices) :
-    threeRouteCorrInvFun S.route.toResolvedThreeRouteInvFunSupply s
-        (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w) = w := by
-  set i := S.route.oneStarRecover s ⟨w.1, hstar⟩ with hi
+    threeRouteCorrInvFun S.toResolvedThreeRouteInvFunSupply s
+        (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w) = w := by
+  set i := S.oneStarRecover s ⟨w.1, hstar⟩ with hi
   -- the recovered index's vertex is w.1
-  have hiv : i.vertex = w.1 := S.route.oneStarRecover_vertex s ⟨w.1, hstar⟩
+  have hiv : i.vertex = w.1 := S.oneStarRecover_vertex s ⟨w.1, hstar⟩
   -- forward keeps the vertex
-  have hfwd : (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w).1 = w.1 :=
-    threeRouteCorrToFun_leftStar_val S.route.toResolvedThreeRouteToFunSupply s w hstar hL
+  have hfwd : (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w).1 = w.1 :=
+    threeRouteCorrToFun_leftStar_val S.toResolvedThreeRouteToFunSupply s w hstar hL
   -- the forward output is a two-stage survivor
   have hsurv : isContractSurvivingVertex (imageOf s).quotientForest w.1 := by
-    have h := S.route.leftStar_toSurvivor s i hL
+    have h := S.leftStar_toSurvivor s i hL
     rwa [hiv] at h
   -- ... hence not a two-stage star
   have hnotstar : ¬ isContractStarVertex (imageOf s).quotientForest
@@ -91,21 +91,21 @@ theorem threeRoute_leftInv_leftStar (S : ResolvedThreeRouteInverseLawSupply D G 
     fun hst => contract_surviving_not_star (imageOf s).quotientForest _ hfreshB hsurv hst
   -- ... and not an original survivor
   have hO : ¬ isContractSurvivingVertex s.1.1 w.1 :=
-    fun hOs => S.route.originalSurvivor_not_leftStar s hOs i hL (hiv.symm)
+    fun hOs => S.originalSurvivor_not_leftStar s hOs i hL (hiv.symm)
   -- transport the two facts to the forward output's vertex
   have hnotstar' : ¬ isContractStarVertex (imageOf s).quotientForest
       (D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest)
-      (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w).1 := by rw [hfwd]; exact hnotstar
+      (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w).1 := by rw [hfwd]; exact hnotstar
   have hO' : ¬ isContractSurvivingVertex s.1.1
-      (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w).1 := by rw [hfwd]; exact hO
+      (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w).1 := by rw [hfwd]; exact hO
   -- evaluate the inverse
   apply Subtype.ext
-  rw [threeRouteCorrInvFun_survivorLeft_val S.route.toResolvedThreeRouteInvFunSupply s _ hnotstar' hO']
+  rw [threeRouteCorrInvFun_survivorLeft_val S.toResolvedThreeRouteInvFunSupply s _ hnotstar' hO']
   -- the chosen index's vertex is the forward output's vertex = w.1
-  have hspec := (S.route.twoStageSurvivor_cases s
+  have hspec := (S.twoStageSurvivor_cases s
     ((contractWithStars_vertex_cases (imageOf s).quotientForest
       (D.starOf (resolvedCoassocQuotientGraph (imageOf s)) (imageOf s).quotientForest)
-      (threeRouteCorrToFun S.route.toResolvedThreeRouteToFunSupply s w).2).resolve_right hnotstar')).resolve_left hO'
+      (threeRouteCorrToFun S.toResolvedThreeRouteToFunSupply s w).2).resolve_right hnotstar')).resolve_left hO'
   exact (Classical.choose_spec hspec).2.trans hfwd
 
 end GaugeGeometry.QFT.Combinatorial
