@@ -810,14 +810,36 @@ no flat term, no `forgetHopf`, no rep/perm).  Two phases:
   - **Quotient = full-quotient** (body-35) — `(imageOf s).quotientForest = fullQuotientOf.toImage =
     remnant ⊔ right` holds **by `rfl`** for the concrete image side (the sigma-cover `Aout`/`starOf` are
     definitionally the selected outer + star), discharging body-17's `quotientForest_union` residual.
+  - **Support-9 / OUTPUT reindex** (bodies 36–57) — the `coassoc_gen` wiring and the outer-forest ↔
+    splitPhi-cover double sum.  Bodies 36–39 fix the support-9 chain (`RepresentativeFamilySupply →
+    RegroupAgreementSupply → RegroupReindexSupply`, all `rw`-thin) and **prove** the finite-cover cross
+    disjointness (`grandFull_forest_image_ne_mixed_image`).  Bodies 40–49 discharge the retarget star
+    recoveries into the coherence/traceability/sector-inverse split.  Bodies 50–57 then reduce the OUTPUT
+    reindex itself.  A decisive scout (body-52) found `ResolvedHopfH ≠ HopfH` (not `rfl`): R-4-full's
+    **concrete** flat reindex engines do NOT transport, but the reindex *patterns* re-prove resolved-natively
+    — the **partition** engine (`grandFull_partition_reindex`, body-53, from the GrandFull cover + body-39
+    cross) and the **fibration** engine (`resolved_outer_cover_fibration`, body-55, generic `AddCommMonoid`).
+    Body-54 named the last obstruction as a resolved σ-cover skeleton (`ResolvedOuterCoverSigmaSupply`), and a
+    unification scout (body-55) **decided** the image and branch reindexes share the fibration *form* but need
+    **two different fiber maps** (one bijection is impossible — it would force `image summand A = branch
+    summand A`, which is the coassoc content).  Body-56 **types** those two fiber maps as named supplies
+    (`ResolvedOuterImageFiberSupply` via the quotient / coassoc-RIGHT decomposition,
+    `ResolvedOuterBranchFiberSupply` via the coassoc-LEFT), each carrying only `forestFiber` / `mixedFiber` +
+    two `maps_to` + one fiberwise agreement — the cover / disjoint work is absorbed inside the engine's
+    `Finset.sum_fiberwise_of_maps_to`.  Body-57 fixes the final map: `resolved_output_reindex_of_fibers`
+    re-exports the two fiber families through `toOuterCoverSigmaSupply` → body-38's `RegroupReindexSupply` →
+    `coassoc_gen`.  **Net: the entire OUTPUT reindex is proved except the two fiber-construction supplies.**
 
 **Net position (R-6c campaign).**  The heart obligations now split into a small, honest set of *named
 irreducible* supplies: the **measure** pair (`cd_nonempty` + `contract_preserves_CD`), the **star**
 kernel (`ResolvedStarGlobalGapSupply` for parent recovery; the fresh/traceable star assumption), the
-**retarget** star recoveries (left/right one-stage-star recovery + inner applicability), and the
-remaining **support-9** finite-cover / regroup / representative-lift geometry.  Everything structural or
-transport-shaped is `rfl` or proved; every remaining field is a recognized geometry/measure assumption,
-not an open-ended gap.  **Full unconditional resolved coassociativity still not claimed complete.**
+**retarget** star recoveries (left/right one-stage-star recovery + inner applicability), the **support-9**
+representative lift, and — for the OUTPUT double sum — the **two fiber-construction supplies**
+(`ResolvedOuterImageFiberSupply` / `ResolvedOuterBranchFiberSupply`), the resolved-native H5.8 outer × inner
+coverage geometry.  Everything else — the support-9 wiring, the finite-cover partition, the σ-cover fibration
+form, and all structural / transport-shaped steps — is `rfl` or proved.  Every remaining field is a
+recognized geometry/measure assumption, not an open-ended gap.  **Full unconditional resolved coassociativity
+still not claimed complete.**
 
 ---
 

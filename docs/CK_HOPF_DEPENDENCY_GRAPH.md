@@ -565,12 +565,17 @@ Product/Sector/Codomain element shapes (transport machinery)                    
 | `ResolvedMeasureLeafSupply` (`cd_nonempty`, `contract_preserves_CD`) | power-counting measure | fielded (2 axioms) |
 | `ResolvedStarGlobalGapSupply` (global star freshness + cross-parent trace) | star id-traceability | fielded (⊋ canonical-local) |
 | retarget `leftStar_recovery` / `rightStar_recovery` + inner applicability | three-route star recovery | fielded |
-| support-9 finite-cover / regroup / representative-lift | cover geometry | pending |
+| support-9 representative lift (`repGraph`/`repCD`/`rep_eq`/`grand`) | cover geometry | pending |
+| `ResolvedOuterImageFiberSupply` / `ResolvedOuterBranchFiberSupply` (2 fiber maps + maps_to + fiberwise agree) | OUTPUT σ-cover double sum | fielded (body-56/57) |
 | `innerLeft = leftSelected` concretization; off-vertex retarget bridge (leaf-21 `∀v`) | connector | pending |
 
 Everything structural or transport-shaped is `rfl` or proved (`parent_disjoint`, `vertices_determine_parent`,
-`outer_case`, `FinsetSubtypePermExtensionSupply`, `quotientForest = remnant⊔right`).  No open-ended
-structural gap remains; each pending field is a recognized geometry/measure assumption.
+`outer_case`, `FinsetSubtypePermExtensionSupply`, `quotientForest = remnant⊔right`).  The OUTPUT reindex is now
+fully factored (bodies 52–57): its partition (`grandFull_partition_reindex`) and fibration
+(`resolved_outer_cover_fibration`) engines are **proved** resolved-natively, and
+`resolved_output_reindex_of_fibers` re-exports the two fiber supplies to `coassoc_gen` — so the only OUTPUT gap
+left is the two fiber constructions.  No open-ended structural gap remains; each pending field is a recognized
+geometry/measure assumption.
 
 ---
 
