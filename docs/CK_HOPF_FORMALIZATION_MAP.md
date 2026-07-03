@@ -763,6 +763,62 @@ heart-6 finite cover/inj + the two regroup agreements + the `∀ x` lift → `co
 `HopfAlgebra ℚ HopfH`) is already in place.  **Full unconditional resolved coassociativity still not
 claimed complete (the parametric supply obligations not yet all discharged).**
 
+### R-6c reduction campaign — leaf/body supply isolation (in progress, 2026-07-03)
+
+The heart's "finite list of named supply obligations" above is being discharged by a systematic
+**one-file-per-task** campaign (each file axiom-clean `[propext, Classical.choice, Quot.sound]`; no facade,
+no flat term, no `forgetHopf`, no rep/perm).  Two phases:
+
+- **Leaves 1–38** — structural / connector reductions (bundling, adapters, transport-`rfl` lemmas,
+  id-bearing `ext` adapters).  These carry no genuine geometry; they wire the supply records so every
+  downstream obligation is a single named field flowing `FinalLeafInventory → GrandFull →
+  GlobalCoverSupply → (∀x) FullCompatibilitySupply → coassoc_gen`.
+- **Bodies 1–35** — the genuine geometry / measure content, each reduced to (or proved from) named
+  irreducible supplies.  Highlights:
+
+  - **Product / Sector / Codomain element shapes** (bodies 1–16) — the branch-weight combinatorics.  The
+    Codomain forests are the *transported* Product forests, so the Sector element shapes and forest
+    unions collapse to `elements_transport` / `elements_disjoint_transport` (`subst h; rfl`) plus the
+    Product forest elements (existing `@[simp]` `rfl` lemmas).  Sector surjectivity/injectivity reduce to
+    the shared de-contraction kernel `occurrence_inj`.
+  - **De-contraction uniqueness kernel** (bodies 7, 19–26) — the biggest thread.  `occurrence_inj`
+    (powers Product `remnantInj` + Sector `forest_forward_injective`) → `parent_inj` (parent component
+    recovery) → `parent_graph_inj` (intrinsic-graph recovery, via `ResolvedFeynmanSubgraph.ext`).  A
+    scout (body-20) established `contractWithStars` is **lossy** (discards `B.vertices` / `B.internalEdges`,
+    collapses complement endpoints to stars) so the raw graph does *not* recover the parent — but the
+    id-bearing legs/edges are **preserved** by `retarget` ("shape is lost, ids remain", body-21).  A
+    second scout (body-23) found leg-ids alone insufficient (leg-empty components) and re-scoped to the
+    **vertex** key.  Body-24 then **proves** `vertices_determine_parent` by a surviving-vs-star vertex
+    chase, and body-25 **proves** `parent_disjoint` from the proper-forest `pairwiseDisjoint`.  Net: the
+    entire kernel reduces to a compact **star-traceability** supply (`ResolvedStarGlobalGapSupply` —
+    inter-component star freshness + cross-parent traceability + contracted-nonempty), which body-26
+    shows is *strictly stronger* than the codebase's component-local `ResolvedCanonicalStarFacts` and is
+    the honest minimal star hypothesis for a parametric `D`.
+  - **Finset-subtype permutation** (body-18) — the one nonlocal but purely combinatorial leaf
+    (`FinsetSubtypePermExtensionSupply`, extend a subtype bijection to a global `Equiv.Perm`) is
+    **constructed**, not fielded: `Equiv.extendSubtype` on the finite carrier `↥(s ∪ t)` lifted by the
+    identity outside.
+  - **Retarget three-route** (bodies 27–32) — `retarget_corr_on_vertices` (contract-twice = one-stage in
+    correspondence coordinates) is split into survivingOriginal / inner-left / inner-right routes.  The
+    outer route is **proved concrete** (body-28/29b) via the packaged `invFun` value lemmas (body-29);
+    the two inner routes are proved through `threeRoute_invFun_leftStar_val` / `_star_val` modulo fielded
+    star recoveries; all three bundle into one record (body-32).
+  - **Measure leaves** (bodies 33–34) — `innerCD_forget` (doubly-contracted CD) reduces to the CK
+    power-counting stability `contract_preserves_CD` plus the carrier CD `D.hCD` (ambient discharged by
+    defeq).  Bundled with `cd_nonempty` into `ResolvedMeasureLeafSupply` — a compact 2-field
+    *measure*-only record, cleanly separated from the geometry supplies.
+  - **Quotient = full-quotient** (body-35) — `(imageOf s).quotientForest = fullQuotientOf.toImage =
+    remnant ⊔ right` holds **by `rfl`** for the concrete image side (the sigma-cover `Aout`/`starOf` are
+    definitionally the selected outer + star), discharging body-17's `quotientForest_union` residual.
+
+**Net position (R-6c campaign).**  The heart obligations now split into a small, honest set of *named
+irreducible* supplies: the **measure** pair (`cd_nonempty` + `contract_preserves_CD`), the **star**
+kernel (`ResolvedStarGlobalGapSupply` for parent recovery; the fresh/traceable star assumption), the
+**retarget** star recoveries (left/right one-stage-star recovery + inner applicability), and the
+remaining **support-9** finite-cover / regroup / representative-lift geometry.  Everything structural or
+transport-shaped is `rfl` or proved; every remaining field is a recognized geometry/measure assumption,
+not an open-ended gap.  **Full unconditional resolved coassociativity still not claimed complete.**
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

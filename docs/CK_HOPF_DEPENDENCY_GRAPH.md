@@ -502,6 +502,78 @@ in `Coassoc.lean` (alias-only, gated theorem not exposed).
 
 ---
 
+## R-6c — native `Δᵣ`-coassociativity reduction campaign (in progress)
+
+> **STATUS (2026-07-03).**  Native resolved coassociativity of `Δᵣ` on `ResolvedHopfH` is being reduced,
+> one axiom-clean file per task (`GaugeGeometry/QFT/HopfAlgebra/ResolvedHopfCoproductCoassoc*.lean`), to a
+> finite set of *named irreducible* geometry/measure supplies.  Every file `#print axioms =
+> [propext, Classical.choice, Quot.sound]`; no facade, no flat term, no `forgetHopf`, no rep/perm.
+
+The wiring funnel (already closed — heart support-9):
+```
+FinalLeafInventory (leaf-38)
+   ▼   ResolvedCoassocGrandFullSupply
+   ▼   ResolvedCoassocGlobalCoverSupply       (repGraph + finite + image/branch agreements)
+   ▼   (∀ x) ResolvedCoassocFullCompatibilitySupply
+   ▼   .coassoc_gen (x) : D.coassocLeft (X x) = D.coassocRight (X x)     ◄── capstone
+```
+`term_eq` (the heart) is `product_eq + right_eq`; `right_eq`'s route dependency is the three-route
+vertex correspondence + `{Transport, QuotientStar, star_injective×2, starOf_fresh}`.
+
+### Reduction DAG — what each remaining supply reduces to
+
+```
+occurrence_inj  (Product remnantInj + Sector forest_forward_injective)      (body-7)
+   ▼   parent_inj            contracted-graph eq ⇒ parent component eq
+   ▼   parent_graph_inj      ⇒ parent INTRINSIC-graph eq (ResolvedFeynmanSubgraph.ext)   (body-19)
+   ▼   parentKey (vertex)    contractWithStars LOSSY (body-20/21: shape lost, ids remain);
+   │                         leg-ids insufficient (body-23) → vertex key
+   ▼   vertices_determine_parent   PROVED by surviving-vs-star chase                      (body-24)
+        ├─ parent_disjoint         PROVED from s.1.1.pairwiseDisjoint                     (body-25)
+        └─ ResolvedStarGlobalGapSupply   ◄── THE star kernel (irreducible for parametric D)
+              star_avoids_outer_vertices + star_trace + contracted_nonempty              (body-26)
+              (strictly ⊋ component-local ResolvedCanonicalStarFacts.starOf_fresh/_injective)
+
+retarget_corr_on_vertices  (leaf-37, contract-twice = one-stage in corr coords)          (body-27)
+   ├─ outer route (survivingOriginal)   PROVED concrete (body-8/9 + freshB)          (body-28/29b)
+   ├─ inner-left route                  via threeRoute_invFun_leftStar_val + recovery (body-30)
+   ├─ inner-right route                 via threeRoute_invFun_star_val + recovery     (body-31)
+   ▼  ResolvedRetargetThreeRouteSupply  (Outer+Left+Right+same_innerLeft)             (body-32)
+        (invFun value lemmas packaged at Three.toVertexCorrespondence level           (body-29))
+
+innerCD_forget (leaf-18, doubly-contracted CD)                                           (body-33)
+   ▼   contract_preserves_CD (CK power-counting stability) + D.hCD (ambient, defeq)
+cd_nonempty (leaf-11 / component nonemptiness, measure)                                   (body-1)
+   ▼   ResolvedMeasureLeafSupply  = cd_nonempty + contract_preserves_CD   (2-field measure record) (body-34)
+
+quotientForest_union / toImage_split                                                      (body-14/17)
+   ▼   (imageOf s).quotientForest = fullQuotientOf.toImage = remnant ⊔ right   BY rfl     (body-35)
+        (concrete image side; sigma-cover Aout/starOf = selectedOuter+star definitionally)
+
+FinsetSubtypePermExtensionSupply (leaf-35, nonlocal pure combinatorics)                   (body-18)
+   ▼   CONSTRUCTED (Equiv.extendSubtype on ↥(s∪t), lifted by identity outside)   ∎ CLOSED
+
+Product/Sector/Codomain element shapes (transport machinery)                           (bodies 2,3,5,6,
+   ▼   elements_transport / elements_disjoint_transport (subst h; rfl)               10–16)
+        + Product forest elements (existing @[simp] rfl) — all concrete
+```
+
+### Remaining named irreducible supplies (the honest floor)
+
+| Supply | Nature | Status |
+|---|---|---|
+| `ResolvedMeasureLeafSupply` (`cd_nonempty`, `contract_preserves_CD`) | power-counting measure | fielded (2 axioms) |
+| `ResolvedStarGlobalGapSupply` (global star freshness + cross-parent trace) | star id-traceability | fielded (⊋ canonical-local) |
+| retarget `leftStar_recovery` / `rightStar_recovery` + inner applicability | three-route star recovery | fielded |
+| support-9 finite-cover / regroup / representative-lift | cover geometry | pending |
+| `innerLeft = leftSelected` concretization; off-vertex retarget bridge (leaf-21 `∀v`) | connector | pending |
+
+Everything structural or transport-shaped is `rfl` or proved (`parent_disjoint`, `vertices_determine_parent`,
+`outer_case`, `FinsetSubtypePermExtensionSupply`, `quotientForest = remnant⊔right`).  No open-ended
+structural gap remains; each pending field is a recognized geometry/measure assumption.
+
+---
+
 *Keep this file in sync with the Lean source line numbers when the kernels move.
 Reader-facing narrative lives in `CK_HOPF_FORMALIZATION_MAP.md`; do not duplicate
 sprint logs here.*
