@@ -504,7 +504,7 @@ in `Coassoc.lean` (alias-only, gated theorem not exposed).
 
 ## R-6c — native `Δᵣ`-coassociativity reduction campaign (in progress)
 
-> **STATUS (2026-07-03).**  Native resolved coassociativity of `Δᵣ` on `ResolvedHopfH` is being reduced,
+> **STATUS (2026-07-04).**  Native resolved coassociativity of `Δᵣ` on `ResolvedHopfH` is being reduced,
 > one axiom-clean file per task (`GaugeGeometry/QFT/HopfAlgebra/ResolvedHopfCoproductCoassoc*.lean`), to a
 > finite set of *named irreducible* geometry/measure supplies.  Every file `#print axioms =
 > [propext, Classical.choice, Quot.sound]`; no facade, no flat term, no `forgetHopf`, no rep/perm.
@@ -576,6 +576,66 @@ fully factored (bodies 52–57): its partition (`grandFull_partition_reindex`) a
 `resolved_output_reindex_of_fibers` re-exports the two fiber supplies to `coassoc_gen` — so the only OUTPUT gap
 left is the two fiber constructions.  No open-ended structural gap remains; each pending field is a recognized
 geometry/measure assumption.
+
+### R-6c bodies 88–136 — the term/index double sum folded into two bundles (2026-07-04)
+
+The OUTPUT reindex (bodies 52–57) is the *outer-forest* double sum.  The per-`A` **inner** term/index bijection —
+`∑_p splitChoiceTerm ⟨A,p⟩ = ∑_B leftTerm A ⊗ (leftTerm B ⊗ rightTerm B)` — is the remaining content, and bodies
+88–136 reduce it, one axiom-clean file each, to a two-bundle assembly reaching `coassoc_gen` directly:
+
+```
+coassoc_gen  ⟸  ResolvedForestBlockBijectionSideSupply            (body-130, → body-113 → coassoc_gen)
+             =  ResolvedConcreteSummandBundleSupply               (body-129: the whole PRODUCT side)
+              + [ invConstruct + 8 membership/inverse laws ]      (the index/cover BIJECTION)
+              + [ contract-twice geometry ]                       (bodies 27–49)
+              + [ carrier_isProperForest + rep/repCD/rep_gen ]    (base)
+```
+
+**PRODUCT side — the four factor products + summand agreement (bodies 92–129), all closed to base supplies:**
+
+```
+resolvedSplitChoiceTerm ⟨A,p⟩ = leftTerm(selectedOuterOf) ⊗ (leftTerm B ⊗ rightTerm B)   (body-100/108/109/111/127)
+   │  splitTerm = (∏ localLeftFactor) ⊗ ((∏ localRightFactor) ⊗ rightTerm)                (resolved_splitChoiceTerm_factor)
+   ├─ ∏ localLeftFactor  = leftTerm(selectedOuterOf)   ← left_primitive (119, PROVED) + promoted (122, hPD)
+   ├─ ∏ localRightFactor = leftTerm B                  ← right_primitive (120+125) + remnant (123+126)
+   └─ rightTerm A' = rightTerm B (contract-twice)      ← quot_eq (111, ← contract geometry 27–49)
+        │
+   right_primitive: ∏ localRightFactor = leftTerm(rightSurvivor)   ← rightSurvivor_region_eq (RightFactorGen)
+        via survivorInj + survivorGen[rfl]  (ResolvedRightSurvivorTransportSupply, body-125)
+   remnant:        ∏ localRightFactor = leftTerm(remnant)          ← remnant_region_eq (RightFactorGen)
+        via remnantInj + remnantGen[de-contraction]  (ResolvedRemnantTransportSupply, body-126)
+        │
+   forward-map coherence (body-128): the CONCRETE resolvedConcreteSelectedOuterImageSupply makes the ambient
+   contract graph (selectedOuterOf q).1.contractWithStars  =  q.selectedOuterContractGraph  BY rfl,
+   so the 125/126 forests slot into the summand bundle with NO cast (only selectedOuter_mem closure fielded).
+        │
+   ResolvedConcreteSummandBundleSupply (body-129) = Forward(128) + Measure(124) + Survivor(125) + Remnant(126)
+        + [ quotientForest + union(115) + quot_eq ] ;  .summand_agree streams 119/122/124 by DEFEQ
+```
+
+**BIJECTION side — fully skeletonized (bodies 131–136):**
+
+```
+ResolvedOuterMixingBijectionProvider (body-131)  = invConstruct + 8 membership/inverse laws, classified vs sector:
+   ├─ 4 membership (mixed/forest toFun_mem/invFun_mem) → Finset.sigma PLUMBING (bodies 132/133, PROVED)
+   │     toFun_mem  ← resolvedIsForestImage star-touch classifier (2 fielded star facts, body-132)
+   │     invFun_mem ← forestChoiceCarrier membership + isForestCarryingChoice tag (2 fielded, body-133)
+   ├─ invConstruct  = ⟨recoverOuter, recoverChoice⟩  (body-134 skeleton; STRUCTURED, no longer opaque)
+   │     grounded into 3 tagged regions leftRegion/rightRegion/forestRegion + region_cover  (body-135)
+   │        left = A's left residual (inl true) ; right = B survivors via componentToRight (inl false)
+   │        forest = B remnants via componentToForest (inr Bγ)
+   └─ 4 inverse laws  = Sigma.ext adapters (body-136, PROVED):
+         left_inv  = Sigma.ext (recoverOuter roundtrip)  (choice HEq)      [region-wise vs SectorLeafBundle]
+         right_inv = Sigma.ext (selectedOuterOf roundtrip)(quotient HEq)
+```
+
+Every file `#print axioms = [propext, Classical.choice, Quot.sound]`.  The whole of `Δᵣ`-coassociativity now
+rests on: **the concrete `recoverOuter`/`recoverChoice` backward reconstruction** (the flat
+`forestComponentSplitPhiInverseConstruction` port — resolves the per-`s` sector-map `s`-dependence) with its 2
+outer roundtrip eqs + 2 HEq roundtrips + the 4 star/tag facts; and the **non-bijection providers** — contract-twice
+geometry (27–49), the survivor/remnant `Inj`/`Gen` (reembed), the measure leaf (124), and the base
+(`carrier_isProperForest`, `selectedOuter_mem`, `rep`).  All wiring, decomposition, membership plumbing and
+inverse-law splitting are done; only concrete geometry/reconstruction provider proofs remain.
 
 ---
 

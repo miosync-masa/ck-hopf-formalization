@@ -841,6 +841,48 @@ form, and all structural / transport-shaped steps — is `rfl` or proved.  Every
 recognized geometry/measure assumption, not an open-ended gap.  **Full unconditional resolved coassociativity
 still not claimed complete.**
 
+### R-6c bodies 88–136 — the inner term/index double sum folded into two bundles (2026-07-04)
+
+The OUTPUT reindex (bodies 52–57) handles the *outer-forest* double sum; the remaining content is the per-`A`
+**inner** term/index bijection `∑_p splitChoiceTerm ⟨A,p⟩ = ∑_B leftTerm A ⊗ (leftTerm B ⊗ rightTerm B)`.  Bodies
+88–136 reduce it (one axiom-clean file each) to a **two-bundle assembly** that reaches `coassoc_gen` directly —
+one bundle for the per-term *product agreement*, one for the index *bijection*.
+
+- **PRODUCT side — the four factor products (bodies 92–129), all closed to base supplies.**  Each split term
+  factors as `splitTerm = (∏ localLeftFactor) ⊗ ((∏ localRightFactor) ⊗ rightTerm)`, and the summand agreement
+  `resolvedSplitChoiceTerm = leftTerm(selectedOuterOf) ⊗ (leftTerm B ⊗ rightTerm B)` reduces to three identities
+  (left factor, right factor, contract-twice `quot_eq`) assembled by `Sigma`-free `rw` (bodies 100/108/109/111/127).
+  The **four** factor products are all closed: `left_primitive` (body-119, unconditional), `promoted` (body-122,
+  from the nonemptiness `hPD`), `right_primitive` (bodies 120+125) and `remnant` (bodies 123+126) — the last two
+  discharged against the **existing** `rightSurvivor_region_eq` / `remnant_region_eq` (`RightFactorGen`), reducing
+  each to the honest survivor/remnant `Inj` + `Gen` reembed facts.  A **forward-map coherence** step (body-128)
+  makes the concrete `resolvedConcreteSelectedOuterImageSupply`'s ambient contract graph *definitionally* equal to
+  `q.selectedOuterContractGraph`, so the transport forests slot into the summand bundle with **no cast**.  Body-129
+  bundles the whole product side into `ResolvedConcreteSummandBundleSupply` = forward coherence + measure leaf +
+  survivor + remnant + fielded quotient data; its `.summand_agree` streams the proved left-factor / disjointness
+  lemmas by *defeq*.
+- **BIJECTION side — fully skeletonized (bodies 130–136).**  Body-130 folds the summand bundle plus the index/cover
+  bijection into body-113's assembly supply → `coassoc_gen`, so the *entire* `Δᵣ`-coassociativity flows from two
+  bundles.  Body-131 pulls the bijection's nine fields (`invConstruct` + 8 membership/inverse laws) into their own
+  provider and classifies each against the existing sector backward machinery (`componentToRight` / `componentToForest`
+  + the `SectorLeafBundle` round-trips).  Bodies 132–133 prove the four *membership* fields are pure `Finset.sigma`
+  plumbing over the codomain/domain carriers, reducing them to the star-touch classifier (`resolvedIsForestImage`)
+  and the choice `p`-tag.  Body-134 gives `invConstruct` a **structured** form `⟨recoverOuter, recoverChoice⟩` (no
+  longer opaque), body-135 grounds it into three tagged regions (left residual / survivor via `componentToRight` /
+  remnant via `componentToForest`), and body-136 proves the four inverse laws are `Sigma.ext` adapters — an outer
+  forest equality plus a heterogeneous second-component round-trip, decomposable region-wise against the four sector
+  laws.
+
+**Net (bodies 88–136).**  `Δᵣ`-coassociativity now rests on exactly two things: (1) the concrete
+`recoverOuter`/`recoverChoice` **backward reconstruction** — the resolved port of the flat
+`forestComponentSplitPhiInverseConstruction`, whose per-`s` sector-map `s`-dependence is the last genuine
+combinatorial obstruction — together with its two outer round-trip equalities, two heterogeneous round-trips and the
+four fielded star/tag facts; and (2) the **non-bijection providers** — the contract-twice geometry (bodies 27–49),
+the survivor/remnant `Inj`/`Gen` reembed facts, the measure leaf, and the base (`carrier_isProperForest`,
+`selectedOuter_mem`, representative lift).  All wiring, decomposition, membership plumbing and inverse-law splitting
+are complete and axiom-clean; only concrete geometry/reconstruction provider proofs remain.  **Full unconditional
+resolved coassociativity still not claimed complete.**
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
