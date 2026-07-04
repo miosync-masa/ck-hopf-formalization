@@ -504,7 +504,7 @@ in `Coassoc.lean` (alias-only, gated theorem not exposed).
 
 ## R-6c — native `Δᵣ`-coassociativity reduction campaign (in progress)
 
-> **STATUS (2026-07-04).**  Native resolved coassociativity of `Δᵣ` on `ResolvedHopfH` is being reduced,
+> **STATUS (2026-07-05).**  Native resolved coassociativity of `Δᵣ` on `ResolvedHopfH` is being reduced,
 > one axiom-clean file per task (`GaugeGeometry/QFT/HopfAlgebra/ResolvedHopfCoproductCoassoc*.lean`), to a
 > finite set of *named irreducible* geometry/measure supplies.  Every file `#print axioms =
 > [propext, Classical.choice, Quot.sound]`; no facade, no flat term, no `forgetHopf`, no rep/perm.
@@ -636,6 +636,59 @@ outer roundtrip eqs + 2 HEq roundtrips + the 4 star/tag facts; and the **non-bij
 geometry (27–49), the survivor/remnant `Inj`/`Gen` (reembed), the measure leaf (124), and the base
 (`carrier_isProperForest`, `selectedOuter_mem`, `rep`).  All wiring, decomposition, membership plumbing and
 inverse-law splitting are done; only concrete geometry/reconstruction provider proofs remain.
+
+### R-6c bodies 137–148 — the backward map built, proof-shape complete (2026-07-05)
+
+Bodies 137–148 finish the *proof-shape* phase: the backward reconstruction `witnessSplit` is built branch-by-branch
+down to region-local geometry, and the base providers are banked.  The residual is now a finite list of named local
+geometry / measure / kernel facts — no structural or proof-shape work remains.
+
+**The backward map, fully structured (bodies 138–147).**  The scout chain collapsed the inverse map to one object:
+
+```
+invConstruct = witnessSplit : ForestBlockCodType → ResolvedCoassocSplitChoice        (body-138: = ForestBlockDomType, defeq)
+   │  recoverOuter/recoverChoice = the two projections of ONE map (no per-s reconstruction; s IS the output)
+   ▼
+witnessSplit z = if resolvedIsForestImage z.1 z.2 then forestPreimage z else mixedPreimage z   (body-141, flat classifier form 28811)
+   │     forward_witness / backward_witness  PROVED from 4 branch specs (apply_dite + split_ifs)   (body-141)
+   ├─ mixed branch  (B avoids star): primitive-only; ¬isForestCarrying PROVED from all-inl          (body-142)
+   ├─ forest branch (B touches star): de-contraction parents; isForestCarrying PROVED from ∃-inr     (body-143)
+   └─ combiner Mixed ⊕ Forest → ResolvedWitnessSplitConcreteData → witnessSplit → 4 inverse laws     (body-144)
+   ▼
+recovered outer A' = leftResidual(A) ∪ rightRecovered(B) ∪ forestRecovered(B)     (body-145, three-region union + union_eq)
+   │     left → inl true ; right → componentToRight → inl false ; forest → componentToForest → inr Bγ
+   ├─ region tags → branch p-tags (all_inl / exists_inr)  PROVED via Finset.ext_iff on union_eq      (body-146)
+   └─ region round-trips → 4 branch forward/backward specs  PROVED via Sigma.ext                      (body-147)
+         (mixed_forward = forest_forward = Sigma.ext forward_outer forward_quotient ; backward analog)
+```
+
+So the whole index/cover bijection flows from `ResolvedRegionRoundTripReductionSupply` (body-147), whose residual is
+purely region geometry: the outer union (`leftResidual`/`rightRecovered`/`forestRecovered`/`unionOuter`/`union_eq`),
+the three region tags + `forestRecovered` empty/nonempty, and the two `Sigma`-level round-trips
+(`forward_outer`/`forward_quotient` HEq / `backward_outer`/`backward_choice` HEq).
+
+**Base providers banked (bodies 137/140/148, alongside 124).**  Each recurring base leaf is pinned to one record:
+
+| provider | body | content | status |
+|---|---|---|---|
+| `ResolvedCarrierProperProvider` | 137 | `carrier_isProperForest` | field / `ofFlatForest_isProperForest` for canonical `D` |
+| `ResolvedContractGeometryProvider` | 140 | contract-twice `ResolvedContractTwiceOnceGeometrySupply` | bundles the 27–49 vertex/edge/retarget layer (`vertices_eq` = three-route star corr) |
+| `ResolvedSurvivorRemnantProvider` | 148 | `survivorInj`/`survivorGen`/`remnantInj`/`remnantGen` | banks bodies 125/126; injectivities ⇐ star kernel via `occurrence_inj` |
+| `ResolvedMeasureLeafSupply` | 124 | `cd_nonempty` + `contract_preserves_CD` | 2-field measure record |
+
+**Final residual provider list (the honest floor).**  Every entry is a named local geometry / measure / kernel fact:
+
+* **region geometry** (bodies 145–147): outer union + region tags + the two `Sigma`-level round-trips;
+* **star facts** (body-132, `mixed_avoids_star`/`forest_touches_star`) + `forestChoiceCarrier` membership (body-133);
+* **contract geometry** (body-140 → `vertices_eq`, the three-route star correspondence of bodies 27–32);
+* **measure** (body-124);
+* **star / global-gap kernel** (`ResolvedStarGlobalGapSupply`, powers `survivorInj`/`remnantInj`);
+* **survivor / remnant** (body-148);
+* **base** — `carrier_isProperForest` (body-137), `rep`, `selectedOuter_mem` (body-128 closure).
+
+Superseded / not on the canonical path: the σ-cover common-cover route (bodies 36–87) is the *other* formulation and
+its `cover_on`/`inj_on` are unsatisfiable-as-reused for the outer-mixing route (kept separate, body-139 scout); the
+`boundary_tail_eq` well-founded induction (body-89) is superfluous once the nested-forest bijection is direct.
 
 ---
 

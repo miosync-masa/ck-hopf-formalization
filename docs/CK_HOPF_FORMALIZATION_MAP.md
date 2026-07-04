@@ -883,6 +883,53 @@ the survivor/remnant `Inj`/`Gen` reembed facts, the measure leaf, and the base (
 are complete and axiom-clean; only concrete geometry/reconstruction provider proofs remain.  **Full unconditional
 resolved coassociativity still not claimed complete.**
 
+### R-6c bodies 137–148 — the backward map built, proof-shape complete (2026-07-05)
+
+Bodies 137–148 close the *proof-shape* phase.  The backward reconstruction is built branch-by-branch down to
+region-local geometry, and the recurring base leaves are banked into single provider records.  What remains is a
+finite, named list of local geometry / measure / kernel facts — no structural or proof-shape obligation is left
+anywhere in the coassociativity proof.
+
+- **The backward map is one map, built in two branches (bodies 138–147).**  A scout (body-138) found the decisive
+  type identity `ResolvedCoassocSplitChoice = ForestBlockDomType` (definitionally), so the whole inverse is a single
+  `witnessSplit : (A,B) ↦ (A',p)` — the source split choice `s` is the *output*, not something reconstructed
+  per-component (the apparent per-`s` obstruction dissolves).  This mirrors the flat backward map exactly: one `inv`
+  built from a branch-decision cover.  Body-141 gave `witnessSplit` its concrete branch shape
+  `if resolvedIsForestImage A B then forestPreimage else mixedPreimage` and **proved** the two whole round-trips from
+  four branch-local specs (`apply_dite` + `split_ifs`).  The **mixed** branch (body-142, `B` avoids the star) is the
+  primitive-only relabelling — its `¬ isForestCarryingChoice` tag is proved from the all-`inl` witness; the
+  **forest** branch (body-143, `B` touches the star) is the de-contraction reassembly — its `isForestCarrying` tag
+  is proved from the `∃`-`inr` witness.  Body-144 combines the two branches into the full backward map.  Finally the
+  recovered outer forest is realised as a **three-region union** `A' = leftResidual(A) ∪ rightRecovered(B) ∪
+  forestRecovered(B)` (body-145), from which the branch `p`-tags (body-146, via `Finset.ext_iff` on the union) and
+  the four forward/backward specs (body-147, via `Sigma.ext` on two `Sigma`-level round-trips) are **proved**.  So
+  the entire index/cover bijection now flows from one region-round-trip supply whose residual is purely region
+  geometry.
+- **The base providers are banked (bodies 137/140/148).**  `carrier_isProperForest` (body-137, a field for abstract
+  `D`, a theorem `ofFlatForest_isProperForest` for the canonical carrier), the contract-twice geometry (body-140,
+  bundling the bodies-27–49 vertex/edge/retarget layer whose `vertices_eq` is the three-route star correspondence),
+  and the four survivor/remnant `Inj`/`Gen` leaves (body-148, bundling bodies 125/126; the injectivities rest on the
+  shared star kernel via `occurrence_inj`) are each pinned to one provider record, alongside the measure leaf
+  (body-124).
+
+**Net (bodies 88–148).**  The coassociativity proof is now *entirely* reduced to a short list of named local
+geometry / measure / kernel providers, with all scaffolding in place and axiom-clean:
+
+* **region geometry** — the outer union (`leftResidual` / `rightRecovered` = `componentToRight` / `forestRecovered`
+  = `componentToForest` / `unionOuter` / `union_eq`), the three region tags with `forestRecovered` empty (mixed) /
+  nonempty (forest), and the two `Sigma`-level round-trips (`forward_outer` / `forward_quotient` / `backward_outer` /
+  `backward_choice`);
+* **star facts** (`mixed_avoids_star` / `forest_touches_star`) and `forestChoiceCarrier` membership;
+* **contract geometry** (`vertices_eq`, the three-route star correspondence);
+* **measure** (`cd_nonempty` + `contract_preserves_CD`);
+* **star / global-gap kernel** (`ResolvedStarGlobalGapSupply`, powering the survivor / remnant injectivities);
+* **base** — `carrier_isProperForest`, the representative lift, and `selectedOuter_mem`.
+
+The σ-cover common-cover route (bodies 36–87) is the *other* formulation and stays separate (its `cover_on` /
+`inj_on` are not reused for the outer-mixing route); the `boundary_tail_eq` induction (body-89) is superfluous once
+the nested-forest bijection is direct.  **Full unconditional resolved coassociativity still not claimed complete** —
+but every remaining obligation is a recognised local geometry / measure fact, not proof-shape.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
