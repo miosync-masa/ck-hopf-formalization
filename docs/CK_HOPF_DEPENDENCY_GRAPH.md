@@ -832,6 +832,58 @@ body-162; `union_eq.trans`, body-163); the two heterogeneous ones are kept as na
 So the round-trip proof-shape is entirely closed; the next front is splitting the region partitions
 (`leftOf_promotedOf_partition` / `recovered_region_partition`) into region-local sector facts.
 
+### R-6c bodies 166–168 — the outer partitions split into region facts (2026-07-05)
+
+Bodies 166–168 split the two outer round-trip partitions (bodies 162/163) into region-local facts, so the forward /
+backward outer partitions are now entirely in region vocabulary.  What remains before the sector bridge is exactly
+the region equalities and the target partition.
+
+**Forward outer split (body-167).**  `leftOf ∪ promotedOf = A` (body-162) reduces to three region facts:
+
+```
+leftOf_recovered_eq      (leftOf recovered).elements   = leftResidual z .elements     (inl true)
+promotedOf_recovered_eq  (promotedOf recovered).elements = forestRecovered z .elements  (inr)
+target_outer_partition   (γ ∈ leftResidual ∨ γ ∈ forestRecovered) ↔ γ ∈ A.elements
+```
+
+so `selectedOuterOf(recovered) = leftResidual ⊔ forestRecovered = A` — the `inl false` right-primitive
+(`rightRecovered`) region is *not* in the outer (it went into the quotient `B`).  Proved by `rw` of the region
+equalities into the membership disjunction + the target partition.
+
+**Backward outer split (body-168).**  `leftResidual ∪ rightRecovered ∪ forestRecovered = A'` (body-163) reduces to
+the component membership partition
+
+```
+recovered_region_membership  (γ ∈ leftResidual ∨ γ ∈ rightRecovered ∨ γ ∈ forestRecovered) ↔ γ ∈ A'.elements
+```
+
+— the three recovered regions of the forward image classify `A'`'s components by their tags (`inl true` /
+`inl false` / `inr`).  Proved by `Finset.ext` + `mem_union` + `or_assoc` (membership form used to avoid the
+dependent `q.2 γ` tag).
+
+**Chain.**  Both feed the bijection unchanged:
+
+```
+167 → SelectedOuterPartition (162) → 160 → 154 → 147 → witnessSplit → coassoc_gen
+168 → RecoveredOuterPartition (163) → 160 → 154 → 147 → witnessSplit → coassoc_gen
+```
+
+**Residual (the honest floor now):**
+
+* **region partition facts** — `leftOf_recovered_eq`, `promotedOf_recovered_eq`, `target_outer_partition`
+  (body-167) and `recovered_region_membership` (body-168);
+* **`HEq` transports** — `backward_choice_heq` (body-164), `forward_quotient_heq` (body-165);
+* **sector bridge** — `rightRecovered` / `forestRecovered` are the `componentToRight` / `componentToForest` images
+  (body-156), `representedInQuotient` (body-157), and the sector round-trips linking the region equalities to the
+  `q.2` tags;
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract `vertices_eq`, measure,
+  star/global-gap kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So both outer partitions are region-local; the next front is the **sector bridge** — connecting the region
+equalities (`leftOf = leftResidual`, `rightRecovered`/`forestRecovered` = sector images) to the original choice
+tags, starting with the survivor (`right`) side.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

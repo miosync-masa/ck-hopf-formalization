@@ -1017,6 +1017,24 @@ disjointnesses** and **carrier closure**, the **sector maps** (`componentToRight
 coassociativity still not claimed complete** — the next front is splitting the region partitions into region-local
 sector facts.
 
+### R-6c bodies 166–168 — the outer partitions split into region facts (2026-07-05)
+
+Bodies 166–168 split the two outer round-trip partitions into region-local facts, so both outer partitions are now
+in region vocabulary.  The forward-outer partition `leftOf ∪ promotedOf = A` (body-162) reduces to `leftOf =
+leftResidual`, `promotedOf = forestRecovered`, and `leftResidual ∪ forestRecovered = A` (body-167) — the
+right-primitive region does not contribute to the outer, since it went into the quotient.  The backward-outer
+partition `leftResidual ∪ rightRecovered ∪ forestRecovered = A'` (body-163) reduces to the component membership
+partition — the three recovered regions of the forward image classify the original outer's components by their
+choice tags (body-168).  Both are proved by `Finset.ext` at the membership level.
+
+**Net (bodies 88–168).**  The two outer partitions are region-local; the residual is: the region equalities
+(`leftOf = leftResidual`, `promotedOf = forestRecovered`, the target partition, and the recovered-region
+membership), the two `HEq` transports, the **sector bridge** (`rightRecovered` / `forestRecovered` = the
+`componentToRight` / `componentToForest` images, `representedInQuotient`, and the sector round-trips linking regions
+to the choice tags), the pairwise disjointnesses and carrier closure, the region classifiers, and the non-region
+base.  **Full unconditional resolved coassociativity still not claimed complete** — the next front is the sector
+bridge (starting with the survivor / right side).
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
