@@ -1035,6 +1035,39 @@ to the choice tags), the pairwise disjointnesses and carrier closure, the region
 base.  **Full unconditional resolved coassociativity still not claimed complete** — the next front is the sector
 bridge (starting with the survivor / right side).
 
+### R-6c bodies 169–175 — the sector bridges close, backward trichotomy, forward asymmetry (2026-07-06)
+
+Bodies 170–172 fielded the three **sector bridges** — each recovered region of a *forward image* is exactly a
+choice-tag class of the source split choice `q`: `rightRecovered ↔ inl false`, `forestRecovered ↔ inr`,
+`leftResidual ↔ inl true`.  Body-173 then closed the **backward-outer partition**: rewriting the three bridges into
+the region disjunction turns `recovered_region_membership` into `choice_tag_trichotomy` — the pure statement that
+every component of `q.1` carries exactly one tag, proved by `Sum` / `Bool` case analysis.  So the backward outer is
+no longer fielded; it stands on the three sector bridges plus a proved trichotomy.
+
+Bodies 174/175 opened the **forward-outer partition** and found its two halves are *different in kind*.  Body-174
+**proved** `leftOf_recovered_eq` (`leftOf recovered = leftResidual`) from the region tags alone: `leftOf` is the
+`filter` of the recovered outer by the `inl true` predicate, so it matches `leftResidual` by the same
+`union_eq` case-split + tag-contradiction pattern used for `all_inl` / `exists_inr` — no new geometry.  But
+`promotedOf_recovered_eq` does **not** follow from tags: `promotedOf` is the **de-contracted** promoted forest
+(the `biUnion` of `promote γ Bᵧ`), while `forestRecovered` is the forest-choice **parents** (`componentToForest`
+images) — their equality is a promotion / de-contraction sector round-trip.  Body-175 isolates that as its own
+named geometry leaf `promoted_region_eq`, so the forward-outer residual is now, structurally, **one tag fact
+(proved) + one de-contraction round-trip + one coverage partition**.
+
+> **The key distinction (bodies 174/175).**  `leftOf` is tag-level; `promotedOf` is geometry-level.
+> `promotedOf.elements` is the promoted / de-contracted components, whereas `forestRecovered.elements` is the
+> `componentToForest` **parent** components.  Their equality is a sector promotion / de-contraction round-trip, not
+> a tag lemma — the first place the resolved reconstruction forces a genuinely geometric (non-combinatorial) leaf
+> on the forward side.
+
+**Net (bodies 88–175).**  Backward outer: PROVED to `choice_tag_trichotomy` on the three sector bridges.  Forward
+outer: `leftOf` PROVED from tags, leaving two named leaves — `promoted_region_eq` (de-contraction round-trip) and
+`target_outer_partition` (coverage `leftResidual ∪ forestRecovered = A`).  Plus the two `HEq` transports, the
+sector-bridge internals (`componentToRight` / `componentToForest` round-trips, `representedInQuotient`, `promote`),
+the disjointnesses and carrier closure, the region classifiers, and the non-region base.  **Full unconditional
+resolved coassociativity still not claimed complete** — the next front is `target_outer_partition`, which will
+fully separate the promotion side from the coverage side.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

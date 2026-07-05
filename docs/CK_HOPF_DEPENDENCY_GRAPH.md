@@ -884,6 +884,60 @@ So both outer partitions are region-local; the next front is the **sector bridge
 equalities (`leftOf = leftResidual`, `rightRecovered`/`forestRecovered` = sector images) to the original choice
 tags, starting with the survivor (`right`) side.
 
+### R-6c bodies 169–175 — the sector bridges, backward trichotomy, and the forward asymmetry (2026-07-06)
+
+Bodies 170–172 field the three **sector bridges** (each recovered region ↔ a choice tag on the forward image);
+body-173 assembles the backward-outer partition from them; bodies 174/175 open the forward-outer partition and
+discover that its two halves are *different in kind* — one is tag-level, the other geometry-level.
+
+```text
+sector bridges (fielded, region ↔ q.2 tag on the forward image)
+  right   body-170  rightRecovered (forward q) ↔ rightPrimSelected q   (inl false)
+  forest  body-171  forestRecovered (forward q) ↔ forestChoiceSelected q (inr)
+  left    body-172  leftResidual (forward q)   ↔ leftSelectedConcrete q (inl true)
+
+backward outer (PROVED to trichotomy)
+  body-173  recovered_region_membership
+            = rw the 3 bridges into the disjunction, then choice_tag_trichotomy
+            choice_tag_trichotomy (PROVED): every component of q.1 has exactly one tag
+              (inl true ∨ inl false ∨ inr) ↔ γ ∈ q.1.1.elements   (Sum/Bool case analysis)
+
+forward outer  (asymmetry discovered)
+  body-174  leftOf_recovered_eq       PROVED from tags + union_eq
+              (leftSelection.leftOf recovered).elements = leftResidual z .elements
+              leftOf = filter(leftSelectedConcrete); imageSupply.leftSelection = concrete def,
+              so leftSelected = leftSelectedConcrete; forward = left_tag, backward = union_eq
+              case-split with right_tag/forest_tag contradictions  (the all_inl/exists_inr pattern)
+  body-174  promotedOf_recovered_eq   does NOT follow from tags — fielded
+  body-175  promoted_region_eq        isolated as its own de-contraction geometry leaf
+```
+
+**The asymmetry (the body-174/175 finding).**  `leftOf` is **tag-level**: it is the `filter` of the recovered
+outer by the `inl true` predicate, so it matches `leftResidual` by a pure region-tag argument (no new fielding).
+`promotedOf` is **geometry-level**: `promotedOf recovered .elements = recovered.promotedElements` is the
+**de-contracted** promoted forest (the `biUnion` over the forest-tagged components of `(promote γ Bᵧ).elements`),
+whereas `forestRecovered z .elements` is the forest-choice **parents** (`componentToForest` images of the remnant
+components).  Their equality is a **sector promotion / de-contraction round-trip**, not a tag lemma — so it stays
+fielded, now as the named leaf `promoted_region_eq` (body-175).
+
+**Residual (the honest floor now):**
+
+* **forward-outer, two leaves** — `promoted_region_eq` (body-175, promotion / de-contraction round-trip) and
+  `target_outer_partition` (`leftResidual ∪ forestRecovered = A`, the star-touch / remnant coverage);
+* **backward-outer** — PROVED to `choice_tag_trichotomy` (body-173), standing on the three sector bridges
+  (bodies 170/171/172);
+* **`HEq` transports** — `backward_choice_heq` (body-164), `forward_quotient_heq` (body-165);
+* **sector bridge internals** — the `componentToRight` / `componentToForest` round-trips inside the three bridges,
+  `representedInQuotient` (body-157), the `promote` de-contraction for `promoted_region_eq`;
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract `vertices_eq`, measure,
+  star/global-gap kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the backward outer is proved down to the trichotomy, and the forward outer is cleanly split into a tag half
+(PROVED) and a geometry half (`promoted_region_eq`) plus coverage (`target_outer_partition`); the next front is
+`target_outer_partition` — the "`A`'s components are exactly `leftResidual` or forest/remnant-represented"
+coverage — which fully separates the promotion side from the coverage side.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
