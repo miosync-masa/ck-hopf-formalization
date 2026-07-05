@@ -788,6 +788,50 @@ element partitions `selectedOuter_partition` (`selectedOuterOf(recovered).elemen
 So the region construction is fully localised; the next front is the element partition proofs (from `A = leftResidual
 ∪ represented` and the `selectedOuterOf` region decomposition) and the sector round-trips.
 
+### R-6c bodies 161–165 — the four round-trips localised (2026-07-05)
+
+Bodies 161–165 close the round-trip proof-shape: each of body-160's four round-trip obligations is reduced to a
+single region partition or region-`HEq` leaf.  After this pass no round-trip is opaque — all four are named local
+region facts, and the residual is the region partitions, the two `HEq` transports, and the pairwise / carrier /
+sector / base geometry.
+
+**The four round-trips, localised.**  Each is reduced to its region content:
+
+| round-trip | body | reduced form |
+|---|---|---|
+| forward outer (A-reconstruction) | 162 | `selectedOuterOf(recovered).elements = A.elements` via `selectedOuterOf = leftOf ⊔ promotedOf` (`selectedOuter_mem_iff` PROVED), then the `leftOf ∪ promotedOf = A` partition |
+| backward outer (A'-recovery) | 163 | `unionOuter(forward).elements = A'.elements` via body-145's `union_eq`, then the `leftResidual ∪ rightRecovered ∪ forestRecovered = A'` region partition |
+| backward choice (p-recovery) | 164 | the `HEq (recoverChoice(forward)) q.2` leaf — region tags read back |
+| forward quotient (B-reconstruction) | 165 | the `HEq (quotientForest(recovered)) B` leaf — survivors ⊔ remnants reconstruct `B` |
+
+The two outer round-trips are **proved** from element partitions (`Subtype.ext` +
+`ResolvedAdmissibleSubgraph.ext_elements`, body-160; `selectedOuter_mem_iff` via `simp` at the membership level,
+body-162; `union_eq.trans`, body-163); the two heterogeneous ones are kept as named region-`HEq` leaves (bodies
+164/165), their region-tag / survivor-remnant meaning documented.
+
+**The chain (all axiom-clean).**  These feed the bijection unchanged:
+
+```
+162 (selectedOuter_partition) / 163 (recoveredOuter_partition) / 164 (backward_choice) / 165 (forward_quotient)
+   → RoundTripComponentPartition (160) → ConcreteRoundTripObligations (154) → RegionRoundTripReduction (147)
+   → WitnessSplitBranchCombiner (144) → WitnessSplitConcrete (141) → WitnessSplitCoverSupply (139)
+   → BijectionProvider (131) → coassoc_gen
+```
+
+**Residual (the honest floor now):**
+
+* **region partitions** — `leftOf_promotedOf_partition` (body-162, `leftOf ∪ promotedOf = A`) and
+  `recovered_region_partition` (body-163, `leftResidual ∪ rightRecovered ∪ forestRecovered = A'`);
+* **`HEq` transports** — `backward_choice_heq` (body-164) and `forward_quotient_heq` (body-165), the dependent
+  transports across the outer / contract-graph equalities;
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **sector maps** (body-156) and `representedInQuotient` (body-157);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract `vertices_eq`, measure,
+  star/global-gap kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the round-trip proof-shape is entirely closed; the next front is splitting the region partitions
+(`leftOf_promotedOf_partition` / `recovered_region_partition`) into region-local sector facts.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

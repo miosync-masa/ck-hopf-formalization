@@ -993,6 +993,30 @@ the **sector maps** (`componentToRight` / `componentToForest` + their well-forme
 the **region classifiers**, and the non-region base.  **Full unconditional resolved coassociativity still not
 claimed complete** — the next front is the element partition proofs and the sector round-trips.
 
+### R-6c bodies 161–165 — the four round-trips localised (2026-07-05)
+
+Bodies 161–165 close the round-trip proof-shape.  Each of the four round-trip obligations is reduced to a single
+region partition or region-`HEq` leaf, so no round-trip is opaque any more.  The two OUTER round-trips are proved
+from element partitions; the two heterogeneous ones (quotient / choice) are pinned as named region leaves.
+
+- **Forward outer (A-reconstruction, body-162).**  `selectedOuterOf(recovered).elements = A.elements` reduces,
+  via the structural `selectedOuterOf = leftOf ⊔ promotedOf` membership (proved by unfolding + `Finset.mem_union`),
+  to the single partition `leftOf ∪ promotedOf = A` — the left-selected components plus the promoted forests are `A`.
+- **Backward outer (A'-recovery, body-163).**  `unionOuter(forward).elements = A'.elements` reduces, via the union's
+  `union_eq`, to the region partition `leftResidual ∪ rightRecovered ∪ forestRecovered = A'` — the three regions of
+  the forward image reconstruct the original outer.
+- **Backward choice / forward quotient (bodies 164/165).**  The two heterogeneous round-trips are pinned as named
+  region-`HEq` leaves: `recoverChoice(forward) = q.2` (the region tags read back recover the original choice) and
+  `quotientForest(recovered) = B` (the survivor / remnant regions reconstruct `B`).
+
+**Net (bodies 88–165).**  The entire round-trip proof-shape is closed.  The residual is now a short list of local
+region / sector / base facts: the two **region partitions** (`leftOf ∪ promotedOf = A`, `leftResidual ∪
+rightRecovered ∪ forestRecovered = A'`), the two **`HEq` transports** (choice / quotient), the **pairwise
+disjointnesses** and **carrier closure**, the **sector maps** (`componentToRight` / `componentToForest`) with
+`representedInQuotient`, the **region classifiers**, and the non-region base.  **Full unconditional resolved
+coassociativity still not claimed complete** — the next front is splitting the region partitions into region-local
+sector facts.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
