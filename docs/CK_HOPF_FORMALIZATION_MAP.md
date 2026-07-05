@@ -966,6 +966,33 @@ regions), the **region classifiers** (survivors-avoid-star / remnant-touches-sta
 kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).  **Full unconditional
 resolved coassociativity still not claimed complete** — the next front is the region contents proper.
 
+### R-6c bodies 155–160 — the region contents built (2026-07-05)
+
+Bodies 155–160 build the three regions concretely and reduce the union assembly and the outer round-trips to their
+element-level content.  After this pass every region has an explicit `Finset`-of-components shape, and the only
+open region obligations are the two element partitions, the two heterogeneous quotient / choice round-trips, the
+pairwise disjointnesses, and the carrier closure.
+
+- **The three regions, concrete (bodies 156/157).**  For `z = (A, B)` (with `B` split by the outer star into
+  survivors and remnants), `rightRecovered` / `forestRecovered` are the `ofElements` images of the survivor /
+  remnant components under the sector backward maps `componentToRight` / `componentToForest`, and `leftResidual`
+  is the filter of `A`'s components by "not represented in `B`".  All three element shapes hold by `rfl`; this is
+  the backward mirror of the forward survivor forest.
+- **The union assembly reduced (bodies 158/159).**  The union's two cross-disjointnesses reduce to the three
+  pairwise region disjointnesses, and its carrier membership is pinned to a single named leaf (`recovered_outer_mem`),
+  parallel to `selectedOuter_mem` — a theorem for a canonical carrier, a genuine primitive for an abstract one.
+- **The outer round-trips reduced to element equalities (body-160).**  The two `{A // A ∈ carrier}` round-trips
+  (`forward_outer` / `backward_outer`) are proved from the element partitions `selectedOuterOf(recovered) = A` and
+  `unionOuter(forward) = A'` (`Subtype.ext` + `ResolvedAdmissibleSubgraph.ext_elements`); the two heterogeneous
+  quotient / choice round-trips (`forward_quotient` / `backward_choice`) are kept as fielded `HEq`.
+
+**Net (bodies 88–160).**  The region construction is fully localised.  The residual is: the two **element
+partitions** (`selectedOuterOf(recovered) = A`, `unionOuter(forward) = A'`), the two **heterogeneous round-trips**
+(quotient / choice, each needing the sector round-trip), the **pairwise disjointnesses** and **carrier closure**,
+the **sector maps** (`componentToRight` / `componentToForest` + their well-formedness) and `representedInQuotient`,
+the **region classifiers**, and the non-region base.  **Full unconditional resolved coassociativity still not
+claimed complete** — the next front is the element partition proofs and the sector round-trips.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

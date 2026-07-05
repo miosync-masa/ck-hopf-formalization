@@ -741,6 +741,53 @@ So the bijection's proof-shape is entirely closed; the next front is the region 
 `rightRecovered` / `forestRecovered` from the sector backward maps (`componentToRight` / `componentToForest`) and
 `leftResidual` from the "not represented in `B`" filter, then discharging the four round-trip decompositions.
 
+### R-6c bodies 155–160 — the region contents built (2026-07-05)
+
+Bodies 155–160 build the three regions concretely and reduce the union assembly and outer round-trips to their
+element-level content.  Every region now has an explicit `Finset`-of-components shape; the residual is exactly the
+element partitions, the pairwise disjointnesses, the carrier closure, and the two heterogeneous quotient / choice
+round-trips.
+
+**The three regions, concrete (bodies 156/157).**  For `z = (A, B)` (`A = z.1`, `B = z.2` over
+`A.1.contractWithStars`, split by the outer star `starOfZ z = z.1.1.starVertices (starOf G z.1.1)`):
+
+```
+rightRecovered  z = ofElements ((rightDomain z).attach.image  (componentToRight  z)) …   (body-156, survivors of B)
+forestRecovered z = ofElements ((forestDomain z).attach.image (componentToForest z)) …   (body-156, remnants of B)
+leftResidual    z = z.1.1.filterElements (fun γ => ¬ representedInQuotient z γ)          (body-157, A not represented)
+```
+
+with `rightRecovered_elements_eq` / `forestRecovered_elements_eq` / `leftResidual_elements_eq` all `rfl`
+(`ofElements_elements` / `filterElements_elements`).  This is the backward mirror of the forward survivor forest
+(body-125).
+
+**The union assembly reduced (bodies 158/159).**  The two union cross-disjointnesses reduce to the three pairwise
+region disjointnesses — `hcross_lr = left_right_disjoint`, `hcross_lrf` by `union_elements` + `mem_union`
+case-split (body-158) — and the union's carrier membership is pinned to a single named leaf `recovered_outer_mem`
+(body-159), parallel to `selectedOuter_mem` (body-128): a theorem for a canonical carrier, a genuine primitive for
+an abstract parametric `D.carrier`.
+
+**The outer round-trips reduced to element equalities (body-160).**  `forward_outer` / `backward_outer` (the two
+`{A // A ∈ carrier}` round-trips) are proved by `Subtype.ext` + `ResolvedAdmissibleSubgraph.ext_elements` from the
+element partitions `selectedOuter_partition` (`selectedOuterOf(recovered).elements = A.elements`) and
+`recoveredOuter_partition` (`unionOuter(forward).elements = A'.elements`); the two heterogeneous `forward_quotient`
+/ `backward_choice` round-trips are kept as fielded `HEq`.
+
+**Residual region leaves (the honest floor now):**
+
+* **element partitions** (body-160) — `selectedOuter_partition` (A = recovered selected outer) and
+  `recoveredOuter_partition` (A' = reconstruction of forward image), at the `Finset`-of-components level;
+* **heterogeneous round-trips** (body-160) — `forward_quotient` (B-reconstruction) and `backward_choice`
+  (p-recovery), each needing the sector `componentToRight` / `componentToForest` round-trip;
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **sector maps** (body-156, `componentToRight` / `componentToForest` + their `CD` / disjointness) and
+  `representedInQuotient` (body-157, its equality with the sector-map images);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract `vertices_eq`, measure,
+  star/global-gap kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the region construction is fully localised; the next front is the element partition proofs (from `A = leftResidual
+∪ represented` and the `selectedOuterOf` region decomposition) and the sector round-trips.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
