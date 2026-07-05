@@ -690,6 +690,57 @@ Superseded / not on the canonical path: the σ-cover common-cover route (bodies 
 its `cover_on`/`inj_on` are unsatisfiable-as-reused for the outer-mixing route (kept separate, body-139 scout); the
 `boundary_tail_eq` well-founded induction (body-89) is superfluous once the nested-forest bijection is direct.
 
+### R-6c bodies 149–154 — the region geometry localised (2026-07-05)
+
+Bodies 149–154 drive the backward map's remaining content down to the **three concrete regions** and four
+round-trip facts.  The membership classifiers and the union/tag machinery are proved; what is left is exactly the
+region contents (from the sector maps) and the four `selectedOuterOf`/`quotientForest` region decompositions.
+
+**Region geometry chain (all axiom-clean).**  The bijection now flows through the concrete region layer:
+
+```
+ResolvedOuterUnionRegionsConcreteSupply   (body-153: unionOuter = (left ∪ right) ∪ forest, union_eq PROVED)
+   .toOuterUnionConstructionSupply → ResolvedOuterUnionConstructionSupply (body-145)
+ResolvedRegionTagDefinitionSupply         (body-152: recoverChoice = region-priority dite, 3 tags PROVED)
+   .toRegionChoiceRoundTripSupply → ResolvedRegionChoiceRoundTripSupply (body-146)
+ResolvedConcreteRoundTripObligationSupply (body-154: 4 named round-trips A/B/A'/p)
+   .toRegionRoundTripReductionSupply → ResolvedRegionRoundTripReductionSupply (body-147)
+      → WitnessSplitBranchCombiner (144) → WitnessSplitConcrete (141) → WitnessSplitCoverSupply (139)
+      → BijectionProvider (131) → coassoc_gen
+```
+
+Classifiers proved from the region data:
+
+* `mixed_avoids_star` / `forest_touches_star` (body-150) — the `toFun_mem` star facts, from `survivor_avoids` +
+  `mixed_remnant_empty` (mixed, PROVED via the summand bundle's `union_eq`) and `forest_quotient_touch` (forest);
+* `mixed_inv_tag` / `forest_inv_tag` (body-151) — the `invFun_mem` `p`-tags: `forestChoiceCarrier` membership is
+  `piCarrier` membership (**always** true) + non-extremality; forest side PROVED from the `inr` witness, mixed side
+  from the primitive-mixture nontriviality; and the three region tags (body-152) are PROVED from the region-priority
+  `recoverChoice`.
+
+**What is proved / banked (the whole classifier + assembly layer):** the four membership fields (`toFun_mem` /
+`invFun_mem` plumbing, bodies 132/133/150/151); the three region tags (body-152); `union_eq` (body-153, via
+`Finset.ext` + `union_elements`, absorbing the `Finset` `DecidableEq` instance diamond); the summand-agreement bundle
+(body-129); the survivor/remnant provider (body-148).
+
+**Residual region providers (the honest floor now):**
+
+* **region construction** (body-153) — the three region forests `leftResidual` ("not represented in `B`"),
+  `rightRecovered` (`componentToRight` image), `forestRecovered` (`componentToForest` image), plus the two
+  cross-disjointnesses and the carrier membership;
+* **round-trips** (body-154) — `forward_outer` (A-reconstruction), `forward_quotient` (B-reconstruction),
+  `backward_outer` (A'-recovery), `backward_choice` (p-recovery) — the `selectedOuterOf` / `quotientForest` region
+  decompositions;
+* **classifiers** (bodies 150/151/152) — `survivor_avoids` / `mixed_remnant_empty` / `forest_quotient_touch` (star),
+  `mixed_ne_pR` / `mixed_ne_pL` (mixed non-extremality), the forest-index map `forestTag` and the region
+  exclusivities;
+* plus the non-region base — contract `vertices_eq`, measure, star/global-gap kernel, survivor/remnant Inj/Gen, and
+  `carrier_isProperForest` / `rep` / `selectedOuter_mem`.
+
+So the bijection's proof-shape is entirely closed; the next front is the region contents proper — constructing
+`rightRecovered` / `forestRecovered` from the sector backward maps (`componentToRight` / `componentToForest`) and
+`leftResidual` from the "not represented in `B`" filter, then discharging the four round-trip decompositions.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

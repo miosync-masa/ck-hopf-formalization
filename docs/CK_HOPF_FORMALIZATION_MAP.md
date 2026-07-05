@@ -930,6 +930,42 @@ The σ-cover common-cover route (bodies 36–87) is the *other* formulation and 
 the nested-forest bijection is direct.  **Full unconditional resolved coassociativity still not claimed complete** —
 but every remaining obligation is a recognised local geometry / measure fact, not proof-shape.
 
+### R-6c bodies 149–154 — the region geometry localised (2026-07-05)
+
+Bodies 149–154 localise the backward map's remaining content onto the **three concrete regions** of the recovered
+outer forest and four round-trip facts, and prove out the classifier / assembly layer.  After this pass the only
+open obligations are the region contents themselves (built from the sector backward maps) and the four
+`selectedOuterOf` / `quotientForest` region decompositions.
+
+- **The recovered outer as a concrete union (body-153).**  The recovered outer forest is the literal
+  admissible-forest union `A' = (leftResidual ∪ rightRecovered) ∪ forestRecovered`, and its elements decomposition
+  `union_eq` is **proved** (`Finset.ext` + `union_elements`, absorbing a `Finset` `DecidableEq` instance diamond).
+  The three regions are named by their sources: `rightRecovered` = the survivors of `B` pulled back by the sector
+  `componentToRight`, `forestRecovered` = the remnants of `B` pulled back by `componentToForest`, `leftResidual` =
+  the components of `A` not represented by `B`.
+- **The choice tagging made definitional (body-152).**  `recoverChoice` is the region-priority function
+  `leftResidual ↦ inl true`, `rightRecovered ↦ inl false`, `forestRecovered ↦ inr Bᵧ`, so body-146's three region
+  tags are **proved** from the definition (given the regions are mutually exclusive on each component).
+- **The classifiers proved from the region data (bodies 150/151).**  The `toFun_mem` star facts reduce to
+  "survivors avoid the star" + "the remnant is empty in the mixed case" (mixed, proved via the summand bundle's
+  `union_eq`) and a touching remnant (forest).  The `invFun_mem` `p`-tags reduce to `forestChoiceCarrier`
+  membership = `piCarrier` membership (**always** true, since every choice value is a valid local choice) plus
+  non-extremality; the forest side is proved outright from the `inr` witness, the mixed side reduces to the
+  primitive-mixture nontriviality.  So all four membership fields of the bijection provider are now local classifier
+  facts.
+- **The round-trips named as region facts (body-154).**  The two `Sigma`-level round-trips are isolated into four
+  named obligations — A-reconstruction (`forward_outer`), B-reconstruction (`forward_quotient`), A'-recovery
+  (`backward_outer`), p-recovery (`backward_choice`) — each local to the three regions.
+
+**Net (bodies 88–154).**  The entire proof-shape of `Δᵣ`-coassociativity is complete and axiom-clean, and the
+backward map is localised onto three concrete regions.  The residual is: the **region construction** (the three
+region forests from the sector maps + the "not represented" filter, their cross-disjointnesses and carrier
+membership), the **four round-trip decompositions** (`selectedOuterOf` / `quotientForest` restricted to the
+regions), the **region classifiers** (survivors-avoid-star / remnant-touches-star / mixed non-extremality /
+`forestTag` / region exclusivities), and the non-region base (contract `vertices_eq`, measure, star/global-gap
+kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).  **Full unconditional
+resolved coassociativity still not claimed complete** — the next front is the region contents proper.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
