@@ -1195,6 +1195,30 @@ carrier closure, the region classifiers, and the non-region base.  **Full uncond
 still not claimed complete** — the next front is the `parent_recovered` scout (the sector forest round-trip /
 occurrence parent injectivity).
 
+### R-6c bodies 202–208 — all four round-trips reduced to local bridges (2026-07-06)
+
+Bodies 202–208 finish reducing the resolved coassociativity backward-map round-trip to local sector bridges.
+Body-202 collapsed the backward-choice `parent_recovered` to `rfl` (the recovered occurrence is body-171's forest
+bridge witness, so its parent is definitionally `γ`).  Bodies 203–208 reduced the forward-quotient `HEq`: a `ForestIdx`
+transport (`heq_forestIdx`) over the already-proved ambient partition takes it to a component-Finset `HEq`, the
+survivor ⊔ remnant `union_eq` split and the star `filter` split take that to the two membership bridges `survivor_mem`
+/ `remnant_mem`, and body-208 assembled them out to body-165.
+
+> **All four round-trips at their floor (bodies 88–208).**  Every round-trip obligation of the backward map now
+> consumes only *local* sector / compatibility bridges: backward outer → the three sector bridges + a proved
+> trichotomy; forward outer → the compatibility leaves; backward choice → `parent_recovered = rfl` from the forest
+> bridge; forward quotient → the survivor / remnant membership bridges.  The `witnessSplit` round-trip proof-shape is
+> complete — **no global `HEq` or `Sigma` proof-shape remains.**
+
+**Net (bodies 88–208).**  The resolved-coassociativity backward map is closed to local bridges.  The remaining
+genuine content is: the **sector bridge internals** (left / right / forest, bodies 170/171/172, and the
+recovered-side `survivor_mem` / `remnant_mem`, bodies 206/207 — the `componentToRight` / `componentToForest`
+round-trips); the **forward compatibility** (`forestTag` / `recoverChoice_forest_eq` / `promote_collapse`,
+`forestComponentMem`, `represented_cases`); the disjointnesses and carrier closure; the region classifiers; and the
+non-region base (contract geometry, measure, survivor/remnant `Inj`/`Gen`, carrier-proper / `rep` /
+`selectedOuter_mem`).  **Full unconditional resolved coassociativity still not claimed complete** — the next front is
+the sector bridge internals, starting with the lighter survivor / right side.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

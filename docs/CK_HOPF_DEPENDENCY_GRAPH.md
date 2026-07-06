@@ -1198,6 +1198,54 @@ So the backward-choice is closed to the forest parent recovery; the next front i
 the sector forest round-trip (`componentToForest (fwdMap q)` recovering the original `γ`, i.e. occurrence parent
 injectivity).
 
+### R-6c bodies 202–208 — all four round-trips reduced to local bridges (2026-07-06)
+
+Bodies 202–208 drive the last two round-trip leaves — the backward-choice `parent_recovered` and the
+forward-quotient `HEq` — down to local sector bridges, so **all four round-trip obligations of the resolved
+coassociativity backward map now consume only local sector / compatibility bridges**.
+
+```text
+backward outer    170/171/172 + 173     floor: three sector bridges + choice_tag_trichotomy (proved)
+forward outer     190                    floor: compatibility leaves (188/185/180) + region constructions
+backward choice   202 → 200 → 199        floor: parent_recovered = rfl from the forest bridge (171)
+forward quotient  206/207 → 208          floor: survivor_mem + remnant_mem (the duals of 170/171)
+```
+
+**Backward choice (bodies 202/200/199).**  `parent_recovered : occ.γ = γ` **collapses to `rfl`** — the recovered
+forest-choice occurrence is read straight off body-171's `forestRecovered_forward_membership` witness, so its
+parent is definitionally `γ`.  The whole backward-choice `HEq` (through `heq_of_index_eq`, the tag cases, and the
+occurrence) rests on the three sector bridges.
+
+**Forward quotient (bodies 203–208).**  The `HEq` of two `ForestIdx` over different contract-with-stars graphs
+reduces (via `heq_forestIdx` + the already-proved ambient transport `selectedOuter_partition`) to a `HEq` of the
+component Finsets, then (via `heq_of_membership_split` / `heq_finset_of_mem_iff` + the `union_eq` survivor ⊔ remnant
+split and the star `filter` split) to the two membership bridges `survivor_mem` / `remnant_mem` — the recovered-side
+survivor / remnant sector bridges, duals of bodies 170/171.
+
+**Canonical chains.**
+
+```text
+backward choice   202 → 200 → 198 → 196 → 194 → 193 → 164 → 160 → 154 → 147 → witnessSplit → coassoc_gen
+forward quotient  208 → 206/207 → 204 → 203 → 165 → 160 → 154 → 147 → witnessSplit → coassoc_gen
+```
+
+**Main statement.**  The `witnessSplit` round-trip proof-shape is complete: all four round-trip obligations now
+consume only local sector / compatibility bridges — no global `HEq` or `Sigma` proof-shape remains.
+
+**Residual (the honest floor now):**
+
+* **sector bridge internals** — the left / right / forest bridges (bodies 170/171/172, `componentToRight` /
+  `componentToForest` round-trips) and the recovered-side `survivor_mem` / `remnant_mem` (bodies 206/207);
+* **forward compatibility** — `forestTag` / `recoverChoice_forest_eq` / `promote_collapse` (body-188),
+  `forestComponentMem` (body-185), `represented_cases` (body-180);
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract geometry `vertices_eq`, measure,
+  survivor/remnant `Inj`/`Gen`, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the round-trip proof-shape is entirely closed to local bridges; the next front is the **sector bridge internals**,
+starting with the lighter survivor / right side (`survivor_mem` / `rightRecovered_forward_membership`), leaving the
+heavier remnant / forest side for later.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
