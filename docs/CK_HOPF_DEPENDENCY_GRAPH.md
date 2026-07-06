@@ -1150,6 +1150,54 @@ Bodies 192–194 retire the backward-choice `HEq` mismatch and drive its content
 So the backward-choice `HEq` is retired to `forest_value_eq`; the next front is the **`forest_value_eq` scout** — the
 choice-value de-contraction relating `recoverChoice`'s `forestTag` on a forward image to `q`'s original forest index.
 
+### R-6c bodies 196–200 — the backward-choice closed to a forest parent recovery (2026-07-06)
+
+Bodies 196–200 drive the backward-choice residual all the way down to a single homogeneous geometry leaf — the
+milestone `body-200`.
+
+```text
+196  forest_value_eq split — recoverChoice tag pinning (body-188 pattern) + forestTag_forward_eq
+       (forestTag_fwd = B, the genuinely fresh forward-forest coherence).
+197  forward-quotient recovery scout — verdict: forestTag_forward_eq and forward_quotient_heq are DUAL siblings
+       (domain q vs codomain z), NOT the same leaf; attack separately (they share only the remnant kernel).
+198  forestTag_forward_eq reduced — Sum.inr.inj ⟹ forest_choiceAt_eq (q.2 γ = inr forestTag_fwd).
+199  backward-choice final leaf — the whole backward_choice_heq chain (198 → 196 → 194 → 193 → 164) supplied by
+       forest_choiceAt_eq + the reused tags / bridges / index transport.
+200  occurrence recovery — forest_choiceAt_eq PROVED: a forest-region component γ is the parent of a recovered
+       occurrence occ (carrying occ.hchoice : choiceAt q occ.γ = inr occ.B for free); with the fielded
+       parent_recovered : occ.γ = γ, heq_transport_choice (cases the parent Eq, then occ.hchoice) closes it.
+```
+
+**Canonical chain.**
+
+```text
+200 → 198 → 196 → 194 → 193 → 164 → 160 → 154 → 147 → witnessSplit → coassoc_gen
+```
+
+**The remaining backward-choice geometry** is no longer an `HEq` or a choice-value abstraction — it is the
+homogeneous **parent recovery**
+
+```text
+parent_recovered : occ.γ = γ
+```
+
+an `Eq` of outer components (the forward round-trip parent identity), plus the occurrence construction.
+
+**Residual (the honest floor now):**
+
+* **backward-choice** — the single homogeneous `parent_recovered` (`occ.γ = γ`) + the occurrence construction;
+* **forward-quotient** — `forward_quotient_heq` (the dual, heavier `ForestIdx` reconstruction, untouched);
+* **forward outer** — closed to the compatibility leaves (bodies 188/185/180);
+* **backward outer** — the three sector bridges (bodies 170/171/172), proved up to `choice_tag_trichotomy` (body-173);
+* **sector bridge internals** — the `componentToRight` / `componentToForest` round-trips, `representedInQuotient`;
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract `vertices_eq`, measure,
+  star/global-gap kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the backward-choice is closed to the forest parent recovery; the next front is the **`parent_recovered` scout** —
+the sector forest round-trip (`componentToForest (fwdMap q)` recovering the original `γ`, i.e. occurrence parent
+injectivity).
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

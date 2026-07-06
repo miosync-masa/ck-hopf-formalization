@@ -1171,6 +1171,30 @@ proved trichotomy.  Backward-choice: retired to `forest_value_eq`.  Remaining: `
 and the non-region base.  **Full unconditional resolved coassociativity still not claimed complete** — the next front
 is the `forest_value_eq` scout (the choice-value de-contraction).
 
+### R-6c bodies 196–200 — the backward-choice closed to a forest parent recovery (2026-07-06)
+
+Bodies 196–200 drive the backward-choice residual all the way down to a single homogeneous geometry leaf — the
+milestone body-200.  Body-196 split `forest_value_eq` into the body-188 tag pinning plus the fresh
+`forestTag_forward_eq`; body-197 scouted whether that shares a root with `forward_quotient_heq` and found them
+**dual** (domain-`q` vs codomain-`z` siblings) — attack separately; body-198 reduced `forestTag_forward_eq` by
+`Sum.inr.inj` to the choice-value identity `forest_choiceAt_eq`; body-199 wired the whole backward-choice chain down
+to that leaf; and body-200 **proved** `forest_choiceAt_eq` from a recovered forest-choice occurrence.
+
+> **Backward-choice, closed (bodies 192–200).**  The heterogeneous `backward_choice_heq` is now supplied by a single
+> homogeneous `Eq` of outer components — the forward round-trip **parent recovery** `parent_recovered : occ.γ = γ` —
+> plus the occurrence construction.  A forest-region component `γ` of the forward image is the parent of a recovered
+> occurrence `occ` carrying its own choice witness `occ.hchoice : choiceAt q occ.γ = inr occ.B`; the dependent
+> `ForestIdx` transport `heq_transport_choice` (a `cases` on the parent `Eq`) then closes `forest_choiceAt_eq`.  No
+> `HEq`, no choice-value abstraction remains — just Feynman-graph geometry.  Verified: `200 → 198 → 196 → 194 → 193
+> → 164`.
+
+**Net (bodies 88–200).**  Forward outer: closed to compatibility leaves.  Backward outer: three sector bridges + a
+proved trichotomy.  Backward-choice: closed to `parent_recovered` (`occ.γ = γ`) + the occurrence construction.
+Remaining: `parent_recovered`, the dual `forward_quotient_heq`, the sector-bridge internals, the disjointnesses and
+carrier closure, the region classifiers, and the non-region base.  **Full unconditional resolved coassociativity
+still not claimed complete** — the next front is the `parent_recovered` scout (the sector forest round-trip /
+occurrence parent injectivity).
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
