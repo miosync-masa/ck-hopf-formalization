@@ -1098,6 +1098,32 @@ and carrier closure, the region classifiers, and the non-region base.  **Full un
 still not claimed complete** — the next front is the forest-recovery geometry (the `componentToForest` inverse /
 promotion de-contraction), the genuinely geometric remaining leaf of the outer partition.
 
+### R-6c bodies 183–186 — the forest-recovery deep leaf isolated (2026-07-06)
+
+Bodies 183–186 open the forest-recovery box and drive it down to a single geometric obstruction, split into two
+inclusions.  Body-183 split the box into three leaves (`forestRecovered_eq`, `parent_mem_carrier`,
+`promoted_eq_forestRecovered`) and proved the glue.  Body-184 made `forestRecovered_eq` (and body-178's
+`leftResidual_eq`) `rfl` by *building* the outer union from the concrete region constructions — closing the
+abstract-union ↔ concrete-construction gap by construction.  Body-185 reduced `parent_mem_carrier` to a
+componentwise membership (each `componentToForest` parent lands in `A`).  Body-186 audited and split the deep leaf.
+
+> **The forest-recovery deep leaf (body-186).**  `(promotedOf recovered).elements = (forestRecovered z).elements`
+> is *not* supplied by the sector inverse laws alone.  Sector inverse relates `componentToForest` to the
+> quotient-side remnant components (`forestToComponent` / `remnantComponent`); it does **not** connect
+> `componentToForest` with `promote` / de-contraction into `G`.  The remaining proof therefore requires concrete
+> `componentToForest` / `forestTag` / `promote` compatibility — the genuinely fresh geometric fact.  It splits into
+> `forestRecovered_subset_promoted` (light: a parent is a de-contracted component of its own promoted subforest) and
+> `promoted_subset_forestRecovered` (heavy: every de-contracted component is a forest parent), with the equality
+> proved by `Finset.Subset.antisymm`.
+
+**Net (bodies 88–186).**  The forward-outer geometry is one leaf in two inclusions, gated on making
+`componentToForest` / `promote` concrete; the forest membership (`forestComponentMem`) and the classifier
+(`represented_cases`) sit beside it.  Backward outer: the three sector bridges + a proved trichotomy.  Plus the two
+`HEq` transports, the disjointnesses and carrier closure, the region classifiers, and the non-region base.  **Full
+unconditional resolved coassociativity still not claimed complete** — the next front is the `componentToForest`
+concretization scout (how far it can be made concrete from `ForestPrimitiveIndex.toOccurrence` / `forest_surj` /
+`Classical.choose`) before the inclusion proofs.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

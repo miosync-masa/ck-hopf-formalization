@@ -992,6 +992,65 @@ trichotomy, and the forward outer on the forest-recovery geometry + the classifi
 **forest-recovery geometry** — the `componentToForest` inverse / promotion de-contraction — the genuinely geometric
 remaining leaf of the outer partition.
 
+### R-6c bodies 183–186 — the forest-recovery deep leaf isolated (2026-07-06)
+
+Bodies 183–186 open the forest-recovery box (body-179) and drive it down to a single geometric obstruction split
+into two inclusions.  Body-183 split the box into three leaves; bodies 184/185 discharged the two shallow ones; body
+-186 audited and split the deep one.
+
+```text
+body-183  forest-recovery box split into three leaves:
+            forestRecovered_eq            (abstract union region ↔ body-156 componentToForest image)
+            parent_mem_carrier            (a forest parent lands in A)
+            promoted_eq_forestRecovered   (the deep de-contraction round-trip)
+          with representedByForest := γ ∈ Construction.forestRecovered; forestRecovered_mem /
+          promoted_region_eq PROVED from the leaves → body-179's supply.
+
+body-184  forestRecovered_eq (and body-178's leftResidual_eq) become rfl by BUILDING the outer union from
+          the concrete region constructions (body-156 right/forest + body-157 left); the abstract-union ↔
+          concrete-construction gap is closed by construction, not fielded.
+
+body-185  parent_mem_carrier reduced to the componentwise membership forestComponentMem
+          (each componentToForest parent ∈ A), the parent leaf read off by Finset.mem_image.
+
+body-186  promoted_eq_forestRecovered split into two inclusions (antisymm):
+            forestRecovered_subset_promoted   LIGHT — a parent is a de-contracted component of its own
+                                              promoted subforest (forest_tag + promotedComponentElements_inr
+                                              + promote_elements + forestRecovered_elements_eq)
+            promoted_subset_forestRecovered   HEAVY — every de-contracted component is a componentToForest parent
+```
+
+**The negative finding (body-186).**  This equality is *not* supplied by the sector inverse laws alone.  The sector
+inverse (`forest_left_inv` / `forest_right_inv`) relates `componentToForest` to `forestToComponent` (= the
+quotient-side `remnantComponent` into `selectedOuterContractGraph`) — it does **not** connect `componentToForest`
+with `promote` / de-contraction into `G`.  The product-level de-contraction facts (`remnant_region_eq`,
+`product_remnantGen_of_decontraction`) live on the quotient side at the polynomial/class level, not as element-level
+`Finset` equalities.  So the remaining proof requires **concrete `componentToForest` / `forestTag` / `promote`
+compatibility**, which the abstract supplies do not provide — this is the genuinely fresh geometric leaf.
+
+**Canonical chain.**
+
+```text
+186 → 183 → 179 → 181 → 177 → 174 → 167 → 162 → 160 → 154 → 147 → witnessSplit → coassoc_gen
+```
+
+**Residual (the honest floor now):**
+
+* **deep forest recovery** — `forestRecovered_subset_promoted` (light) and `promoted_subset_forestRecovered` (heavy),
+  both resting on the prerequisite: concrete `componentToForest` / `forestTag` / `promote` compatibility;
+* **forest membership** — `forestComponentMem` (body-185, each parent ∈ A);
+* **classifier** — `represented_cases` (body-180);
+* **backward-outer** — the three sector bridges (bodies 170/171/172), proved up to `choice_tag_trichotomy` (body-173);
+* **`HEq` transports** — `backward_choice_heq` (body-164), `forward_quotient_heq` (body-165);
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract `vertices_eq`, measure,
+  star/global-gap kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the forward-outer geometry is one leaf in two inclusions, gated on making `componentToForest` / `promote`
+concrete.  The next front is the **`componentToForest` concretization scout** — how far `componentToForest` can be
+made concrete from `ForestPrimitiveIndex.toOccurrence` / `forest_surj` / `Classical.choose` — before the inclusion
+proofs are attempted.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
