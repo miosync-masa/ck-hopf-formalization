@@ -1124,6 +1124,31 @@ unconditional resolved coassociativity still not claimed complete** — the next
 concretization scout (how far it can be made concrete from `ForestPrimitiveIndex.toOccurrence` / `forest_surj` /
 `Classical.choose`) before the inclusion proofs.
 
+### R-6c bodies 188–190 — the forward outer geometry closed to compatibility leaves (2026-07-06)
+
+Bodies 188–190 close the forward-outer partition to its irreducible geometry, verified in one chain to body-162.
+Body-188 found the *semantic* content of the deep leaf: for a forest-tagged parent `γ`, the promoted contribution
+`(promote γ Bᵧ).elements` is the de-contracted **sub-pieces** of `γ` (vertices `⊆ γ`), while `forestRecovered` is
+the set of **parents** — so `promotedOf recovered = forestRecovered` holds iff each promoted subforest collapses to
+its parent, `(promote γ Bᵧ).elements = {γ}` (the recovered forest tag is the whole component).  It named the
+compatibility (`forestTag`, `recoverChoice_forest_eq`, `promote_collapse`) and proved the per-component collapse.
+Body-189 then proved `promoted_region_eq` by a biUnion collapse (the `inl`-tagged left/right regions contribute `∅`,
+each forest parent contributes `{γ}`).  Body-190 assembled the whole forward outer — the compatibility (188), the
+componentwise membership (185), the star/remnant classifier (180), the region constructions, and the wiring bridges
+— out to body-162's `ResolvedSelectedOuterPartitionSupply`.
+
+> **Forward outer, closed (bodies 174–190).**  The forward-outer partition `leftOf ⊔ promotedOf = A` is proved
+> except for the irreducible geometric leaves: `forestTag` / `recoverChoice_forest_eq` / `promote_collapse`
+> (body-188), `forestComponentMem` (body-185), `represented_cases` (body-180), and the region constructions +
+> wiring bridges.  `leftOf`, `leftResidual_mem`, `coverage`, `forestRecovered_mem`, and `promoted_region_eq` are all
+> proved.  Verified in one chain: `190 → 181 → 177 → 174 → 167 → 162`.
+
+**Net (bodies 88–190).**  The forward outer is closed to its irreducible geometric compatibility.  Backward outer:
+the three sector bridges + a proved trichotomy.  Remaining: the two `HEq` transports (`backward_choice_heq`,
+`forward_quotient_heq`), the sector-bridge internals, the disjointnesses and carrier closure, the region
+classifiers, and the non-region base.  **Full unconditional resolved coassociativity still not claimed complete** —
+the next front is the `HEq` transports, splitting the remaining round-trip content into component/sector facts.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
