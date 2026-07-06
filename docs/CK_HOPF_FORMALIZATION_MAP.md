@@ -1068,6 +1068,36 @@ the disjointnesses and carrier closure, the region classifiers, and the non-regi
 resolved coassociativity still not claimed complete** — the next front is `target_outer_partition`, which will
 fully separate the promotion side from the coverage side.
 
+### R-6c bodies 177–181 — the forward outer coverage assembled to its floor (2026-07-06)
+
+Bodies 177–181 took the forward-outer partition down to its floor.  Body-177 recast the coverage half
+(`target_outer_partition`) as a **represented-classification**: `A`'s components are the not-represented ones
+(`leftResidual`) or the remnant parents (`forestRecovered`), never the bare survivors (which live in the quotient) —
+which is exactly why the target is a two-region union.  Bodies 178–180 then discharged or isolated the three
+classification facts, and body-181 assembled them:
+
+* body-178 **proved** `leftResidual_mem` — `leftResidual` was defined as `A.filterElements (¬ representedInQuotient)`,
+  so its membership is `Finset.mem_filter`, over a fielded wiring bridge to the abstract union region;
+* body-179 bundled the **forest-recovery geometry** — `forestRecovered_mem` (coverage view) and `promoted_region_eq`
+  (selected-outer view) are two faces of the same `componentToForest` de-contraction round-trip, so they share one
+  provider;
+* body-180 **proved** `coverage` from a one-directional `represented_cases` (a represented `A`-component is a
+  forest/remnant parent) by excluded middle;
+* body-181 wired 178 + 179 + 180 into body-177's coverage supply — predicates pinned to `representedInQuotient` and
+  `representedByForest` — and ran it out `177 → 174 → 167 → 162`, closing the forward-outer chain.
+
+> **Forward outer floor (bodies 174–181).**  The forward-outer partition is proved except for three genuinely
+> geometric/fielded leaves: the **forest-recovery geometry** (`forestRecovered_mem` + `promoted_region_eq`, the
+> `componentToForest` / `promote` de-contraction round-trip), the **star/remnant classifier** (`represented_cases`),
+> and the **wiring bridge** (`leftResidual_eq`).  `leftOf`, `leftResidual_mem`, and `coverage` are all proved.
+
+**Net (bodies 88–181).**  Both outer partitions are down to their floors.  Backward outer: the three sector bridges
++ a proved trichotomy.  Forward outer: the forest-recovery geometry + the star/remnant classifier + the wiring
+bridge, with `leftOf` / `leftResidual_mem` / `coverage` proved.  Plus the two `HEq` transports, the disjointnesses
+and carrier closure, the region classifiers, and the non-region base.  **Full unconditional resolved coassociativity
+still not claimed complete** — the next front is the forest-recovery geometry (the `componentToForest` inverse /
+promotion de-contraction), the genuinely geometric remaining leaf of the outer partition.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

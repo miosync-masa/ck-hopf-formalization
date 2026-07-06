@@ -938,6 +938,60 @@ So the backward outer is proved down to the trichotomy, and the forward outer is
 `target_outer_partition` — the "`A`'s components are exactly `leftResidual` or forest/remnant-represented"
 coverage — which fully separates the promotion side from the coverage side.
 
+### R-6c bodies 177–181 — the forward outer coverage assembled to its floor (2026-07-06)
+
+Bodies 177–181 take the forward-outer partition all the way down.  Body-177 recast `target_outer_partition` as a
+**coverage classification**; bodies 178–180 discharged or isolated its three facts; body-181 assembled them and ran
+the whole forward-outer partition out to body-162 in one line.
+
+```text
+leftResidual_mem      body-178  PROVED by filterElements (leftResidual = A.filter (¬ representedInQuotient))
+                                over the fielded wiring bridge leftResidual_eq (abstract union ↔ body-157)
+forest recovery box   body-179  forestRecovered_mem + promoted_region_eq — the two faces of the one
+                                componentToForest de-contraction round-trip, shared in one provider
+coverage classifier   body-180  coverage PROVED from represented_cases (represented → representedByForest)
+                                by excluded middle; survivor case vacuous for the target outer
+assembly              body-181  178 + 179 + 180 → 177 → 174 → 167 → 162, predicates pinned
+                                (represented := representedInQuotient, representedByForest := body-179's)
+```
+
+**Forward outer final floor (the asymmetry, fully descended).**
+
+```text
+leftOf side       leftOf_recovered_eq   PROVED by tags (body-174)
+coverage side     leftResidual_mem      PROVED by filterElements (body-178)
+                  forestRecovered_mem   fielded in the forest-recovery box (body-179)
+                  coverage              PROVED from represented_cases (body-180)
+promotion side    promoted_region_eq    fielded in the forest-recovery box (body-179)
+```
+
+So the *only* genuinely fielded forward-outer content is now: the **forest-recovery geometry** (`forestRecovered_mem`
++ `promoted_region_eq`, body-179 — the `componentToForest` / `promote` de-contraction round-trip), the **star/remnant
+classifier** (`represented_cases`, body-180), and the **wiring bridge** (`leftResidual_eq`, body-178).  Everything
+else on the forward outer is proved.
+
+**Canonical chain.**
+
+```text
+181 → 177 → 174 → 167 → 162 → 160 → 154 → 147 → witnessSplit → coassoc_gen
+```
+
+**Residual (the honest floor now):**
+
+* **forward-outer, forest-recovery geometry** — `forestRecovered_mem` and `promoted_region_eq` (body-179, the one
+  `componentToForest` de-contraction round-trip);
+* **forward-outer, classifier** — `represented_cases` (body-180) and the wiring bridge `leftResidual_eq` (body-178);
+* **backward-outer** — the three sector bridges (bodies 170/171/172), PROVED up to `choice_tag_trichotomy` (body-173);
+* **`HEq` transports** — `backward_choice_heq` (body-164), `forward_quotient_heq` (body-165);
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract `vertices_eq`, measure,
+  star/global-gap kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So both outer partitions are down to their floors: the backward outer stands on the three sector bridges + a proved
+trichotomy, and the forward outer on the forest-recovery geometry + the classifier.  The next front is the
+**forest-recovery geometry** — the `componentToForest` inverse / promotion de-contraction — the genuinely geometric
+remaining leaf of the outer partition.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
