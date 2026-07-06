@@ -1149,6 +1149,28 @@ the three sector bridges + a proved trichotomy.  Remaining: the two `HEq` transp
 classifiers, and the non-region base.  **Full unconditional resolved coassociativity still not claimed complete** —
 the next front is the `HEq` transports, splitting the remaining round-trip content into component/sector facts.
 
+### R-6c bodies 192–194 — the backward-choice HEq reduced to a forest value equality (2026-07-06)
+
+Bodies 192–194 retire the backward-choice `HEq` type mismatch and drive its content down to a single forest value
+fact.  Body-192 scouted the two `HEq` leaves: `backward_choice_heq` is light (at each component both sides have the
+*same* codomain `Bool ⊕ (D.supply γ.…).ForestIdx`, so under the already-proved outer partition it reduces to a
+homogeneous componentwise `Eq`), while `forward_quotient_heq` is heavy (a `ForestIdx`-over-contract-graph
+reconstruction).  Body-193 proved the reusable transport `heq_of_index_eq` — two choice functions over equal index
+Finsets that agree pointwise are `HEq` (`subst` + `heq_of_eq` + `funext`) — and assembled `backward_choice_heq` from
+it.  Body-194 split the componentwise `Eq` by tag: the `inl true` / `inl false` cases close by the left/right sector
+bridges (bodies 172/170) + the region tags, and the `inr` case reduces to the single fresh `forest_value_eq` (the
+recovered forest tag on a forward image equals `q`'s original forest index).
+
+> **Backward-choice, retired (bodies 192–194).**  The heterogeneous `backward_choice_heq` is now a homogeneous
+> component agreement, split into three tag cases; two are proved from the sector bridges + tags, leaving only the
+> `inr` value equality `forest_value_eq` — the choice-value de-contraction.  Verified: `194 → 193 → 164 → 160`.
+
+**Net (bodies 88–194).**  Forward outer: closed to compatibility leaves.  Backward outer: three sector bridges + a
+proved trichotomy.  Backward-choice: retired to `forest_value_eq`.  Remaining: `forest_value_eq`, the heavier
+`forward_quotient_heq`, the sector-bridge internals, the disjointnesses and carrier closure, the region classifiers,
+and the non-region base.  **Full unconditional resolved coassociativity still not claimed complete** — the next front
+is the `forest_value_eq` scout (the choice-value de-contraction).
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

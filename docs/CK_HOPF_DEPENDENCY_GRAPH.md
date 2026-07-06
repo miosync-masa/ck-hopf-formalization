@@ -1108,6 +1108,48 @@ So the forward outer is closed to its irreducible geometric compatibility, verif
 next front is the **`HEq` transports** (`backward_choice_heq` / `forward_quotient_heq`) — splitting the remaining
 round-trip content into component/sector facts.
 
+### R-6c bodies 192–194 — the backward-choice HEq reduced to a forest value equality (2026-07-06)
+
+Bodies 192–194 retire the backward-choice `HEq` mismatch and drive its content down to a single forest value fact.
+
+```text
+192  HEq scout — backward_choice_heq HEq (recoverChoice (fwdMap q)) q.2 is LIGHT (same codomain per component,
+       reduces to a homogeneous componentwise Eq under the proved outer partition); forward_quotient_heq is HEAVY
+       (ForestIdx over two contract-with-stars graphs, needs B = survivor ⊔ remnant).
+
+193  heq_of_index_eq — the reusable dependent-function transport: (A = B) + pointwise Eq ⟹ HEq (subst + heq_of_eq
+       + funext, the flat-Coassoc pattern as a clean Resolved lemma).  backward_choice_heq PROVED from the outer
+       partition (body-160) + the componentwise Eq.
+
+194  choice component cases — case on q.2 γ:
+       inl false  → rightPrimSelected → right bridge (body-170) → region right_tag  ✓
+       inl true   → leftSelectedConcrete → left bridge (body-172) → region left_tag  ✓
+       inr B      → forestChoiceSelected → forest bridge (body-171) → region forest_tag gives ∃ B',
+                    and the value match B' = B is fielded as forest_value_eq (the single fresh leaf).
+```
+
+**Canonical chain.**
+
+```text
+194 → 193 → 164 → 160 → 154 → 147 → witnessSplit → coassoc_gen
+```
+
+**Residual (the honest floor now):**
+
+* **backward-choice** — the single `inr` value fact `forest_value_eq` (the choice-value de-contraction: on a
+  forward image, the recovered forest tag equals the original forest index) + the reused tags / bridges + the proved
+  index transport;
+* **forward-quotient** — `forward_quotient_heq` (the heavier `ForestIdx` reconstruction, untouched);
+* **forward outer** — closed to the compatibility leaves (bodies 188/185/180, documented above);
+* **backward outer** — the three sector bridges (bodies 170/171/172), proved up to `choice_tag_trichotomy` (body-173);
+* **sector bridge internals** — the `componentToRight` / `componentToForest` round-trips, `representedInQuotient`;
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract `vertices_eq`, measure,
+  star/global-gap kernel, survivor/remnant Inj/Gen, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the backward-choice `HEq` is retired to `forest_value_eq`; the next front is the **`forest_value_eq` scout** — the
+choice-value de-contraction relating `recoverChoice`'s `forestTag` on a forward image to `q`'s original forest index.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
