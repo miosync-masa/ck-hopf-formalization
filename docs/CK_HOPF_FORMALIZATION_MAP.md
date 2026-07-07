@@ -1219,6 +1219,27 @@ non-region base (contract geometry, measure, survivor/remnant `Inj`/`Gen`, carri
 `selectedOuter_mem`).  **Full unconditional resolved coassociativity still not claimed complete** — the next front is
 the sector bridge internals, starting with the lighter survivor / right side.
 
+### R-6c bodies 210–211 — the right / survivor sector bridge floor (2026-07-07)
+
+Bodies 210/211 open the lighter right / survivor sector bridge.  Body-210 (scout) found the two right leaves —
+body-170's `rightRecovered_forward_membership` (G-level, backward `componentToRight`) and body-206's `survivor_mem`
+(quotient-level, forward `survivorComponent = survivorReembed`) — are *dual but not identical*: opposite halves of
+one right-sector round-trip over different graphs, so no shared provider (attack separately).  The abstract
+sector-index right inverse (`right_left_inv` / `right_right_inv`, `ResolvedRightSectorEquivSupply`) is already proved
+and underlies body-170.  Body-211 then reduced `survivor_mem` to a single image correspondence.
+
+> **Survivor side, reduced (body-211).**  Since `survivorComponent = survivorReembed` preserves vertices at `rfl`,
+> `survivor_mem` unfolds (`rightSurvivorForest_elements`, `rightDomain` filter) to the pure tag correspondence
+> `survivor_image_correspondence`: the `recoverChoice z γ = inl false` components of `unionOuter z`, reembedded, are
+> exactly `B`'s star-avoiding (`Disjoint · (starOfZ z)`) components.
+
+**Net (bodies 88–211).**  The round-trip proof-shape is closed to local bridges; the survivor side is now a tag
+correspondence (`survivor_image_correspondence`) and the right / G side a `componentToRight` round-trip
+(`rightRecovered_forward_membership`).  The remnant / forest side (`remnant_mem`, `forestRecovered_forward_membership`)
+is heavier (de-contraction), plus the forward compatibility, disjointnesses / carrier closure, region classifiers,
+and non-region base.  **Full unconditional resolved coassociativity still not claimed complete** — the next front is
+`rightRecovered_forward_membership` (the G-level right side, where the proved `rightEquiv` may apply).
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

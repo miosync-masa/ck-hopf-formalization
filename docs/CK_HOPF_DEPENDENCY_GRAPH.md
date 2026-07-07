@@ -1246,6 +1246,48 @@ So the round-trip proof-shape is entirely closed to local bridges; the next fron
 starting with the lighter survivor / right side (`survivor_mem` / `rightRecovered_forward_membership`), leaving the
 heavier remnant / forest side for later.
 
+### R-6c bodies 210–211 — the right / survivor sector bridge floor (2026-07-07)
+
+Bodies 210/211 open the lighter right / survivor sector bridge.  Body-210 (scout) found the two right leaves are
+*dual but not identical*; body-211 reduced the survivor leaf to a single image correspondence.
+
+```text
+210  right sector scout — rightRecovered_forward_membership (170) and survivor_mem (206) are DUAL, not identical:
+       rightRecovered_forward_membership = G-level, backward componentToRight (δ ↦ G-parent)
+       survivor_mem                      = quotient-level, forward survivorComponent = survivorReembed
+     opposite halves of one right-sector round-trip, over different graphs — no shared provider (attack separately).
+     The abstract sector-index right inverse (right_left_inv / right_right_inv, ResolvedRightSectorEquivSupply) is
+     already proved and underlies leaf 170.
+
+211  survivor_mem reduction — rightDomain_mem_iff (Finset.mem_filter) proved; rightSurvivorForest_elements rfl;
+     survivor_mem reduced (via body-206's heq_finset_of_mem_iff) to survivor_image_correspondence.
+```
+
+**The survivor-side residual.**
+
+```text
+survivor_image_correspondence :
+  x₁ ∈ rightComponents(recovered).attach.image survivorComponent   -- recoverChoice z γ = inl false, reembedded
+    ↔ x₂ ∈ z.2.1.elements ∧ Disjoint x₂.vertices (starOfZ z)        -- star-avoiding components of B
+  (with survivorReembed_toResolvedFeynmanGraph = rfl — vertices preserved; the pure inl-false ⟷ star-avoid tag)
+```
+
+**Residual (the honest floor now):**
+
+* **survivor side** — `survivor_image_correspondence` (body-211, the `inl false` ⟷ star-avoiding tag correspondence);
+* **right / G side** — `rightRecovered_forward_membership` (body-170, the G-level `componentToRight` round-trip);
+* **remnant / forest side** — `remnant_mem` (body-207) and `forestRecovered_forward_membership` (body-171), the
+  heavier de-contraction bridges;
+* **forward compatibility** — `forestTag` / `recoverChoice_forest_eq` / `promote_collapse` (body-188),
+  `forestComponentMem` (body-185), `represented_cases` (body-180);
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract geometry, measure, survivor/remnant
+  `Inj`/`Gen`, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the survivor side is down to a tag correspondence and the right / G side to a `componentToRight` round-trip; the
+next front is the **`rightRecovered_forward_membership`** (body-170) — the G-level right side, where the already-proved
+`rightEquiv` / sector inverse may apply — leaving the heavier remnant / forest side for later.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
