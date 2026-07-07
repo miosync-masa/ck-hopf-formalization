@@ -1300,6 +1300,27 @@ non-region base.  **Full unconditional resolved coassociativity still not claime
 deeper sector-inverse wiring, starting with the lightest G-side `right_sound` / `right_complete` (where the proved
 `right_surj` / `right_left_inv` / `right_right_inv` may apply).
 
+### R-6c body 224 — the sector-inverse wiring stops at the abstract-region floor (2026-07-07)
+
+Body-224 (scout) found the eight sector `sound` / `complete` directions **cannot** be discharged by wiring the
+abstract region maps to the proved sector inverse: the region `componentToRight` / `componentToForest` are abstract
+fields (never instantiated); the sector index over `fwdMap q` gives a parent in the recovered outer `(selectedOuterOf
+q).1`, not `q.1.1`; and the sector `inl false` / `inr` tag is over `fwdMap q`'s `recoverChoice`-derived structure, not
+`q.2`.  So the sector inverse is a red herring, and discharging the eight directions (not just fielding them) would
+require concretizing the whole region construction (a large lift in the region / `recoverChoice` layer).
+
+> **The sector-inverse route is retired (body-224).**  The eight `sound` / `complete` leaves are the honest floor for
+> the abstract region construction; no further abstract reduction of the sector bridges is available.  Near-term
+> progress pivots to the residuals that do not depend on concretizing the region map.
+
+**Net (bodies 88–224).**  The round-trip and sector layers are fully mapped to their floors (eight `sound` /
+`complete` directions).  The remaining reducible candidates are the **forward compatibility** (`forestTag` /
+`recoverChoice_forest_eq` / `promote_collapse`, `forestComponentMem`, `represented_cases`) and the **disjoint /
+carrier** (pairwise disjointnesses, recovered-outer carrier closure, bodies 158/159); beyond them lies the non-region
+base (contract geometry, measure, survivor/remnant providers, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+**Full unconditional resolved coassociativity still not claimed complete** — the next front is the disjoint / carrier
+candidates.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
