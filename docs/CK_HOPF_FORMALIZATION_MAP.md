@@ -1240,6 +1240,26 @@ is heavier (de-contraction), plus the forward compatibility, disjointnesses / ca
 and non-region base.  **Full unconditional resolved coassociativity still not claimed complete** — the next front is
 `rightRecovered_forward_membership` (the G-level right side, where the proved `rightEquiv` may apply).
 
+### R-6c bodies 210–213 — the right sector reduced to two image correspondences (2026-07-07)
+
+Bodies 211/213 reduce *both* right-sector leaves to image correspondences (after body-210's duality scout).  Body-211
+reduced the quotient-side `survivor_mem` (via the `rfl`-level `survivorReembed`) to `survivor_image_correspondence`;
+body-213 reduced the G-side `rightRecovered_forward_membership` to `right_image_correspondence`.
+
+> **The `rightEquiv` negative finding (body-213).**  The proved abstract right-sector inverse
+> (`RightPrimitiveIndex D G s ≃ (rightForest s).elements`) does **not** directly discharge either leaf: it lives at
+> the sector-index / quotient-graph level (forward `survivorComponent`), while the region maps use abstract
+> `componentToRight` fields disconnected from it.  So the right sector's remaining content is the correspondence
+> between `B`'s **star-avoiding quotient components** and `q`'s **`inl false` source choices** — fielded fresh on each
+> side, over a wiring bridge, not routed through `rightEquiv`.
+
+**Net (bodies 88–213).**  The round-trip proof-shape is closed to local bridges; the right sector is now two image
+correspondences (`survivor_image_correspondence`, `right_image_correspondence`).  The heavier remnant / forest sector
+(`remnant_mem`, `forestRecovered_forward_membership`) — the de-contraction bridges — remains, plus the forward
+compatibility, disjointnesses / carrier closure, region classifiers, and non-region base.  **Full unconditional
+resolved coassociativity still not claimed complete** — the next front is the remnant / forest sector, where the
+de-contraction may share the promotion compatibility (bodies 188/189).
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

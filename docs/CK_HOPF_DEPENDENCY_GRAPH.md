@@ -1288,6 +1288,42 @@ So the survivor side is down to a tag correspondence and the right / G side to a
 next front is the **`rightRecovered_forward_membership`** (body-170) — the G-level right side, where the already-proved
 `rightEquiv` / sector inverse may apply — leaving the heavier remnant / forest side for later.
 
+### R-6c bodies 210–213 — the right sector reduced to two image correspondences (2026-07-07)
+
+Bodies 210–213 reduce **both** right-sector leaves to image correspondences.  Body-210 scouted the duality; bodies
+211/213 reduced the two sides.
+
+```text
+210  scout — rightRecovered_forward_membership (170) and survivor_mem (206) are DUAL but not identical
+211  survivor side — survivor_mem → survivor_image_correspondence
+       x₁ ∈ rightComponents(recovered).attach.image survivorComponent ↔ x₂ ∈ rightDomain z   (survivorReembed rfl)
+213  G-side — rightRecovered_forward_membership → right_image_correspondence
+       γ ∈ (rightDomain (fwdMap q)).attach.image componentToRight ↔ rightPrimSelected q γ    (over a wiring bridge)
+```
+
+**The `rightEquiv` negative finding (body-213).**  The proved abstract right-sector inverse
+(`ResolvedRightSectorEquivSupply.rightEquiv : RightPrimitiveIndex D G s ≃ (rightForest s).elements`,
+`right_left_inv` / `right_right_inv`) does **not** directly discharge either leaf: it lives at the *sector-index /
+quotient-graph* level (forward `survivorComponent`), while the region maps use *abstract `componentToRight` fields*
+disconnected from it.  So the remaining right content is the correspondence between **star-avoiding quotient
+components** of `B` and **`inl false` source choices** of `q` — fielded fresh on each side, not routed through
+`rightEquiv`.
+
+**Residual (the honest floor now):**
+
+* **right sector** — `survivor_image_correspondence` (body-211) and `right_image_correspondence` (body-213), the two
+  star-avoiding ⟷ `inl false` correspondences;
+* **remnant / forest sector** — `remnant_mem` (body-207) and `forestRecovered_forward_membership` (body-171), the
+  heavier de-contraction bridges;
+* **forward compatibility** — `forestTag` / `recoverChoice_forest_eq` / `promote_collapse` (body-188),
+  `forestComponentMem` (body-185), `represented_cases` (body-180);
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract geometry, measure, survivor/remnant
+  `Inj`/`Gen`, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the right sector is closed to two image correspondences; the next front is the heavier **remnant / forest sector**
+(`remnant_mem` / `forestRecovered_forward_membership`), where the de-contraction may share the promotion compatibility.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
