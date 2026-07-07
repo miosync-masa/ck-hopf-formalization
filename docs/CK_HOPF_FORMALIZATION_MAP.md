@@ -1280,6 +1280,26 @@ the forward compatibility (`forestTag` / `recoverChoice_forest_eq` / `promote_co
 unconditional resolved coassociativity still not claimed complete** — the next front is to bundle the three light tag
 correspondences, then attack the single heavy `remnant_image_correspondence` (the de-contraction).
 
+### R-6c bodies 219–222 — the sector correspondences reduced to sound / complete directions (2026-07-07)
+
+Bodies 219–222 reduce all four sector image correspondences to two `Finset.mem_image` directions each — a uniform
+`sound` / `complete` proof-shape: right (219, `componentToRight` ↔ `inl false`), forest (220, `componentToForest` ↔
+`inr B`), survivor (221, `survivorComponent` ↔ star-avoiding, `HEq`-linked), remnant (222, `remnantComponent` ↔
+star-touching, `HEq`-linked, de-contraction).
+
+> **All four sector correspondences share one proof-shape (bodies 219–222).**  `image correspondence = sound +
+> complete`, proved by term-mode `Finset.mem_image.mp` / `.mpr`, with the quotient-side pair (survivor / remnant)
+> closing the cross-graph `HEq` via `eq_of_heq`.  Three are tag round-trips; the remnant pair alone carries the
+> de-contraction (`remnantComponent` into the contracted graph, `remnantClass_eq`).
+
+**Net (bodies 88–222).**  The round-trip proof-shape is closed to local bridges, and the sector bridge layer is now
+eight uniform `sound` / `complete` directions (three tag pairs, one de-contraction pair).  The remaining content is
+these eight directions, the forward compatibility (`forestTag` / `recoverChoice_forest_eq` / `promote_collapse`,
+`forestComponentMem`, `represented_cases`), the disjointnesses / carrier closure, the region classifiers, and the
+non-region base.  **Full unconditional resolved coassociativity still not claimed complete** — the next front is the
+deeper sector-inverse wiring, starting with the lightest G-side `right_sound` / `right_complete` (where the proved
+`right_surj` / `right_left_inv` / `right_right_inv` may apply).
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

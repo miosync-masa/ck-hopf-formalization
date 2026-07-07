@@ -1365,6 +1365,46 @@ remnant  → 207 → 208 → forward_quotient_heq
 So the sector bridges are all four image correspondences; the next front is to bundle the three light tag
 correspondences, leaving the single heavy `remnant_image_correspondence` (the de-contraction) for a focused attack.
 
+### R-6c bodies 219–222 — the sector correspondences reduced to sound / complete directions (2026-07-07)
+
+Bodies 219–222 reduce **all four** sector image correspondences to two `Finset.mem_image` directions each — a uniform
+`sound` / `complete` proof-shape.  Body-218's scout established the three tag correspondences do not bundle, so each is
+attacked separately; the reduction scaffolding is nonetheless identical.
+
+```text
+right     body-219  right_sound    / right_complete      componentToRight  round-trip ↔ inl false     (G-side, no HEq)
+forest    body-220  forest_sound   / forest_complete     componentToForest round-trip ↔ inr B         (G-side, no HEq)
+survivor  body-221  survivor_sound / survivor_complete   survivorComponent round-trip ↔ star-avoiding (quotient, HEq)
+remnant   body-222  remnant_sound  / remnant_complete    remnantComponent  round-trip ↔ star-touching (quotient, HEq, de-contraction)
+```
+
+**Main statement.**  All four sector image correspondences now have the same proof-shape: `image correspondence =
+sound + complete`, proved by term-mode `Finset.mem_image.mp` / `.mpr` (the `@[simp]` form does not fire through `simp`
+due to a `DecidableEq` instance mismatch), with the quotient-side pair (survivor / remnant) carrying the cross-graph
+`HEq` closed by `eq_of_heq`.  The only heavy pair is **remnant**, whose directions carry genuine de-contraction
+geometry (`remnantComponent` into the contracted graph, `remnantClass_eq`); the other three are tag round-trips.
+
+**Canonical links.**
+
+```text
+right / forest    → backward-outer and backward-choice floors (bodies 170/171)
+survivor / remnant → forward-quotient floor (bodies 206/207 → 208)
+```
+
+**Residual (the honest floor now):**
+
+* **eight sector `sound` / `complete` directions** — `right_sound` / `right_complete` (219), `forest_sound` /
+  `forest_complete` (220), `survivor_sound` / `survivor_complete` (221), `remnant_sound` / `remnant_complete` (222);
+* **forward compatibility** — `forestTag` / `recoverChoice_forest_eq` / `promote_collapse` (body-188),
+  `forestComponentMem` (body-185), `represented_cases` (body-180);
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract geometry, measure, survivor/remnant
+  `Inj`/`Gen`, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the sector bridge layer's proof-shape is uniform (eight `sound` / `complete` directions); the next front is the
+**deeper sector-inverse wiring** — starting with the lightest G-side `right_sound` / `right_complete`, where the
+already-proved `right_surj` / `right_left_inv` / `right_right_inv` may apply.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
