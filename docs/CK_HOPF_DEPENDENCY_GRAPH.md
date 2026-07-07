@@ -1324,6 +1324,47 @@ components** of `B` and **`inl false` source choices** of `q` — fielded fresh 
 So the right sector is closed to two image correspondences; the next front is the heavier **remnant / forest sector**
 (`remnant_mem` / `forestRecovered_forward_membership`), where the de-contraction may share the promotion compatibility.
 
+### R-6c bodies 211–216 — all sector leaves reduced to image correspondences (2026-07-07)
+
+Bodies 211/213/215/216 reduce **all four** sector bridge leaves to image correspondences — the same
+`ofElements`-image + wiring / filter scaffolding on each side.
+
+```text
+survivor quotient side  body-211  survivor_image_correspondence   rightComponents image ↔ star-avoiding
+right    G-side         body-213  right_image_correspondence      componentToRight image ↔ inl false
+forest   G-side         body-215  forest_image_correspondence     componentToForest image ↔ inr (forestChoiceSelected)
+remnant  quotient side  body-216  remnant_image_correspondence    remnantComponent image ↔ star-touching
+```
+
+**The one heavy correspondence.**  The first three are **tag / image correspondences** — the `G`-side maps are
+abstract `componentToRight` / `componentToForest` fields, and the survivor `survivorReembed` preserves vertices at
+`rfl`, so only the `inl false` / `inr` tag ⟷ star-avoiding / star-touching content remains.  The **remnant**
+correspondence is the genuine **de-contraction** leaf: `remnantComponent` lands in the contracted graph with a
+nontrivial `remnantClass_eq`, so its `HEq` bridges genuinely different vertex sets (bodies 126/183).
+
+**Canonical connection.**
+
+```text
+survivor → 206 → 208 → forward_quotient_heq
+right    → 170 → backward-outer / backward-choice floors
+forest   → 171 → backward-outer / backward-choice floors
+remnant  → 207 → 208 → forward_quotient_heq
+```
+
+**Residual (the honest floor now):**
+
+* **image correspondences** — `survivor_image_correspondence` (211), `right_image_correspondence` (213),
+  `forest_image_correspondence` (215) [three tag correspondences], and `remnant_image_correspondence` (216) [the one
+  de-contraction correspondence];
+* **forward compatibility** — `forestTag` / `recoverChoice_forest_eq` / `promote_collapse` (body-188),
+  `forestComponentMem` (body-185), `represented_cases` (body-180);
+* **pairwise disjointnesses** (body-158) and the **carrier closure** (body-159);
+* **region classifiers** (bodies 150/151/152) and the non-region base (contract geometry, measure, survivor/remnant
+  `Inj`/`Gen`, `carrier_isProperForest` / `rep` / `selectedOuter_mem`).
+
+So the sector bridges are all four image correspondences; the next front is to bundle the three light tag
+correspondences, leaving the single heavy `remnant_image_correspondence` (the de-contraction) for a focused attack.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

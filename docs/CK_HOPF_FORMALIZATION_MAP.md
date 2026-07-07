@@ -1260,6 +1260,26 @@ compatibility, disjointnesses / carrier closure, region classifiers, and non-reg
 resolved coassociativity still not claimed complete** — the next front is the remnant / forest sector, where the
 de-contraction may share the promotion compatibility (bodies 188/189).
 
+### R-6c bodies 211–216 — all sector leaves reduced to image correspondences (2026-07-07)
+
+Bodies 211/213/215/216 reduce all four sector bridge leaves to image correspondences, each by the same
+`ofElements`-image + wiring / filter scaffolding: the survivor quotient side (211,
+`survivor_image_correspondence`), the right G-side (213, `right_image_correspondence`), the forest G-side (215,
+`forest_image_correspondence`), and the remnant quotient side (216, `remnant_image_correspondence`).
+
+> **All sector bridges are image correspondences (bodies 211–216).**  Three are pure tag correspondences — the
+> `G`-side maps are abstract `componentToRight` / `componentToForest` fields, and `survivorReembed` preserves vertices
+> at `rfl`, leaving only the `inl false` / `inr` ⟷ star-avoiding / star-touching tag content.  The **remnant**
+> correspondence is the one genuine de-contraction leaf: `remnantComponent` lands in the contracted graph with a
+> nontrivial `remnantClass_eq`, so its `HEq` bridges different vertex sets.
+
+**Net (bodies 88–216).**  The round-trip proof-shape is closed to local bridges, and the four sector bridges are now
+four image correspondences (three tag, one de-contraction).  The remaining content is these four correspondences,
+the forward compatibility (`forestTag` / `recoverChoice_forest_eq` / `promote_collapse`, `forestComponentMem`,
+`represented_cases`), the disjointnesses / carrier closure, the region classifiers, and the non-region base.  **Full
+unconditional resolved coassociativity still not claimed complete** — the next front is to bundle the three light tag
+correspondences, then attack the single heavy `remnant_image_correspondence` (the de-contraction).
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
