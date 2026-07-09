@@ -1321,6 +1321,32 @@ base (contract geometry, measure, survivor/remnant providers, `carrier_isProperF
 **Full unconditional resolved coassociativity still not claimed complete** — the next front is the disjoint / carrier
 candidates.
 
+### R-6c bodies 226–228 — canonical carrier grounding begins (`carrier_isProperForest` proved) (2026-07-09)
+
+Bodies 226/227 (scouts) examined the disjoint / carrier candidates; body-228 (proof) grounded the one genuine win into
+a canonical model instance.  Body-226 found the recovered-outer pairwise disjointnesses (158) and carrier closure
+(159) are both abstract floor obligations against an arbitrary carrier `D` (`recovered_outer_mem ≡ selectedOuter_mem`).
+Body-227 found that instantiating `D` to the *canonical* carrier is a **repackaging, not a discharge** —
+`mem_properDisjointAdmissibleDivergentSubgraphs` only re-expresses `∈ carrier` as `IsProperForest ∧ disjoint ∧ …`, so
+for a *constructed* object the obligation is still the properness / disjointness of the construction (which loops back
+to the abstract `componentToRight` / `promote` geometry).  Only `carrier_isProperForest` (137) is a genuine free win,
+and no canonical `D` existed yet.  Body-228 builds `ResolvedCanonicalCarrierProperSupply`: a wrapper carrying the heavy
+carrier ingredients (a per-graph proper-forest `index : ResolvedProperForestFiniteIndex G`, the star assignment, the
+contraction CD, the two `mapPerm` naturalities) whose assembled carrier `G := (index G).carrier` makes
+`carrier_isProperForest := fun G A hA => (index G).mem_proper A hA` a **theorem** (via `.toCarrierProperProvider`).
+
+> **Canonical carrier grounding has begun (body-228).**  The canonical carrier is not merely repackaging: it genuinely
+> discharges `carrier_isProperForest` (137), now proved from the proper-forest index's `mem_proper`.  But
+> `selectedOuter_mem` (128) / `recovered_outer_mem` (159) and the region cross-disjointnesses (158) remain
+> construction-specific — the constructed regions must still be shown proper / disjoint / admissible canonical members.
+
+**Net (bodies 88–228).**  The four closure floor leaves now split: **`carrier_isProperForest` is grounded** (body-228),
+while `selectedOuter_mem`, `recovered_outer_mem`, and the region pairwise disjointnesses stay construction-specific.
+The other floors are unchanged (eight sector `sound` / `complete` directions, forward compatibility, and the non-region
+base — now including the heavy canonical fields `index` / `starOf` / `hCD` / `mapPerm` naturalities).  **Full
+unconditional resolved coassociativity still not claimed complete** — the next front is a `mem_rewrite` adapter
+reshaping `selectedOuter_mem` / `recovered_outer_mem` into "the constructed forest is proper / disjoint / admissible".
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

@@ -1442,6 +1442,56 @@ So the round-trip and sector layers are fully mapped to their floors; the next f
 candidates (bodies 158/159), which may still admit a shallow provider reduction — leaving the deeper forward
 compatibility and the non-region base for later.
 
+### R-6c bodies 226–228 — canonical carrier grounding begins (`carrier_isProperForest` proved) (2026-07-09)
+
+Bodies 226/227 (scouts) tested the disjoint / carrier candidates, and body-228 (proof) grounded the one genuine win.
+
+```text
+226 scout: recovered-outer disjoint (158) + carrier closure (159) are BOTH abstract floor vs arbitrary D.
+  - 158's three cross-disjointnesses are RAW FIELDS (representedInQuotient is an opaque abstract Prop, not linked
+    to the componentToRight/Forest images; A's own disjoint is itself a fielded primitive).
+  - 159's recovered_outer_mem ≡ selectedOuter_mem (128): D.carrier is abstract (no proper-forest/union/closure).
+
+227 scout: instantiating D to the CANONICAL carrier is a REPACKAGING, not a discharge.
+  - mem_properDisjointAdmissibleDivergentSubgraphs re-expresses ∈ carrier as IsProperForest ∧ disjoint ∧ ….
+  - For a CONSTRUCTED object (selectedOuterRawOf, region union, the 3 regions) that obligation is the properness /
+    disjointness of the construction — loops back to the abstract componentToRight/promote geometry.
+  - Only carrier_isProperForest (137) is a genuine free win. No canonical D exists yet; it must be constructed.
+
+228 proof: ResolvedCanonicalCarrierProperSupply (wrapper) + .toData + .toCarrierProperProvider.
+  index : (G) → ResolvedProperForestFiniteIndex G   -- carrier + mem_proper (ResolvedCoproduct.lean:172)
+  carrier G := (index G).carrier
+  carrier_isProperForest := fun G A hA => (index G).mem_proper A hA   -- PROVED, not a field
+```
+
+**The finding that matters:** the canonical carrier is **not merely repackaging** — it genuinely discharges
+`carrier_isProperForest` (137). But `selectedOuter_mem` (128) / `recovered_outer_mem` (159) membership still requires
+proving the *constructed* objects (`selectedOuterRawOf`, the region union) are proper / disjoint / admissible; the
+region cross-disjointnesses (158) likewise. Those stay construction-specific.
+
+**Status table (the four closure floor leaves):**
+
+```text
+carrier_isProperForest   grounded by 228 (proved from ResolvedProperForestFiniteIndex.mem_proper)
+selectedOuter_mem        construction-specific (constructed object must be a canonical member)
+region cross-disjoint    construction-specific (3 regions must be pieces of one member / representedInQuotient concrete)
+recovered_outer_mem      construction-specific (constructed region union must be a canonical member)
+```
+
+**Residual (refreshed):**
+
+* **grounded** — `carrier_isProperForest` (body-228, via the proper-forest finite index);
+* **still construction-specific** — `selectedOuter_mem` (128), `recovered_outer_mem` (159), the region pairwise
+  disjointnesses (158) — all reduce to the constructed regions being canonical members (proper / disjoint / admissible);
+* **other floors** — the eight sector `sound` / `complete` directions (bodies 219–222), forward compatibility
+  (`forestTag` / `promote_collapse` 188, `forestComponentMem` 185, `represented_cases` 180), and the non-region base
+  (contract geometry, measure, survivor/remnant `Inj`/`Gen`, `rep`, and the heavy canonical fields `index` / `starOf`
+  / `hCD` / `mapPerm` naturalities).
+
+The canonical-instance phase has begun: the next front is a **`mem_rewrite` adapter** that reshapes `selectedOuter_mem`
+/ `recovered_outer_mem` from carrier membership into "the constructed forest is proper / disjoint / admissible" — a
+reshaping (not a proof) that puts the residual obligations into canonical form.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
