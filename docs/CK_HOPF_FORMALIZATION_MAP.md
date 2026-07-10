@@ -1347,6 +1347,32 @@ base — now including the heavy canonical fields `index` / `starOf` / `hCD` / `
 unconditional resolved coassociativity still not claimed complete** — the next front is a `mem_rewrite` adapter
 reshaping `selectedOuter_mem` / `recovered_outer_mem` into "the constructed forest is proper / disjoint / admissible".
 
+### R-6c bodies 230–233 — canonical membership route established (2026-07-10)
+
+The `mem_rewrite` adapter is built and connected: the two constructed-forest carrier-closure leaves are now supplied
+from membership certificates rather than kept as raw hypotheses.  Body-230 (scout) established that carrier membership
+of a constructed forest reduces to `IsProperForest` **plus** a section / canonicality condition (`forget_complete`
+gives existence only; `forget` is not globally injective).  Body-231 proved the reusable infrastructure lemma
+`forget_union_elements` (`(A.union B).forget.elements = A.forget.elements ∪ B.forget.elements`).  Body-232 defined the
+certificate `ResolvedCanonicalMembershipCertificate` (fields `isProper : A.IsProperForest` and `recovered_eq`, the
+section condition in generic form) and proved the adapter `cert_mem : certificate → A ∈ carrier` against the generic
+`ResolvedProperForestFiniteCover` interface.  Body-233 wired it to the actual leaves via
+`ResolvedCanonicalCarrierWiring` (a per-graph cover plus `carrier_eq : D.carrier G = (cover G).index.carrier`):
+`.selectedOuterMem` proves `selectedOuter_mem` (128) from a certificate per `selectedOuterRawOf s`, and
+`.recoveredOuterSupply` builds the body-159 supply from a certificate per region union.
+
+> **The canonical membership route is established (bodies 230–233).**  `selectedOuter_mem` (128) and
+> `recovered_outer_mem` (159) are no longer raw supply obligations: they are proved from membership certificates via
+> `cert_mem` and the `carrier_eq` wiring.  Their residual is now exactly the certificate fields — `isProper` (the five
+> `IsProperForest` conjuncts) and `recovered_eq` (the section) — per constructed forest.
+
+**Net (bodies 88–233).**  Two of the four closure floor leaves are now **routed through certificates**
+(`selectedOuter_mem`, `recovered_outer_mem`), joining the grounded `carrier_isProperForest` (body-228); only the region
+pairwise disjointnesses (158) stay construction-specific among the closure leaves.  The other floors are unchanged
+(eight sector directions, forward compatibility, non-region base).  **Full unconditional resolved coassociativity still
+not claimed complete** — the next front is to fill a certificate field: the first `IsProperForest` conjunct (e.g.
+`IsNonempty`) for the constructed forests, via `forget_union_elements`.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

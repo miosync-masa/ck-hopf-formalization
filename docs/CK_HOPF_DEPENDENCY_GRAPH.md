@@ -1492,6 +1492,63 @@ The canonical-instance phase has begun: the next front is a **`mem_rewrite` adap
 / `recovered_outer_mem` from carrier membership into "the constructed forest is proper / disjoint / admissible" — a
 reshaping (not a proof) that puts the residual obligations into canonical form.
 
+### R-6c bodies 230–233 — canonical membership route established (2026-07-10)
+
+The `mem_rewrite` adapter is now built and connected: `selectedOuter_mem` (128) and `recovered_outer_mem` (159) are
+supplied from membership certificates.
+
+```text
+230  scout:  membership = isProper + canonical/section, NOT isProper alone.
+     Resolved-index forget_complete gives EXISTENCE only; forget is not globally injective, so the constructed
+     forest's identity must be supplied (the section condition A = ofForgetForest A.forget).
+
+231  forget_union_elements (PROVED, infra):
+     (A.union B).forget.elements = A.forget.elements ∪ B.forget.elements    (simp: union_elements + forget_elements
+     + Finset.image_union). The tool for building certificates on the constructed unions.
+
+232  ResolvedCanonicalMembershipCertificate (C : ResolvedProperForestFiniteCover G) (A):
+       isProper     : A.IsProperForest
+       recovered_eq : ∀ Ares ∈ C.index.carrier, Ares.forget = A.forget → Ares = A   (section, generic form)
+     cert_mem (PROVED) : certificate → A ∈ C.index.carrier
+       (forget_complete recovers Ares sharing A's forget; recovered_eq identifies it with A).
+
+233  ResolvedCanonicalCarrierWiring D { cover ; carrier_eq : D.carrier G = (cover G).index.carrier }:
+       .selectedOuterMem      (PROVED) : ∀ s, cert (selectedOuterRawOf s) → selectedOuter_mem (128)
+       .recoveredOuterSupply  (PROVED) : ∀ z, cert (region union) → ResolvedRecoveredOuterCarrierSupply (159)
+```
+
+**The route:**
+
+```text
+forget_union infra (231)
+  → certificate fields  isProper + recovered_eq  (232)
+  → cert_mem                                     (232)
+  → selectedOuter_mem / recovered_outer_mem      (233, via carrier_eq)
+```
+
+**Status table (the four closure floor leaves):**
+
+```text
+carrier_isProperForest   grounded by 228 (proved from ResolvedProperForestFiniteIndex.mem_proper)
+selectedOuter_mem        reduced to selectedOuter_cert + carrier_eq (body-233)
+recovered_outer_mem      reduced to recoveredOuter_cert + carrier_eq (body-233)
+region cross-disjoint    still construction-specific (158)
+```
+
+**Residual (refreshed):**
+
+* **grounded** — `carrier_isProperForest` (body-228);
+* **certificate fields (the new residual for 128/159)** — `isProper` (five `IsProperForest` conjuncts) and
+  `recovered_eq` (the section condition), each per constructed forest; plus the `carrier_eq` canonical-`D` wiring;
+* **still construction-specific** — the region pairwise disjointnesses (158);
+* **other floors** — the eight sector `sound` / `complete` directions (bodies 219–222), forward compatibility
+  (`forestTag` / `promote_collapse` 188, `forestComponentMem` 185, `represented_cases` 180), and the non-region base
+  (contract geometry, measure, survivor/remnant `Inj`/`Gen`, `rep`, and the heavy canonical fields).
+
+The next front is to **fill a certificate field** — the first `IsProperForest` conjunct (e.g. `IsNonempty`) for
+`selectedOuterRawOf` / the region union, using `forget_union_elements` — reached via an `IsProper conjunct` scout that
+picks the conjunct that falls first.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
