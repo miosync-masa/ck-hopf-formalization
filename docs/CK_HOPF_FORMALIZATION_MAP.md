@@ -1373,6 +1373,36 @@ pairwise disjointnesses (158) stay construction-specific among the closure leave
 not claimed complete** — the next front is to fill a certificate field: the first `IsProperForest` conjunct (e.g.
 `IsNonempty`) for the constructed forests, via `forget_union_elements`.
 
+### R-6c bodies 235–242 — certificate `isProper` conjuncts, and the `selectedOuter_mem` domain defect (2026-07-12)
+
+Filling the certificate's `isProper` field (the five `IsProperForest` conjuncts) for the two constructed forests
+`X = selectedOuterRawOf s` and `Y = recovered-outer region union`.  The two *universal* conjuncts are proved
+generically: `HasNonemptyComponents` (body-236, from the supplied `cd_nonempty`) and
+`HasPositiveInternalEdgesComponents` (body-238, from a new sibling measure leaf `cd_positiveInternalEdges` — body-237
+established that `IsConnectedDivergent` does not force positive edges, since `IsOnePI`'s bridge clause is vacuous on
+zero edges).  Both discharge `X`, `Y`, and every future construction at once.
+
+The *piece-specific* `IsNonempty` conjunct splits sharply.  For `Y`, body-241 proves it on the forward image
+(`recoveredOuter_isNonempty`) **membership-independently** — from the domain outer's carrier membership + the body-168
+region partition + `union_eq`, never touching the recovered carrier membership `unionOuter.2` (which would be circular).
+For `X`, the audit (body-242) surfaced a **design defect, not a hard leaf**:
+
+> **`selectedOuter_mem : ∀ s` is false at the all-right split (body-242, verdict THREADING OBSTRUCTION).**
+> `selectedOuterRawOf p_R = ∅` (both `leftOf` and `promotedOf` empty when every tag is `Sum.inl false`), and
+> `∅ ∉ D.carrier G` for the canonical carrier, so the *total* obligation is genuinely false at `s = p_R`.  But the
+> real image-side sum is indexed over `forestChoiceCarrier` (which filters out `p_R`), and `EmptyPivot` already carries
+> the all-right boundary **cover-external**.  The fix is a **domain correction** — state the membership on the filtered
+> domain `∀ A, ∀ p ∈ forestChoiceCarrier A, selectedOuterRawOf ⟨A,p⟩ ∈ D.carrier G` — not a stronger proof.  (Body-151's
+> `mixed_ne_pR` does not substitute: it excludes `p_R` only for reconstructed mixed codomain elements.)
+
+**Net (bodies 88–242).**  The certificate `isProper` conjuncts stand as: `HasNonemptyComponents` and
+`HasPositiveInternalEdgesComponents` proved generically for both forests; `IsNonempty` proved for `Y` (forward image)
+and, for `X`, reduced to a **filtered-domain re-typing** of `selectedOuter_mem` (the all-right `p_R` is a genuine
+`∅` counterexample of the *total* statement, carried cover-external by `EmptyPivot`); `0 < internalEdges.card` (depends
+on `IsNonempty`) and `0 < complementEdges.card` (strict properness) unstarted.  **Full unconditional resolved
+coassociativity still not claimed complete** — the next front is a filtered-domain `X.IsNonempty` local theorem, then a
+restricted membership adapter that removes the false total membership field while keeping the total helper functions.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

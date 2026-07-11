@@ -1549,6 +1549,68 @@ The next front is to **fill a certificate field** — the first `IsProperForest`
 `selectedOuterRawOf` / the region union, using `forget_union_elements` — reached via an `IsProper conjunct` scout that
 picks the conjunct that falls first.
 
+### R-6c bodies 235–242 — certificate `isProper` conjuncts, and the `selectedOuter_mem` domain defect (2026-07-12)
+
+Filling the certificate `isProper` field (the five `IsProperForest` conjuncts) for the two constructed forests
+`X = selectedOuterRawOf s` and `Y = recovered-outer region union`.  Bodies 235–238 grounded the two universal
+conjuncts; 239–242 opened the piece-specific `IsNonempty` and, doing so, surfaced a **design defect** in the total
+`selectedOuter_mem` statement.
+
+```text
+236  HasNonemptyComponents (PROVED, generic)
+       hasNonemptyComponents_of_cdNonempty (N : ResolvedConnectedDivergentNonemptySupply G) (A) : A.HasNonemptyComponents
+       := fun γ hγ => (N.cd_nonempty γ (A.isConnectedDivergent γ hγ)).card_pos    -- universal, no piece-specific fact
+
+238  HasPositiveInternalEdgesComponents (PROVED, generic; needs a NEW measure leaf — 237 scout)
+       structure ResolvedConnectedDivergentPositiveInternalEdgesSupply G { cd_positiveInternalEdges : ∀ γ, γ.forget.IsConnectedDivergent → 0 < γ.internalEdges.card }
+       hasPositiveInternalEdgesComponents_of_cdPositive (P) (A) := fun γ hγ => P.cd_positiveInternalEdges γ (A.isConnectedDivergent γ hγ)
+       (IsConnectedDivergent does NOT force positive edges: IsOnePI's bridge clause is vacuous on 0 edges.)
+
+240  IsNonempty transfer infra (PROVED): isNonempty_of_cover / isNonempty_of_membership_iff / union_isNonempty_left/right
+
+241  Y.IsNonempty on the forward image (PROVED, membership-INDEPENDENT)
+       recoveredOuter_isNonempty (P : ResolvedCarrierProperProvider D) (A : …AssemblySupply…) (q : ForestBlockDomType D G)
+         : (Region.Union.unionOuter (fwdMap S q)).1.IsNonempty
+       via q.1.2 (DOMAIN membership, free) + carrier_isProperForest + union_eq + recovered_region_partition (168).
+       Never touches recovered_outer_mem (159) / unionOuter.2. Dependency recorded: building Region.Union is not
+       membership-free (unionOuter codomain {A' // A' ∈ carrier}), so a later cert-assembly must separate the raw
+       region union from the carrier-tagged unionOuter.
+```
+
+**The `selectedOuter_mem` domain defect (body-242, verdict (c) THREADING OBSTRUCTION).**
+
+```text
+- selectedOuter_mem : ∀ s, selectedOuterRawOf s ∈ D.carrier G  is TOTAL over ResolvedCoassocSplitChoice, and is
+  FALSE at s = p_R (the all-right split fun _ _ => Sum.inl false): leftOf p_R and promotedOf p_R are both empty, so
+  selectedOuterRawOf p_R = ∅, and ∅ ∉ D.carrier G for the canonical carrier.
+- The real image-side SUM consumer is indexed over forestChoiceCarrier A = (pi).filter (p ≠ p_R ∧ p ≠ p_L)
+  (ForestCoreIndex.lean:70), so every summand carries p ≠ p_R. p_R is NOT a real summand.
+- EmptyPivot already relocates the all-right boundary COVER-EXTERNAL (resolved_output_boundaries_external), taking
+  ∅ ∉ D.carrier as a canonical-model input. It does not (and need not) discharge selectedOuter_mem at p_R.
+- The fix is NOT a stronger proof but a DOMAIN correction: state the membership on the filtered domain
+  ∀ A, ∀ p ∈ forestChoiceCarrier A, selectedOuterRawOf ⟨A,p⟩ ∈ D.carrier G. body-151's mixed_ne_pR does NOT substitute
+  (it excludes p_R only for reconstructed mixed codomain elements, not a generic s).
+```
+
+**Status table (certificate `isProper` conjuncts, both constructed forests):**
+
+```text
+HasNonemptyComponents             X ✅ (236)   Y ✅ (236)     generic
+HasPositiveInternalEdgesComponents X ✅ (238)   Y ✅ (238)     generic (new measure leaf cd_positiveInternalEdges)
+IsNonempty                         X → 244 (filtered domain)  Y ✅ (241, forward image)
+0 < internalEdges.card             depends on IsNonempty (#4) + #2 (per 237)
+0 < complementEdges.card           hardest (strict properness), unstarted
+```
+
+**Residual (refreshed):** the `isProper` conjuncts above (plus `recovered_eq`, the certificate section) are the
+per-forest residual for `selectedOuter_mem` (128) / `recovered_outer_mem` (159); the `selectedOuter_mem` obligation
+itself must first be **re-typed to the filtered domain** (bodies 244–245) so it is not the false total statement.  The
+p_R boundary stays with `EmptyPivot`.
+
+The next front is a **filtered-domain `X.IsNonempty` local theorem** (`selectedOuterRaw_isNonempty_of_mem_forestChoiceCarrier`),
+then a **restricted membership adapter** swapping the consumer to the filtered domain — removing the false total
+membership field while keeping the total helper functions.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
