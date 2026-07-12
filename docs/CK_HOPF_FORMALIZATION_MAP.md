@@ -1403,6 +1403,33 @@ on `IsNonempty`) and `0 < complementEdges.card` (strict properness) unstarted.  
 coassociativity still not claimed complete** — the next front is a filtered-domain `X.IsNonempty` local theorem, then a
 restricted membership adapter that removes the false total membership field while keeping the total helper functions.
 
+### R-6c bodies 244–246 — domain defect repaired at source; four of five `isProper` conjuncts discharged (2026-07-12)
+
+Two things landed together.  **The selected-outer domain defect is repaired at its source:** the carrier-tagged
+selected outer is now defined only on the filtered forest-block domain.  Body-244 proves `X.IsNonempty` on that domain
+(`selectedOuterRaw_isNonempty_of_mem_forestChoiceCarrier`) from `p ≠ p_R` alone — a non-`inl false` component is
+either left-selected (`leftOf` nonempty) or `inr B`-tagged (`promotedOf` nonempty, via `carrier_isProperForest` on the
+carrier member `B`) — using no `EmptyPivot`, no body-151, no `promote_collapse`, and crucially not the false total
+`selectedOuter_mem`.  Body-245 plants the **new root** `ResolvedSelectedOuterFilteredMemSupply` (total-supply-
+independent): its `selectedOuter_mem` is the honest filtered obligation `∀ A p, p ∈ forestChoiceCarrier A →
+selectedOuterRawOf ⟨A,p⟩ ∈ D.carrier G`, with a carrier-tagged `selectedOuterOfForestChoice` on the filtered sigma
+(`.1 = selectedOuterRawOf` by `rfl`) and a `mem_of_mem_forestBlockDomFinset` reconnection to the sum consumer (which
+already carries the summand's filter membership).
+
+**And four of the five `IsProperForest` conjuncts are now discharged for both constructed forests:**
+`HasNonemptyComponents` (236), `HasPositiveInternalEdgesComponents` (238), `0 < internalEdges.card` (246, from a
+witness component via `mem_internalEdges`), and `IsNonempty` (244 filtered for `X`, 241 forward image for `Y`).
+
+> **The total `selectedOuter_mem : ∀ s` is retired, not merely unproved** — it is *false* at the all-right split
+> `p_R` for the canonical carrier (`selectedOuterRawOf p_R = ∅ ∉ D.carrier G`).  The honest obligation is the filtered
+> new root (body-245); `EmptyPivot` carries the `p_R` boundary cover-external.
+
+**Net (bodies 88–246).**  Only one `IsProperForest` conjunct remains — `0 < complementEdges.card` (strict properness,
+`A.internalEdges < G.internalEdges`) — plus the certificate section `recovered_eq`.  The chain still references the
+retired total root at `fwdMap` and the backward / bijection layer, a **migration boundary** (re-typing, not new
+mathematics — `p_R` is never applied in any live sum).  **Full unconditional resolved coassociativity still not claimed
+complete** — the next front is a `fwdMap` filtered-domain migration scout, then the strict `complementEdges` conjunct.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
