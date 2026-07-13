@@ -1430,6 +1430,38 @@ retired total root at `fwdMap` and the backward / bijection layer, a **migration
 mathematics — `p_R` is never applied in any live sum).  **Full unconditional resolved coassociativity still not claimed
 complete** — the next front is a `fwdMap` filtered-domain migration scout, then the strict `complementEdges` conjunct.
 
+### R-6c bodies 248–254 — interface/statement migration completed (2026-07-13)
+
+The `fwdMap` filtered-domain migration is carried out at the interface/statement level.  Body-248 (scout) found it is a
+shallow **provider-retype**: every proof ports verbatim by `Subtype.ext rfl` (proof irrelevance on the carrier tag).
+Body-249 defines `fwdMapFiltered` (carrier tag from the body-245 filtered root, not the total root); body-250 the
+filtered witnessSplit cover interface, body-251 a legacy-bridge-free `dite` assembly of it.  Body-252 plants an
+**independent, `Forward`-free value root** `ResolvedConcreteSummandValueSupply` (dropping the total-root field
+`Forward`, retyping `quotientForest` / `quot_eq` via `selectedOuterRawOf`); body-253 re-points the round-trip cover and
+branch data onto that value root; body-254 restates the summand agreement over it.
+
+> **The retired total selected-outer root no longer appears in any canonical migration interface.**  It survives only
+> in explicitly marked legacy-comparison adapters (`fwdMapFiltered_eq_legacy`, the several `.ofLegacy`).  The interface
+> migration is complete; **canonical proof inhabitants remain** for witnessSplit membership, the branch geometry, and
+> the value-side summand agreement.
+
+**Migration status (statement vs canonical proof):**
+
+| Layer | Statement | Canonical proof |
+|---|---|---|
+| filtered forward map | complete | membership root (body-245) |
+| witnessSplit cover | `Forward`-free | branch specs / `witnessSplit_mem` remain |
+| value bundle | complete | geometry fields remain |
+| summand agreement | `Forward`-free | factor-equality discharge remains |
+| legacy total root | retired | comparison adapters only |
+
+**Net (bodies 88–254).**  The interface migration is complete (the retired total root is off every canonical
+interface); the isProper conjuncts stand at four of five (only strict `complementEdges` remains).  A hidden domain
+defect to audit next: `ResolvedSummandFactorBundle.selected` is **total** — the last place the filtered-domain
+correction must reach.  **Full unconditional resolved coassociativity still not claimed complete** — the next fronts are
+`witnessSplit_mem` canonical instantiation, the `summand_agree_value` factor-equality discharge (and the `selected`
+audit), then the strict `complementEdges` conjunct.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

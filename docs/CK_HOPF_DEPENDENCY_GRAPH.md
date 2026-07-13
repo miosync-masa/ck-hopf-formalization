@@ -1657,6 +1657,52 @@ mathematics (`p_R` is never applied in any live sum).
 The next front is a **`fwdMap` filtered-domain migration scout** (blast radius + minimal migration boundary of the
 retired total root), then the strict `complementEdges` conjunct.
 
+### R-6c bodies 248–254 — interface/statement migration completed (retired total root off every canonical interface) (2026-07-13)
+
+The `fwdMap` filtered-domain migration is carried out at the interface/statement level.  The retired total
+selected-outer root (`ResolvedForwardMapCoherenceSupply.selectedOuter_mem : ∀ s`, false at `p_R`) **no longer appears
+in any canonical migration interface** — it survives only in explicitly marked legacy-comparison adapters.
+
+```text
+248  scout: verdict (3) PROVIDER-RETYPE (shallow) — every proof ports verbatim by Subtype.ext rfl.
+249  fwdMapFiltered : FilteredForestBlockDom D G → ForestBlockCodType D G   (carrier tag from body-245, not the total root)
+       + fwdMapFiltered_eq_legacy : fwdMapFiltered F S q = fwdMap S q.1  (rfl, proof irrelevance) — migration-check only.
+250  ResolvedWitnessSplitFilteredCoverSupply (round-trips vs fwdMapFiltered) + .ofLegacy (via the rfl bridge).
+251  ResolvedWitnessSplitFilteredConcreteData + dite assembly → the cover WITHOUT the legacy bridge.
+252  ResolvedConcreteSummandValueSupply — independent value root, DROPS Forward, quotientForestRaw / quot_eq via
+       selectedOuterRawOf; fwdMapFilteredValue + rfl projections + .ofLegacy (defeq).
+253  ResolvedWitnessSplitFilteredValue{Cover,ConcreteData} + toCover — round-trip chain re-pointed onto the value root,
+       Forward-free in every statement.
+254  ResolvedSummandAgreeValueSupply — the term equality restated over fwdMapFilteredValue, Forward-free statement;
+       .ofLegacy discharges from S.summand_agree by rfl-defeq.
+```
+
+> **The interface migration is complete; canonical proof inhabitants remain.**  The retired total root appears in a
+> declaration *type* only in the explicitly-marked legacy comparison adapters (`fwdMapFiltered_eq_legacy`,
+> `…CoverSupply.ofLegacy`, `…ValueSupply.ofLegacy`, `…AgreeValueSupply.ofLegacy`).  Canonical *proof inhabitants* still
+> remain to be built for witnessSplit membership, the branch geometry, and the value-side summand agreement.
+
+**Migration status (statement vs canonical proof):**
+
+```text
+Layer                    Statement       Canonical proof
+filtered forward map     complete        membership root (body-245)
+witnessSplit cover       Forward-free    branch specs / witnessSplit_mem remain
+value bundle             complete        geometry fields remain
+summand agreement        Forward-free    factor-equality discharge remains
+legacy total root        retired         comparison adapters only
+```
+
+**Residual (refreshed):** among the `isProper` conjuncts only `0 < complementEdges.card` (strict properness) remains
+(plus `recovered_eq`).  On the migration side, the statements are `Forward`-free; the proof-level inhabitants remain —
+`witnessSplit_mem` (total-root-free via `OuterMixingInvMem` / `forestChoiceCarrier` membership), the branch geometry,
+and a canonical `summand_agree_value` via the factor-equality path (`resolved_splitChoice_summand_agree_of_factor_eqs`,
+`ForestCarryingBlock.lean:68`).  A hidden domain defect to audit: `ResolvedSummandFactorBundle.selected` is **total**
+(a total-root-shaped image supply) — the last place the filtered-domain correction must reach.
+
+The next front is `witnessSplit_mem` canonical instantiation, then the `summand_agree_value` factor-equality discharge
+(and the `selected` audit), then the strict `complementEdges` conjunct.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
