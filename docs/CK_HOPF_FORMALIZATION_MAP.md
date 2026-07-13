@@ -1485,6 +1485,40 @@ compatibility, region cross-disjointnesses, non-region base).  **Full unconditio
 claimed complete** — the next front is the strict `complementEdges` conjunct, the last `IsProperForest` piece, purely
 geometric and independent of the (now complete) migration.
 
+### R-6c bodies 262–267 — `IsProperForest` completed; carrier closure is an honest parametric-model obligation (2026-07-13)
+
+The last `IsProperForest` conjunct is proved, and the certificate route is resolved into its true status.  Body-262
+proves the complement-edge monotonicity infrastructure; body-263 discharges `0 < complementEdges.card` for both
+constructed forests by **global monotonicity** (each has `internalEdges ≤` the domain outer, whose complement is
+positive because the domain outer is a proper carrier member) — no per-component missing-edge witness, no deep leaf.
+Body-264 assembles `IsProperForest` (all five conjuncts) for both: `X = selectedOuterRawOf` as a 5-tuple on the
+filtered domain, `Y` via the generic elements-equality transfer `isProperForest_of_elements_eq`.  Bodies 265–267
+resolve the certificate section: the generic `recovered_eq` / `ofForgetForest` section is an **honest leaf** (forget is
+not globally injective); body-265's claim that `unionOuter.2` supplies membership "for free" was **circular** and is
+**superseded by body-266** (`unionOuter z = ⟨rawRegionUnion z, recovered_outer_mem z⟩`; its `.2` *is* the leaf).
+Body-267 plants the independent `rawRecoveredOuter` root (value from region maps + disjointness alone, no carrier tag)
+and records the carrier-closure verdict.
+
+> **All five `IsProperForest` conjuncts are proved for the relevant constructed forests, but properness does not imply
+> membership in the supplied finite resolved carrier.  Carrier closure is therefore an honest parametric-model
+> obligation, not a remaining coassociativity proof-shape gap.**
+
+**Carrier-closure route table:**
+
+| Route | Verdict |
+|---|---|
+| all resolved proper forests via `Finset.univ` | **impossible** — no global `Fintype (ResolvedAdmissibleSubgraph G)` |
+| payload carrier extension | possible concrete-model work, **not free** (owes generic-`z` raw `IsProperForest` + `carrier_mapPerm` / `hCD`) |
+| forget-image section | **obstructed** by non-injective `forget` / promoted-component ids |
+| parametric carrier-closure supply | the **canonical current interface** |
+
+**Net (bodies 88–267).**  `IsProperForest` (all five conjuncts) is complete; the migration residual is none.  Carrier
+membership (the recovered / selected-outer closure) is an **honest parametric-model supply**, not a proof-shape gap:
+`selectedOuter_mem` is filtered (body-245), `recovered_outer_mem` and the cross-disjointnesses are supplied.  **Full
+unconditional resolved coassociativity still not claimed complete** — the next front is the top-level parametric
+carrier-closure supply consolidating these (with the original geometry), not the concrete carrier-enumeration
+construction, which is a separate phase.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

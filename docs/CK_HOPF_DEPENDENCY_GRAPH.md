@@ -1752,6 +1752,54 @@ old total root                 retired, legacy-comparison adapters only
 The next front is the strict `0 < complementEdges.card` conjunct — the last `IsProperForest` piece, purely geometric
 and entirely independent of the (now complete) migration.
 
+### R-6c bodies 262–267 — `IsProperForest` completed; carrier closure is an honest parametric-model obligation (2026-07-13)
+
+The last `IsProperForest` conjunct is proved and the certificate route is resolved into its true status.
+
+```text
+262  complementEdges monotonicity infra (PROVED): complementEdges_card_pos_of_internalEdges_le,
+       internalEdges_le_of_mem (Finset.single_le_sum), internalEdges_le_of_components_le (pairwise-disjoint).
+263  complement positivity for X / Y by GLOBAL monotonicity (PROVED, no deep leaf): selectedOuterRawOf and the
+       recovered outer have internalEdges ≤ the domain outer, whose complement (carrier proper) is positive.
+264  IsProperForest ASSEMBLED — all five conjuncts complete: X = 5-tuple on the filtered domain; Y via the generic
+       elements-equality transfer isProperForest_of_elements_eq (carrier member A, B.elements = A.1.elements → B proper).
+265  generic recovered_eq / the ofForgetForest section is an HONEST LEAF (forget not globally injective).
+266  CORRECTION — body-265's "unionOuter.2 supplies membership for free" bypass is CIRCULAR (unionOuter z =
+       ⟨rawRegionUnion z, recovered_outer_mem z⟩; its .2 IS the body-159 leaf). The non-circular content is only the
+       raw outer's IsProperForest (from the DOMAIN outer's properness). SUPERSEDES body-265's "off the critical path".
+267  independent rawRecoveredOuter root (circularity pin: region maps + disjointness via .union, no unionOuter / no
+       carrier tag) + the carrier-closure verdict.
+```
+
+> **All five `IsProperForest` conjuncts are proved for the relevant constructed forests, but properness does not imply
+> membership in the supplied finite resolved carrier.  Carrier closure is therefore an honest parametric-model
+> obligation, not a remaining coassociativity proof-shape gap.**
+>
+> `rawRecoveredOuter` is the canonical circularity-prevention root: the recovered outer's *value* built from region
+> maps + disjointness alone.  `unionOuter.2` is an *input* to a carrier-closure proof, never an *output* of one —
+> body-265's bypass claim (that it discharges membership) is superseded by body-266.
+
+**Carrier-closure route table:**
+
+```text
+Route                                          Verdict
+all resolved proper forests via Finset.univ    IMPOSSIBLE — no global Fintype (ResolvedAdmissibleSubgraph G)
+                                               (ResolvedCoproduct.lean:164, by design; no DecidablePred IsProperForest)
+payload carrier extension                      possible concrete-model work, NOT free (owes generic-z raw IsProperForest
+                                               + carrier_mapPerm / hCD equivariance for the enlarged carrier)
+forget-image section (A = ofForgetForest       OBSTRUCTED — forget is not injective; promotedOf components keep δ's ids,
+  A.forget)                                    not the constant-id re-lift, so the section fails on the promoted region
+parametric carrier-closure supply              the canonical current interface (selectedOuter_mem filtered, body-245;
+                                               recovered_outer_mem / cross-disjoint supplied)
+```
+
+**Residual (refreshed).** `IsProperForest` (all five conjuncts) is complete; the migration residual is none (bodies
+248–259).  What remains is the **parametric carrier-closure supply** (filtered selected-outer closure + raw
+recovered-outer closure + cross-disjointnesses) — an honest model obligation, not a proof-shape gap — plus the original
+geometry (branch specs, eight sector directions, forward compatibility, non-region base).  The next front is the
+top-level parametric carrier-closure supply consolidating these, not the concrete carrier-enumeration construction (1b),
+which is a separate phase (carrier enumeration + permutation closure + `hCD`).
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
