@@ -1703,6 +1703,55 @@ and a canonical `summand_agree_value` via the factor-equality path (`resolved_sp
 The next front is `witnessSplit_mem` canonical instantiation, then the `summand_agree_value` factor-equality discharge
 (and the `selected` audit), then the strict `complementEdges` conjunct.
 
+### R-6c bodies 256–259 — filtered-domain migration complete at BOTH interface and proof levels (2026-07-13)
+
+The proof-level inhabitants are now built, closing the migration.
+
+```text
+256  mem_forestBlockDomFinset_of_choice / _of_isForestCarrying / _of_ne (PROVED, total-root-free):
+       q ∈ forestBlockDomFinset G from the reconstruction tags alone (Finset.mem_sigma + mem_attach) — canonical
+       witnessSplit_mem, no selectedOuter_mem / Forward.
+258  resolved_selectedOuter_left_factor_eq_of_parts_raw (PROVED): the last term-path helper re-keyed to raw
+       admissible subgraphs — ∏ localLeftFactor = resolvedForestLeftTerm (leftOf.union promotedOf), NO S in its type.
+259  summand_agree_value_of_value (F) (V) : ResolvedSummandAgreeValueSupply F V (PROVED, .ofLegacy-free):
+       resolved_splitChoice_summand_agree_of_factor_eqs q.1.1 q.1.2 (fwdMapFilteredValue F V q).1 (…).2 hL hR hQ,
+       with hL (258), hR (S-free resolved_quotientForest_right_factor_eq_of_parts), hQ := V.quot_eq — from V + F alone,
+       every gap by rfl/defeq; the leaves hLdisj/hPD are theorems on V.Measure, not fields.
+```
+
+> **The filtered-domain migration is complete at both the interface and proof levels.**  The retired total
+> selected-outer root is absent from the canonical forward map, witnessSplit cover, membership proofs, value bundle,
+> and summand agreement.  It survives only in explicitly marked legacy-comparison adapters.
+>
+> **This was a domain correction, not a stronger proof of the false total theorem.**  The case `p_R` remains
+> cover-external through `EmptyPivot`.
+
+**Final migration table (bodies 248–259):**
+
+```text
+Layer                          Canonical status
+selected outer membership      filtered root, proved (body-245)
+forward map                    filtered / value-root (bodies 249/252)
+witnessSplit statements        filtered, Forward-free (bodies 250/253)
+witnessSplit membership        canonical tag proof (body-256)
+value bundle                   independent Forward-free root (body-252)
+summand agreement statement    Forward-free (body-254)
+summand agreement proof        canonical factor-equality proof (bodies 258/259)
+old total root                 retired, legacy-comparison adapters only
+```
+
+**Residual (migration-derived vs mathematics-derived, fully separated):**
+
+* **Migration residual — none.**  The retired total root is confined to the `.ofLegacy` comparison lemmas.
+* **`IsProperForest` — only `0 < complementEdges.card`** (strict properness) remains.
+* **Membership certificate — `recovered_eq`** (the section condition, body-232).
+* **Original geometry** — the branch specs, the eight sector `sound` / `complete` directions, forward compatibility,
+  the region cross-disjointnesses, and the non-region base (contract geometry, measure, survivor/remnant providers,
+  `rep`).
+
+The next front is the strict `0 < complementEdges.card` conjunct — the last `IsProperForest` piece, purely geometric
+and entirely independent of the (now complete) migration.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

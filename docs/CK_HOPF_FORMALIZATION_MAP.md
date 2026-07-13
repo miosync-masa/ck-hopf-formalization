@@ -1462,6 +1462,29 @@ correction must reach.  **Full unconditional resolved coassociativity still not 
 `witnessSplit_mem` canonical instantiation, the `summand_agree_value` factor-equality discharge (and the `selected`
 audit), then the strict `complementEdges` conjunct.
 
+### R-6c bodies 256–259 — filtered-domain migration complete at BOTH levels (2026-07-13)
+
+The proof-level inhabitants are now built.  Body-256 proves canonical `witnessSplit_mem` (`q ∈ forestBlockDomFinset G`
+from the reconstruction tags alone, `Finset.mem_sigma` — no `selectedOuter_mem`).  Body-258 re-keys the last term-path
+helper to raw admissible subgraphs (`resolved_selectedOuter_left_factor_eq_of_parts_raw`, no `S` in its type).  Body-259
+constructs the canonical `summand_agree_value_of_value (F) (V) : ResolvedSummandAgreeValueSupply F V` `.ofLegacy`-free
+from `V + F` alone — `resolved_splitChoice_summand_agree_of_factor_eqs` fed the raw `hL` (258), the `S`-free `hR`, and
+`hQ := V.quot_eq`; every gap closes by `rfl`/defeq, and the geometry leaves `hLdisj`/`hPD` are theorems on `V.Measure`,
+not fields.
+
+> **The filtered-domain migration is complete at both the interface and proof levels.**  The retired total
+> selected-outer root is absent from the canonical forward map, witnessSplit cover, membership proofs, value bundle,
+> and summand agreement; it survives only in explicitly marked legacy-comparison adapters.  **This was a domain
+> correction, not a stronger proof of the false total theorem** — the case `p_R` remains cover-external through
+> `EmptyPivot`.
+
+**Net (bodies 88–259).**  Migration residual: **none** (the retired total root is confined to `.ofLegacy` comparison
+lemmas).  What remains is purely mathematics-derived: among `IsProperForest`, only strict `0 < complementEdges.card`;
+the certificate section `recovered_eq`; and the original geometry (branch specs, the eight sector directions, forward
+compatibility, region cross-disjointnesses, non-region base).  **Full unconditional resolved coassociativity still not
+claimed complete** — the next front is the strict `complementEdges` conjunct, the last `IsProperForest` piece, purely
+geometric and independent of the (now complete) migration.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
