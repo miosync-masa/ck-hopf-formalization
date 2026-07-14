@@ -1521,5 +1521,66 @@ construction, which is a separate phase.
 
 ---
 
+### R-6c bodies 268–270 — the parametric layer completes as a single conditional coassociativity theorem (2026-07-14)
+
+The parametric coassociativity layer is closed.  Body-268 fixes the carrier-closure verdict (docs anchor).  Body-269
+consolidates the model's carrier-closure assumptions into one honest interface `ResolvedParametricCarrierClosureSupply`
+(filtered selected-outer closure + three region pairwise disjointnesses + the **raw** recovered-outer membership, stated
+on the bare region union — never the carrier-tagged `unionOuter`), with three converters.  Body-270 then inhabits the
+raid-boss `ResolvedForestBlockBijectionSupply` (body-97) **directly from the filtered / value chain** and chains it to
+`coassoc_gen`.  Every one of the twelve `sum_bij'` fields is supplied from the migrated chain (bodies 252/253/259)
+except the forward codomain membership `toFun_mem`, which unfolds (via `Finset.mem_sigma` + `Finset.mem_attach`) to the
+one genuinely new leaf — the forward quotient membership over the value root (`selectedOuterRawOf`), isolated as
+`ResolvedForwardQuotientMemValueSupply.quotient_mem`.  The summand agreement is **derived** from `F + V` (body-259), not
+assumed.
+
+**The chain:**
+
+```text
+ResolvedParametricCarrierClosureSupply          (269)
+  + filtered value bundle                       (252, Forward-free)
+  + filtered witnessSplit cover                 (253)
+  + forward quotient membership                 (270, the sole new leaf)
+  + explicit base / geometry leaves             (carrier_isProperForest, rep / repCD / rep_gen)
+→ ResolvedForestBlockBijectionSupply            (97, inhabited directly)
+→ coassoc_gen                                    (270, coassoc_gen_of_parametric_model)
+```
+
+**The 12-field supply table (all Forward-free, no `.ofLegacy`):**
+
+| `ResolvedForestBlockBijectionSupply` field | supplied by |
+|---|---|
+| `toFun` | `fwdMapFilteredValue F V ⟨q,hq⟩` (252) |
+| `invFun` | `cover.witnessSplit` (253) |
+| `toFun_mem` | `forwardMem.quotient_mem` + `mem_attach` (270, **new leaf**) |
+| `invFun_mem` | `cover.witnessSplit_mem` (253) |
+| `left_inv` | `cover.backward_witness` (253) |
+| `right_inv` | `cover.forward_witness` (253) |
+| `summand_agree` | `summand_agree_value_of_value F V` (259, **derived**) |
+| `carrier_isProperForest` | base model leaf (96) |
+| `rep` / `repCD` / `rep_gen` | representative base leaves |
+
+> **The R-6c parametric layer is complete as a single conditional coassociativity theorem.**
+>
+> **The theorem path is entirely filtered-domain, value-rooted, Forward-free, and legacy-adapter-free.**
+
+**Residual — separated exactly.**
+
+| Kind | Status |
+|---|---|
+| theorem-level migration residual | **none** — no total `selectedOuter_mem`, no `.ofLegacy` on the path |
+| new local leaf | `ResolvedForwardQuotientMemValueSupply.quotient_mem` (the only new obligation) |
+| construction boundary | the concrete value cover's region / backward chain (bodies 156/157/173/184), still total-forward-phrased — a construction detail *below* the theorem, not a gap in it |
+| model instance phase | carrier enumeration / permutation closure / `hCD` (phase 1b, separate) |
+| original geometry / base leaves | explicit hypotheses of `coassoc_gen_of_parametric_model` |
+
+`coassoc_gen_of_parametric_model` is Forward-free / `.ofLegacy`-free **as a theorem**: it takes the migrated value-root
+`cover` (body-253) as a hypothesis.  **Full unconditional resolved coassociativity is still not claimed complete** — a
+concrete model instance must discharge the new forward leaf, migrate the concrete cover construction off the total
+forward map, and (phase 1b) build the concrete carrier.  But the parametric *layer* — model assumptions + geometry
+leaves → `Δᵣ`-coassociativity on generators — is now one honest conditional statement.
+
+---
+
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
 This file is the reviewer-facing distillation; do not add day-by-day logs here.*
