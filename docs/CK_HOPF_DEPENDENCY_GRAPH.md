@@ -1854,6 +1854,81 @@ instance (discharge the new forward leaf, migrate the cover construction, phase-
 
 ---
 
+### R-6c bodies 271–286 — the value-root construction migration completes; concrete cover off the filtered root (2026-07-15)
+
+The named construction boundary (body-273) is closed: the concrete `witnessSplit` cover is built entirely from the
+filtered value root.
+
+```text
+271  docs anchor — parametric layer complete.
+273  construction-boundary scout. VERDICT: MEDIUM, not rfl-shallow — rightDomain/forestDomain read z.2 (the quotient),
+       = V.quotientForestRaw at the value root but S.quotientForest at the total root; NOT equal (V independent). Value
+       re-key needs V's own survivor/remnant split, not a mechanical re-key.
+274  ValueQuotientRegionSplit — rightDomain(fwdMapFilteredValue) ↔ V.Survivor.rightSurvivorForest, forestDomain ↔
+       V.Remnant.remnantForest, from V.union_eq + survivor_avoids/remnant_touches (star facts). PROVED.
+275  right region sector bridge value-root (rightRecovered ↔ rightPrimSelected) via Finset.mem_image + honest
+       right_sound_value/right_complete_value leaves (value image of body-219). PROVED.
+276  forest region sector bridge value-root (forestRecovered ↔ forestChoiceSelected), mirror of 275. PROVED.
+277  S-free region construction core (ResolvedRegionConstructionFromSectorValueSupply) — body-156's six fields, S
+       removed from the declaration type; element shapes rfl. PROVED.
+278  right/forest bridges over the S-free core — no S in the declaration type at all. PROVED.
+279  S-free leftResidual core + left value bridge (leftResidual ↔ leftSelectedConcrete). PROVED.
+280  recovered_region_membership_value — three bridges (278/279) + choice_tag_trichotomy (body-173, S-free), one shared
+       Region/Left assembly. PROVED.
+281  region coherence: the body-280 assembly maps ARE the body-269 closure's region maps (definitionally); S made
+       phantom-free. Final boundary audit recorded.
+282  S-free unionOuterValue (= ⟨recoveredRawUnion, recovered_raw_mem⟩) + recoverChoiceValue (region-priority dite) +
+       three tags (body-152 re-keyed) + recoveredPreimageValue = ⟨unionOuterValue, recoverChoiceValue⟩. PROVED.
+283  recoveredPreimageValue ∈ forestBlockDomFinset: forest branch via of_isForestCarrying (inr witness from
+       forest_nonempty + forest_tag), mixed branch via of_ne (mixed_ne_pR/mixed_ne_pL honest leaves). PROVED.
+284  backward_outer_value = unionOuterValue(fwd q) = q.1.1 (from body-280, Subtype.ext + ext_elements). NO LEAF.
+       CORRECTED AUDIT: the leaves are THREE — forward_outer, forward_quotient, AND the forest exact-B
+       (forestTag = B; forestChoiceSelected forgets B), value analog of forest_choiceAt_eq (body-200).
+285  the 3 leaves produce the two whole round-trips: choice_component_eq_value (mirror of body-194: inl→tags+bridges,
+       inr→leaf 3) → backward_choice_value (heq_of_index_eq, body-193) → backward_roundtrip_value / forward_roundtrip_value
+       (Sigma.ext). PROVED (everything but the 3 leaves).
+286  toConcreteData (four ConcreteData fields = copies of the two whole laws; mixedPreimage = forestPreimage =
+       recoveredPreimageValue) → .toCover → concrete cover. coassoc_gen_of_recovered_preimage_value: F/V/R.toCover/
+       forwardQuotientMemValueOfValue (free, body-272) + base leaves → coassoc_gen, S-FREE (no ParametricCarrierClosure
+       D S, no phantom S, no .ofLegacy). CONSTRUCTION BOUNDARY CLOSED.
+```
+
+**Canonical chain (all value-root, S-free):**
+
+```text
+S-free region cores + bridges     274–280
+→ coherence + raw preimage root    281–283
+→ backward outer + 3-leaf audit    284
+→ 2 whole round-trips              285
+→ concrete branch data + cover     286  (ResolvedWitnessSplitFilteredValueConcreteData → .toCover)
+→ ResolvedForestBlockBijectionSupply  97
+→ coassoc_gen
+```
+
+> **The R-6c value-root construction migration is complete.**  The concrete `witnessSplit` cover and the top-level
+> coassociativity theorem are constructed entirely from the filtered value root.  No total forward map, `Forward`
+> supply, legacy adapter, or phantom `S` remains on the canonical path.
+
+**Final status.**
+
+```text
+proof-shape residual        NONE
+migration residual          NONE
+construction boundary       CLOSED (concrete value cover, body-286)
+value round-trip geometry   3 explicit leaves (forward_outer_value, forward_quotient_value, forest_value_eq)
+region geometry             sound/complete + classifier leaves (mixed_ne_pR/pL, forest_nonempty)
+carrier closure             honest model supply (recovered_raw_mem + pairwise disjoint, body-269)
+concrete carrier instance   separate phase 1b (enumeration + permutation + hCD)
+```
+
+The total-forward machinery is **retired from the canonical path**, not "unused": it survives only in the
+comparison / migration-check converters (`.ofLegacy`, `.toValueCore`, `.toParametricCarrierClosure`), never on the route
+to `coassoc_gen_of_recovered_preimage_value`.  Full unconditional resolved coassociativity remains unclaimed pending a
+concrete phase-1b model instance discharging the three value round-trip geometry leaves + the region / carrier model
+supplies.
+
+---
+
 *Keep this file in sync with the Lean source line numbers when the kernels move.
 Reader-facing narrative lives in `CK_HOPF_FORMALIZATION_MAP.md`; do not duplicate
 sprint logs here.*
