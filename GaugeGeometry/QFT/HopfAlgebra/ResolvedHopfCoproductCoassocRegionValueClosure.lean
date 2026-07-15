@@ -74,7 +74,7 @@ region maps) plus the parametric closure's supplied model leaves: the filtered s
 pairwise disjointnesses of the assembly's maps, and the raw recovered-outer carrier membership.  Everything speaks about
 `Assembly`'s three maps, so the closure and body-280's membership are coherent by construction. -/
 structure ResolvedRegionValueClosureSupply (F : ResolvedSelectedOuterFilteredMemSupply D)
-    (V : ResolvedConcreteSummandValueSupply D) (S : ResolvedConcreteSummandBundleSupply D) where
+    (V : ResolvedConcreteSummandValueSupply D) where
   /-- The shared value bridge assembly (body-280): one `Region`, one `Left`, six sound/complete leaves. -/
   Assembly : ResolvedRecoveredRegionValueBridgeAssemblySupply F V
   /-- The filtered selected-outer carrier closure (body-245). -/
@@ -100,12 +100,13 @@ structure ResolvedRegionValueClosureSupply (F : ResolvedSelectedOuterFilteredMem
 namespace ResolvedRegionValueClosureSupply
 
 variable {F : ResolvedSelectedOuterFilteredMemSupply D} {V : ResolvedConcreteSummandValueSupply D}
-  {S : ResolvedConcreteSummandBundleSupply D}
 
-/-- **R-6c-body-281 — the parametric closure from the coherent region maps** (body-269).  Its region maps ARE the
-assembly's `Left`/`Region` maps, so body-269's `recovered_raw_mem` and body-280's `recovered_region_membership_value`
-are about the same maps by construction. -/
-noncomputable def toParametricCarrierClosure (C : ResolvedRegionValueClosureSupply F V S) :
+/-- **R-6c-body-281 — the parametric closure from the coherent region maps** (body-269, comparison only).  Its region
+maps ARE the assembly's `Left`/`Region` maps, so body-269's `recovered_raw_mem` and body-280's
+`recovered_region_membership_value` are about the same maps by construction.  The legacy bundle `S` is received on the
+converter side ONLY (the canonical root is S-free); do NOT use this converter on the canonical path. -/
+noncomputable def toParametricCarrierClosure (C : ResolvedRegionValueClosureSupply F V)
+    (S : ResolvedConcreteSummandBundleSupply D) :
     ResolvedParametricCarrierClosureSupply D S where
   selected := C.selected
   leftResidual := C.Assembly.Left.leftResidual
