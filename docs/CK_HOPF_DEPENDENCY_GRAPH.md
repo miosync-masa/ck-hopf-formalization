@@ -1984,6 +1984,52 @@ is closed.
 
 ---
 
+### R-6c bodies 293–299 — the round-trip layer reaches its final geometric floor: eight local model facts (2026-07-15)
+
+The six component-level leaves (body-291) are each audited to their floor; body-299 assembles the eight resulting facts.
+
+```text
+293  survivor_mem_value → survivor_sound_value + survivor_complete_value (z-local mirror of bodies 205/211/221;
+       rightSurvivorForest (recPre z) ⟷ rightDomain z DIRECTLY, rfl elements + mem_filter; NO body-278, NO fwd q=z).
+294  remnant_mem_value  → remnant_sound_value + remnant_complete_value (z-local mirror of bodies 207/216/222; de-contraction
+       folded inside the two HEq-directions, no 3rd leaf; NO forestTag_agrees, NO fwd q=z).
+295  forestTag_agrees FLOOR: forestTag arbitrary (region core keeps no B/occurrence for generic z; B is choiceAt-sourced,
+       forward-image only). Core enrichment relocates, does not eliminate.
+296  promote_collapse FLOOR: promote_elements (rfl) → B.elements.image (γ.promote) = {γ} needs B = whole-component forest;
+       forestTag arbitrary ⇒ not derivable. Distinct floor (needs exact B, not fwd-agreement).
+297  forestComponentMem → forest_parent_mem_value FLOOR (componentToForest z δ ∈ z.1.1.elements pointwise; core returns
+       bare graph, parent-in-A not retained). rw [forestRecovered_elements_eq] + mem_image.mp.
+298  represented_cases → represented_forest_complete_value FLOOR (∃δ, componentToForest z δ = γ; completeness only).
+       rw [forestRecovered_elements_eq] + mem_image.mpr.
+299  ResolvedRecoveredPreimageValueGeometryFloorSupply (ONE Data + 8 floor facts) → toSurvivorSupply/toRemnantSupply/
+       toForestComponentMemSupply/toRepresentedCasesSupply (Data:=A.Data) → their theorems discharge 4 leaves + 2 direct
+       floor fields → toGeometryAssemblySupply (body-291) → coassoc_gen_of_geometry_floor (body-286 chain, S-free).
+```
+
+> **The canonical R-6c round-trip layer is complete at its final geometric floor.  Eight local component-level model
+> facts imply resolved coproduct coassociativity; no proof-shape, migration, global-HEq, or abstract round-trip
+> obligation remains.**
+
+**The eight floor facts:** `forestTag_agrees`, `promote_collapse`, `forest_parent_mem_value`,
+`represented_forest_complete_value`, `survivor_sound_value`, `survivor_complete_value`, `remnant_sound_value`,
+`remnant_complete_value`.  They are the honest geometry interface any concrete region/carrier model must supply
+(de-contraction, parent membership, tag occurrence, star sound/complete), NOT unfinished proof-shape obligations.
+
+**Two-layer status.**
+
+```text
+round-trip geometry layer   exactly EIGHT local model facts
+complete theorem            those eight + (inside Data) region sound/complete + carrier closure + F/V + base leaves
+                              (carrier_isProperForest proved 5/5 bodies 264/266; rep/repCD/rep_gen)
+```
+
+The four completion nodes: **271** parametric theorem · **287** construction migration · **292** global-identity
+elimination · **299** final local-geometry floor.  Canonical path S-free / Forward-free / legacy-free.  Full
+unconditional resolved coassociativity remains unclaimed pending a phase-1b concrete model instance discharging the eight
+local facts + the region/carrier supplies — but the round-trip layer is closed at its final irreducible floor.
+
+---
+
 *Keep this file in sync with the Lean source line numbers when the kernels move.
 Reader-facing narrative lives in `CK_HOPF_FORMALIZATION_MAP.md`; do not duplicate
 sprint logs here.*

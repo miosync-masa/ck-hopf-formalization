@@ -1705,5 +1705,56 @@ but the entire *abstract* round-trip / global-identity layer is now closed.
 
 ---
 
+### R-6c bodies 293–299 — the round-trip layer reaches its final geometric floor: eight local model facts (2026-07-15)
+
+The six component-level leaves (body-291) are each audited: four reduce to strictly more local facts (bodies 293/294/297/298)
+and two are pinned as honest floors (bodies 295/296).  Body-299 assembles the result: **eight local model-geometry facts
+imply resolved coproduct coassociativity.**
+
+> **The canonical R-6c round-trip layer is complete at its final geometric floor.  Eight local component-level model
+> facts imply resolved coproduct coassociativity; no proof-shape, migration, global-`HEq`, or abstract round-trip
+> obligation remains.**
+
+**The six-leaf → eight-fact map:**
+
+| body-291 leaf | audit (body) | final floor fact(s) |
+|---|---|---|
+| `survivor_mem_value` | reduced (293) | `survivor_sound_value` + `survivor_complete_value` (`inl false` ⟷ star-avoiding bijection) |
+| `remnant_mem_value` | reduced (294) | `remnant_sound_value` + `remnant_complete_value` (`inr` ⟷ star-touching bijection) |
+| `forestComponentMem` | reduced (297) | `forest_parent_mem_value` (`componentToForest z δ ∈ z.1.1.elements`, pointwise) |
+| `represented_cases` | reduced (298) | `represented_forest_complete_value` (a represented `A`-component has a `componentToForest` preimage) |
+| `forestTag_agrees` | floor pin (295) | `forestTag_agrees` (opaque `forestTag` = the occurrence-recovered `B` at forward images) |
+| `promote_collapse` | floor pin (296) | `promote_collapse` (de-contracting a parent by its forest index returns the parent singleton) |
+
+Bodies 293/294 mirror the total-root survivor/remnant image correspondences (bodies 205-222) **z-locally** — never using
+the forward bridge at `q := recoveredPreimageValue z` (which would presuppose the round-trip `fwd (recoveredPreimageValue
+z) = z`).  Bodies 297/298 reduce the two set-membership leaves to pointwise `componentToForest` facts via the image
+structure of `forestRecovered`.  Bodies 295/296 pin the two genuine floors: `forestTag` is honestly arbitrary (the region
+core keeps no `B`/occurrence for a generic `z`), and `promote_collapse` needs the exact whole-component forest index —
+neither is derivable from the abstract supplies.
+
+`coassoc_gen_of_geometry_floor` (body-299) bundles the eight facts over ONE `Data` and chains through body-291/286: the
+old six leaves are gone from its arguments; only the eight floor facts + the base leaves remain.
+
+**These eight facts are an interface, not a backlog.**  They are the honest geometry that any concrete region / carrier
+*model* must supply — de-contraction (`promote_collapse`), parent membership (`forest_parent_mem_value`,
+`represented_forest_complete_value`), tag occurrence (`forestTag_agrees`), and the survivor/remnant star sound/complete
+directions.  They are NOT unfinished proof-shape obligations.
+
+**Two-layer status (reviewer distinction).**
+
+| Scope | Residual |
+|---|---|
+| round-trip geometry layer | **exactly eight local model facts** |
+| complete theorem | those eight + (inside `Data`) region sound/complete, carrier closure, `F` / `V`; + the base leaves (`carrier_isProperForest`, proved 5/5 bodies 264/266; `rep`/`repCD`/`rep_gen`) |
+
+The canonical path to `coassoc_gen_of_geometry_floor` is entirely **S-free, `Forward`-free, and legacy-adapter-free**.
+The four completion nodes now read: **body-271** parametric theorem · **body-287** construction migration · **body-292**
+global-identity elimination · **body-299** final local-geometry floor.  **Full unconditional resolved coassociativity is
+still not claimed complete** — a concrete phase-1b model instance must discharge the eight local facts + the region /
+carrier supplies — but the round-trip layer is now closed at its final, irreducible geometric floor.
+
+---
+
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
 This file is the reviewer-facing distillation; do not add day-by-day logs here.*
