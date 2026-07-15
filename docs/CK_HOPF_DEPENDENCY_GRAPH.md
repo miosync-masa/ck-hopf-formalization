@@ -1929,6 +1929,61 @@ supplies.
 
 ---
 
+### R-6c bodies 288–291 — the three round-trip leaves reduced to component-level geometry; every abstract HEq eliminated (2026-07-15)
+
+The three value round-trip leaves (body-285) re-key onto the total-root forest-recovery / quotient-HEq machinery
+(bodies 174-208, already proved + S-free) and reduce to LOCAL component-level geometry.
+
+```text
+288  forest exact-B: occurrenceValue built from q.1's own choiceAt via body-278 forest bridge (anti-cycle: B from
+       choiceAt, NOT forestTag); parent_recovered := rfl; forest_choiceAt_eq_value via heq_transport_choice (body-200,
+       generic). forest_value_eq (leaf 3) reduced to forestTag_agrees. PROVED.
+289  forward outer: selectedOuterRawOf = leftOf ∪ promotedOf = leftResidual ∪ forestRecovered = A. leftOf=leftResidual
+       PURE TAG (body-282 tags + mem_unionOuterValue_iff, no leaf); promotedOf=forestRecovered biUnion collapse
+       (promotedComponentElements_inr + promote_collapse LEAF); coverage (forestComponentMem + represented_cases LEAVES).
+       forward_outer_value (leaf 1) reduced to 3 leaves. PROVED.
+290  forward quotient HEq: heq_forestIdx (body-203) [houter=forward_outer_value] + heq_of_membership_split (body-204)
+       [LHS V.union_eq(recPre z), RHS complementary star-filter partition] + heq_finset_of_mem_iff (body-206) × 2.
+       NO CIRCULARITY (never fwd q = z; body-274 fwd-direction NOT used). forward_quotient_value (leaf 2) reduced to
+       survivor_mem_value (tag-reducible) + remnant_mem_value (de-contraction). PROVED.
+291  flat assembly: ResolvedRecoveredPreimageValueGeometryAssemblySupply (ONE Data + 6 leaves) → toForestValueEq /
+       toForwardOuterGeometry / toForwardQuotientGeometry (Geom = forward-outer supply) → toRoundTripLeafSupply →
+       coassoc_gen_of_local_value_geometry (body-286, S-free). PROVED.
+```
+
+**Generic S-free HEq transports reused (all PROVED earlier):** `heq_of_index_eq` (193), `heq_forestIdx` (203),
+`heq_of_membership_split` (204), `heq_finset_of_mem_iff` (206), `heq_transport_choice` (200).
+
+> **All abstract witnessSplit round-trip and global heterogeneous-equality obligations are eliminated from the canonical
+> R-6c path.  The round-trip layer now depends only on six component-level geometry facts.**
+
+**Two-layer residual (the distinction matters):**
+
+```text
+round-trip layer      exactly SIX component geometry leaves:
+                        forestTag_agrees, promote_collapse, forestComponentMem, represented_cases,
+                        survivor_mem_value (tag-reducible), remnant_mem_value (de-contraction)
+complete theorem      those six + (inside Data) region sound/complete + carrier closure + F/V + base leaves
+```
+
+**Headline status.**
+
+```text
+proof-shape residual          none
+migration residual            none
+global HEq residual           none
+abstract round-trip residual  none
+round-trip geometry           six local component facts
+model / base assumptions      explicit and separate
+```
+
+`coassoc_gen_of_local_value_geometry` (body-291) is the S-free top-level theorem over the six leaves + base leaves.
+Full unconditional resolved coassociativity remains unclaimed pending a phase-1b concrete model instance discharging the
+six component leaves + the region / carrier model supplies — but the entire abstract round-trip / global-identity layer
+is closed.
+
+---
+
 *Keep this file in sync with the Lean source line numbers when the kernels move.
 Reader-facing narrative lives in `CK_HOPF_FORMALIZATION_MAP.md`; do not duplicate
 sprint logs here.*

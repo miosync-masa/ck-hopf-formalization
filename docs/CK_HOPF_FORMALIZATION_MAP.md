@@ -1640,5 +1640,70 @@ to be discharged by a concrete phase-1b model instance.
 
 ---
 
+### R-6c bodies 288–291 — the three round-trip leaves reduced to component-level geometry; every abstract HEq obligation eliminated (2026-07-15)
+
+The three value round-trip leaves (`forward_outer_value`, `forward_quotient_value`, `forest_value_eq` — body-285) are
+re-keyed onto the total-root forest-recovery / quotient-HEq machinery (bodies 174-208), all of which was already proved
+and S-free where it matters.  Each reduces to LOCAL, component-level geometry; the abstract dependent-type / global-`HEq`
+obligations are gone.
+
+> **All abstract `witnessSplit` round-trip and global heterogeneous-equality obligations have been eliminated from the
+> canonical R-6c path.**
+>
+> **The round-trip layer now depends only on six component-level geometry facts.**
+
+**The reduction chain:**
+
+```text
+288 exact forest choice     → forestTag_agrees                                        (occurrence compatibility)
+289 forward outer           → promote_collapse + forestComponentMem + represented_cases
+290 forward quotient (HEq)  → survivor_mem_value + remnant_mem_value                   (via generic S-free HEq transports)
+291 six local facts         → the three former global leaves → two whole round-trips → concrete cover → coassoc_gen
+```
+
+Body-288 builds the forest occurrence from `q`'s own `choiceAt` (breaking the `forestTag`-cycle) and reduces the forest
+exact-`B` match to the single `forestTag_agrees`.  Body-289 mirrors the total-root `selectedOuterRawOf = leftOf ∪
+promotedOf = leftResidual ∪ forestRecovered = A` (leftOf is pure-tag, no leaf).  Body-290 reduces the quotient `HEq`
+through the reusable `heq_forestIdx` / `heq_of_membership_split` / `heq_finset_of_mem_iff` transports **without
+circularity** (the RHS is the pure complementary star-filter partition; the LHS is `V.union_eq`; the graph transport is
+body-289's outer equality — never `fwd q = z`).  Body-291 assembles all six over ONE shared `Data`.
+
+**Two-layer status (the distinction matters for review).**
+
+| Scope | Residual |
+|---|---|
+| round-trip layer | **exactly six component-level geometry leaves** |
+| complete theorem | those six + (inside `Data`) the region sound/complete leaves, the carrier closure, `F` / `V`, and the base leaves |
+
+So it is **not** "the whole theorem has six hypotheses" — it is the **round-trip geometry residual** that is six facts;
+the model / carrier / base assumptions remain explicit and separate.  The six round-trip leaves:
+
+```text
+forestTag_agrees    forestTag = the occurrence-recovered index                       (288)
+promote_collapse    (promote γ (forestTag …)).elements = {γ}                          (289, de-contraction singleton)
+forestComponentMem  forest-recovered parent ∈ target outer A                          (289)
+represented_cases   represented A-component ∈ forestRecovered                         (289)
+survivor_mem_value  survivor ⟷ rightDomain  (tag-reducible: inl false ⟷ star-avoiding) (290)
+remnant_mem_value   remnant  ⟷ forestDomain (genuine de-contraction)                  (290)
+```
+
+**Headline status.**
+
+```text
+proof-shape residual        none
+migration residual          none
+global HEq residual         none
+abstract round-trip residual none
+round-trip geometry         six local component facts
+model / base assumptions    explicit and separate
+```
+
+`coassoc_gen_of_local_value_geometry` (body-291) is the S-free top-level theorem taking these six + the base leaves.
+**Full unconditional resolved coassociativity is still not claimed complete** — the six component-level geometry leaves +
+the region / carrier model supplies remain honest obligations, to be discharged by a concrete phase-1b model instance;
+but the entire *abstract* round-trip / global-identity layer is now closed.
+
+---
+
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
 This file is the reviewer-facing distillation; do not add day-by-day logs here.*
