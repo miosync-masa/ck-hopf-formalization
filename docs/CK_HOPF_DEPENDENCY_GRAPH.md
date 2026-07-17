@@ -2028,6 +2028,45 @@ elimination · **299** final local-geometry floor.  Canonical path S-free / Forw
 unconditional resolved coassociativity remains unclaimed pending a phase-1b concrete model instance discharging the eight
 local facts + the region/carrier supplies — but the round-trip layer is closed at its final irreducible floor.
 
+### R-6c bodies 306–334 — faithful phase-1b geometry rebuilt on multi-star de-contraction (2026-07-17)
+
+The eight-fact floor (293–299) is a valid **conditional** interface but **uninhabitable in the faithful model**: bodies
+306–315 established floor-297/298 (`forest_parent_mem_value`, `represented_forest_complete_value`, = `forestComponentMem`
+in body-289's supply) are FALSE at a multi-star orphan `z`; codomain filtering is disallowed (deletes genuine RHS terms);
+the singleton `promote_collapse` is FALSE for multi-component `B`; the external-leg gap is a structural CK datum.  Bodies
+316–334 rebuilt the region model:
+
+```text
+touchedOuterComponents / touchedOuterForest        (316-317)   TouchedOuterComponents / TouchedOuterForest
+→ M1 localize δ into touched contraction            (318-321)   TouchedLocalizationVertex/Edge/Leg / TouchedLocalComponent
+→ localizedParentWithTouchedLegs (custom leg gate)  (326)       TouchedLegLiftDatum
+→ toInner / innerRaw                                 (327-328)   ToInner / InnerRawM3
+→ M3 promote_innerRaw_elements = touched collection  (328)       InnerRawM3
+→ D4 localizedParent_pairwiseDisjoint / _ne          (329-330)   LocalizedParentRetarget / LocalizedParentDisjoint
+     (consumes starOf_fresh + cd_nonempty)
+→ ResolvedMultiStarDecontractionSupply + forestTag   (331-333)   MultiStarDecontraction / MultiStarForestTag
+→ promotedTouchedUnion = representedForestTouched     (334)       ForwardOuterCollectionCore
+→ leftResidual ∪ promotedTouched = z.1.1.elements    (334)       (D5 touched_coverage + M3)  — NO floor-297
+```
+
+All PROVED axiom-clean `[propext, Classical.choice, Quot.sound]`.
+
+**Two-layer status.**
+
+```text
+PROVED mechanical geometry                 Explicit model / construction gates
+M1 localization (316-321)                  legLift (δ-leg-completeness)
+M3 collection promotion (322-328)          parentCD (M2b)
+D4 disjointness/injectivity (329-330)      innerRaw_mem (ForestIdx landing)
+forest source/tag construction (331-333)   starOf_fresh / cd_nonempty providers
+forward-outer collection core (334)        choice alignment · cross-disjointness · recovered_raw_mem · Front-2 coherence
+```
+
+`forestTag` is a CONSTRUCTION (333, via D4 uniqueness), NOT a field; `forestTag_agrees` (`= occurrence.B`) is a
+theorem-pending leaf confluent with Front-2, NOT a standing datum.  Full unconditional resolved coassociativity remains
+unclaimed pending choice alignment + the model gates + Front-2 confluence; the multi-star de-contraction geometry is a
+completed axiom-clean arc.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

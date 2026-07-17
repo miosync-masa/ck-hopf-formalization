@@ -1754,6 +1754,57 @@ global-identity elimination · **body-299** final local-geometry floor.  **Full 
 still not claimed complete** — a concrete phase-1b model instance must discharge the eight local facts + the region /
 carrier supplies — but the round-trip layer is now closed at its final, irreducible geometric floor.
 
+### R-6c bodies 306–334 — the faithful phase-1b geometry is rebuilt on multi-star de-contraction (2026-07-17)
+
+> **The faithful phase-1b path no longer uses the single-parent geometry floor.**  Multi-star de-contraction is now
+> constructed through touched-component localization and collection-level promotion.  Forward outer reconstruction reduces
+> to choice alignment and explicit concrete-model gates, with no parent-membership or singleton-collapse assumption.
+
+The eight-fact geometry floor (bodies 293–299 above) is a valid **conditional** interface, but bodies 306–315 established
+that it is **uninhabitable in the faithful model**, and bodies 316–334 rebuilt the codomain-orphan region from the ground
+up.  The corrections this arc records:
+
+* **floor-297/298 are FALSE at a generic/orphan codomain `z`** (`forest_parent_mem_value` /
+  `represented_forest_complete_value`): a multi-star quotient component has no single parent in `z.1.1.elements` — the
+  codomain-side analogue of the retired total `selectedOuter_mem` (body-128).
+* **Codomain filtering is not allowed** — it deletes genuine RHS `Δᵣ` terms (multi-star `B` are valid carrier members).
+* **body-299 stays a valid conditional theorem**, but its floor interface (`forestComponentMem` = floor-297, a field of
+  body-289's supply) cannot be inhabited faithfully — a dead concrete reduction, now bypassed.
+* **The singleton `promote_collapse` is FALSE for a multi-component `B`** (`promote_elements` emits a collection).
+* **body-303's parent-image predicate is superseded** by the touched predicate `representedByTouched`.
+* **The external-leg gap is a structural CK datum, not a proof deficiency** — the concrete carrier's quotient components
+  are leg-complete (`legLift`).
+
+The new canonical chain (bodies 316–334, all PROVED axiom-clean `[propext, Classical.choice, Quot.sound]`):
+
+```text
+touchedOuterComponents / touchedOuterForest      (316-317)
+→ localize δ into the touched-forest contraction  (318-321)  M1
+→ touched-leg-lift parent                          (326)      localizedParentWithTouchedLegs
+→ toInner / innerRaw                               (327-328)
+→ promote-to-touched-collection                    (328)      M3
+→ parent disjointness / injectivity                (329-330)  D4 (starOf_fresh + cd_nonempty)
+→ concrete forestTag                               (331-333)  forestTag := ⟨innerRaw, innerRaw_mem⟩
+→ promotedTouchedUnion = represented outer          (334)
+→ leftResidual ∪ promotedTouched = original outer  (334)      forward-outer collection core, NO floor-297
+```
+
+**Two-layer status.**
+
+| PROVED mechanical geometry | Explicit model / construction gates |
+|---|---|
+| M1 localization (316–321) | `legLift` (δ-leg-completeness, structural CK) |
+| M3 collection promotion (322–328) | `parentCD` (M2b, power-counting) |
+| D4 disjointness / injectivity (329–330) | `innerRaw_mem` (`ForestIdx` carrier landing) |
+| forest source / `forestTag` construction (331–333) | `starOf_fresh` / `cd_nonempty` providers |
+| collection-level forward-outer core (334) | choice alignment · cross-disjointness · `recovered_raw_mem` · Front-2 quotient/remnant coherence |
+
+**Crucial separation.**  `forestTag` is now a **construction** (body-333, via D4 uniqueness), NOT an arbitrary field; its
+forward-image identity `forestTag_agrees` (`= occurrence.B`) is a **theorem-pending** leaf confluent with Front-2, NOT a
+standing model datum — a strict improvement over the retired opaque-field status (body-295).  **Full unconditional
+resolved coassociativity is still not claimed** — choice alignment, the concrete model gates, and Front-2 confluence
+remain — but the multi-star de-contraction geometry is a completed, axiom-clean arc.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
