@@ -1807,5 +1807,57 @@ remain — but the multi-star de-contraction geometry is a completed, axiom-clea
 
 ---
 
+### R-6c bodies 335–364 — the faithful multi-star value construction reaches `coassoc_gen` (2026-07-18)
+
+> **The faithful multi-star value construction now produces a concrete filtered `witnessSplit` cover and reaches
+> `coassoc_gen`.  The proof architecture is complete; all remaining hypotheses are explicit concrete-model inhabitants.**
+
+Body-334 closed the forward-outer collection *core*; this arc carries the faithful multi-star construction all the way
+to the raid-boss.  `coassoc_gen_of_multiStar_model` (body-364) is the S-free / value-root top-level theorem — the same
+proof term as body-286, with its `R.toCover` replaced by body-363's canonical `toMultiStarCover`.  All bodies PROVED
+axiom-clean `[propext, Classical.choice, Quot.sound]`.
+
+```text
+337-341  concrete right region · left/right/forest cross geometry · touched-choice alignment · forward-outer value wiring
+343      occurrence inversion + ForestIdx transport   (forestTag_agrees_multi = the exact-B geometric identity, HEq)
+345-347  survivor collection HEq   (tag partition · round-trip · heq_finset_of_mem_iff)
+348-359  remnant machinery         (tag partition · star coherence · inner-source selector · re-contract data
+                                     · hardcoded-star swap · component round-trip · collection HEq)
+360      forward-quotient assembly  (heq_of_membership_split fed by V.union_eq + survivor 347 + remnant 359)
+361      recovered-identity root    (forward-outer + forward-quotient + exact-B under ONE shared Tags)
+362      forest-tag identity adapter (Tags.forestTag = forestTag_fwd_value — the one vocabulary boundary; rfl/proof-irrel)
+363      multi-star concrete cover   (toMultiStarCover = R.toCover over one shared Data — no Tags/Data transport)
+364      conditional coassoc_gen     (body-286 raid-boss proof term, R.toCover ↦ toMultiStarCover)
+```
+
+**The false floor is not on the canonical path.**  The eight-fact geometry floor (bodies 293–299) — `floor-297`
+(`forest_parent_mem_value`), the singleton `promote_collapse`, `represented_forest_complete_value` — is FALSE at a
+multi-star orphan codomain and is **not used** anywhere on this path.  No `.ofLegacy`, no `Forward`, no phantom
+total-root `S`, no `forgetHopf`, no facade.  (Body-364's occurrence-inversion binder is the *forest* inversion supply;
+downstream wrappers name it `OccInv` to avoid confusion with the retired total-root phantom `S`.)
+
+**Residual — proof-shape vs model inhabitant.**
+
+```text
+proof-shape residual        none
+remaining hypotheses        explicit concrete-model inhabitants, discharged one socket at a time (Front-3)
+```
+
+| Front-3 bank | Sockets |
+|---|---|
+| 1. definitional wiring (rfl for multi-star `Tags`) | `hForest` · `hFT` · `hRight` |
+| 2. derived geometry | `hround` (via 358) · 6 sound/complete bridges · `hSurvivor` |
+| 3. structural CK inhabitants | `legLift` · `innerStar_agrees` (349) · occurrence inversion (343, `OccInv`) |
+| 4. power-counting / carrier | `parentCD` · `innerRaw_mem` · `recovered_raw_mem` |
+| 5. base model | `P` (carrier proper) · `Fstar` · `Measure` · `rep` / `repCD` / `rep_gen` |
+| 6. unconditional wrapper | assembles 1–5 into an unconditional statement |
+
+**Full unconditional resolved coassociativity is still not claimed** — the Front-3 model inhabitants remain honest
+obligations.  But the *proof architecture* is complete: from the touched-localization geometry (body-334) through the
+raid-boss (body-97 / body-286) to `coassoc_gen`, the faithful multi-star path is closed, and what remains is plugging a
+concrete model into a finished socket, not building a proof DAG.
+
+---
+
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
 This file is the reviewer-facing distillation; do not add day-by-day logs here.*

@@ -2067,6 +2067,49 @@ theorem-pending leaf confluent with Front-2, NOT a standing datum.  Full uncondi
 unclaimed pending choice alignment + the model gates + Front-2 confluence; the multi-star de-contraction geometry is a
 completed axiom-clean arc.
 
+### R-6c bodies 335–364 — faithful multi-star value construction reaches `coassoc_gen` (2026-07-18)
+
+Body-334's forward-outer collection core is carried through to the raid-boss.  All PROVED axiom-clean
+`[propext, Classical.choice, Quot.sound]`.
+
+```text
+337-341  ConcreteRightRegion / MultiStarRegionCross / TouchedChoiceAlignment / MultiStarRegionTagValue
+           → multiStarRegionTagValueSupply (Tags) + multiStar_selectedOuterRawOf_eq (forward-outer)
+343      ForestOccurrenceInversion   forestTag_agrees_multi : HEq (M.forestTag …) o.B  (exact-B, ForestIdx transport)
+345-347  SurvivorTagPartition / SurvivorRoundTrip / SurvivorCollection
+           → rightSurvivorForest_elements_heq : HEq survivorForest.elements (rightDomain z)
+348-359  ForestTagPartition / InnerStarCoherence / InnerSourceSelector / InnerRawAggregate / InnerRawRetarget
+         / RecontractSection / InnerStarImage / RecontractVertex{Subset,Eq} / HardcodedStarSwap
+         / RemnantRoundTrip / RemnantCollection
+           → remnantForest_elements_heq : HEq remnantForest.elements (forestDomain z)
+360      ForwardQuotientMultiAssembly  toForwardQuotientMultiSupply + forward_quotient_value_wired
+           (heq_of_membership_split ← V.union_eq + 347 + 359)
+361      RecoveredIdentityRoot   ResolvedMultiStarRecoveredIdentitySupply (extends RawForwardValueSupply + forestTag_agrees)
+           + toRecoveredIdentitySupply (341 outer · 360 quotient · 343 exact-B, one shared Tags)
+362      ForestTagIdentityAdapter  forestTag_agrees_for_identity_tags : Tags.forestTag = forestTag_fwd_value
+           (multiStar forestTag := M.forestTag rfl · parent_recovered_value rfl · 343)
+363      MultiStarCover  toMultiStarCover = R.toCover  (let-shared Data → ForestEq/RoundTrip, no Tags/Data transport)
+364      MultiStarCoassocGen  coassoc_gen_of_multiStar_model = (BijectionSideSupply.mk … toMultiStarCover …).coassoc_gen
+           (body-286 proof term, R.toCover ↦ toMultiStarCover)
+```
+
+**Not on the canonical path.**  floor-297 (`forest_parent_mem_value`), singleton `promote_collapse`,
+`represented_forest_complete_value` (bodies 293–299) are FALSE at a multi-star orphan `z` and unused.  No `.ofLegacy`,
+no `Forward`, no phantom `S`.
+
+**Two-layer status.**
+
+```text
+proof-shape residual        none  (touched-localization 334 → raid-boss 286/97 closed)
+remaining hypotheses        explicit concrete-model inhabitants (Front-3), one socket at a time
+Front-3 banks               1 definitional wiring (hForest/hFT/hRight rfl) · 2 derived geometry (hround/6 bridges/hSurvivor)
+                            · 3 structural CK (legLift/innerStar_agrees/OccInv) · 4 carrier (parentCD/innerRaw_mem/recovered_raw_mem)
+                            · 5 base model (P/Fstar/Measure/rep*) · 6 unconditional wrapper
+```
+
+Full unconditional resolved coassociativity remains unclaimed pending the Front-3 inhabitants; the proof architecture is
+complete.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

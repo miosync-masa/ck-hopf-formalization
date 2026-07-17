@@ -39,7 +39,7 @@ set_option linter.unusedSectionVars false
 /-- **R-6c-body-364 — conditional native `Δᵣ`-coassociativity from the multi-star model.**  Body-286's raid-boss
 adapter fed by body-363's `toMultiStarCover`. -/
 theorem coassoc_gen_of_multiStar_model (M : ResolvedMultiStarDecontractionSupply D)
-    (Fstar : ResolvedCanonicalStarFacts D) (S : ResolvedForestOccurrenceInversionSupply M)
+    (Fstar : ResolvedCanonicalStarFacts D) (OccInv : ResolvedForestOccurrenceInversionSupply M)
     (Measure : ResolvedMeasureLeafSupply D)
     {Fmem : ResolvedSelectedOuterFilteredMemSupply D} {V : ResolvedConcreteSummandValueSupply D}
     (I : ResolvedMultiStarRecoveredIdentitySupply M Fstar Fmem V) (P : ResolvedCarrierProperProvider D)
@@ -58,7 +58,7 @@ theorem coassoc_gen_of_multiStar_model (M : ResolvedMultiStarDecontractionSupply
     (rep_gen : ∀ x : ResolvedHopfGen, x = (rep x).toResolvedHopfGen (repCD x))
     (x : ResolvedHopfGen) :
     D.coassocLeft (MvPolynomial.X x) = D.coassocRight (MvPolynomial.X x) :=
-  (ResolvedFilteredBijectionSideSupply.mk Fmem V (M.toMultiStarCover Fstar S Measure I P hForest hFT)
+  (ResolvedFilteredBijectionSideSupply.mk Fmem V (M.toMultiStarCover Fstar OccInv Measure I P hForest hFT)
     (forwardQuotientMemValueOfValue Fmem V) carrier_isProperForest rep repCD rep_gen).coassoc_gen x
 
 end GaugeGeometry.QFT.Combinatorial
