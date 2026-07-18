@@ -47,10 +47,12 @@ set_option linter.unusedSectionVars false
 
 /-- **R-6c-body-374 — the `innerRaw_mem`-free value core** of the multi-star de-contraction supply. -/
 structure ResolvedMultiStarDecontractionValueCoreSupply (D : ResolvedCoproductProperForestData) where
-  /-- Payload edge-support. -/
-  hE : ∀ (G : ResolvedFeynmanGraph), ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices
-  /-- Payload leg-support. -/
-  hL : ∀ (G : ResolvedFeynmanGraph), ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices
+  /-- Payload edge-support (body-397: LIVE-`z` scope — required only for graphs hosting a codomain, NOT `∀ G`). -/
+  hE : ∀ {G : ResolvedFeynmanGraph} (_z : ForestBlockCodType D G),
+    ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices
+  /-- Payload leg-support (body-397: LIVE-`z` scope). -/
+  hL : ∀ {G : ResolvedFeynmanGraph} (_z : ForestBlockCodType D G),
+    ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices
   /-- The touched-leg-lift datum for each star-touching quotient component. -/
   legLift : ∀ {G : ResolvedFeynmanGraph} (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}),
@@ -58,7 +60,7 @@ structure ResolvedMultiStarDecontractionValueCoreSupply (D : ResolvedCoproductPr
   /-- The de-contracted parent is connected-divergent (M2b). -/
   parentCD : ∀ {G : ResolvedFeynmanGraph} (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}),
-    (localizedParentWithTouchedLegs z δ.1 (legLift z δ) (hE G) (hL G)).forget.IsConnectedDivergent
+    (localizedParentWithTouchedLegs z δ.1 (legLift z δ) (hE z) (hL z)).forget.IsConnectedDivergent
 
 namespace ResolvedMultiStarDecontractionValueCoreSupply
 
@@ -68,13 +70,13 @@ variable (Mv : ResolvedMultiStarDecontractionValueCoreSupply D) {G : ResolvedFey
 noncomputable def parent (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}) :
     ResolvedFeynmanSubgraph G :=
-  localizedParentWithTouchedLegs z δ.1 (Mv.legLift z δ) (Mv.hE G) (Mv.hL G)
+  localizedParentWithTouchedLegs z δ.1 (Mv.legLift z δ) (Mv.hE z) (Mv.hL z)
 
 /-- **R-6c-body-374 — the raw inner forest, on the value core** (`innerRaw_mem`-free). -/
 noncomputable def innerRaw (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}) :
     ResolvedAdmissibleSubgraph (Mv.parent z δ).toResolvedFeynmanGraph :=
-  GaugeGeometry.QFT.Combinatorial.innerRaw z δ.1 (Mv.legLift z δ) (Mv.hE G) (Mv.hL G)
+  GaugeGeometry.QFT.Combinatorial.innerRaw z δ.1 (Mv.legLift z δ) (Mv.hE z) (Mv.hL z)
 
 end ResolvedMultiStarDecontractionValueCoreSupply
 

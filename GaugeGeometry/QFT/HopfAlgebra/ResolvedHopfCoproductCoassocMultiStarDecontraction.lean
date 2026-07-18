@@ -16,7 +16,7 @@ assembled from `parentCD` (M2b) + D4 pairwise-disjointness.  The image-witness s
 
 ## Derived accessors + forest-side core (banked here)
 
-* `parent M z δ := localizedParentWithTouchedLegs z δ.1 (M.legLift z δ) (M.hE G) (M.hL G)` — the de-contracted parent.
+* `parent M z δ := localizedParentWithTouchedLegs z δ.1 (M.legLift z δ) (M.hE z) (M.hL z)` — the de-contracted parent.
 * `innerIdx M z δ := ⟨innerRaw …, M.innerRaw_mem z δ⟩ : (D.supply (parent M z δ).toResolvedFeynmanGraph).ForestIdx` — the
   inner forest lifted to a carrier `ForestIdx` (via the NEW `innerRaw_mem` gate).
 * `forestRecoveredMulti F M z := ofElements ((forestDomain z).attach.image (parent M z ·)) parentCD D4-disjoint` — the
@@ -49,10 +49,12 @@ set_option linter.unusedSectionVars false
 (δ-leg-completeness) + `parentCD` (M2b) + `innerRaw_mem` (the NEW `ForestIdx` carrier gate).  `localizedParent`/`innerRaw`
 are derived. -/
 structure ResolvedMultiStarDecontractionSupply (D : ResolvedCoproductProperForestData) where
-  /-- Payload edge-support. -/
-  hE : ∀ (G : ResolvedFeynmanGraph), ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices
-  /-- Payload leg-support. -/
-  hL : ∀ (G : ResolvedFeynmanGraph), ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices
+  /-- Payload edge-support (body-397: LIVE-`z` scope — required only for graphs hosting a codomain, NOT `∀ G`). -/
+  hE : ∀ {G : ResolvedFeynmanGraph} (_z : ForestBlockCodType D G),
+    ∀ e ∈ G.internalEdges, e.source ∈ G.vertices ∧ e.target ∈ G.vertices
+  /-- Payload leg-support (body-397: LIVE-`z` scope). -/
+  hL : ∀ {G : ResolvedFeynmanGraph} (_z : ForestBlockCodType D G),
+    ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices
   /-- The touched-leg-lift datum for each star-touching quotient component (δ-leg-completeness). -/
   legLift : ∀ {G : ResolvedFeynmanGraph} (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}),
@@ -60,12 +62,12 @@ structure ResolvedMultiStarDecontractionSupply (D : ResolvedCoproductProperFores
   /-- The de-contracted parent is connected-divergent (M2b). -/
   parentCD : ∀ {G : ResolvedFeynmanGraph} (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}),
-    (localizedParentWithTouchedLegs z δ.1 (legLift z δ) (hE G) (hL G)).forget.IsConnectedDivergent
+    (localizedParentWithTouchedLegs z δ.1 (legLift z δ) (hE z) (hL z)).forget.IsConnectedDivergent
   /-- The inner forest is a carrier member of the parent's graph (the NEW `ForestIdx` gate). -/
   innerRaw_mem : ∀ {G : ResolvedFeynmanGraph} (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}),
-    innerRaw z δ.1 (legLift z δ) (hE G) (hL G)
-      ∈ D.carrier (localizedParentWithTouchedLegs z δ.1 (legLift z δ) (hE G) (hL G)).toResolvedFeynmanGraph
+    innerRaw z δ.1 (legLift z δ) (hE z) (hL z)
+      ∈ D.carrier (localizedParentWithTouchedLegs z δ.1 (legLift z δ) (hE z) (hL z)).toResolvedFeynmanGraph
 
 namespace ResolvedMultiStarDecontractionSupply
 
@@ -75,13 +77,13 @@ variable (M : ResolvedMultiStarDecontractionSupply D) {G : ResolvedFeynmanGraph}
 noncomputable def parent (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}) :
     ResolvedFeynmanSubgraph G :=
-  localizedParentWithTouchedLegs z δ.1 (M.legLift z δ) (M.hE G) (M.hL G)
+  localizedParentWithTouchedLegs z δ.1 (M.legLift z δ) (M.hE z) (M.hL z)
 
 /-- **R-6c-body-332 — the inner forest as a carrier `ForestIdx`** (via the `innerRaw_mem` gate). -/
 noncomputable def innerIdx (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}) :
     (D.supply (M.parent z δ).toResolvedFeynmanGraph).ForestIdx :=
-  ⟨innerRaw z δ.1 (M.legLift z δ) (M.hE G) (M.hL G), M.innerRaw_mem z δ⟩
+  ⟨innerRaw z δ.1 (M.legLift z δ) (M.hE z) (M.hL z), M.innerRaw_mem z δ⟩
 
 /-- **R-6c-body-332 — the recovered forest region** (the `componentToForest`-image of the star-touching quotient
 components; CD from `parentCD`, pairwise from D4). -/
@@ -95,7 +97,7 @@ noncomputable def forestRecoveredMulti (F : ResolvedCanonicalStarFacts D)
       obtain ⟨δ₂, -, rfl⟩ := Finset.mem_image.mp hγ₂
       have hδne : δ₁.1 ≠ δ₂.1 := fun h => hne (congrArg (M.parent z) (Subtype.ext h))
       exact localizedParent_pairwiseDisjoint F z δ₁.1 δ₂.1 (M.legLift z δ₁) (M.legLift z δ₂)
-        (M.hE G) (M.hL G)
+        (M.hE z) (M.hL z)
         (z.2.1.pairwiseDisjoint (Finset.mem_filter.mp δ₁.2).1 (Finset.mem_filter.mp δ₂.2).1 hδne))
 
 /-- **R-6c-body-332 — the recovered forest region's components are the parent image** (`rfl`). -/

@@ -87,7 +87,7 @@ theorem forestSource_parent (Measure : ResolvedMeasureLeafSupply D) (z : ForestB
     z.2.1.pairwiseDisjoint (Finset.mem_filter.mp (M.forestSource F z ⟨M.parent z δ, hmem⟩).2).1
       (Finset.mem_filter.mp δ.2).1 hne
   exact localizedParent_ne F Measure z (M.forestSource F z ⟨M.parent z δ, hmem⟩).1 δ.1
-    (M.legLift z (M.forestSource F z ⟨M.parent z δ, hmem⟩)) (M.legLift z δ) (M.hE G) (M.hL G)
+    (M.legLift z (M.forestSource F z ⟨M.parent z δ, hmem⟩)) (M.legLift z δ) (M.hE z) (M.hL z)
     (Finset.mem_filter.mp (M.forestSource F z ⟨M.parent z δ, hmem⟩).2).2 hdisj hpeq
 
 /-- **R-6c-body-333 — the constructed forest tag.**  Transport the source's `innerIdx` along `parent (source) = γ`. -/

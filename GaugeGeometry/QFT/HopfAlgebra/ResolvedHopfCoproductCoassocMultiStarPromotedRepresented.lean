@@ -94,7 +94,7 @@ theorem promoted_mem_representedByTouched (OccInv : ResolvedForestOccurrenceInve
       M.innerIdx_occurrence OccInv (fwdMapFilteredValue Fmem V q) δ q.1 o hp
     refine ⟨δ.1, δ.2, ?_⟩
     rw [← promote_innerRaw_elements (fwdMapFilteredValue Fmem V q) δ.1
-      (M.legLift (fwdMapFilteredValue Fmem V q) δ) (M.hE G) (M.hL G)]
+      (M.legLift (fwdMapFilteredValue Fmem V q) δ) (M.hE (fwdMapFilteredValue Fmem V q)) (M.hL (fwdMapFilteredValue Fmem V q))]
     show γc ∈ (ResolvedAdmissibleSubgraph.promote (M.parent (fwdMapFilteredValue Fmem V q) δ)
       (M.innerIdx (fwdMapFilteredValue Fmem V q) δ).1).elements
     rw [promote_elements_congr hp (M.innerIdx (fwdMapFilteredValue Fmem V q) δ) o.B hi, hoB]

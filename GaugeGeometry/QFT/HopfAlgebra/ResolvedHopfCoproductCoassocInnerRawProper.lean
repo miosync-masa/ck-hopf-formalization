@@ -49,7 +49,7 @@ theorem innerRaw_isProperForest (P : ResolvedCarrierProperProvider D)
     touchedOuterComponents_nonempty z (Finset.mem_filter.mp δ.2).2
   have helem : (Core.innerRaw z δ).elements
       = (touchedOuterComponents z δ.1).attach.image
-        (toInner z δ.1 (Core.legLift z δ) (Core.hE G) (Core.hL G)) := innerRaw_elements ..
+        (toInner z δ.1 (Core.legLift z δ) (Core.hE z) (Core.hL z)) := innerRaw_elements ..
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · -- IsNonempty : elements.Nonempty
     rw [ResolvedAdmissibleSubgraph.IsNonempty, helem]
@@ -64,7 +64,7 @@ theorem innerRaw_isProperForest (P : ResolvedCarrierProperProvider D)
     obtain ⟨A, hA⟩ := hne
     have hApos : 0 < A.internalEdges.card :=
       houter.2.2.2.1 A (mem_touchedOuterComponents.mp hA).1
-    have hmemInner : toInner z δ.1 (Core.legLift z δ) (Core.hE G) (Core.hL G) ⟨A, hA⟩
+    have hmemInner : toInner z δ.1 (Core.legLift z δ) (Core.hE z) (Core.hL z) ⟨A, hA⟩
         ∈ (Core.innerRaw z δ).elements := by
       rw [helem]; exact Finset.mem_image.mpr ⟨⟨A, hA⟩, Finset.mem_attach _ _, rfl⟩
     have hle : A.internalEdges ≤ (Core.innerRaw z δ).internalEdges :=
@@ -79,7 +79,7 @@ theorem innerRaw_isProperForest (P : ResolvedCarrierProperProvider D)
   · -- 0 < complementEdges.card
     have hcard : (Core.innerRaw z δ).complementEdges.card = δ.1.internalEdges.card := by
       rw [show (Core.innerRaw z δ).complementEdges
-          = (innerRaw z δ.1 (Core.legLift z δ) (Core.hE G) (Core.hL G)).complementEdges from rfl,
+          = (innerRaw z δ.1 (Core.legLift z δ) (Core.hE z) (Core.hL z)).complementEdges from rfl,
         innerRaw_complementEdges_eq,
         ← Multiset.card_map ((touchedOuterForest z δ.1).retargetEdge (D.starOf G z.1.1)),
         quotientEdgePreimage_map, touchedLocalComponent_internalEdges]

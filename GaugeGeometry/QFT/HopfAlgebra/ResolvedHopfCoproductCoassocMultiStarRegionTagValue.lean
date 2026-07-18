@@ -59,7 +59,7 @@ noncomputable def multiStarRegion (M : ResolvedMultiStarDecontractionSupply D)
     obtain ⟨δ₁, -, rfl⟩ := Finset.mem_image.mp hγ₁
     obtain ⟨δ₂, -, rfl⟩ := Finset.mem_image.mp hγ₂
     exact localizedParent_pairwiseDisjoint Fstar z δ₁.1 δ₂.1 (M.legLift z δ₁) (M.legLift z δ₂)
-      (M.hE _) (M.hL _)
+      (M.hE z) (M.hL z)
       (z.2.1.pairwiseDisjoint (Finset.mem_filter.mp δ₁.2).1 (Finset.mem_filter.mp δ₂.2).1
         (fun h => hne (congrArg (M.parent z) (Subtype.ext h))))
 

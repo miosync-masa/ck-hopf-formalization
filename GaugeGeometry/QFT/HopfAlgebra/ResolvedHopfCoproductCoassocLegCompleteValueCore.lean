@@ -120,16 +120,17 @@ noncomputable def touchedLegLiftDatum_of_complete (z : ForestBlockCodType D G)
 
 /-- **R-6c-body-376 — the value core from CK leg-completeness**, with `parentCD` coupled to the canonical lift. -/
 noncomputable def valueCore_of_legComplete
-    (hE : ∀ (G : ResolvedFeynmanGraph), ∀ e ∈ G.internalEdges,
+    (hE : ∀ {G : ResolvedFeynmanGraph} (_z : ForestBlockCodType D G), ∀ e ∈ G.internalEdges,
       e.source ∈ G.vertices ∧ e.target ∈ G.vertices)
-    (hL : ∀ (G : ResolvedFeynmanGraph), ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices)
+    (hL : ∀ {G : ResolvedFeynmanGraph} (_z : ForestBlockCodType D G), ∀ ℓ ∈ G.externalLegs,
+      ℓ.attachedTo ∈ G.vertices)
     (legComplete : ∀ {G : ResolvedFeynmanGraph} (z : ForestBlockCodType D G)
       (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}),
       touchedLegComplete z δ.1)
     (parentCD : ∀ {G : ResolvedFeynmanGraph} (z : ForestBlockCodType D G)
       (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}),
       (localizedParentWithTouchedLegs z δ.1
-        (touchedLegLiftDatum_of_complete z δ.1 (legComplete z δ)) (hE G) (hL G)).forget.IsConnectedDivergent) :
+        (touchedLegLiftDatum_of_complete z δ.1 (legComplete z δ)) (hE z) (hL z)).forget.IsConnectedDivergent) :
     ResolvedMultiStarDecontractionValueCoreSupply D where
   hE := hE
   hL := hL

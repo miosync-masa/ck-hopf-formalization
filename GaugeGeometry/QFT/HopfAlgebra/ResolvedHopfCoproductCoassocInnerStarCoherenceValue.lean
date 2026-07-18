@@ -51,7 +51,7 @@ structure ResolvedInnerStarCoherenceValueSupply
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z})
     (A : {x : ResolvedFeynmanSubgraph G // x ∈ touchedOuterComponents z δ.1}),
     D.starOf (Core.parent z δ).toResolvedFeynmanGraph (Core.innerRaw z δ)
-        (toInner z δ.1 (Core.legLift z δ) (Core.hE G) (Core.hL G) A)
+        (toInner z δ.1 (Core.legLift z δ) (Core.hE z) (Core.hL z) A)
       = D.starOf G z.1.1 A.1
 
 /-- **R-6c-body-379 — raw coherence ⟶ body-349's supply** (over the carrier-lifted `M`), by `rfl`. -/

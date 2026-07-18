@@ -98,7 +98,7 @@ theorem left_forest_cross (M : ResolvedMultiStarDecontractionSupply D)
   have hAz : A ∈ z.1.1.elements := (Finset.mem_filter.mp hA).1
   have hnr : ¬ representedByTouched z A := (Finset.mem_filter.mp hA).2
   have hvz : v ∈ z.1.1.vertices := ResolvedAdmissibleSubgraph.mem_vertices.mpr ⟨A, hAz, hvA⟩
-  have hstar := localizedParent_star_mem F z δf.1 (M.legLift z δf) (M.hE G) (M.hL G) hvz hvP
+  have hstar := localizedParent_star_mem F z δf.1 (M.legLift z δf) (M.hE z) (M.hL z) hvz hvP
   have hcomp : z.1.1.componentAt hvz = A := by
     by_contra hAne
     exact Finset.disjoint_left.mp
@@ -123,7 +123,7 @@ theorem right_forest_cross (M : ResolvedMultiStarDecontractionSupply D)
   rw [rightReembed_vertices] at hvR
   have hvnotz : v ∉ z.1.1.vertices :=
     starAvoiding_notMem_outer z δr.1 (Finset.mem_filter.mp δr.2).2 hvR
-  have hret := localizedParentVertex_retargets z δf.1 (M.legLift z δf) (M.hE G) (M.hL G) hvP
+  have hret := localizedParentVertex_retargets z δf.1 (M.legLift z δf) (M.hE z) (M.hL z) hvP
   have hvnottouched : v ∉ (touchedOuterForest z δf.1).vertices :=
     fun hc => hvnotz (touchedOuterForest_vertices_subset z hc)
   rw [ResolvedAdmissibleSubgraph.retargetVertex_of_not_mem _ _ hvnottouched] at hret

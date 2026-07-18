@@ -107,12 +107,12 @@ theorem hardcodedStar_eq_touchedInnerStarTotal
     (S : ResolvedInnerStarCoherenceSupply M) {G : ResolvedFeynmanGraph} (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z})
     (B : ResolvedFeynmanSubgraph (M.parent z δ).toResolvedFeynmanGraph)
-    (hB : B ∈ (innerRaw z δ.1 (M.legLift z δ) (M.hE G) (M.hL G)).elements) :
+    (hB : B ∈ (innerRaw z δ.1 (M.legLift z δ) (M.hE z) (M.hL z)).elements) :
     D.starOf (M.parent z δ).toResolvedFeynmanGraph (M.innerIdx z δ).1 B
-      = touchedInnerStarTotal z δ.1 (M.legLift z δ) (M.hE G) (M.hL G) B := by
-  rw [touchedInnerStarTotal_of_mem z δ.1 (M.legLift z δ) (M.hE G) (M.hL G) B hB, touchedInnerStar]
-  have hia := S.innerStar_agrees z δ (innerSource z δ.1 (M.legLift z δ) (M.hE G) (M.hL G) ⟨B, hB⟩)
-  rw [innerSource_spec z δ.1 (M.legLift z δ) (M.hE G) (M.hL G) ⟨B, hB⟩] at hia
+      = touchedInnerStarTotal z δ.1 (M.legLift z δ) (M.hE z) (M.hL z) B := by
+  rw [touchedInnerStarTotal_of_mem z δ.1 (M.legLift z δ) (M.hE z) (M.hL z) B hB, touchedInnerStar]
+  have hia := S.innerStar_agrees z δ (innerSource z δ.1 (M.legLift z δ) (M.hE z) (M.hL z) ⟨B, hB⟩)
+  rw [innerSource_spec z δ.1 (M.legLift z δ) (M.hE z) (M.hL z) ⟨B, hB⟩] at hia
   exact hia
 
 /-- **R-6c-body-357 — the hardcoded re-contract's vertices are `δ`'s.** -/
@@ -124,9 +124,9 @@ theorem recontract_hardcoded_vertices (Fstar : ResolvedCanonicalStarFacts D)
     ((M.innerIdx z δ).1.contractWithStars
         (D.starOf (M.parent z δ).toResolvedFeynmanGraph (M.innerIdx z δ).1)).vertices = δ.1.vertices := by
   rw [contractWithStars_vertices_congr (M.innerIdx z δ).1 _
-      (touchedInnerStarTotal z δ.1 (M.legLift z δ) (M.hE G) (M.hL G))
+      (touchedInnerStarTotal z δ.1 (M.legLift z δ) (M.hE z) (M.hL z))
       (fun B hB => M.hardcodedStar_eq_touchedInnerStarTotal S z δ B hB)]
-  exact recontract_innerRaw_vertices z δ.1 (M.legLift z δ) (M.hE G) (M.hL G) Fstar hConn hPos
+  exact recontract_innerRaw_vertices z δ.1 (M.legLift z δ) (M.hE z) (M.hL z) Fstar hConn hPos
 
 /-- **R-6c-body-357 — the hardcoded re-contract's internal edges are `δ`'s.** -/
 theorem recontract_hardcoded_internalEdges
@@ -136,9 +136,9 @@ theorem recontract_hardcoded_internalEdges
         (D.starOf (M.parent z δ).toResolvedFeynmanGraph (M.innerIdx z δ).1)).internalEdges
       = δ.1.internalEdges := by
   rw [contractWithStars_internalEdges_congr (M.innerIdx z δ).1 _
-      (touchedInnerStarTotal z δ.1 (M.legLift z δ) (M.hE G) (M.hL G))
+      (touchedInnerStarTotal z δ.1 (M.legLift z δ) (M.hE z) (M.hL z))
       (fun B hB => M.hardcodedStar_eq_touchedInnerStarTotal S z δ B hB)]
-  exact recontract_innerRaw_internalEdges z δ.1 (M.legLift z δ) (M.hE G) (M.hL G)
+  exact recontract_innerRaw_internalEdges z δ.1 (M.legLift z δ) (M.hE z) (M.hL z)
 
 /-- **R-6c-body-357 — the hardcoded re-contract's external legs are `δ`'s.** -/
 theorem recontract_hardcoded_externalLegs
@@ -148,9 +148,9 @@ theorem recontract_hardcoded_externalLegs
         (D.starOf (M.parent z δ).toResolvedFeynmanGraph (M.innerIdx z δ).1)).externalLegs
       = δ.1.externalLegs := by
   rw [contractWithStars_externalLegs_congr (M.innerIdx z δ).1 _
-      (touchedInnerStarTotal z δ.1 (M.legLift z δ) (M.hE G) (M.hL G))
+      (touchedInnerStarTotal z δ.1 (M.legLift z δ) (M.hE z) (M.hL z))
       (fun B hB => M.hardcodedStar_eq_touchedInnerStarTotal S z δ B hB)]
-  exact recontract_innerRaw_externalLegs z δ.1 (M.legLift z δ) (M.hE G) (M.hL G)
+  exact recontract_innerRaw_externalLegs z δ.1 (M.legLift z δ) (M.hE z) (M.hL z)
 
 end ResolvedMultiStarDecontractionSupply
 

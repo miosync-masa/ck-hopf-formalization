@@ -9,7 +9,7 @@ easily-missed address — a **star allocation coherence** between two DIFFERENT 
 
 ## The two star maps
 
-`M.parent z δ = localizedParentWithTouchedLegs z δ.1 (M.legLift z δ) (M.hE G) (M.hL G)` is built with the
+`M.parent z δ = localizedParentWithTouchedLegs z δ.1 (M.legLift z δ) (M.hE z) (M.hL z)` is built with the
 ORIGINAL star map `D.starOf G z.1.1` (TouchedLegLiftDatum.lean:100-106).  But
 `contractedSourceGraph o = o.B.1.contractWithStars (D.starOf o.γ.1.tRFG o.B.1)` (RemnantScout) uses the
 star map hardcoded on the PARENT graph and the inner forest:
@@ -82,7 +82,7 @@ structure ResolvedInnerStarCoherenceSupply (M : ResolvedMultiStarDecontractionSu
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z})
     (A : {x : ResolvedFeynmanSubgraph G // x ∈ touchedOuterComponents z δ.1}),
     D.starOf (M.parent z δ).toResolvedFeynmanGraph (M.innerIdx z δ).1
-        (toInner z δ.1 (M.legLift z δ) (M.hE G) (M.hL G) A)
+        (toInner z δ.1 (M.legLift z δ) (M.hE z) (M.hL z) A)
       = D.starOf G z.1.1 A.1
 
 end GaugeGeometry.QFT.Combinatorial

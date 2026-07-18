@@ -71,11 +71,11 @@ theorem leftSelected_not_representedByTouched (OccInv : ResolvedForestOccurrence
       ← promote_elements_congr hp (M.innerIdx (fwdMapFilteredValue Fmem V q) δs) o.B hi]
     show γ ∈ (ResolvedAdmissibleSubgraph.promote
       (localizedParentWithTouchedLegs (fwdMapFilteredValue Fmem V q) δs.1
-        (M.legLift (fwdMapFilteredValue Fmem V q) δs) (M.hE G) (M.hL G))
+        (M.legLift (fwdMapFilteredValue Fmem V q) δs) (M.hE (fwdMapFilteredValue Fmem V q)) (M.hL (fwdMapFilteredValue Fmem V q)))
       (innerRaw (fwdMapFilteredValue Fmem V q) δs.1
-        (M.legLift (fwdMapFilteredValue Fmem V q) δs) (M.hE G) (M.hL G))).elements
+        (M.legLift (fwdMapFilteredValue Fmem V q) δs) (M.hE (fwdMapFilteredValue Fmem V q)) (M.hL (fwdMapFilteredValue Fmem V q)))).elements
     rw [promote_innerRaw_elements (fwdMapFilteredValue Fmem V q) δs.1
-      (M.legLift (fwdMapFilteredValue Fmem V q) δs) (M.hE G) (M.hL G)]
+      (M.legLift (fwdMapFilteredValue Fmem V q) δs) (M.hE (fwdMapFilteredValue Fmem V q)) (M.hL (fwdMapFilteredValue Fmem V q))]
     exact hγt
   have hsub : γ.vertices ⊆ o.γ.1.vertices :=
     ResolvedCoassocSplitChoice.promotedComponentElements_vertices_subset_parent q.1 hγt2

@@ -56,7 +56,7 @@ theorem promote_parent_innerIdx_elements (z : ForestBlockCodType D G)
     (δ : {x : ResolvedFeynmanSubgraph (z.1.1.contractWithStars (D.starOf G z.1.1)) // x ∈ forestDomain z}) :
     (ResolvedAdmissibleSubgraph.promote (M.parent z δ) (M.innerIdx z δ).1).elements
       = touchedOuterComponents z δ.1 :=
-  promote_innerRaw_elements z δ.1 (M.legLift z δ) (M.hE G) (M.hL G)
+  promote_innerRaw_elements z δ.1 (M.legLift z δ) (M.hE z) (M.hL z)
 
 /-- **R-6c-body-334 — the union of the promoted inner forests.** -/
 noncomputable def promotedTouchedUnion (z : ForestBlockCodType D G) :
