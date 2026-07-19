@@ -56,6 +56,11 @@ structure ResolvedRightTermAlphaSupply (D : ResolvedCoproductProperForestData) w
       = resolvedForestRightTerm (A.mapPerm σ) (D.starOf (G.mapPerm σ) (A.mapPerm σ))
           (D.hCD (G.mapPerm σ) (A.mapPerm σ) hAσ)
 
+/-- **R-6c-body-405 — the alpha law is now a projection of the migrated core** (`D.rightTerm_mapPerm` is a field). -/
+def ResolvedCoproductProperForestData.toRightTermAlphaSupply (D : ResolvedCoproductProperForestData) :
+    ResolvedRightTermAlphaSupply D where
+  rightTerm_mapPerm := D.rightTerm_mapPerm
+
 /-- **R-6c-body-404 — `sum` is `mapPerm`-invariant from the alpha law ALONE** (strict `star_mapPerm` unused). -/
 theorem sum_mapPerm_of_rightTermAlpha (Alpha : ResolvedRightTermAlphaSupply D)
     (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId) :

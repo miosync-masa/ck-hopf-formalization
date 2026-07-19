@@ -137,10 +137,14 @@ structure ResolvedCoproductProperForestData where
   /-- The carrier transports by relabeling. -/
   carrier_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId),
     carrier (G.mapPerm σ) = (carrier G).image (fun A => A.mapPerm σ)
-  /-- The star assignment is `mapPerm`-natural. -/
-  star_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId)
-    (A : ResolvedAdmissibleSubgraph G) (γ : ResolvedFeynmanSubgraph G), γ ∈ A.elements →
-    starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ) = σ (starOf G A γ)
+  /-- The forest right term is `mapPerm`-invariant (body-405: replaces the strict `star_mapPerm`, which body-403
+  proved inconsistent with `starOf_fresh`; only the right-term class invariance is needed by `sum_mapPerm`). -/
+  rightTerm_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G) (hA : A ∈ carrier G)
+    (hAσ : A.mapPerm σ ∈ carrier (G.mapPerm σ)),
+    resolvedForestRightTerm A (starOf G A) (hCD G A hA)
+      = resolvedForestRightTerm (A.mapPerm σ) (starOf (G.mapPerm σ) (A.mapPerm σ))
+          (hCD (G.mapPerm σ) (A.mapPerm σ) hAσ)
 
 variable (D : ResolvedCoproductProperForestData)
 
@@ -169,8 +173,8 @@ theorem ResolvedCoproductProperForestData.sum_mapPerm (G : ResolvedFeynmanGraph)
       (by simpa only [D.carrier_mapPerm] using B.2)
     exact ⟨⟨A, hA⟩, Finset.mem_attach _ _, Subtype.ext hAeq⟩
   · exact resolvedForestLeftTerm_mapPerm A.1 σ
-  · exact resolvedForestRightTerm_mapPerm A.1 σ
-      (fun γ hγ => D.star_mapPerm G σ A.1 γ hγ) _ _
+  · exact D.rightTerm_mapPerm G σ A.1 A.2
+      (by rw [D.carrier_mapPerm]; exact Finset.mem_image_of_mem _ A.2)
 
 /-- **R-6b-4d — a concrete equivariant `ResolvedCoproductGenSupply`** from proper-forest data, hence a
 concrete `Δᵣ` (`.toGenSupply.coproduct`).  Given the proper-forest data family, the resolved-target

@@ -51,17 +51,26 @@ variable {D : ResolvedCoproductProperForestData}
 
 set_option linter.unusedSectionVars false
 
+/-- **R-6c-body-403/405 — the RETIRED strict `star_mapPerm` law**, kept standalone so the no-go audit can consume it.
+Body-405 removed it from `ResolvedCoproductProperForestData` (replaced by the consistent `rightTerm_mapPerm`); this
+records exactly WHY it cannot return. -/
+structure ResolvedStrictStarMapPermSupply (D : ResolvedCoproductProperForestData) where
+  /-- The (inconsistent) strict `mapPerm`-naturality of the star assignment. -/
+  star_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G) (γ : ResolvedFeynmanSubgraph G), γ ∈ A.elements →
+    D.starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ) = σ (D.starOf G A γ)
+
 /-- **R-6c-body-403 — strict equivariance + freshness are inconsistent** (given the swap fixes the star of the swapped
 configuration — the ambient-support config-fixity).  The star of the swapped configuration is both `s` (by fixity) and
-`σ s = t` (by `star_mapPerm`), but `s ≠ t`. -/
-theorem strict_star_mapPerm_freshness_inconsistent
+`σ s = t` (by strict `star_mapPerm`), but `s ≠ t`. -/
+theorem strict_star_mapPerm_freshness_inconsistent (Strict : ResolvedStrictStarMapPermSupply D)
     {G : ResolvedFeynmanGraph} (A : ResolvedAdmissibleSubgraph G) (η : ResolvedFeynmanSubgraph G)
     (hη : η ∈ A.elements) (t : VertexId) (ht : t ≠ D.starOf G A η)
     (hfix : D.starOf (G.mapPerm (Equiv.swap (D.starOf G A η) t))
         (A.mapPerm (Equiv.swap (D.starOf G A η) t)) (η.mapPerm (Equiv.swap (D.starOf G A η) t))
       = D.starOf G A η) :
     False := by
-  have key := D.star_mapPerm G (Equiv.swap (D.starOf G A η) t) A η hη
+  have key := Strict.star_mapPerm G (Equiv.swap (D.starOf G A η) t) A η hη
   rw [hfix, Equiv.swap_apply_left] at key
   exact ht key.symm
 

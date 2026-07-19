@@ -113,7 +113,16 @@ noncomputable def toSupportedCarrier : ResolvedCanonicalCarrierProperSupply wher
       rw [W.carrier_mapPerm G σ]
     · rw [if_neg (fun hs => h ((ambientSupported_mapPerm_iff G σ).mp hs)), if_neg h]
       simp
-  star_mapPerm := W.star_mapPerm
+  rightTerm_mapPerm := by
+    intro G σ A hA hAσ
+    rw [supportedIndex_carrier] at hA
+    by_cases h : ResolvedAmbientSupported G
+    · rw [if_pos h] at hA
+      have hAσ' : A.mapPerm σ ∈ (W.index (G.mapPerm σ)).carrier := by
+        rw [supportedIndex_carrier, if_pos ((ambientSupported_mapPerm_iff G σ).mpr h)] at hAσ
+        exact hAσ
+      exact W.rightTerm_mapPerm G σ A hA hAσ'
+    · rw [if_neg h] at hA; exact absurd hA (Finset.notMem_empty A)
 
 /-- **R-6c-body-402 — the body-397 ambient gate, DERIVED from the supported carrier.**  Carrier membership forces the
 supported branch, whose conjuncts are the endpoint support. -/

@@ -69,10 +69,13 @@ structure ResolvedCanonicalCarrierProperSupply where
   /-- The index carrier transports by relabeling (fielded). -/
   carrier_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId),
     (index (G.mapPerm σ)).carrier = ((index G).carrier).image (fun A => A.mapPerm σ)
-  /-- The star assignment is `mapPerm`-natural (fielded). -/
-  star_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId)
-    (A : ResolvedAdmissibleSubgraph G) (γ : ResolvedFeynmanSubgraph G), γ ∈ A.elements →
-    starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ) = σ (starOf G A γ)
+  /-- The forest right term is `mapPerm`-invariant (body-405: replaces the strict `star_mapPerm`). -/
+  rightTerm_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId)
+    (A : ResolvedAdmissibleSubgraph G) (hA : A ∈ (index G).carrier)
+    (hAσ : A.mapPerm σ ∈ (index (G.mapPerm σ)).carrier),
+    resolvedForestRightTerm A (starOf G A) (hCD G A hA)
+      = resolvedForestRightTerm (A.mapPerm σ) (starOf (G.mapPerm σ) (A.mapPerm σ))
+          (hCD (G.mapPerm σ) (A.mapPerm σ) hAσ)
 
 /-- **R-6c-body-228 — the assembled coproduct forest data** whose carrier is the proper-forest index carrier. -/
 def ResolvedCanonicalCarrierProperSupply.toData (W : ResolvedCanonicalCarrierProperSupply) :
@@ -81,7 +84,7 @@ def ResolvedCanonicalCarrierProperSupply.toData (W : ResolvedCanonicalCarrierPro
   starOf := W.starOf
   hCD := W.hCD
   carrier_mapPerm := W.carrier_mapPerm
-  star_mapPerm := W.star_mapPerm
+  rightTerm_mapPerm := W.rightTerm_mapPerm
 
 /-- **R-6c-body-228 — the body-137 carrier-proper provider, PROVED.**  `carrier_isProperForest` is discharged from
 the index's `mem_proper`; no longer a raw field.  This is the canonical grounding of floor leaf 137. -/
