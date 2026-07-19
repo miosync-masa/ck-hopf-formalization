@@ -25,3 +25,6 @@
 /GaugeGeometry/QFT/HopfAlgebra/SubgraphFintype.lean
 /Result.md
 /GaugeGeometry_Task_v3.md
+
+# ContextStream local tooling config
+/.contextstream/
