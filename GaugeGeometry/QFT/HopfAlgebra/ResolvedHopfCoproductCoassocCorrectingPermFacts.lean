@@ -45,30 +45,30 @@ variable [∀ G : FeynmanGraph, DivergenceMeasure G]
   [IsAmbientInvariantDivergence] [IsDivergencePreservedByContract]
   [IsDivergencePreservedByAdmissibleForestContract]
 
-variable {D : ResolvedCoproductProperForestData}
+variable {R : ResolvedCoproductProperForestRawData}
 
 set_option linter.unusedSectionVars false
 
 /-- **R-6c-body-407 — the star-index recovery supply from the canonical star facts.**  `starOf_injective` is exactly
-the no-collision inverse that `starVertexEquivIndex` needs. -/
-def starIndexRecoverOfFacts (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
-    (A : ResolvedAdmissibleSubgraph G) : ResolvedStarIndexRecoverSupply A (D.starOf G A) where
+the no-collision inverse that `starVertexEquivIndex` needs.  (Body-412: over the raw core `R`.) -/
+def starIndexRecoverOfFacts (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
+    (A : ResolvedAdmissibleSubgraph G) : ResolvedStarIndexRecoverSupply A (R.starOf G A) where
   star_injective_on_elements := Fstar.starOf_injective G A
 
 /-- **R-6c-body-407 — the `σ`-image of `A`'s star vertices.** -/
-noncomputable def oldMappedStars (D : ResolvedCoproductProperForestData) {G : ResolvedFeynmanGraph} (σ : Equiv.Perm VertexId)
+noncomputable def oldMappedStars (R : ResolvedCoproductProperForestRawData) {G : ResolvedFeynmanGraph} (σ : Equiv.Perm VertexId)
     (A : ResolvedAdmissibleSubgraph G) : Finset VertexId :=
-  (A.starVertices (D.starOf G A)).image σ
+  (A.starVertices (R.starOf G A)).image σ
 
 /-- **R-6c-body-407 — the relabeled forest's star vertices.** -/
-noncomputable def newStars (D : ResolvedCoproductProperForestData) {G : ResolvedFeynmanGraph} (σ : Equiv.Perm VertexId)
+noncomputable def newStars (R : ResolvedCoproductProperForestRawData) {G : ResolvedFeynmanGraph} (σ : Equiv.Perm VertexId)
     (A : ResolvedAdmissibleSubgraph G) : Finset VertexId :=
-  (A.mapPerm σ).starVertices (D.starOf (G.mapPerm σ) (A.mapPerm σ))
+  (A.mapPerm σ).starVertices (R.starOf (G.mapPerm σ) (A.mapPerm σ))
 
 /-- **R-6c-body-407 — an ambient vertex's `σ`-image avoids the old mapped stars** (from `starOf_fresh`). -/
-theorem ambient_notMem_oldMappedStars (Fstar : ResolvedCanonicalStarFacts D)
+theorem ambient_notMem_oldMappedStars (Fstar : ResolvedCanonicalStarRawFacts R)
     {G : ResolvedFeynmanGraph} (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G)
-    {v : VertexId} (hv : v ∈ G.vertices) : σ v ∉ oldMappedStars D σ A := by
+    {v : VertexId} (hv : v ∈ G.vertices) : σ v ∉ oldMappedStars R σ A := by
   intro hmem
   obtain ⟨w, hw, hwv⟩ := Finset.mem_image.mp hmem
   rw [σ.injective hwv] at hw
@@ -76,9 +76,9 @@ theorem ambient_notMem_oldMappedStars (Fstar : ResolvedCanonicalStarFacts D)
   exact Fstar.starOf_fresh G A γ hγ (hγv ▸ hv)
 
 /-- **R-6c-body-407 — an ambient vertex's `σ`-image avoids the new stars** (from `starOf_fresh` on `G.mapPerm σ`). -/
-theorem ambient_notMem_newStars (Fstar : ResolvedCanonicalStarFacts D)
+theorem ambient_notMem_newStars (Fstar : ResolvedCanonicalStarRawFacts R)
     {G : ResolvedFeynmanGraph} (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G)
-    {v : VertexId} (hv : v ∈ G.vertices) : σ v ∉ newStars D σ A := by
+    {v : VertexId} (hv : v ∈ G.vertices) : σ v ∉ newStars R σ A := by
   intro hmem
   obtain ⟨γσ, hγσ, hγσv⟩ := ResolvedAdmissibleSubgraph.mem_starVertices.mp hmem
   refine Fstar.starOf_fresh (G.mapPerm σ) (A.mapPerm σ) γσ hγσ ?_

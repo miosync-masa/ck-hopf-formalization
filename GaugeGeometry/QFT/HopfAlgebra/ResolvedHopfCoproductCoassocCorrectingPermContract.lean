@@ -42,17 +42,17 @@ variable [∀ G : FeynmanGraph, DivergenceMeasure G]
   [IsAmbientInvariantDivergence] [IsDivergencePreservedByContract]
   [IsDivergencePreservedByAdmissibleForestContract]
 
-variable {D : ResolvedCoproductProperForestData}
+variable {R : ResolvedCoproductProperForestRawData}
 
 set_option linter.unusedSectionVars false
 
 /-- **R-6c-body-410 — mixed vertex-retarget law.**  Relabeling the ambient by `σ` and retargeting through the relabeled
 forest with the relabeled stars equals retargeting through the original and transporting by `τ`.  In-component: the
 on-stars law; off-component: the on-vertices law (hence `v ∈ G.vertices`). -/
-theorem correctingPerm_retargetVertex (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+theorem correctingPerm_retargetVertex (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G) {v : VertexId} (hvG : v ∈ G.vertices) :
-    (A.mapPerm σ).retargetVertex (D.starOf (G.mapPerm σ) (A.mapPerm σ)) (σ v)
-      = correctingPerm Fstar σ A (A.retargetVertex (D.starOf G A) v) := by
+    (A.mapPerm σ).retargetVertex (R.starOf (G.mapPerm σ) (A.mapPerm σ)) (σ v)
+      = correctingPerm Fstar σ A (A.retargetVertex (R.starOf G A) v) := by
   by_cases hv : v ∈ A.vertices
   · have hσv : σ v ∈ (A.mapPerm σ).vertices := by
       rw [ResolvedAdmissibleSubgraph.mapPerm_vertices]; exact Finset.mem_image_of_mem σ hv
@@ -64,8 +64,8 @@ theorem correctingPerm_retargetVertex (Fstar : ResolvedCanonicalStarFacts D) {G 
         exact Finset.mem_image_of_mem σ (A.componentAt_vertex_mem hv)
     rw [ResolvedAdmissibleSubgraph.retargetVertex, ResolvedAdmissibleSubgraph.componentAt?_of_mem _ hσv,
         ResolvedAdmissibleSubgraph.retargetVertex, ResolvedAdmissibleSubgraph.componentAt?_of_mem _ hv]
-    show D.starOf (G.mapPerm σ) (A.mapPerm σ) ((A.mapPerm σ).componentAt hσv)
-      = correctingPerm Fstar σ A (D.starOf G A (A.componentAt hv))
+    show R.starOf (G.mapPerm σ) (A.mapPerm σ) ((A.mapPerm σ).componentAt hσv)
+      = correctingPerm Fstar σ A (R.starOf G A (A.componentAt hv))
     rw [hcomp, correctingPerm_on_stars Fstar σ A (A.componentAt_mem hv)]
   · have hσv : σ v ∉ (A.mapPerm σ).vertices := by
       rw [ResolvedAdmissibleSubgraph.mapPerm_vertices]
@@ -77,32 +77,32 @@ theorem correctingPerm_retargetVertex (Fstar : ResolvedCanonicalStarFacts D) {G 
         correctingPerm_on_vertices Fstar σ A hvG]
 
 /-- **R-6c-body-410 — mixed internal-edge-retarget law** (endpoints in `G.vertices`). -/
-theorem correctingPerm_retargetEdge (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+theorem correctingPerm_retargetEdge (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G) (e : ResolvedFeynmanEdge)
     (hsrc : e.source ∈ G.vertices) (htgt : e.target ∈ G.vertices) :
-    (A.mapPerm σ).retargetEdge (D.starOf (G.mapPerm σ) (A.mapPerm σ)) (ResolvedFeynmanEdge.map σ e)
-      = ResolvedFeynmanEdge.map (correctingPerm Fstar σ A) (A.retargetEdge (D.starOf G A) e) := by
+    (A.mapPerm σ).retargetEdge (R.starOf (G.mapPerm σ) (A.mapPerm σ)) (ResolvedFeynmanEdge.map σ e)
+      = ResolvedFeynmanEdge.map (correctingPerm Fstar σ A) (A.retargetEdge (R.starOf G A) e) := by
   cases e with | mk eid es et esec =>
   simp only [ResolvedAdmissibleSubgraph.retargetEdge, ResolvedFeynmanEdge.map,
     ResolvedFeynmanEdge.retarget, correctingPerm_retargetVertex Fstar σ A hsrc,
     correctingPerm_retargetVertex Fstar σ A htgt]
 
 /-- **R-6c-body-410 — mixed external-leg-retarget law** (attachment in `G.vertices`). -/
-theorem correctingPerm_retargetExternalLeg (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+theorem correctingPerm_retargetExternalLeg (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G) (ℓ : ResolvedExternalLeg)
     (hℓ : ℓ.attachedTo ∈ G.vertices) :
-    (A.mapPerm σ).retargetExternalLeg (D.starOf (G.mapPerm σ) (A.mapPerm σ)) (ResolvedExternalLeg.map σ ℓ)
-      = ResolvedExternalLeg.map (correctingPerm Fstar σ A) (A.retargetExternalLeg (D.starOf G A) ℓ) := by
+    (A.mapPerm σ).retargetExternalLeg (R.starOf (G.mapPerm σ) (A.mapPerm σ)) (ResolvedExternalLeg.map σ ℓ)
+      = ResolvedExternalLeg.map (correctingPerm Fstar σ A) (A.retargetExternalLeg (R.starOf G A) ℓ) := by
   cases ℓ with | mk lid la lsec =>
   simp only [ResolvedAdmissibleSubgraph.retargetExternalLeg, ResolvedExternalLeg.map,
     ResolvedExternalLeg.retarget, correctingPerm_retargetVertex Fstar σ A hℓ]
 
 /-- **R-6c-body-410 — the star vertices transport by `τ`.**  Mirrors `mapPerm_starVertices`, with the on-stars law
 supplying the per-component compatibility. -/
-theorem correctingPerm_starVertices (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+theorem correctingPerm_starVertices (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G) :
-    (A.mapPerm σ).starVertices (D.starOf (G.mapPerm σ) (A.mapPerm σ))
-      = (A.starVertices (D.starOf G A)).image (correctingPerm Fstar σ A) := by
+    (A.mapPerm σ).starVertices (R.starOf (G.mapPerm σ) (A.mapPerm σ))
+      = (A.starVertices (R.starOf G A)).image (correctingPerm Fstar σ A) := by
   -- routed through `mem_image` / `mem_starVertices` (not `image_image`) to keep clear of the
   -- `ResolvedFeynmanSubgraph (G.mapPerm σ)` `DecidableEq` diamond; the on-stars law is the bridge.
   ext u
@@ -110,32 +110,32 @@ theorem correctingPerm_starVertices (Fstar : ResolvedCanonicalStarFacts D) {G : 
     Finset.mem_image]
   constructor
   · rintro ⟨γσ, ⟨γ, hγ, rfl⟩, rfl⟩
-    exact ⟨D.starOf G A γ, ⟨γ, hγ, rfl⟩, correctingPerm_on_stars Fstar σ A hγ⟩
+    exact ⟨R.starOf G A γ, ⟨γ, hγ, rfl⟩, correctingPerm_on_stars Fstar σ A hγ⟩
   · rintro ⟨w, ⟨γ, hγ, rfl⟩, rfl⟩
     exact ⟨γ.mapPerm σ, ⟨γ, hγ, rfl⟩, (correctingPerm_on_stars Fstar σ A hγ).symm⟩
 
 /-- **R-6c-body-410 ∎ — the mixed contraction graph equality.**  `(A.mapPerm σ).contractWithStars newStar =
 (A.contractWithStars oldStar).mapPerm τ`.  This is the graph datum whose three `congrArg`-projections inhabit body-406's
 `ResolvedContractTwiceClassData (new) (old)` with `starPerm = τ`. -/
-theorem correctingPerm_contractWithStars (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+theorem correctingPerm_contractWithStars (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G)
     (hE : AmbientEdgesSupported G) (hL : AmbientLegsSupported G) :
-    (A.mapPerm σ).contractWithStars (D.starOf (G.mapPerm σ) (A.mapPerm σ))
-      = (A.contractWithStars (D.starOf G A)).mapPerm (correctingPerm Fstar σ A) := by
+    (A.mapPerm σ).contractWithStars (R.starOf (G.mapPerm σ) (A.mapPerm σ))
+      = (A.contractWithStars (R.starOf G A)).mapPerm (correctingPerm Fstar σ A) := by
   have hsurv : (G.vertices \ A.vertices).image σ
       = (G.vertices \ A.vertices).image (correctingPerm Fstar σ A) :=
     Finset.image_congr (fun w hw =>
       (correctingPerm_on_vertices Fstar σ A (Finset.mem_sdiff.mp hw).1).symm)
   have hv : ((G.mapPerm σ).vertices \ (A.mapPerm σ).vertices)
-        ∪ (A.mapPerm σ).starVertices (D.starOf (G.mapPerm σ) (A.mapPerm σ))
-      = ((G.vertices \ A.vertices) ∪ A.starVertices (D.starOf G A)).image (correctingPerm Fstar σ A) := by
+        ∪ (A.mapPerm σ).starVertices (R.starOf (G.mapPerm σ) (A.mapPerm σ))
+      = ((G.vertices \ A.vertices) ∪ A.starVertices (R.starOf G A)).image (correctingPerm Fstar σ A) := by
     rw [correctingPerm_starVertices Fstar σ A, Finset.image_union,
         ResolvedAdmissibleSubgraph.mapPerm_vertices,
         show (G.mapPerm σ).vertices = G.vertices.image σ from rfl,
         ← Finset.image_sdiff G.vertices A.vertices σ.injective, hsurv]
   have hi : (A.mapPerm σ).complementEdges.map
-        ((A.mapPerm σ).retargetEdge (D.starOf (G.mapPerm σ) (A.mapPerm σ)))
-      = (A.complementEdges.map (A.retargetEdge (D.starOf G A))).map
+        ((A.mapPerm σ).retargetEdge (R.starOf (G.mapPerm σ) (A.mapPerm σ)))
+      = (A.complementEdges.map (A.retargetEdge (R.starOf G A))).map
           (ResolvedFeynmanEdge.map (correctingPerm Fstar σ A)) := by
     rw [ResolvedAdmissibleSubgraph.mapPerm_complementEdges, Multiset.map_map, Multiset.map_map]
     refine Multiset.map_congr rfl (fun e he_mem => ?_)
@@ -143,12 +143,12 @@ theorem correctingPerm_contractWithStars (Fstar : ResolvedCanonicalStarFacts D) 
       Multiset.mem_of_le (Multiset.sub_le_self _ _) he_mem
     exact correctingPerm_retargetEdge Fstar σ A e (hE e heG).1 (hE e heG).2
   have he : (G.mapPerm σ).externalLegs.map
-        ((A.mapPerm σ).retargetExternalLeg (D.starOf (G.mapPerm σ) (A.mapPerm σ)))
-      = (G.externalLegs.map (A.retargetExternalLeg (D.starOf G A))).map
+        ((A.mapPerm σ).retargetExternalLeg (R.starOf (G.mapPerm σ) (A.mapPerm σ)))
+      = (G.externalLegs.map (A.retargetExternalLeg (R.starOf G A))).map
           (ResolvedExternalLeg.map (correctingPerm Fstar σ A)) := by
     show (G.externalLegs.map (ResolvedExternalLeg.map σ)).map
-        ((A.mapPerm σ).retargetExternalLeg (D.starOf (G.mapPerm σ) (A.mapPerm σ)))
-      = (G.externalLegs.map (A.retargetExternalLeg (D.starOf G A))).map
+        ((A.mapPerm σ).retargetExternalLeg (R.starOf (G.mapPerm σ) (A.mapPerm σ)))
+      = (G.externalLegs.map (A.retargetExternalLeg (R.starOf G A))).map
           (ResolvedExternalLeg.map (correctingPerm Fstar σ A))
     rw [Multiset.map_map, Multiset.map_map]
     exact Multiset.map_congr rfl

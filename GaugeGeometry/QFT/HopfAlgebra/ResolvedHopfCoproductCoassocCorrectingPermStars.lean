@@ -4,7 +4,7 @@ import GaugeGeometry.QFT.HopfAlgebra.ResolvedHopfCoproductCoassocCorrectingPerm
 # R-6c-body-409 — the correcting permutation's on-stars law (PROVED)
 
 Four-hundred-and-ninth genuine-body step — the second `correctingPerm` action law, completing body-408: `τ` sends each
-old star `D.starOf G A γ` to the corresponding new star `D.starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ)`.
+old star `R.starOf G A γ` to the corresponding new star `R.starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ)`.
 
 The key, per the safe split, is to use ONLY the subtype witnesses that the equivalences themselves issue — never a hand-built
 `⟨σ oldStar, _⟩` witness that would carry its membership on a different `DecidableEq` instance.  The chain law
@@ -33,7 +33,7 @@ variable [∀ G : FeynmanGraph, DivergenceMeasure G]
   [IsAmbientInvariantDivergence] [IsDivergencePreservedByContract]
   [IsDivergencePreservedByAdmissibleForestContract]
 
-variable {D : ResolvedCoproductProperForestData}
+variable {R : ResolvedCoproductProperForestRawData}
 
 set_option linter.unusedSectionVars false
 
@@ -41,11 +41,11 @@ set_option linter.unusedSectionVars false
 star of `γ` (as issued by `finsetImageSubtypeEquiv ∘ (starVertexEquivIndex …).symm`) to the new star of `γ.mapPerm σ`
 (as issued by `(starVertexEquivIndex …).symm ∘ componentMapPermEquiv`).  Proved by injectivity — the forward chain
 collapses both round-trips without inspecting the `Classical.choose` interior. -/
-theorem starRelabelEquiv_symm_canonical (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+theorem starRelabelEquiv_symm_canonical (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G) {γ : ResolvedFeynmanSubgraph G}
     (hγ : γ ∈ A.elements) :
     (starRelabelEquiv Fstar σ A).symm
-        (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (D.starOf G A))
+        (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (R.starOf G A))
           ((starVertexEquivIndex (starIndexRecoverOfFacts Fstar A)).symm ⟨γ, hγ⟩))
       = (starVertexEquivIndex (starIndexRecoverOfFacts Fstar (A.mapPerm σ))).symm
           (componentMapPermEquiv σ A ⟨γ, hγ⟩) := by
@@ -55,7 +55,7 @@ theorem starRelabelEquiv_symm_canonical (Fstar : ResolvedCanonicalStarFacts D) {
   show _ = ((starVertexEquivIndex (starIndexRecoverOfFacts Fstar (A.mapPerm σ))).trans
       ((componentMapPermEquiv σ A).symm.trans
         ((starVertexEquivIndex (starIndexRecoverOfFacts Fstar A)).symm.trans
-          (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (D.starOf G A))))))
+          (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (R.starOf G A))))))
       ((starVertexEquivIndex (starIndexRecoverOfFacts Fstar (A.mapPerm σ))).symm
           (componentMapPermEquiv σ A ⟨γ, hγ⟩))
   rw [Equiv.trans_apply, Equiv.apply_symm_apply, Equiv.trans_apply, Equiv.symm_apply_apply,
@@ -64,20 +64,20 @@ theorem starRelabelEquiv_symm_canonical (Fstar : ResolvedCanonicalStarFacts D) {
 
 /-- **R-6c-body-409 — `τ` sends each old star to the corresponding new star.**  Read off from the canonical inverse image
 via `finsetSubtypeExtensionPerm_on_t` applied to the equiv-issued membership witness `mappedOldV.2`. -/
-theorem correctingPerm_on_stars (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+theorem correctingPerm_on_stars (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G) {γ : ResolvedFeynmanSubgraph G}
     (hγ : γ ∈ A.elements) :
-    correctingPerm Fstar σ A (D.starOf G A γ)
-      = D.starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ) := by
-  calc correctingPerm Fstar σ A (D.starOf G A γ)
+    correctingPerm Fstar σ A (R.starOf G A γ)
+      = R.starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ) := by
+  calc correctingPerm Fstar σ A (R.starOf G A γ)
       = ((starRelabelEquiv Fstar σ A).symm
-          (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (D.starOf G A))
+          (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (R.starOf G A))
             ((starVertexEquivIndex (starIndexRecoverOfFacts Fstar A)).symm ⟨γ, hγ⟩))).1 := by
         rw [correctingPerm, Equiv.Perm.mul_apply]
         exact finsetSubtypeExtensionPerm_on_t _ _ _
-          (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (D.starOf G A))
+          (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (R.starOf G A))
             ((starVertexEquivIndex (starIndexRecoverOfFacts Fstar A)).symm ⟨γ, hγ⟩)).2
-    _ = D.starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ) :=
+    _ = R.starOf (G.mapPerm σ) (A.mapPerm σ) (γ.mapPerm σ) :=
         congrArg Subtype.val (starRelabelEquiv_symm_canonical Fstar σ A hγ)
 
 end GaugeGeometry.QFT.Combinatorial

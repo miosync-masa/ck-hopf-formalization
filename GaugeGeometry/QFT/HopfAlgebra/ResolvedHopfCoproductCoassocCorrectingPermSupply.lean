@@ -7,7 +7,7 @@ import GaugeGeometry.QFT.HopfAlgebra.ResolvedHopfCoproductCoassocRightTermCorrec
 Four-hundred-and-eleventh genuine-body step — the pure assembly that turns body-410's graph equality into body-406's
 class-level socket.  Given the canonical star facts `Fstar` (freshness + injectivity) and the carrier-ambient support gate
 `Ambient`, every `(G, σ, A)` with `A ∈ D.carrier G` gets a `ResolvedContractTwiceClassData` with `starPerm = τ :=
-correctingPerm Fstar σ A` and the three field equalities read off `correctingPerm_contractWithStars` by `congrArg`.
+correctingPerm Fstar.toRaw σ A` and the three field equalities read off `correctingPerm_contractWithStars` by `congrArg`.
 
 * `correctingPermSupplyOfFacts` — inhabits `ResolvedRightTermCorrectingPermSupply D` from `Ambient` + `Fstar`;
 * `rightTermAlphaOfFacts` — the body-404 alpha law issued from it;
@@ -39,7 +39,7 @@ variable {D : ResolvedCoproductProperForestData}
 set_option linter.unusedSectionVars false
 
 /-- **R-6c-body-411 — the correcting-permutation class socket from fresh/ambient facts.**  For each carrier-hosted
-`(G, σ, A)`, the two-stage class datum with `starPerm = correctingPerm Fstar σ A` and the three field equalities from
+`(G, σ, A)`, the two-stage class datum with `starPerm = correctingPerm Fstar.toRaw σ A` and the three field equalities from
 `correctingPerm_contractWithStars` (endpoint support supplied by `Ambient` off `A ∈ D.carrier G`).  `hAσ` is required by
 the field TYPE, not by the geometry. -/
 noncomputable def correctingPermSupplyOfFacts
@@ -49,10 +49,10 @@ noncomputable def correctingPermSupplyOfFacts
   classData := fun G σ A hA _hAσ =>
     have hgraph :
         (A.mapPerm σ).contractWithStars (D.starOf (G.mapPerm σ) (A.mapPerm σ))
-          = (A.contractWithStars (D.starOf G A)).mapPerm (correctingPerm Fstar σ A) :=
-      correctingPerm_contractWithStars Fstar σ A
+          = (A.contractWithStars (D.starOf G A)).mapPerm (correctingPerm Fstar.toRaw σ A) :=
+      correctingPerm_contractWithStars Fstar.toRaw σ A
         (Ambient.edges_supported_of_mem hA) (Ambient.legs_supported_of_mem hA)
-    { starPerm := correctingPerm Fstar σ A
+    { starPerm := correctingPerm Fstar.toRaw σ A
       vertices_eq := congrArg (fun H : ResolvedFeynmanGraph => H.vertices) hgraph
       internalEdges_eq := congrArg (fun H : ResolvedFeynmanGraph => H.internalEdges) hgraph
       externalLegs_eq := congrArg (fun H : ResolvedFeynmanGraph => H.externalLegs) hgraph }

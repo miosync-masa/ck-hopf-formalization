@@ -69,4 +69,23 @@ def ResolvedCanonicalStarFacts.toMechanicalSupply (F : ResolvedCanonicalStarFact
   Recover := F.toRecoverSupply imageOf
   canonicalFresh := F.toFreshSupply
 
+/-- **R-6c-body-412 — the raw canonical star facts.**  The exact same two universal star-allocation properties
+(freshness + injectivity), but stated over the `rightTerm`-free raw core `R` — the honest carrier of what the
+correcting-permutation geometry consumes.  The `D`-facing `ResolvedCanonicalStarFacts` is kept (the 400-chain uses it);
+this is the additive raw counterpart. -/
+structure ResolvedCanonicalStarRawFacts (R : ResolvedCoproductProperForestRawData) where
+  /-- The allocated star `R.starOf G' A η` is fresh (outside `G'`) for each component `η` of `A`. -/
+  starOf_fresh : ∀ (G' : ResolvedFeynmanGraph) (A : ResolvedAdmissibleSubgraph G')
+    (η : ResolvedFeynmanSubgraph G'), η ∈ A.elements → R.starOf G' A η ∉ G'.vertices
+  /-- Distinct components of `A` get distinct stars. -/
+  starOf_injective : ∀ (G' : ResolvedFeynmanGraph) (A : ResolvedAdmissibleSubgraph G')
+    {η δ : ResolvedFeynmanSubgraph G'}, η ∈ A.elements → δ ∈ A.elements →
+      R.starOf G' A η = R.starOf G' A δ → η = δ
+
+/-- **R-6c-body-412 — the `D`→raw star-facts adapter** (definitional: `D.toRaw.starOf = D.starOf`). -/
+def ResolvedCanonicalStarFacts.toRaw (F : ResolvedCanonicalStarFacts D) :
+    ResolvedCanonicalStarRawFacts D.toRaw where
+  starOf_fresh := F.starOf_fresh
+  starOf_injective := F.starOf_injective
+
 end GaugeGeometry.QFT.Combinatorial

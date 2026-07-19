@@ -146,6 +146,45 @@ structure ResolvedCoproductProperForestData where
       = resolvedForestRightTerm (A.mapPerm σ) (starOf (G.mapPerm σ) (A.mapPerm σ))
           (hCD (G.mapPerm σ) (A.mapPerm σ) hAσ)
 
+/-- **R-6c-body-412 — the `rightTerm`-free raw core.**  The proper-forest data MINUS `rightTerm_mapPerm` — the honest
+primitive on which the correcting-permutation geometry (bodies 407–411) actually depends (it reads only `starOf` /
+`carrier`).  Building `rightTerm_mapPerm` from raw facts (freshness / injectivity / ambient support) and only THEN
+assembling the full `D` breaks the definitional cycle that `ResolvedCanonicalStarFacts (completed D)` would otherwise
+force. -/
+structure ResolvedCoproductProperForestRawData where
+  /-- The finite forest carrier per graph. -/
+  carrier : (G : ResolvedFeynmanGraph) → Finset (ResolvedAdmissibleSubgraph G)
+  /-- The star assignment per forest. -/
+  starOf : (G : ResolvedFeynmanGraph) → ResolvedAdmissibleSubgraph G →
+    (ResolvedFeynmanSubgraph G → VertexId)
+  /-- The contraction is connected divergent (the right factor is a generator). -/
+  hCD : ∀ (G : ResolvedFeynmanGraph) (A : ResolvedAdmissibleSubgraph G), A ∈ carrier G →
+    ((A.contractWithStars (starOf G A)).forget.toClass.IsConnectedDivergent)
+  /-- The carrier transports by relabeling. -/
+  carrier_mapPerm : ∀ (G : ResolvedFeynmanGraph) (σ : Equiv.Perm VertexId),
+    carrier (G.mapPerm σ) = (carrier G).image (fun A => A.mapPerm σ)
+
+/-- The raw core underlying a full `D` (drops only `rightTerm_mapPerm`). -/
+def ResolvedCoproductProperForestData.toRaw (D : ResolvedCoproductProperForestData) :
+    ResolvedCoproductProperForestRawData where
+  carrier := D.carrier
+  starOf := D.starOf
+  hCD := D.hCD
+  carrier_mapPerm := D.carrier_mapPerm
+
+@[simp] theorem ResolvedCoproductProperForestData.toRaw_carrier (D : ResolvedCoproductProperForestData) :
+    D.toRaw.carrier = D.carrier := rfl
+
+@[simp] theorem ResolvedCoproductProperForestData.toRaw_starOf (D : ResolvedCoproductProperForestData) :
+    D.toRaw.starOf = D.starOf := rfl
+
+@[simp] theorem ResolvedCoproductProperForestData.toRaw_hCD (D : ResolvedCoproductProperForestData) :
+    D.toRaw.hCD = D.hCD := rfl
+
+@[simp] theorem ResolvedCoproductProperForestData.toRaw_carrier_mapPerm
+    (D : ResolvedCoproductProperForestData) :
+    D.toRaw.carrier_mapPerm = D.carrier_mapPerm := rfl
+
 variable (D : ResolvedCoproductProperForestData)
 
 /-- The summand supply from the forest data (`ForestIdx` = the carrier subtype, so the right term

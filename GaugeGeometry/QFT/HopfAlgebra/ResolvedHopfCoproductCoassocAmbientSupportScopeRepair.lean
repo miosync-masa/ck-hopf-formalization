@@ -92,4 +92,21 @@ theorem liveAmbient_legs_supported (Amb : ResolvedCarrierAmbientSupportSupply D)
     ∀ ℓ ∈ G.externalLegs, ℓ.attachedTo ∈ G.vertices :=
   Amb.legs_supported_of_mem z.1.2
 
+/-- **R-6c-body-412 — the raw carrier-ambient support gate.**  The same endpoint well-formedness gate, over the
+`rightTerm`-free raw core `R`.  The `D`-facing supply is kept (body-397 feasibility uses it); this is the additive raw
+counterpart that the correcting-permutation geometry consumes. -/
+structure ResolvedCarrierAmbientSupportRawSupply (R : ResolvedCoproductProperForestRawData) where
+  /-- A graph hosting a raw-carrier member is edge-well-formed. -/
+  edges_supported_of_mem : ∀ {G : ResolvedFeynmanGraph} {A : ResolvedAdmissibleSubgraph G},
+    A ∈ R.carrier G → AmbientEdgesSupported G
+  /-- A graph hosting a raw-carrier member is leg-well-formed. -/
+  legs_supported_of_mem : ∀ {G : ResolvedFeynmanGraph} {A : ResolvedAdmissibleSubgraph G},
+    A ∈ R.carrier G → AmbientLegsSupported G
+
+/-- **R-6c-body-412 — the `D`→raw ambient-support adapter** (definitional: `D.toRaw.carrier = D.carrier`). -/
+def ResolvedCarrierAmbientSupportSupply.toRaw (Amb : ResolvedCarrierAmbientSupportSupply D) :
+    ResolvedCarrierAmbientSupportRawSupply D.toRaw where
+  edges_supported_of_mem := Amb.edges_supported_of_mem
+  legs_supported_of_mem := Amb.legs_supported_of_mem
+
 end GaugeGeometry.QFT.Combinatorial

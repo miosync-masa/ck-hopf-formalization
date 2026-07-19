@@ -44,7 +44,7 @@ variable [∀ G : FeynmanGraph, DivergenceMeasure G]
   [IsAmbientInvariantDivergence] [IsDivergencePreservedByContract]
   [IsDivergencePreservedByAdmissibleForestContract]
 
-variable {D : ResolvedCoproductProperForestData}
+variable {R : ResolvedCoproductProperForestRawData}
 
 set_option linter.unusedSectionVars false
 
@@ -59,21 +59,21 @@ noncomputable def componentMapPermEquiv {G : ResolvedFeynmanGraph} (σ : Equiv.P
       simp only [ResolvedAdmissibleSubgraph.mapPerm_elements, Finset.mem_image])
 
 /-- **R-6c-body-408 — the star relabeling equivalence** `newStars ≃ oldMappedStars`. -/
-noncomputable def starRelabelEquiv (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+noncomputable def starRelabelEquiv (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G) :
-    {v // v ∈ newStars D σ A} ≃ {v // v ∈ oldMappedStars D σ A} :=
+    {v // v ∈ newStars R σ A} ≃ {v // v ∈ oldMappedStars R σ A} :=
   (starVertexEquivIndex (starIndexRecoverOfFacts Fstar (A.mapPerm σ))).trans
     ((componentMapPermEquiv σ A).symm.trans
       ((starVertexEquivIndex (starIndexRecoverOfFacts Fstar A)).symm.trans
-        (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (D.starOf G A)))))
+        (finsetImageSubtypeEquiv σ σ.injective (A.starVertices (R.starOf G A)))))
 
 /-- **R-6c-body-408 — the correcting permutation** `τ := ρ * σ`. -/
-noncomputable def correctingPerm (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+noncomputable def correctingPerm (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G) : Equiv.Perm VertexId :=
-  finsetSubtypeExtensionPerm (newStars D σ A) (oldMappedStars D σ A) (starRelabelEquiv Fstar σ A) * σ
+  finsetSubtypeExtensionPerm (newStars R σ A) (oldMappedStars R σ A) (starRelabelEquiv Fstar σ A) * σ
 
 /-- **R-6c-body-408 — `τ` agrees with `σ` on ambient vertices.** -/
-theorem correctingPerm_on_vertices (Fstar : ResolvedCanonicalStarFacts D) {G : ResolvedFeynmanGraph}
+theorem correctingPerm_on_vertices (Fstar : ResolvedCanonicalStarRawFacts R) {G : ResolvedFeynmanGraph}
     (σ : Equiv.Perm VertexId) (A : ResolvedAdmissibleSubgraph G) {v : VertexId} (hv : v ∈ G.vertices) :
     correctingPerm Fstar σ A v = σ v := by
   rw [correctingPerm, Equiv.Perm.mul_apply]
