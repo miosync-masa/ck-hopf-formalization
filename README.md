@@ -129,6 +129,30 @@ modules, not yet wired into `Main`):
   (`resolvedHopfStructureCertificate_holds`), with an explicit canonical family
   exhibited (`exists_resolvedHopfStructureCertificate`).
 
+- **R-6c — the canonical supported resolved carrier now has a genuine inhabitant.**
+  `ResolvedHopfCoproductCoassocRealSupportedW.lean`:
+  `canonicalSupportedCarrierProperSupply : ResolvedCanonicalCarrierProperSupply`
+  is **constructed** (axiom-clean; `[propext, Classical.choice, Quot.sound]`). The
+  earlier audit had this carrier as an *interface only*: its `rightTerm_mapPerm` field
+  demanded a strict fresh-star equivariance that was proven **inconsistent** with
+  freshness (`ResolvedHopfCoproductCoassocEquivariantFreshStarNoGo.lean`). Rather than
+  assume the impossible certificate, the whole mechanism was rebuilt without it:
+    - strict `star_mapPerm` — **retired**; the right-term class invariance is instead
+      **derived** from a finite *correcting permutation* (`correctingPerm`);
+    - the global proper-forest carrier is provably **finite**
+      (`Fintype (ResolvedFeynmanSubgraph G)`), so a saturated
+      `Finset.univ.filter IsProperForest` index exists — overturning the prior
+      "no `Fintype` by design" note;
+    - `mapPerm`-naturality of the carrier, ambient-support and connected-divergence
+      emptying, the resolved↔flat contraction identification, and the fresh
+      star-renaming permutation are all proven;
+    - the raw-carrier `hCD` is **derived** from the flat canonical connected-divergent
+      theorem via that star renaming, with no strict equivariance anywhere.
+  Strict fresh-star equivariance is thus replaced by finite correcting permutations, and
+  the final carrier root is closed. (The multi-star coassociativity line's *other*
+  payload inhabitants remain separate open work; unconditional coassociativity is not
+  yet claimed.)
+
 Design conclusions: the **algebra carrier stays flat `HopfH`** — no resolved
 generator type, no native resolved `Fintype`, no ambient id-uniqueness assumption;
 the resolved carrier is a *semantic witness layer* reached through `forget`. The
