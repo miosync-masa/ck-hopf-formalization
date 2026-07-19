@@ -1857,6 +1857,47 @@ obligations.  But the *proof architecture* is complete: from the touched-localiz
 raid-boss (body-97 / body-286) to `coassoc_gen`, the faithful multi-star path is closed, and what remains is plugging a
 concrete model into a finished socket, not building a proof DAG.
 
+### R-6c bodies 403–425 — the canonical supported carrier gets a genuine inhabitant (2026-07-19)
+
+One of those Front-3 sockets — the **canonical carrier** `W` (`ResolvedCanonicalCarrierProperSupply`) — is now
+**closed with a real inhabitant**, and the way it closed is the point.
+
+The carrier's `rightTerm_mapPerm` field looked like it needed a *strict fresh-star equivariance*
+(`starOf (G.mapPerm σ) … = σ (starOf G …)`).  Body-403 did not assume it — it **proved that law impossible**: on a
+graph with two swappable fresh names, ambient-support pins the configuration but the strict law forces the star to move,
+a contradiction (a nominal-set / fresh-name obstruction).  So the honest move was not "assume the certificate" but
+"replace the mechanism that needed it."
+
+That is what bodies 405–425 did:
+
+- **the law was relaxed to a *class* invariant** and then *derived* from a **finite correcting permutation** `τ` that
+  fixes the ambient vertices and only relabels the fresh stars (bodies 405–411).  `τ` does the equivariance work that no
+  single star assignment could;
+- **the ownership cycle was cut**: the geometry was refactored onto a `rightTerm`-free *raw core*, so a full carrier can
+  be assembled *from* the raw facts rather than presupposing itself (body-412);
+- **the global proper-forest carrier was proven finite** — `Fintype (ResolvedFeynmanSubgraph G)` is *constructible* (the
+  subgraph data is bounded by the ambient graph; enumerate vertex subsets and edge/leg sub-multisets), overturning a
+  long-standing "no `Fintype` by design" design note and unlocking a saturated `Finset.univ.filter IsProperForest`
+  carrier (body-415);
+- **naturality, and two orthogonal emptyings** (ambient-support and connected-divergence) were proven, with the ambient
+  connected-divergence *recovered from carrier membership*, never reverse-engineered from properness (bodies 416–418);
+- the **resolved contraction was identified with the flat one** (bodies 419–422), so the flat Connes–Kreimer
+  connected-divergence theorem could be reused, transported back through a same-forest star renaming (bodies 423–424);
+- body-425 assembles all of it into `canonicalSupportedCarrierProperSupply`.
+
+| Result | Status |
+|---|---|
+| `W` inhabitant | **constructed** (axiom-clean; full build ✔) |
+| strict `star_mapPerm` | **retired** (proven inconsistent, body-403) |
+| `rightTerm_mapPerm` | **derived** from the finite correcting permutation |
+| global carrier finiteness | **proved** (overturning "no `Fintype` by design") |
+| raw-carrier `hCD` | **proved** from the flat canonical CD theorem, no strict equivariance |
+| axioms | `[propext, Classical.choice, Quot.sound]` |
+| unconditional coassociativity | **not yet claimed** |
+
+The carrier root is closed *constructively*: strict fresh-star equivariance is gone, replaced by finite correcting
+permutations.  The multi-star coassociativity line's *other* payload inhabitants remain separate honest obligations.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).

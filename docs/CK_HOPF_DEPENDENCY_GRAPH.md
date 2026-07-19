@@ -2110,6 +2110,62 @@ Front-3 banks               1 definitional wiring (hForest/hFT/hRight rfl) · 2 
 Full unconditional resolved coassociativity remains unclaimed pending the Front-3 inhabitants; the proof architecture is
 complete.
 
+### R-6c bodies 403–425 — the canonical supported carrier `W` gets a genuine inhabitant (2026-07-19)
+
+The `ResolvedCanonicalCarrierProperSupply` (`W`) audit had this carrier as an **interface only**: its
+`rightTerm_mapPerm` field demanded a strict fresh-star equivariance.  Body-403
+(`ResolvedHopfCoproductCoassocEquivariantFreshStarNoGo.lean`) **proved that law inconsistent** with `starOf_fresh`
+(swapping two fresh names fixes the ambient config but forces the star to move).  Bodies 405–425 rebuilt the whole
+mechanism WITHOUT the strict law, and body-425 issues the certificate.
+
+```text
+403      EquivariantFreshStarNoGo    strict star_mapPerm ∧ starOf_fresh → False  (nominal-set obstruction)
+405–406  RightTermAlpha / RightTermCorrectingPerm
+           retire star_mapPerm; add rightTerm_mapPerm (right-term CLASS invariance) to D + W;
+           ResolvedRightTermCorrectingPermSupply (τ + new = old.mapPerm τ ⟹ rightTerm eq via resolved_rightTerm_eq_of_class_eq)
+407–409  CorrectingPerm{Facts,,Stars}   τ := finsetSubtypeExtensionPerm (newStars)(oldMappedStars)(starRelabelEquiv) * σ
+           correctingPerm_on_vertices (τ = σ on ambient) · correctingPerm_on_stars (τ(oldStar γ)=newStar(γ.mapPerm σ))
+410–411  CorrectingPermContract / CorrectingPermSupply
+           correctingPerm_contractWithStars : (A.mapPerm σ).contractWithStars newStar = (A.contractWithStars oldStar).mapPerm τ
+           correctingPermSupplyOfFacts (Ambient+Fstar → ResolvedRightTermCorrectingPermSupply, congrArg off the graph eq)
+412      RawDataConstructor    ResolvedCoproductProperForestRawData (rightTerm-free core) + D.toRaw
+           R.toDataOfFreshCorrecting : raw core + raw facts → full D, CYCLE-FREE (breaks the D-needs-itself loop)
+413      RawCanonicalCarrier   ResolvedCanonicalCarrierProperRawSupply + Wraw.toSupportedCanonicalCarrier
+414      ComponentFreshStar    resolvedComponentFreshStar = freshVertex + idxOf  (fresh + injective; NOT mapPerm-natural — fine)
+415      SubgraphFintype       Fintype (ResolvedFeynmanSubgraph/ResolvedAdmissibleSubgraph G) CONSTRUCTED (Multiset.powerset)
+           overturns the "no Fintype by design" note; saturatedProperForestIndex := Finset.univ.filter IsProperForest
+416–417  ProperForestMapPerm / SubgraphMapPermEquiv
+           isProperForest_mapPerm_iff (conjunct-wise) · rasMapPermEquiv (surjectivity sealed in an Equiv, HEq-free)
+           saturatedProperForestIndex_carrier_mapPerm
+418      CDSupportedIndex      cdSupportedIndex := if G.forget.IsConnectedDivergent then saturated else ∅
+           mapPerm-iff · carrier_mapPerm · ambientCD_of_mem (ambient CD recovered from membership, NOT from IsProperForest)
+419–422  ForgetInjOn / StarOnForget / RetargetForget / ContractForget   resolved↔flat contraction identification
+           forget_injOn_elements_of_isProperForest (pairwise-disjoint + nonempty) · resolvedStarOnForget (+ spec)
+           retargetVertex/starVertices forget-correspondences · multiset_map_sub_of_le (bounded, non-injective map-sub)
+           forget_contractWithStars_resolvedStar : (A.contractWithStars resolvedStar).forget = A.forget.contractWithStars resolvedStarOnForget
+423–424  FlatStarRename{,Contract}   flatStarRenamePerm (same-forest σ=id correcting perm) + on-ambient/on-stars
+           flatStarRename_contractWithStars : B.contractWithStars s₂ = (B.contractWithStars s₁).mapPerm ρ
+425      RealSupportedW ∎     canonicalSupportedCarrierProperSupply : ResolvedCanonicalCarrierProperSupply  CONSTRUCTED
+           hCD chain: membership → ambient CD + proper (418) → A.forget ∈ flat proper index (419-lib)
+             → flat canonical CD (admissibleForestCanonicalContractGraph_hCD_of_ambient_preservation)
+             → flatStarRename_contractWithStars (424) → mapPerm_isConnectedDivergent_iff → 422 → resolved CD
+```
+
+**Status ledger.**
+
+```text
+W inhabitant                 CONSTRUCTED  (axiom-clean; full build ✔)
+strict star_mapPerm          RETIRED      (proven inconsistent, body-403)
+rightTerm_mapPerm            DERIVED      (from the finite correcting permutation τ)
+global carrier finiteness    PROVED       (Fintype, overturning "no Fintype by design")
+RawW hCD                     PROVED       (from the flat canonical CD theorem, no strict equivariance)
+axioms                       [propext, Classical.choice, Quot.sound]
+unconditional coassoc        NOT yet claimed
+```
+
+Strict fresh-star equivariance is replaced by finite correcting permutations; the final carrier root is closed.  The
+multi-star coassociativity line's *other* payload inhabitants (Front-3, above) remain separate open work.
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.
