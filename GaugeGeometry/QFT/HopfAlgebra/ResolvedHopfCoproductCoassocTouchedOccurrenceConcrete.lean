@@ -71,6 +71,25 @@ theorem promote_mem_selectedOuterRawOf {G : ResolvedFeynmanGraph} (q : FilteredF
     ResolvedAdmissibleSubgraph.union_elements, Finset.mem_union]
   exact Or.inr hmem
 
+/-- **R-6c-body-462 — the raw-domain promoted membership.**  Body-385's promoted-membership generalized from a filtered
+`q` to a raw split choice `s` (the proof never reads `q.2`); the totality-feasibility root of the body-463 corrected
+provider migration. -/
+theorem promote_mem_selectedOuterRawOf_raw {G : ResolvedFeynmanGraph} (s : ResolvedCoassocSplitChoice D G)
+    (o : ResolvedCoassocSplitChoice.ForestChoiceOccurrence s)
+    {b : ResolvedFeynmanSubgraph o.γ.1.toResolvedFeynmanGraph} (hb : b ∈ o.B.1.elements) :
+    o.γ.1.promote b ∈ ((resolvedConcreteForestPromoteSupply D G).selectedOuterRawOf s).elements := by
+  classical
+  have hmem : o.γ.1.promote b ∈ ((resolvedPromotedOfSupply D G).promotedOf s).elements := by
+    rw [ResolvedPromotedOfSupply.promotedOf_elements]
+    unfold ResolvedCoassocSplitChoice.promotedElements
+    refine Finset.mem_biUnion.mpr ⟨o.γ, Finset.mem_attach _ _, ?_⟩
+    rw [ResolvedCoassocSplitChoice.promotedComponentElements_inr s o.hchoice]
+    simp only [ResolvedAdmissibleSubgraph.promote_elements, Finset.mem_image]
+    exact ⟨b, hb, rfl⟩
+  simp only [ResolvedForestPromoteSupply.selectedOuterRawOf,
+    ResolvedAdmissibleSubgraph.union_elements, Finset.mem_union]
+  exact Or.inr hmem
+
 /-- **R-6c-body-385 — the concrete touched-collection theorem.**  The forward-selected outer's touched collection
 inside the concrete remnant `δ` of a forest-choice occurrence `o` is the occurrence's `o.B`-promoted collection. -/
 theorem touchedOuterComponents_of_occurrence

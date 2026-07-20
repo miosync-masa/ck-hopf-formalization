@@ -68,23 +68,9 @@ set_option linter.unusedSectionVars false
 
 variable {D : ResolvedCoproductProperForestData} {G : ResolvedFeynmanGraph}
 
-/-- **R-6c-body-462 — the raw-domain totality feasibility.**  Body-385's promoted-membership generalizes verbatim from a
-filtered `q` to a raw split choice `s` (the proof never reads `q.2`).  Certifies 455–461 need no hybrid. -/
-theorem promote_mem_selectedOuterRawOf_raw (s : ResolvedCoassocSplitChoice D G)
-    (o : s.ForestChoiceOccurrence) {b : ResolvedFeynmanSubgraph o.γ.1.toResolvedFeynmanGraph}
-    (hb : b ∈ o.B.1.elements) :
-    o.γ.1.promote b ∈ ((resolvedConcreteForestPromoteSupply D G).selectedOuterRawOf s).elements := by
-  classical
-  have hmem : o.γ.1.promote b ∈ ((resolvedPromotedOfSupply D G).promotedOf s).elements := by
-    rw [ResolvedPromotedOfSupply.promotedOf_elements]
-    unfold ResolvedCoassocSplitChoice.promotedElements
-    refine Finset.mem_biUnion.mpr ⟨o.γ, Finset.mem_attach _ _, ?_⟩
-    rw [ResolvedCoassocSplitChoice.promotedComponentElements_inr s o.hchoice]
-    simp only [ResolvedAdmissibleSubgraph.promote_elements, Finset.mem_image]
-    exact ⟨b, hb, rfl⟩
-  simp only [ResolvedForestPromoteSupply.selectedOuterRawOf,
-    ResolvedAdmissibleSubgraph.union_elements, Finset.mem_union]
-  exact Or.inr hmem
+-- `promote_mem_selectedOuterRawOf_raw` (the raw-domain totality-feasibility lemma) now lives beside body-385 in
+-- `ResolvedHopfCoproductCoassocTouchedOccurrenceConcrete` so the body-463 forward chain (upstream of this file) can
+-- consume it; it is re-exported here transitively.
 
 /-- **R-6c-body-462 — prototype: the alpha-native corrected remnant family interface** (un-consumed).  The total corrected
 family (feasible by `promote_mem_selectedOuterRawOf_raw`), plus the ONE genuinely-new field `remnantDisjoint` (GEOMETRY,

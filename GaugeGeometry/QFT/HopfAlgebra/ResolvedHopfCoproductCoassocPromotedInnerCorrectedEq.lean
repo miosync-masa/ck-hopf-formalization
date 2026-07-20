@@ -122,9 +122,9 @@ the recovered-side corrected source graph (body-454) are the same graph — WITH
 theorem promotedCorrectedSource_eq_innerCorrectedSource
     (hparent : o.γ.1 = M.parent z δ) (hidx : HEq o.B (M.innerIdx z δ))
     (houter : (resolvedConcreteForestPromoteSupply D G).selectedOuterRawOf q.1 = z.1.1) :
-    promotedCorrectedOccurrenceSourceGraph Fstar q o
+    promotedCorrectedOccurrenceSourceGraph Fstar q.1 o
       = innerCorrectedOccurrenceSourceGraph Fstar M z δ o := by
-  have h1 : o.B.1.contractWithStars (promotedOccurrenceStar q o)
+  have h1 : o.B.1.contractWithStars (promotedOccurrenceStar q.1 o)
       = (innerRaw z δ.1 (M.legLift z δ) (M.hE z) (M.hL z)).contractWithStars
           (touchedInnerStarTotal z δ.1 (M.legLift z δ) (M.hE z) (M.hL z)) :=
     occurrenceContract_transport M z δ q o.γ.1 o.B hparent hidx houter
@@ -133,14 +133,14 @@ theorem promotedCorrectedSource_eq_innerCorrectedSource
           (D.starOf (M.parent z δ).toResolvedFeynmanGraph
             (innerRaw z δ.1 (M.legLift z δ) (M.hE z) (M.hL z))) :=
     occurrenceSource_eq M z δ o.γ.1 o.B hparent hidx
-  rw [← promotedCorrectedSource_eq Fstar q o, h1, innerStarCorrected_contract_eq Fstar M z δ,
+  rw [← promotedCorrectedSource_eq Fstar q.1 o, h1, innerStarCorrected_contract_eq Fstar M z δ,
     innerCorrectedOccurrenceSourceGraph, h2]
 
 /-- **R-6c-body-457 — the central equality on vertices.** -/
 theorem promotedCorrectedSource_vertices_eq_inner
     (hparent : o.γ.1 = M.parent z δ) (hidx : HEq o.B (M.innerIdx z δ))
     (houter : (resolvedConcreteForestPromoteSupply D G).selectedOuterRawOf q.1 = z.1.1) :
-    (promotedCorrectedOccurrenceSourceGraph Fstar q o).vertices
+    (promotedCorrectedOccurrenceSourceGraph Fstar q.1 o).vertices
       = (innerCorrectedOccurrenceSourceGraph Fstar M z δ o).vertices :=
   congrArg ResolvedFeynmanGraph.vertices
     (promotedCorrectedSource_eq_innerCorrectedSource M z δ q o Fstar hparent hidx houter)
@@ -149,7 +149,7 @@ theorem promotedCorrectedSource_vertices_eq_inner
 theorem promotedCorrectedSource_internalEdges_eq_inner
     (hparent : o.γ.1 = M.parent z δ) (hidx : HEq o.B (M.innerIdx z δ))
     (houter : (resolvedConcreteForestPromoteSupply D G).selectedOuterRawOf q.1 = z.1.1) :
-    (promotedCorrectedOccurrenceSourceGraph Fstar q o).internalEdges
+    (promotedCorrectedOccurrenceSourceGraph Fstar q.1 o).internalEdges
       = (innerCorrectedOccurrenceSourceGraph Fstar M z δ o).internalEdges :=
   congrArg ResolvedFeynmanGraph.internalEdges
     (promotedCorrectedSource_eq_innerCorrectedSource M z δ q o Fstar hparent hidx houter)
@@ -158,7 +158,7 @@ theorem promotedCorrectedSource_internalEdges_eq_inner
 theorem promotedCorrectedSource_externalLegs_eq_inner
     (hparent : o.γ.1 = M.parent z δ) (hidx : HEq o.B (M.innerIdx z δ))
     (houter : (resolvedConcreteForestPromoteSupply D G).selectedOuterRawOf q.1 = z.1.1) :
-    (promotedCorrectedOccurrenceSourceGraph Fstar q o).externalLegs
+    (promotedCorrectedOccurrenceSourceGraph Fstar q.1 o).externalLegs
       = (innerCorrectedOccurrenceSourceGraph Fstar M z δ o).externalLegs :=
   congrArg ResolvedFeynmanGraph.externalLegs
     (promotedCorrectedSource_eq_innerCorrectedSource M z δ q o Fstar hparent hidx houter)
