@@ -153,6 +153,25 @@ modules, not yet wired into `Main`):
   payload inhabitants remain separate open work; unconditional coassociativity is not
   yet claimed.)
 
+- **R-6c — the canonical carrier now closes both multi-star carrier-membership
+  obligations.** With `W` constructed, bodies 426–439 demote the two opaque
+  carrier-membership fields to **derived theorems**: `innerRaw_mem`
+  (`ResolvedHopfCoproductCoassocInnerRawClosureDemotion.lean`) and `recovered_raw_mem`
+  (`ResolvedHopfCoproductCoassocRecoveredRawClosureAssembly.lean`), so the whole
+  `ResolvedMultiStarCarrierClosureBundleSupply` is fully derived from the canonical
+  supported carrier, a value core, and the existing measure / `EdgeIdsUnique` inputs.
+  The saturated `Finset.univ.filter IsProperForest` carrier of body-415 pays off here:
+  carrier membership becomes an `iff` (support ∧ connected-divergence ∧ properness), so
+  each obligation reduces to *checkable geometry*. The recovered-outer residual is
+  settled by **`count`-safe region separation** (a residual quotient edge lifted back
+  to the ambient, each recovered region shown to under-count it, counts summing because
+  a pairwise-disjoint forest gives every edge one owner) — staying in `count` throughout
+  because `EdgeIdsUnique` is **not** `Nodup`. The forest-region alignment is closed
+  inside the touched/M1 geometry with no forward-outer round-trip and no occurrence
+  supplies. Axiom-clean (`[propext, Classical.choice, Quot.sound]`); `Core` /
+  `DivergenceMeasure` / `Ids` stay honest inputs; unconditional coassociativity is still
+  not claimed.
+
 Design conclusions: the **algebra carrier stays flat `HopfH`** — no resolved
 generator type, no native resolved `Fintype`, no ambient id-uniqueness assumption;
 the resolved carrier is a *semantic witness layer* reached through `forget`. The

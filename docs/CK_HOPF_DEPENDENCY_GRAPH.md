@@ -2166,6 +2166,59 @@ unconditional coassoc        NOT yet claimed
 Strict fresh-star equivariance is replaced by finite correcting permutations; the final carrier root is closed.  The
 multi-star coassociativity line's *other* payload inhabitants (Front-3, above) remain separate open work.
 
+### R-6c bodies 426–439 — both carrier-membership obligations demoted to theorems; the closure bundle derived (2026-07-20)
+
+With `W` constructed (body-425), the `coassoc_gen` chain still consumed two **opaque carrier-membership fields** —
+`innerRaw_mem` and `recovered_raw_mem` (`ResolvedMultiStarCarrierClosureBundleSupply`).  Bodies 426–439 discharge both as
+theorems by descending into finiteness / properness / `count` geometry, with **no forward-outer round-trip, no cycle**.
+
+```text
+426      SupportedWMembership   mem_canonicalSupportedCarrier_iff (∈ carrier ↔ ambientSupported ∧ CD ∧ IsProperForest)
+           + canonicalStarFactsOfW · ambientSupportOfW  (W supplies D/CarrierProper/Fstar/Ambient)
+427      InnerRawClosureDemotion  canonicalInnerRawCarrierClosureSupply : innerRaw_mem is a THEOREM over W
+           (426 iff + Core.parentCD [subgraph→graph via forget_toFeynmanGraph] + innerRaw_isProperForest 378)
+428–429  RecoveredRawProperAudit / RegionRawNonempty
+           isProperForest_of_isNonempty_complement (IsProperForest ⟸ 2 honest inputs; conj 2/4 generic, conj 3 derived)
+           regionRawUnion_isNonempty (conjunct 1 = region THEOREM, from quotient forest properness + 344 partition; NO forward-outer)
+           VERDICT: conjunct 5 (complementEdges.card>0) is the sole honest residual — strict properness, count-safe
+430–431  QuotientResidualLift / ComplementCountBackbone
+           contractWithStars_internalEdges = outerComplement.map retargetEdge (rfl) ⟹ quotient residual edge e_q lifts to
+           e ∈ z.1.1.complementEdges with retargetEdge e = e_q; count-safe backbone (EdgeIdsUnique ≠ Nodup — stay in count)
+           regionRawUnion_complementEdges_card_pos_of_count_lt : closure ⟸ ONE witness count bound
+432      ComponentOwnerCount    count_internalEdges_eq_of_mem_component (pairwise-disjoint ⟹ an edge has ≤1 owner)
+           — the load-bearing bridge that lets per-region count bounds sum; leftRegion count-exclusion
+433      ResidualCountTransport count e outer.complement = count (retargetEdge e) quotient.internalEdges (InjOn count-map)
+434      RightRegionCount       right count-exclusion (star-avoiding survivor ⟹ retarget identity ⟹ e = e_q; owner on z.2.1)
+435–436  ForestCountBackbone / AmbientRetargetTransport
+           parent.internalEdges = touchedOuterForest.internalEdges + quotientEdgePreimage · ledger identity · touched bound
+           count_map_eq_count_of_injOn_mem (domain-widened, x∉s allowed) · ambient retarget InjOn
+437      TOFPreimageAlignment   forest alignment closed INSIDE the touched/M1 geometry — no occurrence/StarProm/Wiring,
+           no reconciliation of the two Classical.choose preimages.  touched_vertex_ok_of_local (untouched impossible by
+           star freshness) → TOF_qEP_retargetEdge_eq_whole → quotientEdgePreimage_map_whole (alignment in ONE map_congr)
+438      ForestRegionCount      forest count-exclusion (pure count arithmetic on 435 backbone + 437 map + 433 transport)
+439 ∎   RecoveredRawClosureAssembly
+           regionRawUnion_count_lt (owner classification: left 432 / right 434 / forest 438)
+           canonicalMultiStarCarrierClosureBundleSupply : Closure := 427 ; recovered_raw_mem := 439 count chain
+             (ambient support/CD read off the outer block's own W-carrier membership z.1.2, body-426)
+```
+
+**Status ledger (carrier closure).**
+
+```text
+innerRaw_mem                 THEOREM  (body-427, over W.toData)
+recovered_raw_mem            THEOREM  (body-439, count-safe region separation)
+CarrierClosureBundle         FULLY DERIVED  (from W + value core + measure leaves + EdgeIdsUnique)
+count-safe design            EdgeIdsUnique ≠ Nodup ⟹ never drop to ∉; count_lt throughout (flat theory does likewise)
+forest alignment             closed inside touched/M1 geometry (Fstar freshness), NOT occurrence/StarProm/Wiring
+Core / DivergenceMeasure / Ids   NOT unconditionalized (honest inputs)
+axioms                       [propext, Classical.choice, Quot.sound]
+unconditional coassoc        NOT yet claimed
+```
+
+The canonical saturated carrier now closes **both** multi-star carrier-membership obligations; the remaining `coassoc_gen`
+inputs are value-geometry (`VBuild`, `Core.legComplete`/`parentCD`), the `StarProm`/`StarRaw`/`OccRaw`/`Split`/`Ids`
+supplies, and the base-model representatives (`rep`/`repCD`/`rep_gen`).
+
 ---
 
 *Keep this file in sync with the Lean source line numbers when the kernels move.

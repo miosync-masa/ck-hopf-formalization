@@ -1898,6 +1898,52 @@ That is what bodies 405–425 did:
 The carrier root is closed *constructively*: strict fresh-star equivariance is gone, replaced by finite correcting
 permutations.  The multi-star coassociativity line's *other* payload inhabitants remain separate honest obligations.
 
+### R-6c bodies 426–439 — the canonical carrier closes both multi-star membership obligations (2026-07-20)
+
+With `W` built, the coassociativity chain still needed the model to *assert* two carrier-membership facts as opaque
+supply fields: that a de-contracted inner forest (`innerRaw`) and that the recovered outer union (`recovered_raw_mem`)
+land back in the carrier.  These bodies **prove both**, and — the point again — how they prove them.
+
+The key that unlocks everything is body-415's decision to make the carrier a **finite saturated
+`Finset.univ.filter IsProperForest`** rather than an opaque `Finset`.  Membership in it is now an `iff` (body-426):
+a forest is in the carrier exactly when the ambient graph is support-well-formed and connected-divergent and the forest
+is *proper*.  So a carrier-membership obligation becomes a properness obligation — checkable geometry, not an axiom.
+
+- **`innerRaw_mem` falls immediately** (body-427): the inner forest's properness is already a theorem (body-378), and its
+  ambient conditions come from the parent's own connected-divergence.  The closure supply is now a *derived
+  construction*.
+- **`recovered_raw_mem` is the deep one.**  The recovered union is a proper forest iff five conjuncts hold; four of them
+  reduce to generic facts or to the quotient forest's own properness (bodies 428–429) — with **no forward-outer
+  round-trip**, so no circularity.  The single genuine residual is *strict properness*: the union does not consume all of
+  the ambient's internal edges.
+- That residual is settled by **`count` geometry, never by set non-membership** (bodies 430–438).  A subtle but decisive
+  point: `EdgeIdsUnique` is **not** `Nodup` — distinct edges have distinct ids, but that says nothing about a single
+  edge's multiplicity — so the honest primitive is a strict *count* inequality, exactly as the flat theory already does.
+  A residual edge of the quotient is lifted back to the ambient (the contraction's internal edges are *definitionally*
+  the outer complement retargeted), and each of the three recovered regions (left survivor / right survivor / forest
+  remnant) is shown to under-count it, the counts summing safely because a pairwise-disjoint forest gives every edge at
+  most one owner (body-432).
+- The forest region's alignment — where the recovered geometry is expressed through a *touched* localization rather than
+  the whole outer — is closed **entirely inside that touched/M1 geometry** (body-437): the two `Classical.choose` edge
+  preimages are never reconciled, and no occurrence / promotion / wiring value-supply is pulled in; the whole↔touched
+  retarget agreement is proven on the preimage's support alone, its one impossible case ruled out by star freshness.
+- Body-439 classifies the union's edge-owner into the three regions and assembles the
+  `ResolvedMultiStarCarrierClosureBundleSupply` in full.
+
+| Result | Status |
+|---|---|
+| `innerRaw_mem` | **theorem** (body-427, over `W`) |
+| `recovered_raw_mem` | **theorem** (body-439, count-safe region separation) |
+| carrier-closure bundle | **fully derived** from `W` + value core + measure leaves + `EdgeIdsUnique` |
+| forward-outer round-trip | **not used** anywhere in the closure line |
+| `Core` / `DivergenceMeasure` / `Ids` | **not** unconditionalized (honest inputs) |
+| axioms | `[propext, Classical.choice, Quot.sound]` |
+| unconditional coassociativity | **not yet claimed** |
+
+The canonical saturated carrier now closes **both** multi-star carrier-membership obligations.  The remaining
+`coassoc_gen` inputs are genuinely elsewhere: value geometry (`VBuild`, the value core's `legComplete` / `parentCD`), the
+star / occurrence / split supplies, and the base-model representatives.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
