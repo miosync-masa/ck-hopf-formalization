@@ -97,12 +97,8 @@ theorem canonicalCorrectedQuotientUnion_not_mem
   rw [canonicalCorrectedQuotientUnion_elements_eq_empty Fstar Measure CarrierProper s hR hF]
   simp
 
-/-- **R-6c-body-468 — prototype: the filtered quotient-ownership interface** (un-consumed).  The quotient-owned field
-`quotientForestRaw` retyped to a filtered `q` — the faithful repair of the `∀ raw q` no-go. -/
-structure ResolvedFilteredQuotientOwnershipSupply (D : ResolvedCoproductProperForestData) where
-  /-- The quotient forest index, over a FILTERED forest-block-domain point only. -/
-  quotientForestRaw : ∀ {G : ResolvedFeynmanGraph} (q : FilteredForestBlockDom D G),
-    (D.supply (((resolvedConcreteForestPromoteSupply D G).selectedOuterRawOf q.1).contractWithStars
-      (D.starOf G ((resolvedConcreteForestPromoteSupply D G).selectedOuterRawOf q.1)))).ForestIdx
+-- (The filtered quotient-ownership interface is the faithful repair; it is realised as a two-field structure —
+-- `quotient_mem` + `quot_eq`, with `quotientForestRaw` DERIVED — in body-469
+-- `ResolvedHopfCoproductCoassocFilteredQuotientValue`.)
 
 end GaugeGeometry.QFT.Combinatorial
