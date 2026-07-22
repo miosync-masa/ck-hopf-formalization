@@ -364,9 +364,11 @@ Lean `leanprover/lean4:v4.29.0`, Mathlib `v4.29.0` (see `lean-toolchain` /
 
 ## Acknowledgment / AI-collaboration disclosure
 
-This formalization (~130k lines of Lean 4) was developed in **substantial, ongoing collaboration
-with Claude (Anthropic)** — Claude Opus 4.7 and Opus 4.8 (`https://claude.ai`). The collaboration was
-**not** limited to translation. Claude was a working partner throughout for:
+This formalization (~130k lines of Lean 4) was developed in **substantial, ongoing collaboration with
+AI assistants** — primarily **Claude (Anthropic)**, Claude Opus 4.7 and Opus 4.8 (`https://claude.ai`),
+with **OpenAI Codex** used for additional codebase scouting and cross-checks when the research
+direction was uncertain. The collaboration was **not** limited to translation. The AI assistants were
+working partners throughout for:
 
 - **navigating and searching the codebase** — "scouting" existing definitions, lemmas, and
   dependency chains across ~130k lines that no human keeps in working memory;
@@ -374,16 +376,20 @@ with Claude (Anthropic)** — Claude Opus 4.7 and Opus 4.8 (`https://claude.ai`)
   against the compiler; and
 - a tight **write → `lake build` → `#print axioms` → verify → commit** loop on every step.
 
-The **mathematics is machine-checked, so nothing rests on trusting the AI.** Every result is verified
-by the Lean 4 kernel and reported axiom-clean (`[propext, Classical.choice, Quot.sound]` — no `sorry`,
-no `admit`, no project-level axiom). **Lean — not the AI, and not the author — is the final arbiter of
-every proof.** This is precisely what makes heavy AI collaboration legitimate here: it is fully
-auditable, and correctness is settled by the proof assistant, not by anyone's authority.
+**Every formal theorem reported from the development is verified by the Lean 4 kernel** and reported
+axiom-clean (`[propext, Classical.choice, Quot.sound]` — no `sorry`, no `admit`, no project-level
+axiom). The kernel certifies each proof against its definitions and the listed axioms; it does not, of
+course, certify the natural-language significance a paper ascribes to a theorem — that reading is the
+author's responsibility. But the logical content itself rests on the proof assistant, not on trusting
+any AI: **Lean — not the AI, and not the author — is the final arbiter of every proof.** This is
+precisely what makes heavy AI collaboration legitimate here: the development is fully auditable, and
+correctness is settled by the proof assistant, not by anyone's authority. Any reviewer can run
+`lake build` and `#print axioms` and check exactly which theorem is claimed and on what it depends.
 
-The **mathematical direction, architecture, and design decisions** are the author's: the
-boundary-resolved carrier, the two-facade diagnosis and its resolved repair, the "fourth emptying
-axis" saturated carrier `W″`, the `Parent`-decomposition strategy, and the theorem statements
-themselves. Claude also assisted with English phrasing of the manuscript and this repository (the
-author is a non-native English speaker). All mathematical content, analysis, and interpretation are
-the author's own.
+The **research direction, architecture, and design decisions** are the author's: the boundary-resolved
+carrier, the two-facade diagnosis and its resolved repair, the "fourth emptying axis" saturated
+carrier `W″`, the `Parent`-decomposition strategy, and the theorem statements themselves. The AI
+assistants also helped with English phrasing of the manuscript and this repository (the author is a
+non-native English speaker). **The author takes full responsibility for all mathematical claims,
+architectural decisions, analysis, and interpretation.**
 
