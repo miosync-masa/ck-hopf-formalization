@@ -2221,6 +2221,131 @@ supplies, and the base-model representatives (`rep`/`repCD`/`rep_gen`).
 
 ---
 
+### R-6c bodies 440–534 — the residual purge: every construction artifact discharged, down to two CK model laws (2026-07-20 → 07-22)
+
+Bodies 440–534 carry the `coassoc_gen` capstone from "canonical carrier + a long list of opaque supplies" to a signature
+whose *only* non-representative inputs are two named power-counting/measure laws.  One axiom-clean file per body
+(`ResolvedHopfCoproductCoassocAlpha*.lean`); every file `#print axioms = [propext, Classical.choice, Quot.sound]`; no
+facade, no flat term, no `forgetHopf`, no rep/perm, no strict `StarProm`/`InnerStarRaw`, no `promote_collapse`/singleton/
+floor-297.  The arc, in five stretches:
+
+```
+440–445  W′ finished                canonicalUniqueSupportedCarrierProperSupply — the unique-ID supported carrier,
+                                       StarFacts + CarrierProperProvider banked
+446–468  strict star ⇒ THEOREM      StarProm / InnerStarRaw discharged via a correcting permutation (no strict-law
+                                       socket); the promoted / inner-star raw obligations become proofs
+469–495  native conditional coassoc faithful filtered-V + α forward/round-trip; membership geometry fully closed
+                                       (canonicalMultiStarAlphaRoundTripLeafSupply_closed)
+496–510  residual purification ✅    Fmem (496) / Split (497) / survivorInj+survivorGen (498) / quotient_mem (499–501)
+                                       / OccRaw (502–510) — ALL DISCHARGED
+                                       ▼ coassoc_gen_of_canonicalMultiStar_alpha_quotEq_occurrence_discharged
+                                         (residual inputs: quot_eq · ValueGeometry · Measure/E · rep*)
+511–529  quot_eq campaign ★GONE★     corrected two-stage contraction geometry ⇒ quot_eq is DERIVED, not assumed
+                                       ▼ coassoc_gen_of_canonicalMultiStar_alpha_construction_discharged
+                                         (residual inputs: ValueGeometry · Measure/E · rep*)
+530–531  ValueGeometry decomposed    ⇒ LegModel (carrier external-leg saturation) + Parent (inverse-decontraction CD)
+                                       ▼ coassoc_gen_of_canonicalMultiStar_alpha_model_laws
+                                         (residual inputs: Measure/E · LegModel · Parent · rep*)
+532–534  fourth emptying axis W″     LegModel absorbed combinatorially into a saturation-filtered carrier
+```
+
+**The quot_eq campaign (511–529) — the mathematical core.**  `quot_eq` (`rightTerm A′ = rightTerm B` under
+contract-twice) was the last construction artifact.  It is discharged by building the *corrected two-stage* contraction
+geometry and showing the one-stage and two-stage corrected contraction graphs are equal (never the permutation itself):
+
+```
+511 quot_eq ⟸ contract_class_eq          single graph-class equality
+512 field audit                          three field eqs (retargetVertex / retargetEdge / retargetLeg) + internalEdges
+513 global σ  contractStarPerm            whole-vertex correspondence as a finite Equiv extension
+514–518 sector equiv + star-vertex recover  right / forest sectors INHABITED
+519 ★446-grade re-audit★                 sourceLeftStar ≠ targetLeftStar; corrected LEFT route via the 446
+                                            non-existence certificate (correctedLeftTarget_injective)
+520 targetLeftStar is a STAGE-2 survivor  correctedLeftStar_toSurvivor (5 decls)
+521 ★partition★  correctedTwoStageSurvivor_cases   surviving vertex = input-outer survivor OR corrected targetLeftStar
+522 three-route maps (toFun/invFun + 6 branch value lemmas)
+523 ★correspondence inhabitant★          canonicalCorrectedContractCorrespondenceSupply — body-513 socket INHABITED
+524 ★519-grade scope trap★               on-G retarget field only (∀v∈G.vertices, NOT unrestricted); socket
+                                            ResolvedCanonicalFilteredContractRetargetDomainSupply = 2 fields
+525 sector forward-value bank (the "type mountain": simp-unfold + rfl through the equiv chain)
+526 retargetVertex_eq_on_G  ✅            socket field 1 discharged (4 routes + aggregate)
+527–528 exact residual  Q.internalEdges = (A.I − S.I).map f   (le_antisymm; body-500 le + reverse inclusion)
+529 ★★quot_eq DISCHARGED★★               internalEdges_domain (socket field 2) + socket inhabit + adapter chain
+                                            524→512→511 ⇒ quot_eq GONE
+```
+
+At 529 the capstone `coassoc_gen_of_canonicalMultiStar_alpha_construction_discharged` has residual inputs
+`Measure / E / ValueGeometry / rep*` **only** — `quot_eq`, `contract_class_eq`, correspondence, global σ, `Fmem`,
+`Split`, `survivorInj`, `survivorGen`, `quotient_mem`, `OccRaw`, `StarProm`, `InnerStarRaw` are all gone (verified by
+`#check`).  Pure construction artifacts = **zero**.
+
+**ValueGeometry decomposed (530–531).**  The surviving `ValueGeometry` aggregate (`legComplete` + dependent `parentCD`)
+splits into two minimal CK-model laws:
+
+```
+ValueGeometry
+  ├ legComplete  =  touchedLegComplete (∀ z, forest-domain δ)
+  │     upper inclusion δ.externalLegs ≤ G.externalLegs.map retarget   — DERIVED from body-320 (touchedContractedExternalLegs_le)
+  │     lower conjunct touchedLegSaturated                             — DERIVED from ...
+  │        ResolvedCarrierExternalLegSaturationSupply  (LegModel)      — carrier full-boundary multiplicity-safe filter ≤ law
+  │           via touchedOuter_externalLegs_map_le_componentFilter + le_trans  (canonicalTouchedLegSaturationSupply)
+  └ parentCD   =  ResolvedCanonicalUniqueDecontractionCDSupply  (Parent)  — inverse-decontraction CD law
+        (Measure.contract_preserves_CD runs parent→quotient; the needed law is the INVERSE, degree arbitrary ⇒ honest)
+```
+
+`coassoc_gen_of_canonicalMultiStar_alpha_model_laws` (body-531) then has residual inputs `Measure / E / LegModel /
+Parent / rep*` — the `ValueGeometry` record is gone.
+
+**Verdict (body-532).**  The two laws sit on opposite sides of a sharp frontier:
+
+```text
+LegModel:  ResolvedForestExternalLegSaturated is mapPerm-INVARIANT              → W″ fourth-emptying-axis candidate  (combinatorial)
+             (resolvedExternalLegSaturated_mapPerm_iff: filter/map commute; ResolvedExternalLeg.map σ injective; map_le_map_iff)
+Parent:    inverse-decontraction divergence law (DivergenceMeasure.degree arbitrary) → honest divergence typeclass    (physics)
+```
+
+**The fourth emptying axis W″ (533–534).**  Because `LegModel` is `mapPerm`-invariant, a *saturation-filtered* sub-carrier
+is `mapPerm`-closed — a genuine emptying axis, not an ad-hoc restriction:
+
+```
+canonicalLegSaturatedIndex G          W′.index.carrier.filter ResolvedForestExternalLegSaturated  (mem_proper inherited)   (533)
+   │  carrier_mapPerm  ← W′.carrier_mapPerm + 532 saturation invariance
+   ▼
+canonicalLegSaturatedCarrierProperSupply   full W″ supply (same allocator/hCD/rightTerm as W′, filter-projected)          (533)
+   ├ mem_canonicalLegSaturatedCarrier_iff / _full_iff   (2-condition + 6-condition membership APIs)
+   └ canonicalLegSaturatedExternalLegSaturationSupply   LegModel on W″ = CANONICAL DERIVED from membership (ofForestSaturated)
+        │
+generic saturation algebra (534 Step 1)   ResolvedHopfCoproductCoassocAlphaSaturationAlgebra
+   ├ resolvedForestExternalLegSaturated_union                (union closure)
+   └ resolvedExternalLegSaturated_promote_of_nested          (nested-promote closure, multiplicity-safe count filter)
+        │
+selectedOuter closure (534 Step 2)   ResolvedHopfCoproductCoassocAlphaSaturatedSelectedOuter
+   ├ selectedOuterRawOf_forestExternalLegSaturated   selectedOuterRawOf = leftOf ∪ promotedOf ⇒ forest-saturated (RAW s)
+   │     leftOf  → input-outer W″-membership saturation (s.1.2, resolved_leftOf_elements_eq + mem_of_mem_filter)
+   │     promotedOf → parent (hOuter γ) + chosen-inner (…_saturated B.2) through the nested-promote closure
+   └ canonicalLegSaturatedSelectedOuterFilteredMemSupply (+ _of_measure)   W″ Fmem = a theorem of membership (body-496 mirror)
+```
+
+So the first major construction (selectedOuter) already passes the fourth axis — its W″ carrier membership (hence `Fmem`)
+is a *theorem*, derived without reading any target membership.  Remaining W″ closure audits (next bodies): the
+forest-recovered `recoveredRawUnion` and the ambient-contraction `canonicalCorrectedQuotientRaw` transport; then
+`LegModel` drops off the final coassoc signature, leaving `Parent` as the sole honest physics law.
+
+| Result | Status |
+|---|---|
+| `quot_eq` (`rightTerm A′ = rightTerm B`) | **DISCHARGED** — derived from corrected two-stage geometry (body-529) |
+| pure construction artifacts (`Fmem`/`Split`/`survivorInj`/`survivorGen`/`quotient_mem`/`OccRaw`/`StarProm`/`InnerStarRaw`) | **all gone** from the capstone |
+| `ValueGeometry` aggregate | **decomposed** into `LegModel` + `Parent` (bodies 530–531) |
+| `LegModel` (external-leg saturation) | `mapPerm`-invariant; **absorbed** by the W″ saturation carrier on selectedOuter (533–534) |
+| `Parent` (inverse-decontraction CD) | **honest physics law** — not derivable from forward preservation |
+| final capstone `..._alpha_model_laws` residual | `Measure` / `E` / `LegModel` / `Parent` / `rep*` |
+| axioms (every body) | `[propext, Classical.choice, Quot.sound]` |
+| unconditional coassociativity | **not yet claimed** (`Parent` remains; W″ closure of the other two constructions pending) |
+
+The honest floor is now genuinely small: two CK-model laws (`LegModel`, `Parent`) plus the measure leaves and the
+base-model representatives — and `LegModel` is on a clear path to combinatorial absorption via W″.
+
+---
+
 *Keep this file in sync with the Lean source line numbers when the kernels move.
 Reader-facing narrative lives in `CK_HOPF_FORMALIZATION_MAP.md`; do not duplicate
 sprint logs here.*
