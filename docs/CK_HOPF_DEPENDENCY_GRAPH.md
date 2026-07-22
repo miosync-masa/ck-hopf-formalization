@@ -2346,6 +2346,110 @@ base-model representatives — and `LegModel` is on a clear path to combinatoria
 
 ---
 
+### R-6c bodies 535–546 — the fourth axis emptied: `W″` native coassoc reduced to `Measure / E / Parent / rep*` (2026-07-22) ∎
+
+Bodies 535–546 carry out the plan of the §440–534 verdict: build `W″` (the fourth emptying axis), prove every
+construction saturated *on it*, absorb `LegModel` into carrier membership, and re-issue the whole alpha chain over the
+`W″` owner.  The endpoint is the public theorem
+
+```
+coassoc_gen_of_canonicalLegSaturated_alpha
+    (Measure : ResolvedMeasureLeafSupply canonicalLegSaturatedCarrierProperSupply.toData)
+    (E       : ∀ H, ResolvedConnectedDivergentPositiveInternalEdgesSupply H)
+    (Parent  : ResolvedCanonicalLegSaturatedDecontractionCDSupply)
+    (rep) (repCD) (rep_gen) (x) :
+  canonicalLegSaturatedCarrierProperSupply.toData.coassocLeft  (X x)
+    = canonicalLegSaturatedCarrierProperSupply.toData.coassocRight (X x)
+```
+
+`#print axioms = [propext, Classical.choice, Quot.sound]` (verified).  Every body axiom-clean; no facade, no flat term.
+
+#### The one-way road (`W′` → `W″` → native coassoc)
+
+```
+W′  (canonicalUniqueSupportedCarrierProperSupply)
+ │   saturation filter  (ResolvedForestExternalLegSaturated; mapPerm-invariant, body-532/533)
+ ▼
+W″  (canonicalLegSaturatedCarrierProperSupply = W′ ∩ forest-external-leg-saturated)
+ │   the four construction memberships, each a THEOREM of W″ membership:
+ ├─ selectedOuter        PASSED  (body-534: selectedOuterRawOf_forestExternalLegSaturated → Fmem)
+ ├─ recoveredRawUnion    PASSED  (body-536 ID-cancellation + 537 filter-transport → regionRawUnion_mem)
+ ├─ innerRaw             PASSED  (body-538 filter monotonicity → innerRaw carrier closure)
+ └─ correctedQuotient    PASSED  (body-539 trace+coherence → 540 six-condition membership)
+        │
+        ▼  LegModel DERIVED FROM MEMBERSHIP  (body-533 canonicalLegSaturatedExternalLegSaturationSupply)
+        ▼  canonical legComplete  (body-541: touchedLegComplete_of_saturated ∘ membership LegModel — NOT a field)
+        ▼  Parent-only value Core  (body-541: ResolvedCanonicalLegSaturatedDecontractionCDSupply → .toValueCore)
+        ▼  quot_eq DERIVED  (body-545: global σ once → on-G retarget field → class equality → resolved_rightTerm_eq_of_class_eq)
+        ▼  single-owner alpha assembly  (body-546: R → Core/Closure/M/V/TagsF/DataF/RoundTripF, each issued once)
+        ▼
+   coassoc_gen_of_canonicalLegSaturated_alpha            ∎  (roots: Measure / E / Parent / rep*)
+```
+
+#### Emptying ledger (frozen)
+
+| Input (historical) | Status after body-546 | Mechanism |
+|---|---|---|
+| `Fmem` / `Split` / survivor+remnant leaves | **derived** | `R.Fmem` / `R`-projections (bodies 534/541/546) |
+| `quotient_mem` / `quot_eq` | **derived** | `R.quotient_mem` (540) / `R.quot_eq` (545) |
+| `OccRaw` / strict `StarProm` / `InnerStarRaw` sockets | **eliminated** | never re-introduced across 542–546 |
+| `LegModel` / `ValueGeometry` aggregate | **absorbed into `W″`** | membership ⟹ saturation (533) ⟹ `legComplete` (541) |
+| `Parent` (inverse-decontraction CD) | **open physics frontier** | the sole remaining honest model law |
+| `Measure` / `E` | honest CK measure inputs | power-counting environment |
+| `rep` / `repCD` / `rep_gen` | representation inputs | base-model lift |
+
+#### `W′` (body-529) vs `W″` (body-546) — NOT a cast
+
+```text
+body-529  coassoc_gen_of_canonicalMultiStar_alpha_construction_discharged   (W′)
+            broader carrier;  external LegModel / ValueGeometry required as inputs
+body-546  coassoc_gen_of_canonicalLegSaturated_alpha                        (W″)
+            carrier restricted by intrinsic saturation;  LegModel DERIVED from membership
+```
+
+The `W″` theorem is **not globally stronger** and **not a corollary/cast** of the `W′` one: it trades carrier breadth
+for hypothesis purity.  Both are valid at different abstraction levels.  Precisely because `W″ ⊆ W′` runs the *wrong*
+direction for transporting a coassoc statement (a theorem about all of `W′` does not restrict for free to the honest
+*sub*-carrier's own coproduct, and the sub-carrier's coproduct indexes over `W″`, not `W′`), the entire construction had
+to be **re-issued** over the `W″` owner (bodies 542–546) rather than inherited — which is why the campaign exists.
+
+#### Master architecture (the single proof pattern of the fourth axis)
+
+```text
+rigidify → coherence → traceability → local closure → effective descent
+```
+
+| axis | rigidify | coherence | traceability | local closure |
+|---|---|---|---|---|
+| **star** (body-539 Step 3) | persistent `starOf` allocator | `starOf_injective` on ONE allocator | promoted-star → parent component | fresh-star exclusion |
+| **leg** (bodies 536–538) | boundary `legId` | `retargetExternalLeg` agreement (459) | `map f`-cancellation / filter monotone | `datum.legs_le`, source saturation |
+| **corrected quotient** (body-539) | corrected two-stage contraction | `promoted_retargetExternalLeg_eq_selectedOuter` | `promotedCorrectedOccurrence_vertex_trace` | `mapped_externalLeg_filter_le_of_trace` |
+| **Parent** (frontier) | — | — | — | — (see below) |
+
+The load-bearing generic lemma is `mapped_externalLeg_filter_le_of_trace` (body-539 Step 1):
+*traceability + coherence + source closure ⟹ closure descends.*
+
+#### Next frontier — the `Parent` audit boundary (NOT yet implemented)
+
+`ResolvedCanonicalLegSaturatedDecontractionCDSupply.parentCD` asserts the de-contracted parent is
+`IsConnectedDivergent`.  Candidate decomposition to audit (body-548 onward):
+
+```text
+parentCD  =  Connected  +  OnePI (1-particle irreducible)  +  Divergent
+candidate decomposition:
+  reconstruction geometry            (Connected — likely a construction theorem)
+  + interface traceability           (OnePI — likely a construction theorem)
+  + topological insertion preservation
+  + divergence insertion closure     (the genuine power-counting residual)
+  + equivalence invariance
+```
+
+Frozen boundary: no `Parent` inhabitant is built here; no new typeclass; `coassoc_gen_of_canonicalLegSaturated_alpha`
+is **not** called "unconditional" (`Parent` / `Measure` / `E` are honest CK physics typeclasses modulo); the `W′`
+theorem is **not** deprecated; no theorem is force-transported across the `W″ ⊆ W′` inclusion.
+
+---
+
 *Keep this file in sync with the Lean source line numbers when the kernels move.
 Reader-facing narrative lives in `CK_HOPF_FORMALIZATION_MAP.md`; do not duplicate
 sprint logs here.*

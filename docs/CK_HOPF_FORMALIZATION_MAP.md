@@ -2018,6 +2018,80 @@ carrier, the other (`Parent`) a genuine, isolated power-counting assumption.  Th
 closure of the other two constructions (`recoveredRawUnion`, `canonicalCorrectedQuotientRaw`) so that `LegModel` drops
 off the signature entirely, leaving `Parent` as the sole honest physics input.
 
+### R-6c bodies 535–546 ∎ — the fourth axis emptied: native `Δᵣ`-coassociativity on `W″` modulo `Measure / E / Parent`
+
+Bodies 535–546 execute the fourth emptying axis to completion.  The result is a **native `Δᵣ`-coassociativity theorem on
+the boundary-resolved saturated carrier `W″`** whose entire hypothesis set is three CK-physics inputs and the base
+representatives — with *no* combinatorial construction artifact and *no* `LegModel`/`ValueGeometry` law surviving:
+
+```
+coassoc_gen_of_canonicalLegSaturated_alpha
+    (Measure : ResolvedMeasureLeafSupply canonicalLegSaturatedCarrierProperSupply.toData)
+    (E       : ∀ H, ResolvedConnectedDivergentPositiveInternalEdgesSupply H)
+    (Parent  : ResolvedCanonicalLegSaturatedDecontractionCDSupply)
+    (rep) (repCD) (rep_gen) (x) :
+  canonicalLegSaturatedCarrierProperSupply.toData.coassocLeft  (X x)
+    = canonicalLegSaturatedCarrierProperSupply.toData.coassocRight (X x)
+```
+
+Axioms `[propext, Classical.choice, Quot.sound]`; every body `sorry`/facade-free.
+
+| Carrier | `W″` = `W′` filtered by intrinsic forest external-leg saturation |
+|---|---|
+| combinatorial residual | **ZERO** — `Fmem` / `Split` / `quotient_mem` / `quot_eq` / `OccRaw` all derived from `W″` membership |
+| closure-law residual | **`Parent`** (the inverse-decontraction / divergence-closure law) |
+| other model inputs | `Measure`, `E` (the CK power-counting environment) |
+| representation inputs | `rep`, `repCD`, `rep_gen` |
+| axioms | `propext`, `Classical.choice`, `Quot.sound` |
+
+**What `W″` is, and why it is not a trick.**  `W″` removes from `W′` exactly the forests that fail external-leg
+saturation.  This predicate is `mapPerm`-invariant (relabeling-stable), so the sub-carrier is still closed under the
+symmetry the coproduct needs — a *genuine emptying axis*, not an ad-hoc restriction.  On `W″` the leg-saturation law
+`LegModel` is no longer an input: it is a **theorem of carrier membership**.  Feeding that membership-derived law through
+the earlier `ValueGeometry` decomposition (§530–531) turns `legComplete` into a theorem too, so the value core is built
+from `Parent` alone.
+
+**The emptying, step by step.**  (i) Each of the four constructions the coproduct uses is proved forest-saturated *on
+`W″`*: `selectedOuter` by pure filter monotonicity (534), `recoveredRawUnion` by a boundary-ID `map`-cancellation and a
+star-avoiding filter-transport (536–537), `innerRaw` by contravariant filter monotonicity through a *shrinking* boundary
+(538), and the `corrected quotient` by star-**traceability** + retarget-**coherence** (539).  (ii) Those saturations
+upgrade to formal `W″` carrier memberships and a single carrier-closure bundle (540).  (iii) The construction root bundles
+`Measure` + `Parent` and *derives* `Fmem` / `Core` / `ClosureBundle` / `quotient_mem`, with `legComplete` read off
+membership (541).  (iv) The entire index/cover/geometry apparatus — sector equivalences, star recoveries, the corrected
+left route and survivor partition, the three-route vertex correspondence, the global relabeling `σ`, and `quot_eq` — is
+**re-issued** over the `W″` owner (542–545).  (v) The full alpha assembly is threaded through one owner to the final
+theorem (546).
+
+**One master pattern.**  Every axis closed by the same four-move argument —
+
+```text
+rigidify  →  coherence  →  traceability  →  local closure  →  (effective descent)
+```
+
+made precise by the one load-bearing generic lemma `mapped_externalLeg_filter_le_of_trace`:
+*if the retarget is coherent and its image traces back to the parent component, and the parent's boundary is saturated,
+then saturation descends to the image.*  Persistent boundary identities (`starId`/`edgeId`/`legId`) are what make the
+retargets coherent and traceable — the same identities the flat carrier discards (§5).
+
+**`W″` (body-546) vs `W′` (body-529) — a deliberate trade, not a corollary.**  The `W′` theorem
+(`coassoc_gen_of_canonicalMultiStar_alpha_construction_discharged`) lives on the broader carrier but needs `LegModel` /
+`ValueGeometry` as *external* inputs.  The `W″` theorem restricts the carrier by an intrinsic law and *derives* those
+inputs.  The `W″` result is **not** a cast or corollary of the `W′` one: since `W″ ⊆ W′`, a statement about all of `W′`
+does not restrict for free to `W″`'s own coproduct (whose quotient index is over `W″`), so the whole construction was
+re-issued rather than inherited.  Both theorems are valid and serve different abstraction levels: `W′` maximizes carrier
+breadth, `W″` maximizes hypothesis purity.
+
+**The remaining frontier — `Parent`.**  `Parent` (`parentCD`: the de-contracted parent is connected-divergent) is the
+one honest physics law left.  It is *not* claimed to be discharged, and the theorem is **not** called "unconditional":
+`Parent` / `Measure` / `E` are CK power-counting typeclasses, exactly the abstracted Weinberg/CK environment of §4.  The
+next campaign audits whether `parentCD` decomposes as `Connected + OnePI + Divergent`, and how far the first two are
+themselves construction theorems (reconstruction geometry / interface traceability) rather than power-counting inputs —
+isolating the irreducible **divergence-insertion closure** as the true physics residual.
+
+The headline of R-6c is therefore: *native resolved `Δᵣ`-coassociativity now rests on nothing combinatorial — every
+graph-notation artifact is a theorem of the saturated carrier's membership — and on a single, explicitly named physics
+closure law (`Parent`) plus the power-counting measure.*
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
