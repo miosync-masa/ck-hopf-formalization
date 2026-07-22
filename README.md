@@ -64,6 +64,64 @@ work. (The flat `HopfAlgebra ℚ HopfH` bundle as a whole remains conditional on
 this result makes its hardest reindex step facade-free on the resolved carrier and explains why the
 flat statement cannot be.)
 
+## Native `Δᵣ`-coassociativity on the boundary-resolved saturated carrier `W″` ∎ (R-6c)
+
+Beyond the facade-free H5.8 *reindex*, the resolved development now reaches **native
+`Δᵣ`-coassociativity of the Connes–Kreimer coproduct on a boundary-resolved carrier**, with
+**no combinatorial construction artifact left as a hypothesis**. The public terminus is
+
+```lean
+theorem coassoc_gen_of_canonicalLegSaturated_alpha_parent_discharged
+    (Measure : ResolvedMeasureLeafSupply canonicalLegSaturatedCarrierProperSupply.toData)
+    (E : ∀ H, ResolvedConnectedDivergentPositiveInternalEdgesSupply H)
+    (rep : ResolvedHopfGen → ResolvedFeynmanGraph)
+    (repCD : ∀ x, (rep x).forget.toClass.IsConnectedDivergent)
+    (rep_gen : ∀ x, x = (rep x).toResolvedHopfGen (repCD x))
+    (x : ResolvedHopfGen) :
+    canonicalLegSaturatedCarrierProperSupply.toData.coassocLeft (MvPolynomial.X x)
+      = canonicalLegSaturatedCarrierProperSupply.toData.coassocRight (MvPolynomial.X x)
+```
+
+(`GaugeGeometry/QFT/HopfAlgebra/ResolvedHopfCoproductCoassocAlphaParentDischarged.lean`;
+`#print axioms` = `[propext, Classical.choice, Quot.sound]`). Its **explicit** hypotheses are only
+the power-counting leaves `Measure` / `E` and the generator representatives `rep*`; the remaining
+assumptions are the standard CK power-counting typeclasses carried as *instance* arguments.
+
+- **The carrier `W″`.** `W″` (`canonicalLegSaturatedCarrierProperSupply`) is the boundary-resolved
+  supported carrier `W′` filtered by an intrinsic, relabeling-invariant **external-leg saturation**
+  predicate — a genuine "fourth emptying axis", not an ad-hoc restriction. On `W″` the leg-saturation
+  law (`LegModel`) is no longer an input: it is a **theorem of carrier membership**. Feeding that
+  through the earlier value-geometry decomposition makes the whole `ValueGeometry` aggregate a
+  consequence of membership as well.
+- **Every construction artifact is discharged.** `Fmem`, the region split, the survivor/remnant
+  leaves, `quotient_mem`, `quot_eq`, and the occurrence supply `OccRaw` are all *derived* (and
+  re-issued natively over the `W″` owner); the strict `StarProm` / `InnerStarRaw` sockets are
+  eliminated. What was a long list of opaque supplies is now a chain of theorems.
+- **The `Parent` model law is discharged too.** The last honest model input — `parentCD` (the
+  de-contracted parent is connected-divergent) — is **not** assumed. Its topology half (`parentOnePI`)
+  is proved *constructively* on the resolved carrier (support-connectivity by lifting the quotient
+  component's path along the insertion; every inserted-forest and quotient edge shown non-bridge);
+  its divergence half (`parentDivergent`) is the **canonical resolved consequence of a divergence law
+  the development already carried** (`IsDivergenceReflectedByAdmissibleForestContract`), applied
+  **exactly once** after a faithful coordinate descent onto the flat physics interface — the delicate
+  step being an *intrinsic* graph equality `remainder.toFeynmanGraph = δ.forget.toFeynmanGraph` that
+  sidesteps the ill-typed cross-ambient equality. So the explicit `Parent` argument disappears.
+
+**Stated precisely, and not overstated.** This is **not** called *unconditional*: the result is
+
+> native `Δᵣ`-coassociativity on the boundary-resolved saturated carrier `W″`, **modulo the
+> established CK divergence laws** — with every combinatorial artifact a theorem of the carrier's
+> membership, and no independent `Parent` input.
+
+The residual *global* assumptions are exactly the standard Weinberg/CK power-counting environment
+(rename / ambient invariance, contract and forest-contract preservation, the forest-contract
+reflection, and the `DivergenceMeasure` valuation), plus `Fintype (FeynmanSubgraph G)` as finiteness
+infrastructure. Discharging *those* would mean supplying a concrete physics model — a separate main
+theorem (a concrete Weinberg/boundary valuation inhabiting these laws), not more coassociativity
+plumbing. The `W′` conditional theorem remains valid; `W″` is a full **native re-issue** of the whole
+chain, not a cast, absorbing external-leg saturation into membership and the `Parent` aggregate into a
+canonical construction.
+
 ## Non-vacuity (not a unicorn)
 
 The conditional flat-carrier theorem is a **proof-skeleton factorization**, not an
@@ -171,6 +229,20 @@ modules, not yet wired into `Main`):
   supplies. Axiom-clean (`[propext, Classical.choice, Quot.sound]`); `Core` /
   `DivergenceMeasure` / `Ids` stay honest inputs; unconditional coassociativity is still
   not claimed.
+
+- **R-6c — native `Δᵣ`-coassociativity reached, modulo the CK divergence laws.**
+  Bodies 440–556 carry the coassociativity capstone from "canonical carrier + a long list
+  of opaque supplies" to the terminus `coassoc_gen_of_canonicalLegSaturated_alpha_parent_discharged`
+  (see the headline section above): the fourth emptying axis `W″` absorbs the leg-saturation
+  law into membership (bodies 530–541), every construction artifact — `Fmem` / split /
+  survivor-remnant / `quotient_mem` / `quot_eq` / `OccRaw` — is discharged and re-issued
+  natively over `W″` (bodies 496–545), and the last model law `Parent` is discharged as the
+  canonical resolved consequence of the existing forest-contraction reflection law (bodies
+  548–556, reflection consumed exactly once). The final theorem's only explicit roots are
+  `Measure` / `E` / `rep*`; the residual global assumptions are the standard CK power-counting
+  typeclasses. Every body is axiom-clean (`[propext, Classical.choice, Quot.sound]`), no
+  `sorry`; the result is native coassociativity **modulo the established CK divergence laws**,
+  not unconditional.
 
 Design conclusions: the **algebra carrier stays flat `HopfH`** — no resolved
 generator type, no native resolved `Fintype`, no ambient id-uniqueness assumption;
