@@ -2450,6 +2450,84 @@ theorem is **not** deprecated; no theorem is force-transported across the `W″ 
 
 ---
 
+### R-6c bodies 548–556 — `Parent` discharged: the last model law reduced to an existing CK reflection primitive (2026-07-22 → 07-23) ∎
+
+The §535–546 terminus left exactly one honest model input, `Parent`
+(`ResolvedCanonicalLegSaturatedDecontractionCDSupply.parentCD`: the de-contracted parent is `IsConnectedDivergent`).
+Bodies 548–556 discharge it — not by adding a physics axiom, but by **proving `Parent` is the canonical resolved
+consequence of the existing divergence-reflection typeclass** — so the explicit `Parent` argument disappears from the
+final theorem.  Every body axiom-clean `[propext, Classical.choice, Quot.sound]`; the reflection typeclass field is
+consumed **exactly once** (body-556 Step 3); no new `class`/`structure`/`instance`; strict star sockets ZERO.
+
+#### The `Parent` discharge DAG
+
+```
+Parent.parentCD  =  IsConnectedDivergent  =  IsConnected ∧ IsOnePI ∧ IsDivergent      (body-548 decomposition)
+                                                └ IsConnected ⟸ IsOnePI.isConnected (FREE)
+                                          ⟺  parentOnePI ∧ parentDivergent
+
+canonical parent geometry (canonicalLegSaturatedParentForget = parent's .forget, Parent-FREE)
+ ├─ canonicalLegSaturated_parent_isConnected                549  (quotient path-lift; support-connected trunk)
+ ├─ Exact edges are not bridges                             550  (erase_add_right_pos; erase-connectivity)
+ ├─ Promoted edges are not bridges                          551  (cross-owner flat-edge separation, NO forget injectivity)
+ └─ canonicalLegSaturated_parent_isOnePI                    552  (549 + 550/551 dispatched by edge_cases)   ⟹ parentCD ↔ parentDivergent
+
+innerRaw (inserted forest, Parent-FREE)
+ ├─ admissibleSubgraphQuotientRemainder_divergent_reflect   553  (PUBLIC adapter to the reflection class field)
+ ├─ canonicalLegSaturatedFlatTouchedInnerStar (+ spec+fresh) 554  (touched-star descent through forget, via forget_injOn_elements)
+ ├─ remainder.toFeynmanGraph = δ.forget.toFeynmanGraph      555  (INTRINSIC graph equality — not cross-ambient; no cast/HEq)
+ └─ existing IsDivergenceReflectedByAdmissibleForestContract
+        ▼   (δ divergent → intrinsic transport → remainder divergent → reflect, ONCE)
+   canonicalLegSaturated_parent_isDivergent                 556  (= parentDivergent, Parent-FREE)
+
+  parentOnePI (552)  +  parentDivergent (556)
+        ▼   canonicalLegSaturated_parentCD_of_divergent (552)
+   canonicalLegSaturated_parent_isConnectedDivergent        556  (Parent-FREE)
+        ▼
+   canonicalLegSaturatedDecontractionCDSupply               556  (a def — NOT an instance — the single canonical Parent supply)
+        ▼   fed to body-546's W″ alpha chain (body-546 UNCHANGED)
+   coassoc_gen_of_canonicalLegSaturated_alpha_parent_discharged   ∎  (roots: Measure / E / rep*)
+```
+
+`#check` on the final theorem: explicit roots are `Measure / E / rep / repCD / rep_gen / x` — **zero**
+`ResolvedCanonicalLegSaturatedDecontractionCDSupply` arguments (the ambient CK physics typeclasses, incl.
+`IsDivergenceReflectedByAdmissibleForestContract`, remain as instance args).
+
+#### The frozen emptying ledger (full R-6c)
+
+| Historical input | Status | Where |
+|---|---|---|
+| strict `star_mapPerm` / `StarProm` / `InnerStarRaw` sockets | **ZERO** | retired 403 / discharged 446–468 |
+| `Fmem` / `Split` / survivor+remnant / `quotient_mem` / `quot_eq` | **derived** | 496–529 / re-issued on `W″` 542–545 |
+| `OccRaw` | **eliminated** | 502–510 |
+| `LegModel` / `ValueGeometry` aggregate | **absorbed into `W″` membership** | 530–541 |
+| `Parent` topology (`parentOnePI`) | **derived (constructive)** | 548–552 |
+| `Parent` divergence (`parentDivergent`) | **derived from the existing reflection law** | 553–556 (consumed once) |
+| explicit `Parent` input | **GONE** | 556 |
+| remaining explicit roots | `Measure` / `E` / `rep*` | — |
+
+#### Conceptual verdict (state precisely)
+
+- **NOT** "the `Parent` law was eliminated." The reflection law `IsDivergenceReflectedByAdmissibleForestContract` still
+  does the divergence work — it is consumed exactly once (body-556 Step 3).
+- **Correct:** the `Parent` *aggregate* is reduced to that existing primitive reflection law; the duplicated *external*
+  `Parent` input is removed.
+- The boundary-resolved carrier is what made this possible: it enables a **faithful coordinate descent** from the
+  canonical resolved objects onto the old flat physics API (bodies 553–555), and an **intrinsic `.toFeynmanGraph`
+  equality** (body-555) that replaces the ill-typed cross-ambient strict equality.
+- `W′` (body-529) stays a valid conditional theorem; `W″` (bodies 546/556) is a full **native re-issue** of the whole
+  chain (not a cast), absorbing external-leg saturation into membership (533–541) and now the `Parent` aggregate into a
+  canonical construction (556).
+- The result is **not** called unconditional: it is `canonical W″ coassociativity modulo the established CK divergence
+  laws` (rename/ambient invariance, contract / forest-contract preservation, forest-contract reflection, measure
+  realization).
+
+Frozen boundary: no physics typeclass is added or merged; reflection is not derived from `Measure`; no Lean theorem is
+edited; `W′` is not deprecated.  The next audit (body-558) will only *classify* the remaining CK physics instances, not
+discharge them.
+
+---
+
 *Keep this file in sync with the Lean source line numbers when the kernels move.
 Reader-facing narrative lives in `CK_HOPF_FORMALIZATION_MAP.md`; do not duplicate
 sprint logs here.*

@@ -2092,6 +2092,62 @@ The headline of R-6c is therefore: *native resolved `Δᵣ`-coassociativity now 
 graph-notation artifact is a theorem of the saturated carrier's membership — and on a single, explicitly named physics
 closure law (`Parent`) plus the power-counting measure.*
 
+### R-6c bodies 548–556 ∎ — `Parent` discharged: `W″` coassociativity modulo the established CK divergence laws
+
+The §535–546 terminus had reduced native `Δᵣ`-coassociativity on `W″` to `Measure / E / Parent / rep*`, with `Parent`
+(`parentCD`: the de-contracted parent is connected-divergent) the one honest model law left.  Bodies 548–556 remove even
+that as an *explicit* input — not by assuming a new physics law, but by **proving that `Parent` is the canonical resolved
+consequence of a divergence law the development already had**.  The endpoint is
+
+```
+coassoc_gen_of_canonicalLegSaturated_alpha_parent_discharged
+    (Measure) (E) (rep) (repCD) (rep_gen) (x) :
+  canonicalLegSaturatedCarrierProperSupply.toData.coassocLeft  (X x)
+    = canonicalLegSaturatedCarrierProperSupply.toData.coassocRight (X x)
+```
+
+whose explicit hypotheses are `Measure`, `E`, and the base representatives — **no `Parent` argument**.  The ambient CK
+power-counting typeclasses (rename/ambient invariance, contract and forest-contract preservation, and — the one that does
+the divergence work here — `IsDivergenceReflectedByAdmissibleForestContract`) remain as instance arguments; the reflection
+field is consumed **exactly once**.  Axioms `[propext, Classical.choice, Quot.sound]`.
+
+| Explicit roots | `Measure` / `E` / `rep` / `repCD` / `rep_gen` |
+|---|---|
+| Global model assumptions (instances) | the established CK divergence invariance / preservation classes + `IsDivergenceReflectedByAdmissibleForestContract` |
+| explicit `Parent` input | **GONE** |
+
+**How `Parent` splits.**  `parentCD = IsConnected ∧ IsOnePI ∧ IsDivergent`.  `IsConnected` is free from `IsOnePI` (548),
+so `Parent` is exactly `parentOnePI ∧ parentDivergent`.  The **topology** half (`parentOnePI`) is proved *constructively*
+on the boundary-resolved carrier: the de-contracted parent is support-connected by lifting the quotient component's
+connectivity along the insertion (549), and every internal edge — whether an inserted-forest ("promoted") edge or a
+quotient ("exact") edge — is not a bridge (550/551), so the parent is 1PI (552).  The **divergence** half
+(`parentDivergent`) is the reverse power-counting reflection the code already carried: `IsDivergenceReflectedByAdmissible-
+ForestContract` says "a quotient plus its divergent inserted forest reflects to a divergent source parent."  Bodies
+553–555 descend the canonical resolved data (inserted forest, its fresh insertion stars, the quotient remainder) onto the
+flat interface that law expects — the delicate step being an **intrinsic graph equality** `remainder.toFeynmanGraph =
+δ.forget.toFeynmanGraph` (555) that sidesteps the ill-typed cross-ambient equality — and body-556 applies the law once to
+obtain `parentDivergent`, hence (with 552) the full `parentCD`, packaged as one canonical `Parent` supply fed to the
+unchanged §546 chain.
+
+**What this is, stated precisely.**  This is *not* "the `Parent` law was eliminated" — the reflection law still supplies
+the divergence content, once.  It is: the `Parent` *aggregate* is reduced to that pre-existing primitive, and the
+duplicated *external* `Parent` input is removed.  The boundary-resolved carrier is exactly what enables the faithful
+coordinate descent onto the old flat physics API and the intrinsic-equality replacement of cross-ambient casts.  The `W′`
+theorem (body-529) remains a valid conditional statement; the `W″` result (546/556) is a full native re-issue of the
+whole construction — external-leg saturation absorbed into carrier membership (533–541), and now the `Parent` aggregate
+absorbed into a canonical construction.
+
+The result is deliberately **not** called unconditional.  Its honest name is:
+
+> **native `Δᵣ`-coassociativity on the boundary-resolved saturated carrier `W″`, modulo the established CK divergence
+> laws** — with every combinatorial artifact a theorem of the carrier's membership, and no independent `Parent` input.
+
+The remaining explicit roots are the power-counting `Measure`/`E` and the representation `rep*`; the residual *global*
+assumptions are the standard CK divergence typeclasses — the same Weinberg/CK power-counting environment abstracted since
+Sprint A–C (§4).  A later audit will *classify* those instances (rename invariance, ambient invariance, contract
+preservation, forest-contract preservation, forest-contract reflection, measure realization); it does not discharge them,
+because removing them would mean removing physics inputs, not construction artifacts.
+
 ---
 
 *Maintained alongside `HOPF_DECOMPOSITION.md` (internal, full sprint log).
