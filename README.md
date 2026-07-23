@@ -1,6 +1,7 @@
 # CK Hopf Formalization
 
 [![Lean Action CI](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml/badge.svg)](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21502004.svg)](https://doi.org/10.5281/zenodo.21502004)
 
 A Lean 4 formalization of the **Connes–Kreimer Hopf algebra of Feynman graphs**.
 
@@ -361,6 +362,29 @@ dependency boundary.
 
 Lean `leanprover/lean4:v4.29.0`, Mathlib `v4.29.0` (see `lean-toolchain` /
 `lakefile.toml`).
+
+## Citation
+
+This release is archived on Zenodo with a citable DOI. If you use this development,
+please cite:
+
+> Masamichi Iizumi (2026). *CK Hopf Formalization: 1.0.0 — R-6c Beyond the facade-free
+> H5.8 reindex* (Version v1.0.0) [Computer software]. Zenodo.
+> <https://doi.org/10.5281/zenodo.21502004>
+
+BibTeX:
+
+```bibtex
+@software{iizumi_ck_hopf_2026,
+  author    = {Iizumi, Masamichi},
+  title     = {{CK Hopf Formalization: 1.0.0 --- R-6c Beyond the facade-free H5.8 reindex}},
+  year      = {2026},
+  version   = {v1.0.0},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.21502004},
+  url       = {https://doi.org/10.5281/zenodo.21502004}
+}
+```
 
 ## Acknowledgment / AI-collaboration disclosure
 
