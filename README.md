@@ -368,9 +368,9 @@ Lean `leanprover/lean4:v4.29.0`, Mathlib `v4.29.0` (see `lean-toolchain` /
 This release is archived on Zenodo with a citable DOI. If you use this development,
 please cite:
 
-> Masamichi Iizumi (2026). *CK Hopf Formalization: 1.0.0 — R-6c Beyond the facade-free
-> H5.8 reindex* (Version v1.0.0) [Computer software]. Zenodo.
-> <https://doi.org/10.5281/zenodo.21502004>
+> Masamichi Iizumi (2026). *CK Hopf Formalization: 1.0.1 — manuscript
+> (Version v1.0.1) [Computer software]. Zenodo.
+> <https://doi.org/10.5281/zenodo.21543358>
 
 BibTeX:
 
