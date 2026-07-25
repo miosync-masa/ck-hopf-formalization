@@ -377,12 +377,12 @@ BibTeX:
 ```bibtex
 @software{iizumi_ck_hopf_2026,
   author    = {Iizumi, Masamichi},
-  title     = {{CK Hopf Formalization: 1.0.0 --- R-6c Beyond the facade-free H5.8 reindex}},
+  title     = {{CK Hopf Formalization: 1.0.1 --- manuscript }},
   year      = {2026},
-  version   = {v1.0.0},
+  version   = {v1.0.1},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.21502004},
-  url       = {https://doi.org/10.5281/zenodo.21502004}
+  doi       = {10.5281/zenodo.21543358},
+  url       = {https://doi.org/10.5281/zenodo.21543358}
 }
 ```
 
