@@ -759,11 +759,14 @@ theorem phi4WTriplePrime_inv_promotion_recovery
 
 /-- **body-609 (Step 5) — PROOF FRONTIER — NOT EXTERNAL INPUT (discharged in body-613): recontraction
 recovery (honest class form).**  Contracting the recovered parent's boundary-completed ambient by the
-recovered inner forest returns `δ` — at the resolved CLASS level (a strict raw star equality is NOT claimed;
-the canonical recontraction star and `δ`'s quotient star generally differ, so the honest statement is a
-`toResolvedClass` equality, discharged via ONE body-580 correcting permutation).  PROVABLE proof debt (the
-inverse-direction mirror of the body-604 forward contract-twice raw equality, ≈860 lines — a body of its own,
-body-613), NOT a physics assumption — named here as a frontier predicate. -/
+recovered inner forest returns `δ`'s **boundary-completion** — at the resolved CLASS level (a strict raw star
+equality is NOT claimed; the canonical recontraction star and `δ`'s quotient star generally differ, so the
+honest statement is a `toResolvedClass` equality against `δ.1.boundaryCompletedResolvedGraph`, the exact
+inverse of body-604's `remnant.boundaryCompletion = localContraction.mapPerm τ`, discharged via ONE body-580
+correcting permutation; the raw-δ target would implicitly force `δ.boundaryEdgeCount = 0`, which W‴ membership
+does NOT guarantee).  PROVABLE proof debt (the inverse-direction mirror of the body-604 forward contract-twice
+raw equality, ≈860 lines — a body of its own, body-613), NOT a physics assumption — named here as a frontier
+predicate. -/
 def phi4WTriplePrime_inv_recontraction_recovery
     {z : Phi4WTriplePrimeInverseCodomain G} {δ : {x // x ∈ z.2.1.elements}}
     (I : phi4WTriplePrime_ForestDecontractionInput z δ) (hCD : phi4WTriplePrime_inv_innerForest_CD I) :
@@ -772,7 +775,7 @@ def phi4WTriplePrime_inv_recontraction_recovery
       (phi4WTriplePrimeCanonicalSupply.starOf
         (phi4WTriplePrime_inv_recoveredParent I).boundaryCompletedResolvedGraph
         (phi4WTriplePrime_inv_recoveredInnerForest I hCD))).toResolvedClass
-    = δ.1.toResolvedFeynmanGraph.toResolvedClass
+    = δ.1.boundaryCompletedResolvedGraph.toResolvedClass
 
 /-! ## The canonical `RecoveredForestOccurrence` owner is NOT issued here.
 
