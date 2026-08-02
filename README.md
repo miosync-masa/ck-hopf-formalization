@@ -3,7 +3,9 @@
 [![Lean Action CI](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml/badge.svg)](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21757055.svg)](https://doi.org/10.5281/zenodo.21757055)
 
-A Lean 4 formalization of the **Connes–Kreimer Hopf algebra of Feynman graphs**.
+A Lean 4 formalization of the **Connes–Kreimer Hopf algebra of Feynman graphs**, and a
+concrete **φ⁴₄ QFT realization** whose stable boundary-resolved coproduct is proved
+**coassociative unconditionally**.
 
 This repository is extracted from a broader `GaugeGeometry` development.  The Lean
 namespace `GaugeGeometry.QFT…` is intentionally retained to preserve **stable
@@ -122,6 +124,52 @@ theorem (a concrete Weinberg/boundary valuation inhabiting these laws), not more
 plumbing. The `W′` conditional theorem remains valid; `W″` is a full **native re-issue** of the whole
 chain, not a cast, absorbing external-leg saturation into membership and the `Parent` aggregate into a
 canonical construction.
+
+## Concrete φ⁴₄ QFT realization: unconditional coproduct coassociativity ∎ (QFT-R1)
+
+The R-6c terminus above is stated *modulo the established CK divergence laws*, and discharging
+those was noted to require **a concrete physics model — a separate main theorem**. This development
+now carries exactly such a concrete φ⁴₄ instance. On a **stable** boundary-resolved carrier
+(`StableResolvedPhi4HopfGen`), the Connes–Kreimer-style divergent-subforest coproduct
+
+```lean
+coproduct_resolved_stable_phi4 : StableResolvedPhi4HopfH →ₐ[ℚ]
+    StableResolvedPhi4HopfH ⊗[ℚ] StableResolvedPhi4HopfH
+```
+
+is proved **coassociative, unconditionally** — no divergence-law hypotheses and no typeclass
+instance arguments; the φ⁴ power-counting enters as a concrete *providable* instance
+(`phi4DivergenceMeasureFamily`), not an assumption. The public terminus is the standard
+coassociativity square `assoc ∘ (Δᵣˢ ⊗ id) ∘ Δᵣˢ = (id ⊗ Δᵣˢ) ∘ Δᵣˢ`:
+
+```lean
+theorem coproduct_resolved_stable_phi4_coassociativity_law :
+    ((Algebra.TensorProduct.assoc ℚ ℚ ℚ … … …).toAlgHom.comp
+        (Algebra.TensorProduct.map coproduct_resolved_stable_phi4 (AlgHom.id ℚ _))).comp
+        coproduct_resolved_stable_phi4
+      = (Algebra.TensorProduct.map (AlgHom.id ℚ _) coproduct_resolved_stable_phi4).comp
+        coproduct_resolved_stable_phi4
+```
+
+(`GaugeGeometry/QFT/HopfAlgebra/Phi4StableCoproductCoassociativityLaw.lean`, re-stating the
+whole-algebra `coproduct_resolved_stable_phi4_coassociative`; `#print axioms` =
+`[propext, Classical.choice, Quot.sound]`).
+
+- **Why *stable*.** The naive resolved carrier's forest-block round-trip is only an orbit
+  (relabeling-class) equality; forcing it raw would break coassociativity — a recorded no-go. The
+  repair is an **idempotent** boundary completion carrying inherited legs *verbatim*, on which every
+  round-trip is a genuine **raw** equality: no orbit quotient, no dedup, exact component
+  multiplicity, and no public `HEq` / `cast` / graph-data transport.
+- **How it closes.** A weight-preserving **bijection** between the two iterated coproducts' residual
+  sums (`stablePhi4ForestBlockEquiv` — both left and right inverses proved), promoted to a finite-sum
+  reindex and matched against a common "alpha" part.
+
+Reader-facing map: `docs/PHI4_QFT_REALIZATION_MAP.md`.
+
+**Scope (not overstated).** This establishes the concrete φ⁴ coproduct's **coassociativity**. The
+counit, the antipode, and a full `Bialgebra` / `HopfAlgebra` instance are **out of scope**; so is a
+*formal instantiation of the abstract CK divergence typeclasses* of the R-6c terminus by this
+concrete coproduct — it is a concrete φ⁴ **counterpart**, not a discharge of the `W″` modulo-clause.
 
 ## Non-vacuity (not a unicorn)
 
@@ -357,6 +405,9 @@ dependency boundary.
   fails, and how boundary resolution repairs it.
 - [`docs/CK_HOPF_DEPENDENCY_GRAPH.md`](docs/CK_HOPF_DEPENDENCY_GRAPH.md) —
   developer/reviewer technical dependency DAG.
+- [`docs/PHI4_QFT_REALIZATION_MAP.md`](docs/PHI4_QFT_REALIZATION_MAP.md) —
+  reader/paper-facing map of the concrete φ⁴₄ QFT realization: the stable
+  boundary-resolved coproduct and its unconditional coassociativity.
 
 ## Toolchain
 
