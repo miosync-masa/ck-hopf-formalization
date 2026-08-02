@@ -1,7 +1,7 @@
 # CK Hopf Formalization
 
 [![Lean Action CI](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml/badge.svg)](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21543358.svg)](https://doi.org/10.5281/zenodo.21543358)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21757055.svg)](https://doi.org/10.5281/zenodo.21757055)
 
 A Lean 4 formalization of the **Connes–Kreimer Hopf algebra of Feynman graphs**.
 
@@ -368,21 +368,21 @@ Lean `leanprover/lean4:v4.29.0`, Mathlib `v4.29.0` (see `lean-toolchain` /
 This release is archived on Zenodo with a citable DOI. If you use this development,
 please cite:
 
-> Masamichi Iizumi (2026). *CK Hopf Formalization: 1.0.1 — manuscript*
-> (Version v1.0.1) [Computer software]. Zenodo.
-> <https://doi.org/10.5281/zenodo.21543358>
+> Masamichi Iizumi (2026). *CK Hopf Formalization: v1.1.0 — φ⁴₄ QFT realization:
+> stable resolved coproduct coassociativity* (Version v1.1.0) [Computer software].
+> Zenodo. <https://doi.org/10.5281/zenodo.21757055>
 
 BibTeX:
 
 ```bibtex
 @software{iizumi_ck_hopf_2026,
   author    = {Iizumi, Masamichi},
-  title     = {{CK Hopf Formalization: 1.0.1 --- manuscript }},
+  title     = {{CK Hopf Formalization: v1.1.0 --- \(\phi^4_4\) QFT realization: stable resolved coproduct coassociativity}},
   year      = {2026},
-  version   = {v1.0.1},
+  version   = {v1.1.0},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.21543358},
-  url       = {https://doi.org/10.5281/zenodo.21543358}
+  doi       = {10.5281/zenodo.21757055},
+  url       = {https://doi.org/10.5281/zenodo.21757055}
 }
 ```
 
