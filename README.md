@@ -1,7 +1,7 @@
 # CK Hopf Formalization
 
 [![Lean Action CI](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml/badge.svg)](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21757055.svg)](https://doi.org/10.5281/zenodo.21757055)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21765915.svg)](https://doi.org/10.5281/zenodo.21765915)
 
 A Lean 4 formalization of the **Connes–Kreimer Hopf algebra of Feynman graphs**, and a
 concrete **φ⁴₄ QFT realization** whose stable boundary-resolved coproduct is proved
@@ -487,7 +487,7 @@ please cite:
 
 > Masamichi Iizumi (2026). *CK Hopf Formalization: v2.0.0 — φ⁴₄ QFT realization:
 > Connes–Kreimer character Birkhoff factorization `φ₋ ⋆ φ = φ₊`* (Version v2.0.0)
-> [Computer software]. Zenodo. <https://doi.org/10.5281/zenodo.21757055>
+> [Computer software]. Zenodo. <https://doi.org/10.5281/zenodo.21765915>
 
 BibTeX:
 
@@ -498,14 +498,13 @@ BibTeX:
   year      = {2026},
   version   = {v2.0.0},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.21757055},
-  url       = {https://doi.org/10.5281/zenodo.21757055}
+  doi       = {10.5281/zenodo.21765915},
+  url       = {https://doi.org/10.5281/zenodo.21765915}
 }
 ```
 
-*(The DOI above is the concept record resolving to the latest version. The v2.0.0
-version-specific DOI is minted by Zenodo when the GitHub release is published; update
-this citation with that version DOI once available.)*
+*(DOI `10.5281/zenodo.21765915` is the v2.0.0 version-specific record; earlier
+versions have their own DOIs — v1.1.0 is `10.5281/zenodo.21757055`.)*
 
 ## Acknowledgment / AI-collaboration disclosure
 
