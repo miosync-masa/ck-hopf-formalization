@@ -10,6 +10,15 @@ renormalization character theory** — associative-unital character convolution,
 well-founded Bogoliubov recursion, and the **Birkhoff factorization `φ₋ ⋆ φ = φ₊`** —
 all axiom-clean (QFT-R2).
 
+> **For referees — two files suffice:**
+> **[`PaperMainTheorems.lean`](GaugeGeometry/QFT/HopfAlgebra/PaperMainTheorems.lean)** — the
+> paper's main theorems under stable names (`paper_thm1 … paper_thm7`, plus the witness layer
+> `paper_thm2'` / `paper_thm5'`), each a one-line re-export of the internal proof; and
+> **[`Phi4StableChainLedgerAudit.lean`](GaugeGeometry/QFT/HopfAlgebra/Phi4StableChainLedgerAudit.lean)**
+> — the one-build theorem ledger (`#check` by exact name + `#print axioms` for every headline,
+> with the theorem → source file → commit table). Raw kernel output:
+> [`docs/paper/APPENDIX_B_AXIOM_AUDIT.md`](docs/paper/APPENDIX_B_AXIOM_AUDIT.md).
+
 This repository is extracted from a broader `GaugeGeometry` development.  The Lean
 namespace `GaugeGeometry.QFT…` is intentionally retained to preserve **stable
 imports and theorem names** — do not rename it.
