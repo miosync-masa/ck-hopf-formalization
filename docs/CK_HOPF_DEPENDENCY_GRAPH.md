@@ -9,6 +9,67 @@ no `sorry`/`admit`/project axiom.  The only conditional surface is the **two**
 named boundary-semantics kernels in §4 (the former third kernel, the CK §3
 right-antipode core identity, is eliminated — §4).
 
+The concrete **φ⁴₄ QFT realization chain** (QFT-R1 coproduct coassociativity, QFT-R2
+renormalization character Birkhoff factorization) is a *separate, unconditional,
+axiom-clean* development on the stable resolved carrier; its dependency chain is
+summarized in §0 below and its mathematics in `PHI4_QFT_REALIZATION_MAP.md`.
+
+---
+
+## 0. The φ⁴₄ QFT realization chain (QFT-R1 + QFT-R2) — unconditional, axiom-clean
+
+A single linear import chain on the **stable** boundary-resolved carrier
+`StableResolvedPhi4HopfGen` (each body imports only the previous), terminating in the
+public renormalization settlement. Unlike the CK layers below, this chain carries **no
+divergence-law hypotheses and no typeclass-instance arguments** — φ⁴ power-counting enters
+as the concrete *providable* `phi4DivergenceMeasureFamily`.
+
+```
+QFT-R1  (coproduct + coassociativity, bodies 629 → 652)
+  Phi4StableResolvedHopfCoproduct.lean      Δᵣˢ := coproduct_resolved_stable_phi4, stableForestSum
+        ▼  … stable forest-block Equiv (641→648), finite-sum reindex (649), alpha bridge (650) …
+  Phi4StableCoproductCoassociativity.lean   coproduct_resolved_stable_phi4_coassociative (651, CROWN)
+        ▼
+  Phi4StableCoproductCoassociativityLaw.lean  …_coassociativity_law (652, public square)
+
+  Figure-1 counterexample (bodies 653 → 655)
+  Phi4WDoubleTriplePrime{Counterexample,ConcreteCounterexample,Topology,Strictness}.lean  W‴ ⊊ W″
+  Phi4ForestSupportDiscrepancy.lean          formal indicator-vector coefficient 1 → 0 (654)
+  Phi4ForestEvaluationDiscrepancy.lean       scheme-parametric evaluated difference = Σ_{W″∖W‴} (655)
+
+QFT-R2  (renormalization character theory, bodies 656 → 665)
+  Phi4RegularizedFeynmanRule.lean            phi4CarrierGapStableGen, phi4RegularizedFeynmanRule (656)
+        ▼
+  Phi4RegularizedCharacterConvolution.lean   phi4CharacterConvolution  (657, = mul∘(f⊗g)∘Δᵣˢ)
+        ▼
+  Phi4CharacterConvolutionAssociativity.lean phi4CharacterConvolution_assoc (658)
+        ▼
+  Phi4StableCounit.lean                      phi4StableCounit_left_law/_right_law (659a)
+        ▼
+  Phi4StableConvolutionUnit.lean             phi4CharacterConvolution_left_unit/_right_unit (659b)
+        ▼
+  Phi4RotaBaxterSubtraction.lean             Phi4RotaBaxterSubtractionScheme (660, the one new structure)
+        ▼
+  Phi4StableBogoliubovRank.lean              stablePhi4GeneratorRank, stableForestComponent_rank_lt (661a)
+        ▼
+  Phi4StableBogoliubovRecursion.lean         phi4Bogoliubov{Preparation,Counterterm,Renormalized}Gen (661b)
+        ▼
+  Phi4StableBogoliubovCharacters.lean        phi4Bogoliubov{Counterterm,Renormalized}Character (662)
+        ▼
+  Phi4StableBogoliubovFactorization.lean     phi4Bogoliubov_birkhoff_factorization  (663, φ₋ ⋆ φ = φ₊)
+        ▼
+  Phi4CarrierGapBogoliubovDiscrepancy.lean   φ₊(X gap) = φ₋ + φ + Eval(w, vec W‴)  (664a)
+        ▼
+  Phi4CarrierGapBogoliubovDroppedSector.lean comparison − φ₊ = Σ_{W″∖W‴} φ₋(L)·φ(R)  (664b, PAPER HEADLINE)
+        ▼
+  Phi4StableRenormalizationSettlement.lean   phi4StableCK_renormalization_settlement (665, public CROWN)
+```
+
+Every node is `[propext, Classical.choice, Quot.sound]`. The one `structure`
+(`Phi4RotaBaxterSubtractionScheme`, 660) is the only new type in the whole QFT-R1+R2 chain;
+there are zero new `class` / global `instance`. Frontier (QFT-R3, not in this chain): the
+antipode `S_H`, the convolution-inverse `φ₋ = φ ∘ S_H`, bundled `Bialgebra` / `HopfAlgebra`.
+
 ---
 
 ## 1. File / module layer

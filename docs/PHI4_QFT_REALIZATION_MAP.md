@@ -1,12 +1,17 @@
 # φ⁴₄ QFT Realization — Formalization Map
 
-*A compact, reader/paper-facing map of the **QFT-R1** campaign: a concrete
+*A compact, reader/paper-facing map of two campaigns: **QFT-R1** — a concrete
 φ⁴₄ realization of a stable **boundary-resolved** Connes–Kreimer-style
 coproduct in Lean 4, culminating in its **coassociativity** on the whole
-polynomial algebra.  Companion to `CK_HOPF_FORMALIZATION_MAP.md` (the abstract
-Connes–Kreimer side) and separated from it: the CK docs describe the abstract
-Hopf-algebra formalization; this file describes the concrete φ⁴ coproduct built
-on the stable resolved carrier and the theorem that it is coassociative.*
+polynomial algebra (§0–§6); and **QFT-R2** — the full **Connes–Kreimer
+renormalization character theory** built on that coproduct: an
+associative-unital character convolution, a well-founded Bogoliubov recursion,
+genuine counterterm/renormalized characters, their **Birkhoff factorization
+`φ₋ ⋆ φ = φ₊`**, and the Figure-1 dropped-sector CK-weight discrepancy (§7).
+Companion to `CK_HOPF_FORMALIZATION_MAP.md` (the abstract Connes–Kreimer side)
+and separated from it: the CK docs describe the abstract Hopf-algebra
+formalization; this file describes the concrete φ⁴ coproduct and the
+renormalization character theory built on the stable resolved carrier.*
 
 All Lean names below are verified against the source.  Constructive body: no
 `sorry` / `admit` / project axiom.  Every headline theorem is axiom-clean —
@@ -162,20 +167,22 @@ inner forest + exact `Sum.inr` payload (647b-2,
 
 ---
 
-## 5. Honest scope boundary
+## 5. Honest scope boundary (QFT-R1)
 
 **Proved.**  `coproduct_resolved_stable_phi4` is a coassociative coproduct
 (algebra hom) on the whole algebra `StableResolvedPhi4HopfH`, realized from
 concrete φ⁴₄ divergent-subforest combinatorics, axiom-clean.
 
-**Not claimed here (out of scope / future work).**
+**Established in QFT-R2 (§7 below).**  The **counit** `ε` (both counit laws), an
+associative-unital **character convolution**, a well-founded **Bogoliubov
+recursion**, genuine counterterm/renormalized **characters** `φ₋, φ₊`, and their
+**Birkhoff factorization `φ₋ ⋆ φ = φ₊`** — all built on this coproduct, all
+axiom-clean.
 
-* **counit / antipode / full `Bialgebra` / `HopfAlgebra` instance.**  Only the
-  coproduct and its coassociativity are established; the remaining Hopf structure
-  is a separate front and is *not* asserted.
-* A formal instantiation of the abstract CK divergence typeclasses by this
-  concrete coproduct — the broader QFT-R1 realization goal — beyond the
-  coassociativity delivered here.
+**Still out of scope (QFT-R3 frontier).**  The **antipode** `S_H`, the
+convolution-inverse representation `φ₋ = φ ∘ S_H`, a bundled `Bialgebra` /
+`HopfAlgebra` instance, a concrete momentum-space / dimensional-regularization
+evaluator, and the *unconditional* nonvanishing of the Figure-1 weight.
 
 ---
 
@@ -186,3 +193,113 @@ concrete φ⁴₄ divergent-subforest combinatorics, axiom-clean.
 * Abstract Connes–Kreimer side: `CK_HOPF_FORMALIZATION_MAP.md` (reader-facing),
   `CK_HOPF_DEPENDENCY_GRAPH.md` (technical dependency map).
 * Source: `GaugeGeometry/QFT/HopfAlgebra/Phi4Stable*.lean`.
+
+---
+
+## 7. QFT-R2 — the Connes–Kreimer renormalization character theory (bodies 653 → 665)
+
+Building on the coassociative coproduct `Δᵣˢ` of §0–§6, the **QFT-R2** campaign realizes
+the full Connes–Kreimer renormalization machinery for the concrete φ⁴₄ carrier and
+proves the **Birkhoff factorization `φ₋ ⋆ φ = φ₊`** on the whole polynomial algebra —
+unconditional, axiom-clean.
+
+### 7.1 The carrier-gap counterexample (Figure 1; bodies 653–655)
+
+A concrete **12-edge φ⁴ graph** (`phi4CarrierGapAmbient`) witnesses the strict inclusion
+`W‴ ⊊ W″` of the two forest carriers (edge-complete W‴ inside leg-saturated W″): its
+marginal outer forest sits in W″ but is *dropped* by W‴'s fifth (edge-completeness) axis.
+The counterexample is fully formal — topology (support-connectivity + 1PI, native, no
+`native_decide`), the exact hidden defect `{h03, h14}`, the superficial-degree reversal
+(`ω(δ)=0 → root ω=−2`), and the carrier-membership difference — and it is lifted to a
+formal indicator-vector coefficient change (`1 → 0`, body-654) and a scheme-parametric
+evaluated difference `= ∑_{W″ ∖ W‴} amp(F)` (body-655), with `amp` a socket.
+
+### 7.2 The character algebra (bodies 656–659)
+
+| Piece | Headline Lean name | File |
+|---|---|---|
+| Figure-1 as a stable Hopf generator | `phi4CarrierGapStableGen` | `Phi4RegularizedFeynmanRule.lean` (656) |
+| Regularized Feynman-rule character | `phi4RegularizedFeynmanRule` (`= aeval`) | `Phi4RegularizedFeynmanRule.lean` (656) |
+| Counit-free character convolution | `phi4CharacterConvolution` (`= mul ∘ (f⊗g) ∘ Δᵣˢ`) | `Phi4RegularizedCharacterConvolution.lean` (657) |
+| Convolution **associativity** | `phi4CharacterConvolution_assoc` | `Phi4CharacterConvolutionAssociativity.lean` (658) |
+| Stable **counit** `ε` + laws | `phi4StableCounit_left_law` / `_right_law` | `Phi4StableCounit.lean` (659a) |
+| Convolution **unit** `η` + identity laws | `phi4CharacterConvolution_left_unit` / `_right_unit` | `Phi4StableConvolutionUnit.lean` (659b) |
+
+Convolution is built **counit-free** (a direct `AlgHom`, no `Coalgebra` instance), and its
+**associativity** is obtained by pushing the §0 coassociativity through a triple-tensor
+evaluator — purely structural, no generator/forest re-expansion. Together with the
+two-sided unit `η` and the counit `ε` (`(ε ⊗ id) ∘ Δᵣˢ = includeRight`,
+`(id ⊗ ε) ∘ Δᵣˢ = includeLeft`), the character space is an **associative unital**
+convolution algebra.
+
+### 7.3 The Rota–Baxter subtraction vessel + Bogoliubov recursion (bodies 660–661)
+
+* **Subtraction vessel** (`Phi4RotaBaxterSubtractionScheme`, body-660). A weight `−1`
+  Rota–Baxter operator `R` (`polePart`, ℚ-linear, `R² = R`, `R 1 = 0`) owns the pole part;
+  `1 − R` is proved also weight `−1` Rota–Baxter, giving the pole/finite split.
+* **Well-founded recursion** (bodies 661a/661b). The prepared value
+  `B_φ(x) = φ(X x) + ∑_{F ∈ W‴} φ₋(L_F)·φ(R_F)`, counterterm `φ₋(x) = −R(B_φ(x))`, and
+  renormalized `φ₊(x) = (1 − R)(B_φ(x))` are defined by `WellFounded.fix` on a **generator
+  rank** (`stablePhi4GeneratorRank`, internal-edge count, class-well-defined). The
+  load-bearing termination fact `stableForestComponent_rank_lt` proves every W‴ forest
+  **component** generator has strictly smaller rank than the ambient — carried by
+  `IsProperForest`'s **positive complement** (`0 < complementEdges.card`), *not* the fifth
+  axis. **Ownership separation:** the fifth axis (edge-completeness) is the recursion-term
+  *closure*; the positive complement is the *well-foundedness*.
+
+### 7.4 The Birkhoff factorization crown (bodies 662–663)
+
+* `φ₋, φ₊` are promoted to genuine unital ℚ-algebra **characters** via `MvPolynomial.aeval`
+  (body-662), with the load-bearing `map_prod` left-aggregate bridge.
+* **`φ₋ ⋆ φ = φ₊`** on the *whole* algebra (body-663,
+  `phi4Bogoliubov_birkhoff_factorization`): the generator identity — 657's
+  `convolution_of_graph` + 662's bridge + 661's explicit preparation + 662's
+  `prep + counterterm = renormalized` — lifts by `MvPolynomial.algHom_ext` precisely because
+  *both sides are genuine `AlgHom`s*. This is the formal Connes–Kreimer Birkhoff
+  factorization core.
+
+### 7.5 The Figure-1 renormalization discrepancy + public settlement (bodies 664–665)
+
+The §7.1 dropped-sector socket is instantiated with the **genuine CK weight**
+`w(F) = φ₋(L_F)·φ(R_F)`. The PAPER HEADLINE (body-664b) is the exact identity
+
+$$\text{comparisonValue} - \phi_+(X_{\mathrm{gap}})
+  = \sum_{F \in W'' \setminus W'''} \phi_-(L_F)\,\phi(R_F),$$
+
+with an honest numerical criterion (nonzero dropped-sector, or an isolated marginal with
+`w(Outer) ≠ 0` and the rest vanishing — both **explicit hypotheses**). The public
+settlement (body-665, `phi4StableCK_renormalization_settlement`) bundles the Birkhoff law
+and this discrepancy identity under one `S`, `φ`.
+
+**The reviewer's answer.** The forest-support change (`W‴ ⊊ W″`) **propagates** to the CK
+renormalization formula; the exact difference is the sum of genuine
+counterterm-times-quotient weights over the dropped sector; numerical inequality follows
+*precisely* when that sector does not cancel — not a bookkeeping defect, but the
+renormalization-calculation consequence, formally proved.
+
+### 7.6 Honest scope boundary (QFT-R2)
+
+**Proved (unconditional, axiom-clean).** Stable coproduct coassociativity;
+associative-unital character convolution + counit + unit; well-founded Bogoliubov
+recursion (termination owned by Lean); genuine `φ₋, φ₊` characters; `φ₋ ⋆ φ = φ₊`; the exact
+Figure-1 dropped-sector CK-weight identity + honest numerical criterion.
+
+**Out of scope (QFT-R3 frontier).** The antipode `S_H`; the convolution-inverse
+representation `φ₋ = φ ∘ S_H`; bundled `Bialgebra` / `HopfAlgebra` instances; a
+momentum-space / dimensional-regularization evaluator inhabiting the Rota–Baxter socket;
+the *unconditional* nonvanishing of the Figure-1 weight (always a hypothesis here). `S` and
+`φ` are inputs; no concrete Feynman-rule integral is built.
+
+Discipline invariants of §4 hold across QFT-R2 as well: every headline theorem is
+`[propext, Classical.choice, Quot.sound]`; no forbidden divergence class in any declaration
+type (checked by scanning every `#check @` printed type); no public `HEq` / `cast` /
+graph-data `▸`; one new `structure` in the whole campaign (`Phi4RotaBaxterSubtractionScheme`,
+body-660), zero new `class` / global `instance`.
+
+Source: `GaugeGeometry/QFT/HopfAlgebra/Phi4{RegularizedFeynmanRule,
+RegularizedCharacterConvolution, CharacterConvolutionAssociativity, StableCounit,
+StableConvolutionUnit, RotaBaxterSubtraction, StableBogoliubovRank, StableBogoliubovRecursion,
+StableBogoliubovCharacters, StableBogoliubovFactorization, CarrierGapBogoliubovDiscrepancy,
+CarrierGapBogoliubovDroppedSector, StableRenormalizationSettlement}.lean` and the Figure-1
+counterexample `Phi4WDoubleTriplePrime*.lean` / `Phi4ForestSupportDiscrepancy.lean` /
+`Phi4ForestEvaluationDiscrepancy.lean`.

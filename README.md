@@ -5,7 +5,10 @@
 
 A Lean 4 formalization of the **Connes–Kreimer Hopf algebra of Feynman graphs**, and a
 concrete **φ⁴₄ QFT realization** whose stable boundary-resolved coproduct is proved
-**coassociative unconditionally**.
+**coassociative unconditionally** (QFT-R1) and carries the full **Connes–Kreimer
+renormalization character theory** — associative-unital character convolution, a
+well-founded Bogoliubov recursion, and the **Birkhoff factorization `φ₋ ⋆ φ = φ₊`** —
+all axiom-clean (QFT-R2).
 
 This repository is extracted from a broader `GaugeGeometry` development.  The Lean
 namespace `GaugeGeometry.QFT…` is intentionally retained to preserve **stable
@@ -167,9 +170,72 @@ whole-algebra `coproduct_resolved_stable_phi4_coassociative`; `#print axioms` =
 Reader-facing map: `docs/PHI4_QFT_REALIZATION_MAP.md`.
 
 **Scope (not overstated).** This establishes the concrete φ⁴ coproduct's **coassociativity**. The
-counit, the antipode, and a full `Bialgebra` / `HopfAlgebra` instance are **out of scope**; so is a
-*formal instantiation of the abstract CK divergence typeclasses* of the R-6c terminus by this
-concrete coproduct — it is a concrete φ⁴ **counterpart**, not a discharge of the `W″` modulo-clause.
+counit, the character convolution, the Bogoliubov recursion, and the **Connes–Kreimer Birkhoff
+factorization** built on top of this coproduct are the subject of the **QFT-R2** campaign below (all
+proved, axiom-clean). The **antipode** and a full bundled `Bialgebra` / `HopfAlgebra` instance remain
+out of scope (the QFT-R3 frontier); so is a *formal instantiation of the abstract CK divergence
+typeclasses* of the R-6c terminus by this concrete coproduct — it is a concrete φ⁴ **counterpart**,
+not a discharge of the `W″` modulo-clause.
+
+## Concrete φ⁴₄ CK renormalization: character Birkhoff factorization `φ₋ ⋆ φ = φ₊` ∎ (QFT-R2)
+
+Building directly on the coassociative coproduct `Δᵣˢ` above, the **QFT-R2** campaign realizes the
+full **Connes–Kreimer renormalization character theory** for the concrete φ⁴₄ carrier — the
+BPHZ/Bogoliubov recursion, the counterterm and renormalized characters, and their **Birkhoff
+factorization** — all unconditional and axiom-clean. The public settlement crown
+(`Phi4StableRenormalizationSettlement.lean`, body-665) bundles the two headline results under one
+Rota–Baxter scheme `S` and one character `φ`:
+
+```lean
+theorem phi4StableCK_renormalization_settlement
+    (S : Phi4RotaBaxterSubtractionScheme B) (φ : StableResolvedPhi4HopfH →ₐ[ℚ] B) :
+    (phi4CharacterConvolution (phi4BogoliubovCountertermCharacter S φ) φ
+        = phi4BogoliubovRenormalizedCharacter S φ)                        -- φ₋ ⋆ φ = φ₊
+      ∧ (phi4CarrierGapWDoublePrimeComparisonValue S φ
+            - phi4BogoliubovRenormalizedCharacter S φ (MvPolynomial.X phi4CarrierGapStableGen)
+          = ∑ A ∈ phi4WDoublePrimeIndex phi4CarrierGapAmbient
+                \ phi4WTriplePrimeIndex phi4CarrierGapAmbient,
+              phi4CarrierGapBogoliubovForestWeight S φ A)                 -- Figure-1 dropped-sector weight
+```
+
+(`#print axioms` = `[propext, Classical.choice, Quot.sound]`.)
+
+**What QFT-R2 proves (unconditional, axiom-clean).**
+
+- **Character algebra.** On the target algebra `B` (any `CommRing` + `Algebra ℚ`), the CK
+  **convolution** of characters is built *counit-free* directly as an `AlgHom`
+  (`(f ⋆ g) := mul ∘ (f ⊗ g) ∘ Δᵣˢ`), and proved **associative** by pushing the coassociativity of
+  §QFT-R1 through a triple-tensor evaluator, with a two-sided **unit** `η`. The stable **counit** `ε`
+  satisfies both counit laws `(ε ⊗ id) ∘ Δᵣˢ = includeRight`, `(id ⊗ ε) ∘ Δᵣˢ = includeLeft`.
+- **Rota–Baxter subtraction vessel.** A weight `−1` Rota–Baxter operator `R` (`polePart`, ℚ-linear,
+  `R² = R`, `R 1 = 0`) owns the renormalization "pole part"; `1 − R` is proved also weight `−1`
+  Rota–Baxter, giving the pole/finite decomposition.
+- **Well-founded Bogoliubov recursion.** The prepared value
+  `B_φ(x) = φ(X x) + ∑_{F ∈ W‴} φ₋(L_F)·φ(R_F)`, counterterm `φ₋(x) = −R(B_φ(x))`, and renormalized
+  `φ₊(x) = (1 − R)(B_φ(x))` are defined by `WellFounded.fix` on a **generator rank** (internal-edge
+  count). Crucially, Lean *owns why the recursion terminates*: every W‴ forest **component** generator
+  has strictly smaller rank than the ambient — carried by the `IsProperForest` **positive complement**
+  (`0 < complementEdges.card`), **not** by the fifth (edge-completeness) axis.
+- **Genuine characters + factorization.** `φ₋, φ₊` are promoted to genuine unital ℚ-algebra
+  **characters** via the free-commutative-algebra universal property (`MvPolynomial.aeval`), and the
+  **Connes–Kreimer Birkhoff factorization `φ₋ ⋆ φ = φ₊`** is proved on the *whole* polynomial algebra
+  — the generator identity lifts by `MvPolynomial.algHom_ext` precisely because both sides are genuine
+  `AlgHom`s.
+- **Figure-1 renormalization discrepancy.** The `W‴ ⊊ W″` carrier-gap counterexample (a concrete
+  12-edge φ⁴ graph; the QFT-R1 companion `docs` map's "Figure 1") is connected to the completed
+  character: the exact difference between the broader-support comparison value and the genuine
+  renormalized character is the sum of genuine **counterterm-times-quotient** weights
+  `φ₋(L_F)·φ(R_F)` over the **dropped sector** `W″ ∖ W‴`; numerical inequality follows *precisely*
+  when that sector does not cancel (an explicit, never-assumed hypothesis).
+
+**Scope (not overstated).** `φ₋, φ, φ₊` are genuine characters and `φ₋ ⋆ φ = φ₊` holds unconditionally.
+The **antipode `S_H`**, the convolution-inverse representation `φ₋ = φ ∘ S_H`, bundled `Bialgebra` /
+`HopfAlgebra` instances, a concrete momentum-space / dimensional-regularization evaluator inhabiting
+the Rota–Baxter socket, and the *unconditional* nonvanishing of the Figure-1 weight are **out of
+scope** — the QFT-R3 frontier (the antipode is a separate campaign: connected grading + reduced
+coproduct rank descent + recursion over the whole polynomial algebra + a convolution-inverse law, not
+a "last tile"). The Rota–Baxter scheme `S` and the character `φ` enter as inputs; nothing here builds a
+concrete Feynman-rule integral.
 
 ## Non-vacuity (not a unicorn)
 
@@ -419,23 +485,27 @@ Lean `leanprover/lean4:v4.29.0`, Mathlib `v4.29.0` (see `lean-toolchain` /
 This release is archived on Zenodo with a citable DOI. If you use this development,
 please cite:
 
-> Masamichi Iizumi (2026). *CK Hopf Formalization: v1.1.0 — φ⁴₄ QFT realization:
-> stable resolved coproduct coassociativity* (Version v1.1.0) [Computer software].
-> Zenodo. <https://doi.org/10.5281/zenodo.21757055>
+> Masamichi Iizumi (2026). *CK Hopf Formalization: v2.0.0 — φ⁴₄ QFT realization:
+> Connes–Kreimer character Birkhoff factorization `φ₋ ⋆ φ = φ₊`* (Version v2.0.0)
+> [Computer software]. Zenodo. <https://doi.org/10.5281/zenodo.21757055>
 
 BibTeX:
 
 ```bibtex
 @software{iizumi_ck_hopf_2026,
   author    = {Iizumi, Masamichi},
-  title     = {{CK Hopf Formalization: v1.1.0 --- \(\phi^4_4\) QFT realization: stable resolved coproduct coassociativity}},
+  title     = {{CK Hopf Formalization: v2.0.0 --- \(\phi^4_4\) QFT realization: Connes--Kreimer character Birkhoff factorization \(\phi_- \star \phi = \phi_+\)}},
   year      = {2026},
-  version   = {v1.1.0},
+  version   = {v2.0.0},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.21757055},
   url       = {https://doi.org/10.5281/zenodo.21757055}
 }
 ```
+
+*(The DOI above is the concept record resolving to the latest version. The v2.0.0
+version-specific DOI is minted by Zenodo when the GitHub release is published; update
+this citation with that version DOI once available.)*
 
 ## Acknowledgment / AI-collaboration disclosure
 
