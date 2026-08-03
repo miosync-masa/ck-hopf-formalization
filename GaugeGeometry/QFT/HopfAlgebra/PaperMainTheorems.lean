@@ -7,6 +7,7 @@ import GaugeGeometry.QFT.HopfAlgebra.Phi4StableCoproductCoassociativityLaw
 import GaugeGeometry.QFT.HopfAlgebra.Phi4StableBogoliubovFactorization
 import GaugeGeometry.QFT.HopfAlgebra.Phi4CarrierGapBogoliubovDroppedSector
 import GaugeGeometry.QFT.HopfAlgebra.Phi4BubbleNestedObstruction
+import GaugeGeometry.QFT.HopfAlgebra.Phi4BubbleWitnessNonPrimitive
 
 /-!
 # Paper main theorems — a compact façade over the φ⁴₄ development
@@ -31,6 +32,7 @@ Axiom footprint of every export is verified in the companion ledger
 | **Thm 3** | Stable normalization: root-relative stable completion is **idempotent** under nested contraction. | 627–630 (esp. 628) | `stableBoundaryIterate_idempotent` |
 | **Thm 4** | Multiplicity-preserving forest correspondence: mixed split choices and iterated quotient forests are in **genuine bijection**, preserving summand weights (no dedup of forest occurrences). | 640, 648, 649 | `stablePhi4ForestBlockEquiv` + `stableForestBlock_finiteSum_reindex` |
 | **Thm 5** | Concrete φ⁴₄ coassociativity: the stable resolved φ⁴₄ coproduct is **coassociative** on the full polynomial algebra. | 650b, 651 | `coproduct_resolved_stable_phi4_coassociativity_law` |
+| **Thm 5′** | The coproduct is **non-primitive** on a concrete φ⁴ graph: `Δᵣˢ(X_G) ≠ X_G ⊗ 1 + 1 ⊗ X_G` (the bubble witness) — the theorem has content beyond the trivially-coassociative primitive case. | 665a–c | `coproduct_resolved_stable_phi4_bubble_not_primitive` |
 
 ## Renormalization extension (QFT-R2) — two further main theorems
 
@@ -42,6 +44,14 @@ Axiom footprint of every export is verified in the companion ledger
 Thm 2 (the no-go) and Thm 3 (the repair) are the **paired mathematical novelty**: the naive
 completion is provably not relabeling-stable, and the root-relative completion provably is —
 which is *why* the coassociativity proof lives on the stable carrier.
+
+The primed theorems are the **witness layer**, in symmetric pairs: Thm 2 states the obstruction,
+Thm 2′ shows it *occurs* on a real φ⁴ configuration; Thm 5 states coassociativity, Thm 5′ shows the
+coproduct is *non-primitive* on a real φ⁴ graph (a primitive coproduct would satisfy coassociativity
+trivially — 5′ is what makes Thm 5 non-trivial content). Both primes are carried by the SAME
+8-edge bubble witness: a **vacuum graph** (no external legs) chosen deliberately as the minimal
+configuration whose cograph edges never have both endpoints inside the bubble — so edge-completeness
+(the W‴ fifth axis) holds automatically.
 -/
 
 namespace GaugeGeometry.QFT.Paper
@@ -154,6 +164,20 @@ theorem paper_thm5_phi4_coassociativity :
           coproduct_resolved_stable_phi4).comp
         coproduct_resolved_stable_phi4 :=
   coproduct_resolved_stable_phi4_coassociativity_law
+
+/-- **Paper Theorem 5′ — the coproduct is non-primitive on a concrete φ⁴ graph (the ∃-content of
+Theorem 5).**  On the bubble witness `phi4BubbleStableGen` (the 8-edge φ⁴ **vacuum** graph containing a
+one-loop four-point bubble subdivergence — vacuum chosen deliberately: with no external legs, the
+minimal configuration whose cograph edges never have both endpoints inside the bubble, so
+edge-completeness holds automatically and the bubble forest enters W‴), the stable coproduct genuinely
+computes a forest term: `Δᵣˢ(X_G) ≠ X_G ⊗ 1 + 1 ⊗ X_G`.  A primitive coproduct satisfies
+coassociativity trivially; Theorem 5′ is what certifies Theorem 5 as non-trivial content — the exact
+symmetric counterpart of Theorem 2′ (obstruction → inhabited; coassociativity → non-primitive). -/
+theorem paper_thm5'_coproduct_non_primitive :
+    coproduct_resolved_stable_phi4 (MvPolynomial.X phi4BubbleStableGen)
+      ≠ MvPolynomial.X phi4BubbleStableGen ⊗ₜ[ℚ] (1 : StableResolvedPhi4HopfH)
+        + (1 : StableResolvedPhi4HopfH) ⊗ₜ[ℚ] MvPolynomial.X phi4BubbleStableGen :=
+  coproduct_resolved_stable_phi4_bubble_not_primitive
 
 /-! ## Theorem 6 — Connes–Kreimer Birkhoff factorization (renormalization extension, QFT-R2) -/
 
