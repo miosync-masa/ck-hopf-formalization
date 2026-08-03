@@ -7,7 +7,9 @@ polynomial algebra (§0–§6); and **QFT-R2** — the full **Connes–Kreimer
 renormalization character theory** built on that coproduct: an
 associative-unital character convolution, a well-founded Bogoliubov recursion,
 genuine counterterm/renormalized characters, their **Birkhoff factorization
-`φ₋ ⋆ φ = φ₊`**, and the Figure-1 dropped-sector CK-weight discrepancy (§7).
+`φ₋ ⋆ φ = φ₊`**, and the Figure-1 dropped-sector CK-weight discrepancy (§7);
+plus the **witness layer** (the bubble graph inhabiting both the nested-completion
+no-go and the coproduct's non-primitivity) and the paper-facing façade/ledger (§8).
 Companion to `CK_HOPF_FORMALIZATION_MAP.md` (the abstract Connes–Kreimer side)
 and separated from it: the CK docs describe the abstract Hopf-algebra
 formalization; this file describes the concrete φ⁴ coproduct and the
@@ -303,3 +305,70 @@ StableBogoliubovCharacters, StableBogoliubovFactorization, CarrierGapBogoliubovD
 CarrierGapBogoliubovDroppedSector, StableRenormalizationSettlement}.lean` and the Figure-1
 counterexample `Phi4WDoubleTriplePrime*.lean` / `Phi4ForestSupportDiscrepancy.lean` /
 `Phi4ForestEvaluationDiscrepancy.lean`.
+
+---
+
+## 8. The witness layer + the paper-facing infrastructure (bodies 665a–665d, façade, ledger)
+
+### 8.1 The bubble witness — non-vacuity of the coproduct AND of the no-go
+
+The theorems of §0–§7 are universal; the witness layer makes their content **inhabited**. The
+single witness is an **8-edge φ⁴ vacuum graph** `phi4BubbleAmbient` (vertices `{0,1,2,3}`, all
+valence 4, no external legs, `L = E − V + 1 = 5`) containing a **one-loop four-point bubble
+subdivergence** `phi4BubbleInner` on `{0,1}` (edges `{e0,e1}`, `ω = 0`, marginal). *The vacuum
+choice is deliberate*: with no external legs, this is the minimal configuration whose cograph
+edges never have both endpoints inside the bubble — so **edge-completeness (the W‴ fifth axis)
+holds automatically**, the exact inverse of Figure 1's engineered failure.
+
+| Body | Content | Headline |
+|---|---|---|
+| 665a | graph + raw geometry; the PASSING edge-completeness (`filter (both ∈ {0,1}) = {e0,e1}`) | `phi4BubbleInner_internalEdgeComplete` |
+| 665b | native topology (explicit reachability, no `native_decide`) + CD certificates (ambient `ω = 4`, bubble `ω = 0`) | `phi4BubbleInner_forget_isConnectedDivergent` |
+| 665c | **the payoff**: bubble forest `∈ W‴`; W‴ nonempty; `stableForestSum ≠ 0` via the all-1 character (`Eval = |W‴| > 0`, cancellation-free); **the coproduct is NON-PRIMITIVE**: `Δᵣˢ(X_G) ≠ X_G ⊗ 1 + 1 ⊗ X_G` | `coproduct_resolved_stable_phi4_bubble_not_primitive` |
+| 665d | **the ∃-no-go**: the nested copy `phi4BubbleNested` on the bubble's boundary completion inherits the straddling edge `e2`, inhabiting body-625's obstruction | `exists_nested_completion_obstruction` |
+
+**The pairing of the two witnesses.** Figure 1 (`phi4CarrierGapAmbient`, 12 edges) and the bubble
+(8 edges) divide the labor exactly:
+
+* **Figure 1 — the HIDDEN channel, the negative example.** Its outer forest is dropped by the
+  fifth axis (`h03`/`h14`); its `inheritedOuter` is PROVED empty
+  (`phi4CarrierGap_inheritedOuter = 0` — it *cannot* witness the nested no-go). It carries
+  `W‴ ⊊ W″` and the dropped-sector renormalization discrepancy (§7.5).
+* **The bubble — the INHERITED channel, the positive example.** It passes the fifth axis into W‴
+  (non-primitive coproduct, 665c) *and* its nested copy inherits an outer boundary edge
+  (∃-no-go, 665d). One graph does double duty.
+
+### 8.2 The paper façade + the reproducible theorem ledger
+
+* **`PaperMainTheorems.lean`** — one import point compressing the development to the paper's
+  main theorems under stable names (`namespace GaugeGeometry.QFT.Paper`):
+
+  | Paper name | Statement | Internal name |
+  |---|---|---|
+  | `paper_thm1_early_quotient_obstruction` | flat quotienting loses identity data | `flat{Edge,Leg}Retarget_not_injective` (axiom-FREE) |
+  | `paper_thm2_naive_completion_obstruction` | naive completion not relabeling-stable | `nested_direct_singletonProfile_ne` |
+  | `paper_thm2'_obstruction_inhabited` | the obstruction OCCURS on a real φ⁴ configuration | `exists_nested_completion_obstruction` (665d) |
+  | `paper_thm3_stable_normalization` | root-relative completion idempotent | `stableBoundaryIterate_idempotent` |
+  | `paperForestBlockEquiv` + `paper_thm4_multiplicity_preserving_correspondence` | genuine bijection + weight-preserving reindex | `stablePhi4ForestBlockEquiv` + `stableForestBlock_finiteSum_reindex` |
+  | `paper_thm5_phi4_coassociativity` | coassociativity, unconditional | `coproduct_resolved_stable_phi4_coassociativity_law` |
+  | `paper_thm5'_coproduct_non_primitive` | the coproduct is non-primitive on a real φ⁴ graph | `coproduct_resolved_stable_phi4_bubble_not_primitive` (665c) |
+  | `paper_thm6_birkhoff_factorization` | `φ₋ ⋆ φ = φ₊` | `phi4Bogoliubov_birkhoff_factorization` |
+  | `paper_thm7_carrier_support_discrepancy` | the dropped-sector CK-weight identity | `phi4CarrierGap_comparison_minus_renormalized_eq_droppedSector` |
+
+  The **primed theorems are the witness layer, in symmetric pairs**: Thm 2 states the
+  obstruction, Thm 2′ shows it occurs; Thm 5 states coassociativity, Thm 5′ shows the coproduct
+  is non-primitive (a primitive coproduct would satisfy coassociativity trivially — 5′ is what
+  certifies 5 as non-trivial content). Both primes ride the same bubble witness.
+
+* **`Phi4StableChainLedgerAudit.lean`** — the single reproducible **theorem ledger**: building
+  this one module `#check @`s (by exact name — a rename fails the build) and `#print axioms`
+  the eight QFT-R1+R2 headlines, with the theorem → source file → introducing-commit table.
+  One `lake build` re-verifies the whole claim.
+
+Paper-support documents: `docs/paper/QFT_RESULTS_INVENTORY.md` (the results catalog framed for a
+mathematical-physics readership) and `docs/paper/P2_BRIDGE_AND_SCOPE_AUDIT.md` (the abstract-CK
+bridge audit — verdict: the φ⁴ development is a self-contained concrete realization, NOT an
+instantiation of the abstract interface; the paper scope is "Birkhoff factorization +
+forest-support dependence", with the antipode as the QFT-R3 frontier).
+
+Release: **v2.0.0**, DOI `10.5281/zenodo.21765915`.

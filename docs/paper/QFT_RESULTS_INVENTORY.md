@@ -9,7 +9,7 @@ no `admit`, no `native_decide`, no project axiom).*
 
 *Repository: `miosync-masa/ck-hopf-formalization`, v2.0.0, DOI `10.5281/zenodo.21765915`.
 Lean `v4.29.0`, Mathlib `v4.29.0`. Combined `GaugeGeometry/QFT` + `GaugeGeometry/Core`:
-**183,787 lines of Lean** (929 files).*
+**185,066 lines of Lean** (935 files).*
 
 ---
 
@@ -170,10 +170,43 @@ counterexample was engineered to make precise.)*
 
 ---
 
+## 6bis. Result F — the witness layer (non-vacuity, symmetric primes)
+
+The universal theorems above are certified **non-vacuous** by a second concrete witness: an
+**8-edge φ⁴ vacuum graph** containing a **one-loop four-point bubble subdivergence**
+(`phi4BubbleAmbient` / `phi4BubbleInner`; `V = 4`, `E = 8`, `L = 5`, bubble `ω = 0` marginal).
+*The vacuum choice is deliberate*: with no external legs, this is the minimal configuration whose
+cograph edges never have both endpoints inside the bubble, so **edge-completeness (the W‴ fifth
+axis) holds automatically** — the exact inverse of Figure 1's engineered failure.
+
+Two theorems, in **symmetric pairs** with the universal statements:
+
+* **Thm 5′ — the coproduct is non-primitive** (`coproduct_resolved_stable_phi4_bubble_not_primitive`):
+  the bubble forest enters W‴, the forest sum is nonzero (evaluated to `|W‴| > 0` by the all-1
+  character through the tensor evaluator — cancellation-free), hence
+  `Δᵣˢ(X_G) ≠ X_G ⊗ 1 + 1 ⊗ X_G`. A primitive coproduct satisfies coassociativity *trivially*;
+  Thm 5′ is what certifies Result A as non-trivial content.
+* **Thm 2′ — the nested-completion obstruction is inhabited**
+  (`exists_nested_completion_obstruction`): the nested copy of the bubble on its own boundary
+  completion inherits the straddling edge `e2 (0–2)`, and on this concrete configuration the naive
+  nested completion **provably differs** (as a resolved class) from the root-relative one — the
+  no-go (the paper's obstruction theorem) *occurs*, it is not a statement about an empty
+  hypothesis. Notably **Figure 1 provably cannot witness this** (`phi4CarrierGap_inheritedOuter = 0`).
+
+**The two figures divide the labor** (the paper needs exactly two):
+
+| Figure | Graph | Channel | Role |
+|---|---|---|---|
+| Figure 1 | `phi4CarrierGapAmbient` (12 edges) | **hidden** (`h03`,`h14`) | negative: `W‴ ⊊ W″`, the dropped-sector discrepancy (Result E, §5 of the paper) |
+| Figure 2 | the bubble (8 edges) | **inherited** (`e2`) | positive, double duty: the naive-completion failure *occurs* (§2.2) AND the coproduct actually computes a forest term (§3) |
+
+---
+
 ## 7. Honest scope — what is and is not claimed
 
-**Proved (unconditional, axiom-clean).** Results A–E above, bundled publicly as
-`phi4StableCK_renormalization_settlement` (`Phi4StableRenormalizationSettlement.lean`).
+**Proved (unconditional, axiom-clean).** Results A–F above — A–E bundled publicly as
+`phi4StableCK_renormalization_settlement` (`Phi4StableRenormalizationSettlement.lean`), the
+witness layer F exported as `paper_thm2'` / `paper_thm5'` (`PaperMainTheorems.lean`).
 
 **Open — the antipode frontier (deliberately not in this work).**
 - the antipode `S_H` of `H` (needs connected grading + reduced-coproduct rank descent +
@@ -206,6 +239,12 @@ Rota–Baxter structure.
   `instance`.
 - **Reproducible.** `lake exe cache get && lake build` compiles the development; any
   reviewer can re-run `#print axioms` on the named theorems.
+- **One-build ledger + stable façade.** `Phi4StableChainLedgerAudit.lean` is a single audit
+  module that `#check @`s every headline by its exact name (a rename fails the build) and
+  `#print axioms` it, with the theorem → source file → introducing-commit table; and
+  `PaperMainTheorems.lean` (`namespace GaugeGeometry.QFT.Paper`) re-exports the paper's main
+  theorems under stable names `paper_thm1 … paper_thm7` + the primed witness layer
+  `paper_thm2'` / `paper_thm5'`. A referee needs exactly two files.
 
 ---
 
@@ -240,11 +279,30 @@ statement about Hopf-algebraic renormalization, and it is certified beyond doubt
 
 **Recommended paper shape (for the pivot).** A focused paper whose **headline is Result D
 (Birkhoff factorization, concrete + verified) and Result E (carrier-support dependence,
-new)**, with Results A–C as the necessary structural scaffolding, and §8 as a short
-"machine-verification" section. Suggested working title:
+new)**, with Results A–C as the necessary structural scaffolding, Result F as the witness
+layer, and §8 as a short "machine-verification" section. Suggested working title (fixed by the
+P2 scope audit, `P2_BRIDGE_AND_SCOPE_AUDIT.md` — more than a coproduct paper, short of a full
+Hopf-algebra paper; the antipode is QFT-R3 future work):
 
 > *A concrete, machine-verified Connes–Kreimer Birkhoff factorization for φ⁴₄, and the
 > exact forest-support dependence of the renormalized amplitude.*
+
+**The façade IS the table of contents.** `PaperMainTheorems.lean`'s sequence is the paper's
+narrative spine:
+
+> Thm 1 (early quotienting fails) → Thm 2 (naive completion fails) → **Thm 2′ (it actually
+> happens)** → Thm 3 (the stable repair) → Thm 4 (the bijection) → Thm 5 (coassociativity) →
+> **Thm 5′ (the coproduct is non-trivial)** → Thm 6 (Birkhoff `φ₋ ⋆ φ = φ₊`) → Thm 7 (changing
+> the carrier changes the value)
+
+with exactly **two figures** (Result F's table): Figure 1 = the 12-edge hidden-channel
+counterexample (→ Thm 7, §5), Figure 2 = the 8-edge bubble (→ Thm 2′ in §2.2 AND Thm 5′ in §3).
+
+**Framing decision (P2 bridge audit).** The abstract resolved-CK layer (R-6c, modulo the CK
+divergence typeclasses) is *prior context in the same repository*; the φ⁴ development is a
+**self-contained concrete realization** — the middle/maximal "bridge" to the abstract interface
+is deliberately NOT built (the carriers and coproducts genuinely differ; that difference is
+Result E). See `P2_BRIDGE_AND_SCOPE_AUDIT.md`.
 
 ---
 
@@ -263,10 +321,15 @@ new)**, with Results A–C as the necessary structural scaffolding, and §8 as a
 | E1 | renormalized = forest formula | `phi4CarrierGap_renormalizedCharacter_eq_forestFormula` | `Phi4CarrierGapBogoliubovDiscrepancy.lean` |
 | E2 | **dropped-sector identity** | `phi4CarrierGap_comparison_minus_renormalized_eq_droppedSector` | `Phi4CarrierGapBogoliubovDroppedSector.lean` |
 | E3 | numerical criterion | `phi4CarrierGap_bogoliubov_difference_of_isolated_marginal` | `Phi4CarrierGapBogoliubovDroppedSector.lean` |
+| F1 | **coproduct non-primitive** (Thm 5′; bubble ∈ W‴, forest sum ≠ 0) | `coproduct_resolved_stable_phi4_bubble_not_primitive` | `Phi4BubbleWitnessNonPrimitive.lean` |
+| F2 | **∃-no-go inhabited** (Thm 2′; nested completion provably differs) | `exists_nested_completion_obstruction` | `Phi4BubbleNestedObstruction.lean` |
 | — | public settlement (A/D/E bundled) | `phi4StableCK_renormalization_settlement` | `Phi4StableRenormalizationSettlement.lean` |
+| — | paper façade (`paper_thm1 … thm7`, `thm2'`, `thm5'`) | `GaugeGeometry.QFT.Paper.*` | `PaperMainTheorems.lean` |
+| — | one-build theorem ledger (names + axioms + commits) | — | `Phi4StableChainLedgerAudit.lean` |
 
 ---
 
-*Next step after this inventory: choose the venue (recommend Letters in Mathematical
-Physics or Annales Henri Poincaré), then draft the paper with Results D+E as the headline
-and A–C as scaffolding.*
+*Status: P0 (ledger) / P1 (façade, non-vacuity, no-go↔repair pairing) / P2 (bridge audit,
+scope/title, novelty) are DONE. Next step: choose the venue (recommend Letters in Mathematical
+Physics or Annales Henri Poincaré) and draft the paper along the façade's spine — Results D+E
+headline, A–C scaffolding, F as the witness layer, two figures.*
