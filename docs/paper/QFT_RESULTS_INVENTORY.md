@@ -7,7 +7,7 @@ and the physics meaning of each. Every headline theorem is machine-verified and
 axiom-clean (`#print axioms` = `[propext, Classical.choice, Quot.sound]` — no `sorry`,
 no `admit`, no `native_decide`, no project axiom).*
 
-*Repository: `miosync-masa/ck-hopf-formalization`, v2.0.0, DOI `10.5281/zenodo.21765915`.
+*Repository: `miosync-masa/ck-hopf-formalization`, v2.1.0, DOI `10.5281/zenodo.21774979`.
 Lean `v4.29.0`, Mathlib `v4.29.0`. Combined `GaugeGeometry/QFT` + `GaugeGeometry/Core`:
 **185,066 lines of Lean** (935 files).*
 

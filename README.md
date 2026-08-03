@@ -1,7 +1,7 @@
 # CK Hopf Formalization
 
 [![Lean Action CI](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml/badge.svg)](https://github.com/miosync-masa/ck-hopf-formalization/actions/workflows/lean.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21765915.svg)](https://doi.org/10.5281/zenodo.21765915)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21774979.svg)](https://doi.org/10.5281/zenodo.21774979)
 
 A Lean 4 formalization of the **Connes–Kreimer Hopf algebra of Feynman graphs**, and a
 concrete **φ⁴₄ QFT realization** whose stable boundary-resolved coproduct is proved
@@ -494,26 +494,28 @@ Lean `leanprover/lean4:v4.29.0`, Mathlib `v4.29.0` (see `lean-toolchain` /
 This release is archived on Zenodo with a citable DOI. If you use this development,
 please cite:
 
-> Masamichi Iizumi (2026). *CK Hopf Formalization: v2.0.0 — φ⁴₄ QFT realization:
-> Connes–Kreimer character Birkhoff factorization `φ₋ ⋆ φ = φ₊`* (Version v2.0.0)
-> [Computer software]. Zenodo. <https://doi.org/10.5281/zenodo.21765915>
+> Masamichi Iizumi (2026). *miosync-masa/ck-hopf-formalization: v2.1.0 — witness layer +
+> paper infrastructure: non-primitive coproduct, ∃-no-go, theorem façade & one-build ledger*
+> (Version v2.1.0) [Computer software]. Zenodo. <https://doi.org/10.5281/zenodo.21774979>
 
 BibTeX:
 
 ```bibtex
 @software{iizumi_ck_hopf_2026,
   author    = {Iizumi, Masamichi},
-  title     = {{CK Hopf Formalization: v2.0.0 --- \(\phi^4_4\) QFT realization: Connes--Kreimer character Birkhoff factorization \(\phi_- \star \phi = \phi_+\)}},
+  title     = {{miosync-masa/ck-hopf-formalization: v2.1.0 --- witness layer + paper infrastructure: non-primitive coproduct, \(\exists\)-no-go, theorem fa\c{c}ade \& one-build ledger}},
   year      = {2026},
-  version   = {v2.0.0},
+  version   = {v2.1.0},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.21765915},
-  url       = {https://doi.org/10.5281/zenodo.21765915}
+  doi       = {10.5281/zenodo.21774979},
+  url       = {https://doi.org/10.5281/zenodo.21774979}
 }
 ```
 
-*(DOI `10.5281/zenodo.21765915` is the v2.0.0 version-specific record; earlier
-versions have their own DOIs — v1.1.0 is `10.5281/zenodo.21757055`.)*
+*(DOI `10.5281/zenodo.21774979` is the v2.1.0 version-specific record; earlier versions
+have their own DOIs — v2.0.0 (the QFT-R2 Birkhoff-factorization settlement) is
+`10.5281/zenodo.21765915`, v1.1.0 (the QFT-R1 coassociativity snapshot) is
+`10.5281/zenodo.21757055`.)*
 
 ## Acknowledgment / AI-collaboration disclosure
 

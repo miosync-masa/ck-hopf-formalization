@@ -371,4 +371,4 @@ bridge audit — verdict: the φ⁴ development is a self-contained concrete rea
 instantiation of the abstract interface; the paper scope is "Birkhoff factorization +
 forest-support dependence", with the antipode as the QFT-R3 frontier).
 
-Release: **v2.0.0**, DOI `10.5281/zenodo.21765915`.
+Release: **v2.1.0**, DOI `10.5281/zenodo.21774979`.
