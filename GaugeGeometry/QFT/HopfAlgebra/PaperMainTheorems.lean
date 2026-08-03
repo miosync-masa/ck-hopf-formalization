@@ -6,6 +6,7 @@ import GaugeGeometry.QFT.HopfAlgebra.Phi4StableFiniteSumReindex
 import GaugeGeometry.QFT.HopfAlgebra.Phi4StableCoproductCoassociativityLaw
 import GaugeGeometry.QFT.HopfAlgebra.Phi4StableBogoliubovFactorization
 import GaugeGeometry.QFT.HopfAlgebra.Phi4CarrierGapBogoliubovDroppedSector
+import GaugeGeometry.QFT.HopfAlgebra.Phi4BubbleNestedObstruction
 
 /-!
 # Paper main theorems — a compact façade over the φ⁴₄ development
@@ -26,6 +27,7 @@ Axiom footprint of every export is verified in the companion ledger
 |---|---|---|---|
 | **Thm 1** | Early-quotient obstruction: flat quotienting does **not** retain the identity data needed for coherent contraction/reconstruction. | four flat counterexamples | `flat{Edge,Leg}Retarget_not_injective` |
 | **Thm 2** | Naive boundary-completion obstruction: the naive boundary-completed presentation is **not** stable under nested forest contraction. | 625/596 | `nested_direct_singletonProfile_ne` |
+| **Thm 2′** | The obstruction is **inhabited**: a concrete φ⁴ configuration (the bubble witness) on which the naive nested completion provably differs from the root-relative one — the ∃-form of Thm 2. | 665d | `exists_nested_completion_obstruction` |
 | **Thm 3** | Stable normalization: root-relative stable completion is **idempotent** under nested contraction. | 627–630 (esp. 628) | `stableBoundaryIterate_idempotent` |
 | **Thm 4** | Multiplicity-preserving forest correspondence: mixed split choices and iterated quotient forests are in **genuine bijection**, preserving summand weights (no dedup of forest occurrences). | 640, 648, 649 | `stablePhi4ForestBlockEquiv` + `stableForestBlock_finiteSum_reindex` |
 | **Thm 5** | Concrete φ⁴₄ coassociativity: the stable resolved φ⁴₄ coproduct is **coassociative** on the full polynomial algebra. | 650b, 651 | `coproduct_resolved_stable_phi4_coassociativity_law` |
@@ -83,6 +85,23 @@ theorem paper_thm2_naive_completion_obstruction {G : ResolvedFeynmanGraph}
     ({ResolvedFeynmanSubgraph.existingLegId (γ.boundaryExternalLeg e)} : Multiset ResolvedLegId)
       ≠ {ResolvedFeynmanSubgraph.boundaryLegId e} :=
   nested_direct_singletonProfile_ne γ e
+
+/-- **Paper Theorem 2′ — the obstruction is inhabited (the ∃-form of Theorem 2).**  There EXISTS a
+concrete φ⁴ configuration — an ambient graph with unique edge ids, a subgraph `γ`, a nested subgraph
+`δ` of `γ`'s boundary completion, and an inherited outer boundary edge `e` — on which the naive
+nested boundary completion PROVABLY differs (as a resolved class) from the root-relative one.
+Witnessed by the one-loop bubble (`phi4BubbleAmbient`/`phi4BubbleInner`/`phi4BubbleNested`, edge
+`e2 (0–2)`); notably Figure 1 canNOT witness this (its `inheritedOuter` is proved empty), so the
+witness is a genuinely separate configuration. Theorem 2 states the obstruction; Theorem 2′ shows it
+occurs on a real φ⁴ graph. -/
+theorem paper_thm2'_obstruction_inhabited :
+    ∃ (G : ResolvedFeynmanGraph) (γ : ResolvedFeynmanSubgraph G)
+      (δ : ResolvedFeynmanSubgraph γ.boundaryCompletedResolvedGraph)
+      (e : ResolvedFeynmanEdge),
+      G.EdgeIdsUnique ∧ e ∈ inheritedOuter γ δ ∧
+      δ.boundaryCompletedResolvedGraph.toResolvedClass
+        ≠ (rootRelativeInner γ δ).boundaryCompletedResolvedGraph.toResolvedClass :=
+  exists_nested_completion_obstruction
 
 /-! ## Theorem 3 — stable normalization (idempotent root-relative completion) -/
 
